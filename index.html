@@ -1196,7 +1196,7 @@ function extractFields(raw){
   if(f.juzgado && isCCF(f.juzgado) && sec){ const n = +((sec.match(/\d+/)||[])[0]||0); if(n && !ccfSecretarias(f.juzgado).includes(n)) f.secretariaDudosa = true; }
   // prestación: se puntúa cada tipo según cuántas veces aparecen sus palabras
   const scored = scorePrestaciones(one);
-  if(scored.length){ f.prestacion = scored[0][0]; f.otrasPrestaciones = scored.slice(1,3).map(x=>x[0]); }
+  if(scored.length){ f.prestacion = scored[0][0]; f.otrasPrestaciones = scored.slice(1).filter(x=>x[1] >= Math.max(2, scored[0][1]*0.4)).slice(0,2).map(x=>x[0]); }
   // qué pide exactamente
   m = one.match(/cobertura\s+(?:integral\s+|total\s+)?(?:del?\s+(?:cien\s+por\s+ciento\s+)?\(?100\s*%?\)?\s*)?(?:de(?:l)?\s+(?:la\s+|los\s+|las\s+)?)?([^.;]{6,180})/i);
   if(m) f.detalle = m[1].trim().replace(/\s*,?\s+(?:conforme|seg[uú]n|en los t[eé]rminos|dentro|en el plazo|bajo apercibimiento|a fin de|para que|hasta tanto)\b.*$/i,'').replace(/[,\s]+$/,'');
@@ -1376,7 +1376,12 @@ function drawWizard(){
     <label class="fld">Secretaría ${fb('secretaria')}
       ${isCCF(W.juzgado)?`<select id="wSec"><option value="">Elegí la secretaría…</option>${ccfSecretarias(W.juzgado).map(n=>`<option value="N° ${n}" ${W.secretaria===`N° ${n}`?'selected':''}>Secretaría N° ${n}</option>`).join('')}${W.secretaria && !ccfSecretarias(W.juzgado).some(n=>W.secretaria===`N° ${n}`)?`<option selected>${esc(W.secretaria)}</option>`:''}</select>`:`<input type="text" id="wSec" value="${esc(W.secretaria)}" placeholder="Ej.: N° 2, Civil, Única">`}
       ${W.found.secretariaDudosa?'<span class="hint" style="color:var(--warn)">La secretaría del documento no corresponde a ese juzgado. Revisala.</span>':''}</label>
-    <div class="fld">¿Qué reclama? ${fb('prestacion')}${(W.otrasPrestaciones||[]).length?`<span class="hint">El documento también menciona: ${W.otrasPrestaciones.map(esc).join(', ')}.</span>`:''}<div class="opts">${PRESTACIONES.map(p=>`<button type="button" class="opt ${W.prestacion===p?'on':''}" data-w="prestacion" data-v="${esc(p)}">${esc(p)}</button>`).join('')}</div></div>
+    ${(()=>{ const ligadas = W.found.prestacion ? [W.prestacion, ...(W.otrasPrestaciones||[])].filter((x,i,a)=>x && a.indexOf(x)===i) : [];
+      const lista = (W.verTodas || !ligadas.length) ? PRESTACIONES : ligadas;
+      return `<div class="fld">¿Qué reclama? ${fb('prestacion')}
+        ${ligadas.length && !W.verTodas ? `<span class="hint">${ligadas.length>1?'Son las opciones que surgen de los documentos. Elegí la principal.':'Es lo que surge de los documentos.'}</span>` : ''}
+        <div class="opts">${lista.map(p=>`<button type="button" class="opt ${W.prestacion===p?'on':''}" data-w="prestacion" data-v="${esc(p)}">${esc(p)}</button>`).join('')}</div>
+        ${ligadas.length ? (W.verTodas ? `<button type="button" class="btn ghost sm" data-act="wpocas" style="align-self:flex-start">Mostrar solo lo que surge de los documentos</button>` : `<button type="button" class="btn ghost sm" data-act="wtodas" style="align-self:flex-start">No es esto: elegir otro tipo de reclamo</button>`) : ''}</div>`; })()}
     <div class="fld">¿En qué etapa está? ${fb('estado')}<div class="opts">${ESTADOS.slice(0,4).map(p=>`<button type="button" class="opt ${W.estado===p?'on':''}" data-w="estado" data-v="${esc(p)}">${esc(p)}</button>`).join('')}</div></div>
     <div class="fld">¿Hay medida cautelar ordenada? ${fb('cautelar')}<div class="opts"><button type="button" class="opt ${W.cautelar?'on':''}" data-w="cautelar" data-v="1">Sí</button><button type="button" class="opt ${!W.cautelar?'on':''}" data-w="cautelar" data-v="0">No</button></div></div>
     <label class="fld">¿Qué hay que hacer primero? ${fb('plazoDesc')}<input type="text" id="wPd" value="${esc(W.plazoDesc)}" placeholder="Ej.: Cumplir intimación"></label>
@@ -1515,7 +1520,7 @@ document.addEventListener('click', async ev => {
   if(d.tpl){ ui.tpl = d.tpl; ui.tplText=''; render(); return; }
   if(d.tplexp){ ui.tplExp = +d.tplexp; ui.tplText=''; render(); return; }
   if(d.quick){ $('#plV').value = dPlus(+d.quick); document.querySelectorAll('[data-quick]').forEach(b=>b.classList.toggle('on', b===t)); return; }
-  if(d.w){ wRead(); const k = d.w; if(k==='cautelar') W.cautelar = d.v==='1'; else if(k==='plazoQuick'){ W.plazoFecha = +d.v<=2 ? dPlus(+d.v) : addBusinessDays(+d.v); W.plazoNota=''; } else W[k] = d.v; drawWizard(); return; }
+  if(d.w){ wRead(); const k = d.w; if(k==='cautelar') W.cautelar = d.v==='1'; else if(k==='prestacion' && W.verTodas){ W.prestacion = d.v; W.verTodas = false; if(W.found.prestacion && !(W.otrasPrestaciones||[]).includes(d.v) && d.v!==W.prestacion) {} W.otrasPrestaciones = [...new Set([...(W.otrasPrestaciones||[])])]; W.found.prestacion = true; W.prestElegida = d.v; } else if(k==='plazoQuick'){ W.plazoFecha = +d.v<=2 ? dPlus(+d.v) : addBusinessDays(+d.v); W.plazoNota=''; } else W[k] = d.v; drawWizard(); return; }
   if(d.wnav){ wRead(); if(+d.wnav>0){ const err = wCheck(); if(err){ $('#wErr').innerHTML = `<div class="notice bad">${esc(err)}</div>`; return; } } W.step += +d.wnav; drawWizard(); return; }
   const a = d.act;
   if(a==='close') closeModal();
@@ -1527,6 +1532,8 @@ document.addEventListener('click', async ev => {
   if(a==='pwd') openPwd(false);
   if(a==='nuevo') openNuevo();
   if(a==='wmanual'){ W.step = 2; drawWizard(); }
+  if(a==='wtodas' && W){ wRead(); W.verTodas = true; drawWizard(); }
+  if(a==='wpocas' && W){ wRead(); W.verTodas = false; drawWizard(); }
   if(a==='wresum' && W){ wRead(); W.sumarioEditado = false; drawWizard(); }
   if(a==='wcreate'){
     const x = {id:S.nextId++, numero:W.numero, afiliado:W.afiliado, dni:W.dni||'—', prestacion:W.prestacion, juzgado:W.juzgado, secretaria:W.secretaria, sumario:W.sumario, estado:W.estado, riesgo:/oncol|Discapacidad|domiciliaria/.test(W.prestacion)||W.cautelar?'alto':'medio', abogado:S.user, inicio:iso(today()), monto:0, cautelar:W.cautelar, plazos:[], movimientos:[], docs:[]};
