@@ -212,7 +212,32 @@ tr:last-child td{border-bottom:0}
 .login .box{display:flex;align-items:center;justify-content:center;padding:32px;background:var(--bg)}
 .login .box .card{width:min(420px,100%);padding:30px}
 
+/* esquema del equipo */
+.org{display:flex;flex-direction:column;align-items:center;padding:8px 0}
+.orgcard{display:flex;gap:12px;align-items:center;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;cursor:pointer;min-width:250px;box-shadow:var(--shadow);font:inherit;color:inherit}
+.orgcard:hover{border-color:var(--accent)}
+.orgcard.boss{border-color:var(--accent);background:var(--accent-soft)}
+.kids{display:flex;gap:28px;justify-content:center;flex-wrap:wrap;position:relative;padding-top:44px;margin-top:0}
+.kids::before{content:"";position:absolute;top:0;left:50%;width:2px;height:22px;background:var(--violet)}
+.kid{position:relative;display:flex}
+.kid::before{content:"";position:absolute;top:-22px;left:50%;width:2px;height:22px;background:var(--violet)}
+.kid::after{content:"";position:absolute;top:-22px;height:2px;background:var(--violet);left:-14px;right:-14px}
+.kid:first-child::after{left:50%} .kid:last-child::after{right:50%} .kid:only-child::after{display:none}
+.members{display:flex;flex-direction:column;gap:12px}
+.member{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.member[open]{border-color:var(--accent)}
+.member summary{list-style:none;display:flex;gap:14px;align-items:center;padding:16px 18px;cursor:pointer;flex-wrap:wrap}
+.member summary::-webkit-details-marker{display:none}
+.member summary:hover{background:var(--sunken)}
+.member .chev{transition:transform .15s;color:var(--muted)}
+.member[open] .chev{transform:rotate(90deg)}
+.panel{background:var(--sunken);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.panel h3{display:flex;gap:8px;align-items:center;font-size:15px}
+.mini{background:var(--surface);border-radius:10px;padding:10px 12px;border:1px solid var(--line)}
+.mini a{color:var(--ink);text-decoration:none} .mini a:hover{text-decoration:underline}
+
 @media (max-width:860px){
+  .kids{flex-direction:column;align-items:center;gap:14px} .kid::after{display:none}
   .app{grid-template-columns:1fr;grid-template-rows:auto 1fr}
   .side{flex-direction:row;overflow-x:auto;padding:8px;border-right:0;border-bottom:1px solid var(--line)}
   .side .navlabel,.brand b,.nav a span.lbl,.nav button span.lbl{display:none}
@@ -284,7 +309,7 @@ const daysTo = s => Math.round((new Date(s+'T00:00:00') - today())/86400000);
 const urg = n => n < 0 ? 'late' : n <= 3 ? 'soon' : 'okk';
 const whenText = n => n < 0 ? (n===-1?'Venció ayer':`Venció hace ${-n} días`) : n === 0 ? 'Vence hoy' : n === 1 ? 'Vence mañana' : `Faltan ${n} días`;
 const money = n => n ? '$ ' + Number(n).toLocaleString('es-AR') : 'Sin monto';
-const initials = s => s.split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+const initials = s => { const w = String(s||'?').trim().split(/\s+/); return ((w[0]||'')[0] + (w.length>1 ? w[w.length-1][0] : '')).toUpperCase(); };
 function toast(t, undo){
   const el = $('#toast'); el.innerHTML = `<span>${esc(t)}</span>${undo?'<button id="undoBtn">Deshacer</button>':''}`;
   el.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(()=>el.classList.remove('show'), undo?6000:2600);
@@ -294,11 +319,13 @@ async function copy(text){ try{ await navigator.clipboard.writeText(text); toast
 
 // ---------- datos de ejemplo ----------
 const DEFAULT_USERS = [
-  {id:'lbrunelli', nombre:'Lucas Brunelli', rol:'Analista legal', pass:'Fojas2026!'},
-  {id:'jgomez', nombre:'Julieta Gómez', rol:'Abogada a cargo', pass:'Fojas2026!'},
+  {id:'dfraerman', nombre:'Deborah Fraerman', rol:'Jefa de Amparos', pass:'Fojas2026!'},
+  {id:'lbrunelli', nombre:'Lucas Emmanuel Brunelli', rol:'Analista legal', pass:'Fojas2026!'},
+  {id:'fzaurdo', nombre:'Florencia Zaurdo', rol:'Analista legal', pass:'Fojas2026!'},
   {id:'rperez', nombre:'Ramiro Pérez', rol:'Procurador', pass:'Fojas2026!'},
   {id:'admin', nombre:'Administración', rol:'Administrador', pass:'Admin2026!'}
 ];
+const DEFAULT_TEAMS = [{id:'t1', nombre:'Amparos', jefe:'dfraerman', miembros:['lbrunelli','fzaurdo']}];
 const ORG = 'saludintegral-demo';
 const ESTADOS = ['Intimación recibida','Cautelar otorgada','Informe art. 8 pendiente','En prueba','Para sentencia','Sentencia','Archivado'];
 const ESTADO_CORTO = ['Intimación','Cautelar','Informe','Prueba','Para sentencia','Sentencia','Archivado'];
@@ -308,10 +335,10 @@ function seed(){
   const E = (id, numero, afiliado, nroAf, prestacion, juzgado, estado, riesgo, abogado, inicio, monto, cautelar, plazos, movs, docs) =>
     ({id, numero, caratula:`${afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`, afiliado, nroAf, prestacion, juzgado, estado, riesgo, abogado, inicio, monto, cautelar, plazos, movimientos:movs, docs});
   return [
-    E(1,'CCF 4512/2026','Romero, Ana Lía','0045-11872-01','Medicación oncológica','Juzg. Nac. Civ. y Com. Fed. N° 3 · Sec. 5','Cautelar otorgada','alto','jgomez',dPlus(-24),4850000,true,
+    E(1,'CCF 4512/2026','Romero, Ana Lía','0045-11872-01','Medicación oncológica','Juzg. Nac. Civ. y Com. Fed. N° 3 · Sec. 5','Cautelar otorgada','alto','fzaurdo',dPlus(-24),4850000,true,
       [{desc:'Acreditar cumplimiento de cautelar',vence:dPlus(1),hecho:false},{desc:'Presentar informe art. 8 Ley 16.986',vence:dPlus(4),hecho:false}],
       [{fecha:dPlus(-24),tipo:'Notificación',desc:'Se notifica traslado de la demanda y pedido de medida cautelar.',user:'rperez'},
-       {fecha:dPlus(-20),tipo:'Resolución',desc:'Se hace lugar a la medida cautelar: cobertura del 100 % de pembrolizumab.',user:'jgomez'},
+       {fecha:dPlus(-20),tipo:'Resolución',desc:'Se hace lugar a la medida cautelar: cobertura del 100 % de pembrolizumab.',user:'dfraerman'},
        {fecha:dPlus(-19),tipo:'Interno',desc:'Se envía pedido de autorización a Auditoría Médica.',user:'lbrunelli'}],
       [{nombre:'Demanda y cautelar.pdf',tipo:'Escrito de la actora',fecha:dPlus(-24),size:'1,2 MB'},{nombre:'Resolución cautelar.pdf',tipo:'Resolución',fecha:dPlus(-20),size:'340 KB'},{nombre:'Dictamen auditoría médica.pdf',tipo:'Interno',fecha:dPlus(-18),size:'210 KB'}]),
     E(2,'CCF 3977/2026','Benítez, Tomás (por su hijo L.B.)','0045-20931-03','Discapacidad (Ley 24.901)','Juzg. Nac. Civ. y Com. Fed. N° 8 · Sec. 15','Informe art. 8 pendiente','medio','lbrunelli',dPlus(-12),1320000,false,
@@ -319,19 +346,19 @@ function seed(){
       [{fecha:dPlus(-12),tipo:'Notificación',desc:'Se requiere informe circunstanciado en el plazo de 5 días.',user:'rperez'},
        {fecha:dPlus(-10),tipo:'Interno',desc:'Se solicita a Discapacidad el legajo de prestaciones.',user:'lbrunelli'}],
       [{nombre:'Demanda.pdf',tipo:'Escrito de la actora',fecha:dPlus(-12),size:'860 KB'},{nombre:'CUD y prescripción.pdf',tipo:'Prueba documental',fecha:dPlus(-12),size:'1,9 MB'}]),
-    E(3,'CCF 2210/2026','Sosa, Marcela','0045-09344-01','Fertilización (Ley 26.862)','Juzg. Nac. Civ. y Com. Fed. N° 1 · Sec. 2','En prueba','medio','jgomez',dPlus(-95),2600000,true,
+    E(3,'CCF 2210/2026','Sosa, Marcela','0045-09344-01','Fertilización (Ley 26.862)','Juzg. Nac. Civ. y Com. Fed. N° 1 · Sec. 2','En prueba','medio','fzaurdo',dPlus(-95),2600000,true,
       [{desc:'Control de pericia médica',vence:dPlus(9),hecho:false}],
-      [{fecha:dPlus(-95),tipo:'Notificación',desc:'Traslado de demanda.',user:'rperez'},{fecha:dPlus(-60),tipo:'Escrito propio',desc:'Se contesta informe y se ofrece prueba.',user:'jgomez'},{fecha:dPlus(-15),tipo:'Resolución',desc:'Se abre a prueba. Se designa perito médico.',user:'rperez'}],
+      [{fecha:dPlus(-95),tipo:'Notificación',desc:'Traslado de demanda.',user:'rperez'},{fecha:dPlus(-60),tipo:'Escrito propio',desc:'Se contesta informe y se ofrece prueba.',user:'fzaurdo'},{fecha:dPlus(-15),tipo:'Resolución',desc:'Se abre a prueba. Se designa perito médico.',user:'rperez'}],
       [{nombre:'Contestación informe.docx',tipo:'Escrito propio',fecha:dPlus(-60),size:'95 KB'}]),
     E(4,'CCF 5021/2026','Herrera, Julio César','0045-33120-01','Internación domiciliaria','Juzg. Nac. Civ. y Com. Fed. N° 11 · Sec. 21','Intimación recibida','alto','lbrunelli',dPlus(-2),980000,false,
       [{desc:'Cumplir intimación (48 hs)',vence:dPlus(-1),hecho:false}],
       [{fecha:dPlus(-2),tipo:'Notificación',desc:'Intimación a otorgar internación domiciliaria bajo apercibimiento de astreintes.',user:'rperez'}],
       [{nombre:'Cédula de intimación.pdf',tipo:'Notificación',fecha:dPlus(-2),size:'120 KB'}]),
-    E(5,'CCF 1188/2026','Ibarra, Rosa','0045-07710-02','Cirugía','Juzg. Nac. Civ. y Com. Fed. N° 4 · Sec. 7','Para sentencia','bajo','jgomez',dPlus(-180),3100000,false,
+    E(5,'CCF 1188/2026','Ibarra, Rosa','0045-07710-02','Cirugía','Juzg. Nac. Civ. y Com. Fed. N° 4 · Sec. 7','Para sentencia','bajo','fzaurdo',dPlus(-180),3100000,false,
       [{desc:'Seguimiento: sentencia',vence:dPlus(21),hecho:false}],
       [{fecha:dPlus(-180),tipo:'Notificación',desc:'Traslado de demanda.',user:'rperez'},{fecha:dPlus(-30),tipo:'Resolución',desc:'Autos para sentencia.',user:'rperez'}],
       []),
-    E(6,'CCF 0954/2025','Maidana, Ezequiel','0045-15502-01','Prótesis / ortesis','Juzg. Nac. Civ. y Com. Fed. N° 6 · Sec. 11','Sentencia','bajo','jgomez',dPlus(-320),750000,false,
+    E(6,'CCF 0954/2025','Maidana, Ezequiel','0045-15502-01','Prótesis / ortesis','Juzg. Nac. Civ. y Com. Fed. N° 6 · Sec. 11','Sentencia','bajo','fzaurdo',dPlus(-320),750000,false,
       [{desc:'Evaluar apelación',vence:dPlus(6),hecho:false}],
       [{fecha:dPlus(-8),tipo:'Resolución',desc:'Sentencia: se hace lugar parcialmente. Costas por su orden.',user:'rperez'}],
       [{nombre:'Sentencia.pdf',tipo:'Resolución',fecha:dPlus(-8),size:'410 KB'}]),
@@ -398,11 +425,11 @@ SERÁ JUSTICIA.`}
 ];
 
 // ---------- estado ----------
-const KEY = 'fojas-demo-v3';
+const KEY = 'fojas-demo-v4';
 let S;
 async function makeUser(u, pass, mustChange){ const salt = randId(16); return {id:u.id, nombre:u.nombre, rol:u.rol, activo:true, salt, hash: await hashPass(pass, salt), mustChange:!!mustChange}; }
 async function fresh(){ const users = []; for(const u of DEFAULT_USERS) users.push(await makeUser(u, u.pass, false));
-  return {user:null, users, lock:{}, toured:{}, modules:{amparos:true, administrativos:false, contratos:false, cartas:false}, exps:seed(), audit:[], nextId:8}; }
+  return {user:null, users, lock:{}, toured:{}, teams:JSON.parse(JSON.stringify(DEFAULT_TEAMS)), modules:{amparos:true, administrativos:false, contratos:false, cartas:false}, exps:seed(), audit:[], nextId:8}; }
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
 function load(){ try{ const r = localStorage.getItem(KEY); if(r) return JSON.parse(r); }catch(e){} return null; }
 const userName = id => ((S.users||[]).find(u=>u.id===id)||{nombre:id}).nombre;
@@ -410,6 +437,14 @@ const staff = () => S.users.filter(u=>u.activo && u.rol!=='Administrador');
 const me = () => S.users.find(u=>u.id===S.user);
 const isAdmin = () => (me()||{}).rol==='Administrador';
 const expById = id => S.exps.find(e=>e.id==id);
+const teamsLed = (uid=S.user) => (S.teams||[]).filter(t=>t.jefe===uid);
+const teamOf = (uid=S.user) => (S.teams||[]).find(t=>t.jefe===uid || t.miembros.includes(uid));
+const isLeader = () => teamsLed().length>0;
+const myPeople = () => { const s = new Set(); teamsLed().forEach(t=>{ s.add(t.jefe); t.miembros.forEach(m=>s.add(m)); }); return [...s]; };
+const canManage = e => isAdmin() || myPeople().includes(e.abogado);
+const statsOf = uid => { const cs = S.exps.filter(e=>e.abogado===uid && e.estado!=='Archivado'); const ps = cs.flatMap(e=>pending(e).map(p=>({...p, exp:e, idx:e.plazos.indexOf(p)}))).sort((a,b)=>a.vence.localeCompare(b.vence));
+  return {cases:cs, plazos:ps, vencidos:ps.filter(p=>daysTo(p.vence)<0).length, semana:ps.filter(p=>{const n=daysTo(p.vence); return n>=0&&n<=7;}).length, cautelar:cs.filter(e=>e.cautelar).length,
+    actividad:S.audit.filter(a=>a.user===uid && !/sesión|ingreso/i.test(a.accion)).slice(-6).reverse()}; };
 const active = () => S.exps.filter(e=>e.estado!=='Archivado');
 const pending = e => e.plazos.filter(p=>!p.hecho).sort((a,b)=>a.vence.localeCompare(b.vence));
 const nextPlazo = e => pending(e)[0];
@@ -423,9 +458,10 @@ async function sha(text){
 const entryBody = e => JSON.stringify([e.n, e.ts, e.user, e.accion, e.objeto, e.detalle, e.prev]);
 let chain = Promise.resolve();
 function audit(accion, objeto, detalle, opts={}){
+  const who = opts.user || S.user || 'sistema';
   chain = chain.then(async () => {
     const prev = S.audit.length ? S.audit[S.audit.length-1].hash : 'GENESIS';
-    const e = {n:S.audit.length+1, ts:opts.ts || new Date().toISOString(), user:opts.user || S.user, accion, objeto, detalle, prev};
+    const e = {n:S.audit.length+1, ts:opts.ts || new Date().toISOString(), user:who, accion, objeto, detalle, prev};
     e.hash = await sha(entryBody(e));
     S.audit.push(e); save();
   });
@@ -446,8 +482,11 @@ async function seedAudit(){
     ['admin','Activó módulo','Amparos de salud','Plan inicial del cliente'],
     ['lbrunelli','Importó expedientes','Migración','7 expedientes desde planilla'],
     ['rperez','Cargó novedad','CCF 5021/2026','Notificación: intimación 48 hs'],
-    ['jgomez','Subió documento','CCF 4512/2026','Dictamen auditoría médica.pdf'],
-    ['lbrunelli','Abrió expediente','CCF 3977/2026','Consulta']
+    ['fzaurdo','Subió documento','CCF 4512/2026','Dictamen auditoría médica.pdf'],
+    ['lbrunelli','Abrió expediente','CCF 3977/2026','Consulta'],
+    ['fzaurdo','Cargó una novedad','CCF 2210/2026','Resolución: se abre a prueba'],
+    ['dfraerman','Reasignó un amparo','CCF 1188/2026','De Lucas Emmanuel Brunelli a Florencia Zaurdo'],
+    ['fzaurdo','Preparó un escrito','CCF 4512/2026','Acreditar cumplimiento de cautelar']
   ];
   for(let i=0;i<items.length;i++){ const [u,a,o,d] = items[i]; await audit(a,o,d,{user:u, ts:new Date(base + i*5400000).toISOString()}); }
 }
@@ -498,8 +537,8 @@ function route(){
   const m = h.match(/^expediente-(\d+)$/);
   return m ? {name:'expediente', id:+m[1]} : {name:h};
 }
-window.addEventListener('hashchange', ()=>{ ui.q=''; ui.tab='resumen'; ui.ia=''; ui.addMov=false; ui.addPlazo=false; ui.results=false; render(); const v=$('#view'); if(v) v.scrollTop=0; });
-const ui = {tab:'resumen', ia:'', filtro:'todos', q:'', verify:null, tpl:null, tplExp:null, tplText:'', backupOut:'', backupMsg:null, csvMsg:null, results:false, addMov:false, addPlazo:false};
+window.addEventListener('hashchange', ()=>{ if(ui.scrollTo){ const u = ui.scrollTo; ui.scrollTo=null; setTimeout(()=>{ const d=document.querySelector(`[data-member="${u}"]`); if(d) d.scrollIntoView({behavior:'smooth', block:'start'}); }, 60); } ui.q=''; ui.tab='resumen'; ui.ia=''; ui.addMov=false; ui.addPlazo=false; ui.results=false; render(); const v=$('#view'); if(v) v.scrollTop=0; });
+const ui = {open:{}, scrollTo:null, tab:'resumen', ia:'', filtro:'todos', q:'', verify:null, tpl:null, tplExp:null, tplText:'', backupOut:'', backupMsg:null, csvMsg:null, results:false, addMov:false, addPlazo:false};
 
 // ---------- estructura ----------
 function shell(content){
@@ -519,6 +558,7 @@ function shell(content){
         ${link('vencimientos','cal','Vencimientos', urgentes?`<span class="badge red">${urgentes}</span>`:'')}
         ${link('escritos','pen','Escritos')}
         ${link('informes','chart','Informes')}
+        ${(teamOf()||isAdmin())?link('equipo','users',isLeader()?'Mi equipo':'Equipo', isLeader()&&myPeople().some(u=>statsOf(u).vencidos)?`<span class="badge red">${myPeople().reduce((a,u)=>a+statsOf(u).vencidos,0)}</span>`:''):''}
         ${extra}
       </nav>
       <div class="navlabel">Más opciones</div>
@@ -526,7 +566,7 @@ function shell(content){
         ${link('historial','history','Historial de cambios')}
         ${link('respaldo','cloud','Copias y migración')}
         ${link('modulos','grid','Módulos')}
-        ${isAdmin()?link('usuarios','users','Usuarios'):''}
+        ${isAdmin()?link('usuarios','key','Usuarios'):''}
       </nav>
       <div class="foot nav">
         <button data-act="tour" title="Ayuda">${ic('help')}<span class="lbl">Ayuda</span></button>
@@ -596,6 +636,8 @@ function vInicio(){
         <div class="li"><div style="display:flex;gap:10px"><div class="avatar" style="width:32px;height:32px;font-size:13px">${initials(userName(a.user))}</div><div><b>${esc(userName(a.user))}</b> <span class="muted">${esc(a.accion.toLowerCase())}</span><div class="small muted">${esc(a.objeto)}</div></div></div><div class="small muted" style="white-space:nowrap">${fmtTs(a.ts)}</div></div>`).join('')}
       </div></section>
   </div>
+  ${isLeader()?`<section class="card"><div class="head"><h2>Tu equipo hoy</h2><a href="#equipo" class="small">Ver el equipo completo</a></div>
+    <div class="grid g3">${teamsLed()[0].miembros.map(uid=>{ const st = statsOf(uid); return `<a class="action" href="#equipo" data-openmember="${uid}" style="flex-direction:row;align-items:center"><div class="avatar">${initials(userName(uid))}</div><div style="flex:1"><b style="font-size:16px">${esc(userName(uid))}</b><div class="row" style="margin-top:4px;gap:6px"><span class="pill">${st.cases.length} casos</span>${st.vencidos?`<span class="pill red">${st.vencidos} vencido${st.vencidos>1?'s':''}</span>`:'<span class="pill grn">Al día</span>'}${st.semana?`<span class="pill yel">${st.semana} esta semana</span>`:''}</div></div></a>`; }).join('')}</div></section>`:''}
   <section class="card" style="flex-direction:row;align-items:center;gap:16px;flex-wrap:wrap">
     <div class="ico y">${ic('help','lg')}</div>
     <div style="flex:1;min-width:220px"><b>¿Es tu primera vez?</b><div class="muted small">Mirá la guía rápida: en un minuto te mostramos cómo se usa.</div></div>
@@ -610,8 +652,10 @@ function vAmparos(){
     urgentes:{l:'Urgentes', f:e=>{const p=nextPlazo(e); return p && daysTo(p.vence)<=3;}},
     cautelar:{l:'Con cautelar', f:e=>e.cautelar && e.estado!=='Archivado'},
     mios:{l:'Míos', f:e=>e.abogado===S.user && e.estado!=='Archivado'},
+    ...(isLeader()?{equipo:{l:'De mi equipo', f:e=>myPeople().includes(e.abogado) && e.estado!=='Archivado'}}:{}),
     archivados:{l:'Archivados', f:e=>e.estado==='Archivado'}
   };
+  if(!F[ui.filtro]) ui.filtro='todos';
   const list = all.filter(F[ui.filtro].f).sort((a,b)=>{ const pa=nextPlazo(a), pb=nextPlazo(b); return (pa?pa.vence:'9999').localeCompare(pb?pb.vence:'9999'); });
   return `
   <div class="head"><div><h1>Amparos</h1><p class="sub">Tocá cualquier amparo para ver todo lo que tiene. Los más urgentes aparecen primero.</p></div>
@@ -660,7 +704,7 @@ function vExpediente(id){
       <div class="fact"><span>Fecha de inicio</span><b>${fmt(e.inicio)}</b></div>
       <div class="fact"><span>Monto estimado</span><b>${money(e.monto)}</b></div>
       <div class="fact"><span>Medida cautelar</span><b>${e.cautelar?'Sí, vigente':'No'}</b></div>
-      <div class="fact"><span>A cargo de</span><b>${esc(userName(e.abogado))}</b></div>
+      <div class="fact"><span>A cargo de</span>${canManage(e)?`<select data-reassign="${e.id}" aria-label="Cambiar responsable" style="margin-top:4px">${assignable(e).map(u=>`<option value="${u.id}" ${u.id===e.abogado?'selected':''}>${esc(u.nombre)}</option>`).join('')}</select>`:`<b>${esc(userName(e.abogado))}</b>`}</div>
     </div>
     <div class="fld">¿Qué tan riesgoso es?
       <div class="chips">${[['alto','Alto'],['medio','Medio'],['bajo','Bajo']].map(([k,l])=>`<button class="chipbtn ${e.riesgo===k?'on':''}" data-riesgo="${k}">${l}</button>`).join('')}</div></div>`;
@@ -845,6 +889,71 @@ function vRespaldo(){
   </div>`;
 }
 
+function assignable(e){ const t = teamOf(e.abogado) || teamsLed()[0]; const ids = t ? [t.jefe, ...t.miembros] : staff().map(u=>u.id); if(isAdmin()) staff().forEach(u=>{ if(!ids.includes(u.id)) ids.push(u.id); }); return ids.map(id=>S.users.find(u=>u.id===id)).filter(Boolean); }
+function memberCard(uid, boss){
+  const u = S.users.find(x=>x.id===uid); if(!u) return '';
+  const st = statsOf(uid);
+  return `<button class="orgcard ${boss?'boss':''}" data-openmember="${uid}">
+    <div class="avatar" style="${boss?'background:var(--accent);color:#fff':''}">${initials(u.nombre)}</div>
+    <div style="text-align:left"><b>${esc(u.nombre)}</b><div class="small muted">${esc(u.rol)}</div>
+    <div class="row" style="gap:6px;margin-top:6px"><span class="pill">${st.cases.length} casos</span>${st.vencidos?`<span class="pill red">${st.vencidos} vencido${st.vencidos>1?'s':''}</span>`:''}${st.semana?`<span class="pill yel">${st.semana} esta semana</span>`:''}${!st.vencidos&&!st.semana?'<span class="pill grn">Al día</span>':''}</div></div>
+  </button>`;
+}
+function memberDetail(uid, t){
+  const u = S.users.find(x=>x.id===uid); if(!u) return '';
+  const st = statsOf(uid);
+  const canSee = isAdmin() || t.jefe===S.user || uid===S.user;
+  if(!canSee) return '';
+  const open = ui.open[uid] ? 'open' : '';
+  const others = [t.jefe, ...t.miembros].filter(x=>x!==uid);
+  return `<details class="member" data-member="${uid}" ${open}>
+    <summary><div class="avatar">${initials(u.nombre)}</div><div style="flex:1;min-width:180px"><b>${esc(u.nombre)}</b><div class="small muted">${esc(u.rol)}</div></div>
+      <div class="row" style="gap:6px"><span class="pill">${st.cases.length} casos</span>${st.cautelar?`<span class="pill acc">${st.cautelar} con cautelar</span>`:""}${st.vencidos?`<span class="pill red">${st.vencidos} vencido${st.vencidos>1?'s':''}</span>`:''}${st.semana?`<span class="pill yel">${st.semana} vencen esta semana</span>`:''}</div>
+      <span class="chev">${ic('next')}</span></summary>
+    <div class="grid g3" style="padding:4px 18px 18px">
+      <div class="panel"><h3>${ic('folder','sm')} Casos asignados</h3>
+        ${st.cases.map(e=>{ const p=nextPlazo(e); const n=p?daysTo(p.vence):null; return `<div class="mini">
+          <a href="#expediente-${e.id}"><b>${esc(e.afiliado)}</b></a><div class="small muted">${esc(e.numero)} · ${esc(e.estado)}</div>
+          ${p?`<div class="when ${urg(n)}" style="font-size:13px">${whenText(n)}: ${esc(p.desc)}</div>`:''}
+          ${(isAdmin()||t.jefe===S.user)&&others.length?`<select data-reassign="${e.id}" aria-label="Pasar a otra persona" class="small" style="margin-top:6px;padding:6px 8px"><option value="">Pasar a…</option>${others.map(o=>`<option value="${o}">${esc(userName(o))}</option>`).join('')}</select>`:''}
+        </div>`;}).join('') || '<div class="muted small">No tiene casos asignados.</div>'}</div>
+      <div class="panel"><h3>${ic('cal','sm')} Vencimientos</h3>
+        ${st.plazos.map(p=>{ const n=daysTo(p.vence); return `<div class="mini" style="border-left:4px solid var(--${n<0?'danger':n<=3?'warn':'ok'})"><a href="#expediente-${p.exp.id}"><b>${esc(p.desc)}</b></a><div class="small muted">${esc(p.exp.afiliado)}</div><div class="when ${urg(n)}" style="font-size:13px">${whenText(n)} · ${fmt(p.vence)}</div></div>`; }).join('') || '<div class="muted small">No tiene vencimientos pendientes.</div>'}</div>
+      <div class="panel"><h3>${ic('history','sm')} Últimos movimientos</h3>
+        ${st.actividad.map(a=>`<div class="mini"><b>${esc(a.accion)}</b><div class="small muted">${esc(a.objeto)} — ${esc(a.detalle)}</div><div class="small muted">${fmtTs(a.ts)}</div></div>`).join('') || '<div class="muted small">Todavía no registró actividad.</div>'}</div>
+    </div>
+  </details>`;
+}
+function vEquipo(){
+  const visible = isAdmin() ? S.teams : S.teams.filter(t=>t.jefe===S.user || t.miembros.includes(S.user));
+  if(!visible.length && !isAdmin()) return `<div class="card empty"><div class="ico a">${ic('users','lg')}</div><b>Todavía no formás parte de un equipo</b><span>Pedile al administrador que te sume a uno.</span></div>`;
+  return `
+  <div><h1>${isLeader()?'Mi equipo':'Equipo'}</h1><p class="sub">${isLeader()?'Tocá a cualquier persona del esquema para desplegar sus casos, vencimientos y últimos movimientos. Desde ahí también podés pasarle un caso a otra persona.':'Así está armado tu equipo. Abajo ves el detalle de tus casos.'}</p></div>
+  ${visible.map(t=>{ const all=[t.jefe,...t.miembros]; const tot = all.map(statsOf); return `
+  <section class="card">
+    <div class="head"><div><h2>Equipo ${esc(t.nombre)}</h2><div class="small muted">${t.miembros.length} analista${t.miembros.length===1?'':'s'} · ${tot.reduce((a,s)=>a+s.cases.length,0)} casos en curso</div></div>
+      <div class="row">${tot.reduce((a,s)=>a+s.vencidos,0)?`<span class="pill red">${tot.reduce((a,s)=>a+s.vencidos,0)} ${tot.reduce((a,s)=>a+s.vencidos,0)===1?'vencido':'vencidos'} en el equipo</span>`:'<span class="pill grn">Sin vencidos</span>'}<span class="pill yel">${tot.reduce((a,s)=>a+s.semana,0)} vencen esta semana</span></div></div>
+    <div class="org">
+      ${memberCard(t.jefe, true)}
+      <div class="kids">${t.miembros.map(m=>`<div class="kid">${memberCard(m,false)}</div>`).join('') || '<div class="muted small" style="padding-top:20px">Todavía no tiene analistas.</div>'}</div>
+    </div>
+  </section>
+  <div class="members">${all.map(uid=>memberDetail(uid,t)).join('')}</div>`; }).join('')}
+  ${isAdmin()?teamEditor():''}`;
+}
+function teamEditor(){
+  const people = S.users.filter(u=>u.activo && u.rol!=='Administrador');
+  return `<section class="card"><h2>Armar equipos</h2><p class="muted small">Elegí quién lo dirige y quiénes son sus analistas. Una persona puede estar en un solo equipo como analista.</p>
+    ${S.teams.map(t=>`<form class="form teamform" data-team="${t.id}" style="padding:16px;border:1px solid var(--line);border-radius:12px">
+      <label>Nombre del equipo<input type="text" name="nombre" value="${esc(t.nombre)}" required></label>
+      <label>Jefa/e<select name="jefe">${people.map(u=>`<option value="${u.id}" ${u.id===t.jefe?'selected':''}>${esc(u.nombre)}</option>`).join('')}</select></label>
+      <div class="fld full">Analistas<div class="chips">${people.map(u=>`<label class="chipbtn" style="font-weight:600"><input type="checkbox" name="m" value="${u.id}" ${t.miembros.includes(u.id)?'checked':''} style="accent-color:var(--accent)"> ${esc(u.nombre)}</label>`).join('')}</div></div>
+      <div class="full row"><button class="btn pri" type="submit">Guardar equipo</button><button class="btn ghost danger" type="button" data-act="delteam" data-team="${t.id}">Eliminar equipo</button></div>
+    </form>`).join('')}
+    <div><button class="btn" data-act="newteam">${ic('plus','sm')} Crear otro equipo</button></div>
+  </section>`;
+}
+
 function vUsuarios(){
   if(!isAdmin()) return `<div class="card empty"><b>Esta sección es solo para el administrador.</b></div>`;
   const m = ui.userMsg;
@@ -887,6 +996,8 @@ function vIngreso(){
       <details class="small muted"><summary style="cursor:pointer">Datos para probar</summary>
         <div style="margin-top:6px">Organización: <span class="mono">saludintegral-demo</span><br>
         Usuario <span class="mono">lbrunelli</span> · contraseña <span class="mono">Fojas2026!</span><br>
+        Jefa de equipo: <span class="mono">dfraerman</span> · contraseña <span class="mono">Fojas2026!</span><br>
+        Analista: <span class="mono">fzaurdo</span> · contraseña <span class="mono">Fojas2026!</span><br>
         Administrador: <span class="mono">admin</span> · contraseña <span class="mono">Admin2026!</span></div></details>
     </form></div>
   </div>`;
@@ -984,7 +1095,7 @@ function render(){
   if(!logged()){ $('#root').innerHTML = vIngreso(); document.title='Fojas · Ingresar'; return; }
   document.title='Fojas';
   const r = route();
-  const views = {inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, informes:vInformes, historial:vHistorial, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios};
+  const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, informes:vInformes, historial:vHistorial, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios};
   const html = r.name==='expediente' ? vExpediente(r.id) : (views[r.name]||vInicio)();
   const scroll = $('#view') ? $('#view').scrollTop : 0;
   $('#root').innerHTML = shell(html);
@@ -1001,6 +1112,8 @@ function markDone(e, i){
 // ---------- eventos ----------
 document.addEventListener('click', async ev => {
   if(!ev.target.closest('.search')) { if(ui.results){ ui.results=false; const r=$('.results'); if(r) r.remove(); } }
+  const om = ev.target.closest('[data-openmember]');
+  if(om){ ui.open[om.dataset.openmember] = true; if(route().name!=='equipo'){ ui.scrollTo = om.dataset.openmember; return; } render(); const d = document.querySelector(`[data-member="${om.dataset.openmember}"]`); if(d) d.scrollIntoView({behavior:'smooth', block:'start'}); return; }
   const t = ev.target.closest('[data-act],[data-tab],[data-go],[data-ia],[data-filtro],[data-riesgo],[data-estado],[data-tour],[data-tpl],[data-tplexp],[data-w],[data-wnav],[data-quick]');
   if(!t) return;
   const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
@@ -1020,6 +1133,9 @@ document.addEventListener('click', async ev => {
   if(d.wnav){ wRead(); if(+d.wnav>0){ const err = wCheck(); if(err){ $('#wErr').innerHTML = `<div class="notice bad">${esc(err)}</div>`; return; } } W.step += +d.wnav; drawWizard(); return; }
   const a = d.act;
   if(a==='close') closeModal();
+  if(a==='newteam' && isAdmin()){ S.teams.push({id:'t'+Date.now(), nombre:'Nuevo equipo', jefe:staff()[0].id, miembros:[]}); save(); audit('Creó un equipo','Equipos','Nuevo equipo'); await chain; render(); }
+  if(a==='delteam' && isAdmin()){ const tm = S.teams.find(x=>x.id===d.team); const i = S.teams.indexOf(tm); S.teams.splice(i,1); save(); audit('Eliminó un equipo','Equipos',tm.nombre); render();
+    toast(`Equipo "${tm.nombre}" eliminado.`, ()=>{ S.teams.splice(i,0,tm); save(); audit('Restauró un equipo','Equipos',tm.nombre); render(); }); }
   if(a==='tour') openTour(0);
   if(a==='logout') logout();
   if(a==='pwd') openPwd(false);
@@ -1090,12 +1206,16 @@ $('#overlay').addEventListener('click', ev => { if(ev.target.id==='overlay' && !
 document.addEventListener('change', async ev => {
   const t = ev.target; const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
   if(t.id==='fileIn' && e) addFiles(e, t.files);
+  if(t.dataset && t.dataset.reassign && t.value){ const x = expById(t.dataset.reassign); if(!x || !canManage(x) || t.value===x.abogado) return; const old = x.abogado; x.abogado = t.value; save();
+    audit('Reasignó un amparo', x.numero, `De ${userName(old)} a ${userName(t.value)}`); render();
+    toast(`${x.afiliado} ahora está a cargo de ${userName(t.value)}.`, ()=>{ x.abogado = old; save(); audit('Deshizo reasignación', x.numero, `Vuelve a ${userName(old)}`); render(); }); }
   if(t.dataset && t.dataset.mod){ S.modules[t.dataset.mod] = t.checked; save(); const m = MODULES.find(x=>x.id===t.dataset.mod); audit(t.checked?'Activó un módulo':'Apagó un módulo', m.nombre, 'Configuración'); render(); toast(t.checked?`${m.nombre} activado: ya aparece en el menú`:`${m.nombre} apagado`); }
 });
 function addFiles(e, files){
   [...files].forEach(f=>{ e.docs.push({nombre:f.name, tipo:'Documento', fecha:iso(today()), size: f.size>1e6?(f.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(f.size/1000))+' KB'}); audit('Subió un documento', e.numero, f.name); });
   save(); render(); toast(files.length===1?'Documento agregado':`${files.length} documentos agregados`);
 }
+document.addEventListener('toggle', ev => { const d = ev.target; if(d.matches && d.matches('details[data-member]')) ui.open[d.dataset.member] = d.open; }, true);
 document.addEventListener('dragover', ev => { const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); dz.classList.add('over'); } });
 document.addEventListener('dragleave', ev => { const dz = ev.target.closest('#drop'); if(dz) dz.classList.remove('over'); });
 document.addEventListener('drop', ev => { const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); const e = expById(route().id); if(e) addFiles(e, ev.dataTransfer.files); } });
@@ -1146,6 +1266,14 @@ document.addEventListener('submit', async ev => {
   }
   if(id==='movForm' && e){ const m = {fecha:$('#mvF').value, tipo:$('#mvT').value, desc:$('#mvD').value.trim(), user:S.user}; if(!m.desc) return; e.movimientos.push(m); save(); ui.addMov=false; audit('Cargó una novedad', e.numero, `${m.tipo}: ${m.desc}`); render(); toast('Novedad guardada'); }
   if(id==='plForm' && e){ const p = {desc:$('#plD').value.trim(), vence:$('#plV').value, hecho:false}; if(!p.desc||!p.vence) return; e.plazos.push(p); save(); ui.addPlazo=false; audit('Agregó un plazo', e.numero, `${p.desc} (${fmt(p.vence)})`); render(); toast('Plazo guardado'); }
+  if(ev.target.classList.contains('teamform') && isAdmin()){
+    const f = ev.target, tm = S.teams.find(x=>x.id===f.dataset.team);
+    const jefe = f.jefe.value, miembros = [...f.querySelectorAll('input[name=m]:checked')].map(i=>i.value).filter(m=>m!==jefe);
+    const taken = miembros.filter(m=>S.teams.some(o=>o.id!==tm.id && o.miembros.includes(m)));
+    if(taken.length){ toast(`${taken.map(userName).join(', ')} ya está en otro equipo. Sacalo de ahí primero.`); return; }
+    tm.nombre = f.nombre.value.trim() || tm.nombre; tm.jefe = jefe; tm.miembros = miembros; save();
+    audit('Actualizó un equipo','Equipos',`${tm.nombre}: jefa/e ${userName(jefe)}, ${miembros.length} analista(s)`); await chain; render(); toast('Equipo guardado');
+  }
   if(id==='userForm' && isAdmin()){
     const uid = $('#nuId').value.trim().toLowerCase();
     if(S.users.some(x=>x.id===uid)){ ui.userMsg={ok:false,t:'Ya hay alguien con ese usuario. Probá con otro.'}; render(); return; }
@@ -1159,7 +1287,7 @@ document.addEventListener('submit', async ev => {
 (async function init(){
   S = load();
   if(!S || !S.exps || !S.users){ S = await fresh(); save(); await seedAudit(); }
-  S.lock = S.lock || {}; S.toured = S.toured || {};
+  S.lock = S.lock || {}; S.toured = S.toured || {}; S.teams = S.teams || [];
   render();
   const u = getSession() && me(); if(u && u.mustChange) openPwd(true);
 })();
