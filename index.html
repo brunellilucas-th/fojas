@@ -183,6 +183,7 @@ tr:last-child td{border-bottom:0}
 .form label,.fld{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600;color:var(--muted)}
 .form .full{grid-column:1/-1}
 .hint{font-weight:400;font-size:13px;color:var(--faint)}
+.fld > .pill{align-self:flex-start}
 
 /* modal y asistente de carga */
 .overlay{position:fixed;inset:0;background:rgba(8,20,24,.5);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow:auto;z-index:10}
@@ -332,37 +333,37 @@ const ESTADO_CORTO = ['Intimación','Cautelar','Informe','Prueba','Para sentenci
 const PRESTACIONES = ['Medicación oncológica','Discapacidad (Ley 24.901)','Fertilización (Ley 26.862)','Internación domiciliaria','Cirugía','Prótesis / ortesis','Salud mental','Otra'];
 
 function seed(){
-  const E = (id, numero, afiliado, nroAf, prestacion, juzgado, estado, riesgo, abogado, inicio, monto, cautelar, plazos, movs, docs) =>
-    ({id, numero, caratula:`${afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`, afiliado, nroAf, prestacion, juzgado, estado, riesgo, abogado, inicio, monto, cautelar, plazos, movimientos:movs, docs});
+  const E = (id, numero, afiliado, dni, prestacion, juzgado, estado, riesgo, abogado, inicio, monto, cautelar, plazos, movs, docs) =>
+    ({id, numero, caratula:`${afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`, afiliado, dni, prestacion, juzgado, estado, riesgo, abogado, inicio, monto, cautelar, plazos, movimientos:movs, docs});
   return [
-    E(1,'CCF 4512/2026','Romero, Ana Lía','0045-11872-01','Medicación oncológica','Juzg. Nac. Civ. y Com. Fed. N° 3 · Sec. 5','Cautelar otorgada','alto','fzaurdo',dPlus(-24),4850000,true,
+    E(1,'CCF 4512/2026','Romero, Ana Lía','27.845.112','Medicación oncológica','Juzg. Nac. Civ. y Com. Fed. N° 3 · Sec. 5','Cautelar otorgada','alto','fzaurdo',dPlus(-24),4850000,true,
       [{desc:'Acreditar cumplimiento de cautelar',vence:dPlus(1),hecho:false},{desc:'Presentar informe art. 8 Ley 16.986',vence:dPlus(4),hecho:false}],
       [{fecha:dPlus(-24),tipo:'Notificación',desc:'Se notifica traslado de la demanda y pedido de medida cautelar.',user:'rperez'},
        {fecha:dPlus(-20),tipo:'Resolución',desc:'Se hace lugar a la medida cautelar: cobertura del 100 % de pembrolizumab.',user:'dfraerman'},
        {fecha:dPlus(-19),tipo:'Interno',desc:'Se envía pedido de autorización a Auditoría Médica.',user:'lbrunelli'}],
       [{nombre:'Demanda y cautelar.pdf',tipo:'Escrito de la actora',fecha:dPlus(-24),size:'1,2 MB'},{nombre:'Resolución cautelar.pdf',tipo:'Resolución',fecha:dPlus(-20),size:'340 KB'},{nombre:'Dictamen auditoría médica.pdf',tipo:'Interno',fecha:dPlus(-18),size:'210 KB'}]),
-    E(2,'CCF 3977/2026','Benítez, Tomás (por su hijo L.B.)','0045-20931-03','Discapacidad (Ley 24.901)','Juzg. Nac. Civ. y Com. Fed. N° 8 · Sec. 15','Informe art. 8 pendiente','medio','lbrunelli',dPlus(-12),1320000,false,
+    E(2,'CCF 3977/2026','Benítez, Tomás (por su hijo L.B.)','35.902.447','Discapacidad (Ley 24.901)','Juzg. Nac. Civ. y Com. Fed. N° 8 · Sec. 15','Informe art. 8 pendiente','medio','lbrunelli',dPlus(-12),1320000,false,
       [{desc:'Presentar informe art. 8 Ley 16.986',vence:dPlus(2),hecho:false}],
       [{fecha:dPlus(-12),tipo:'Notificación',desc:'Se requiere informe circunstanciado en el plazo de 5 días.',user:'rperez'},
        {fecha:dPlus(-10),tipo:'Interno',desc:'Se solicita a Discapacidad el legajo de prestaciones.',user:'lbrunelli'}],
       [{nombre:'Demanda.pdf',tipo:'Escrito de la actora',fecha:dPlus(-12),size:'860 KB'},{nombre:'CUD y prescripción.pdf',tipo:'Prueba documental',fecha:dPlus(-12),size:'1,9 MB'}]),
-    E(3,'CCF 2210/2026','Sosa, Marcela','0045-09344-01','Fertilización (Ley 26.862)','Juzg. Nac. Civ. y Com. Fed. N° 1 · Sec. 2','En prueba','medio','fzaurdo',dPlus(-95),2600000,true,
+    E(3,'CCF 2210/2026','Sosa, Marcela','31.220.958','Fertilización (Ley 26.862)','Juzg. Nac. Civ. y Com. Fed. N° 1 · Sec. 2','En prueba','medio','fzaurdo',dPlus(-95),2600000,true,
       [{desc:'Control de pericia médica',vence:dPlus(9),hecho:false}],
       [{fecha:dPlus(-95),tipo:'Notificación',desc:'Traslado de demanda.',user:'rperez'},{fecha:dPlus(-60),tipo:'Escrito propio',desc:'Se contesta informe y se ofrece prueba.',user:'fzaurdo'},{fecha:dPlus(-15),tipo:'Resolución',desc:'Se abre a prueba. Se designa perito médico.',user:'rperez'}],
       [{nombre:'Contestación informe.docx',tipo:'Escrito propio',fecha:dPlus(-60),size:'95 KB'}]),
-    E(4,'CCF 5021/2026','Herrera, Julio César','0045-33120-01','Internación domiciliaria','Juzg. Nac. Civ. y Com. Fed. N° 11 · Sec. 21','Intimación recibida','alto','lbrunelli',dPlus(-2),980000,false,
+    E(4,'CCF 5021/2026','Herrera, Julio César','14.733.601','Internación domiciliaria','Juzg. Nac. Civ. y Com. Fed. N° 11 · Sec. 21','Intimación recibida','alto','lbrunelli',dPlus(-2),980000,false,
       [{desc:'Cumplir intimación (48 hs)',vence:dPlus(-1),hecho:false}],
       [{fecha:dPlus(-2),tipo:'Notificación',desc:'Intimación a otorgar internación domiciliaria bajo apercibimiento de astreintes.',user:'rperez'}],
       [{nombre:'Cédula de intimación.pdf',tipo:'Notificación',fecha:dPlus(-2),size:'120 KB'}]),
-    E(5,'CCF 1188/2026','Ibarra, Rosa','0045-07710-02','Cirugía','Juzg. Nac. Civ. y Com. Fed. N° 4 · Sec. 7','Para sentencia','bajo','fzaurdo',dPlus(-180),3100000,false,
+    E(5,'CCF 1188/2026','Ibarra, Rosa','22.519.374','Cirugía','Juzg. Nac. Civ. y Com. Fed. N° 4 · Sec. 7','Para sentencia','bajo','fzaurdo',dPlus(-180),3100000,false,
       [{desc:'Seguimiento: sentencia',vence:dPlus(21),hecho:false}],
       [{fecha:dPlus(-180),tipo:'Notificación',desc:'Traslado de demanda.',user:'rperez'},{fecha:dPlus(-30),tipo:'Resolución',desc:'Autos para sentencia.',user:'rperez'}],
       []),
-    E(6,'CCF 0954/2025','Maidana, Ezequiel','0045-15502-01','Prótesis / ortesis','Juzg. Nac. Civ. y Com. Fed. N° 6 · Sec. 11','Sentencia','bajo','fzaurdo',dPlus(-320),750000,false,
+    E(6,'CCF 0954/2025','Maidana, Ezequiel','29.661.083','Prótesis / ortesis','Juzg. Nac. Civ. y Com. Fed. N° 6 · Sec. 11','Sentencia','bajo','fzaurdo',dPlus(-320),750000,false,
       [{desc:'Evaluar apelación',vence:dPlus(6),hecho:false}],
       [{fecha:dPlus(-8),tipo:'Resolución',desc:'Sentencia: se hace lugar parcialmente. Costas por su orden.',user:'rperez'}],
       [{nombre:'Sentencia.pdf',tipo:'Resolución',fecha:dPlus(-8),size:'410 KB'}]),
-    E(7,'CCF 3305/2025','Quiroga, Pablo','0045-29003-01','Salud mental','Juzg. Nac. Civ. y Com. Fed. N° 2 · Sec. 3','Archivado','bajo','lbrunelli',dPlus(-400),0,false,
+    E(7,'CCF 3305/2025','Quiroga, Pablo','33.418.276','Salud mental','Juzg. Nac. Civ. y Com. Fed. N° 2 · Sec. 3','Archivado','bajo','lbrunelli',dPlus(-400),0,false,
       [], [{fecha:dPlus(-40),tipo:'Resolución',desc:'Se archivan las actuaciones.',user:'rperez'}], [])
   ];
 }
@@ -386,7 +387,7 @@ I. OBJETO
 Que vengo en legal tiempo y forma a producir el informe previsto en el art. 8 de la Ley 16.986, respecto de la prestación reclamada: {prestacion}.
 
 II. ANTECEDENTES
-El/la afiliado/a {afiliado} (N° de afiliado {nroAf}) [DESCRIBIR ANTECEDENTES DE LA SOLICITUD Y SU TRÁMITE INTERNO].
+El/la afiliado/a {afiliado} (DNI {dni}) [DESCRIBIR ANTECEDENTES DE LA SOLICITUD Y SU TRÁMITE INTERNO].
 
 III. FUNDAMENTOS
 [DESARROLLAR].
@@ -425,7 +426,7 @@ SERÁ JUSTICIA.`}
 ];
 
 // ---------- estado ----------
-const KEY = 'fojas-demo-v4';
+const KEY = 'fojas-demo-v5';
 let S;
 async function makeUser(u, pass, mustChange){ const salt = randId(16); return {id:u.id, nombre:u.nombre, rol:u.rol, activo:true, salt, hash: await hashPass(pass, salt), mustChange:!!mustChange}; }
 async function fresh(){ const users = []; for(const u of DEFAULT_USERS) users.push(await makeUser(u, u.pass, false));
@@ -577,7 +578,7 @@ function shell(content){
       <div class="demo">Versión de prueba con datos ficticios. No cargues datos reales de afiliados.</div>
       <header class="top">
         <div class="search">${ic('search')}
-          <input type="search" id="gsearch" placeholder="Buscar por nombre del afiliado o número de expediente" value="${esc(ui.q)}" aria-label="Buscar" autocomplete="off">
+          <input type="search" id="gsearch" placeholder="Buscar por afiliado, DNI o número de expediente" value="${esc(ui.q)}" aria-label="Buscar" autocomplete="off">
           ${ui.results?searchResults():''}
         </div>
         <div class="who"><div><b>${esc(u.nombre)}</b><br><span>${esc(u.rol)}</span></div>
@@ -589,7 +590,7 @@ function shell(content){
 }
 function matches(q){
   q = q.trim().toLowerCase(); if(!q) return [];
-  return S.exps.filter(e => [e.numero,e.afiliado,e.juzgado,e.prestacion].join(' ').toLowerCase().includes(q));
+  return S.exps.filter(e => [e.numero,e.afiliado,e.juzgado,e.prestacion,e.dni,(e.dni||'').replace(/\./g,'')].join(' ').toLowerCase().includes(q));
 }
 function searchResults(){
   const list = matches(ui.q).slice(0,6);
@@ -697,7 +698,7 @@ function vExpediente(id){
   let body = '';
   if(t==='resumen') body = `
     <div class="facts">
-      <div class="fact"><span>Afiliado</span><b>${esc(e.afiliado)}</b><div class="small muted mono">${esc(e.nroAf)}</div></div>
+      <div class="fact"><span>Afiliado</span><b>${esc(e.afiliado)}</b><div class="small muted">DNI ${esc(e.dni||'—')}</div></div>
       <div class="fact"><span>Qué reclama</span><b>${esc(e.prestacion)}</b></div>
       <div class="fact"><span>Juzgado</span><b>${esc(e.juzgado)}</b></div>
       <div class="fact"><span>Número de expediente</span><b class="mono">${esc(e.numero)}</b></div>
@@ -796,7 +797,7 @@ function vEscritos(){
     <h2>2. ¿Para qué amparo es?</h2>
     <div class="cases">${active().map(x=>`<button class="case" data-tplexp="${x.id}" style="text-align:left;font:inherit;color:inherit"><div class="bar"></div><div><div class="name">${esc(x.afiliado)}</div><div class="meta"><span class="mono">${esc(x.numero)}</span><span>${esc(x.prestacion)}</span></div></div><div class="right">${ic('next')}</div></button>`).join('')}</div>`;
   if(step===3){
-    const vars = {abogado:userName(e.abogado), caratula:e.caratula, numero:e.numero, juzgado:e.juzgado, prestacion:e.prestacion, afiliado:e.afiliado, nroAf:e.nroAf};
+    const vars = {abogado:userName(e.abogado), caratula:e.caratula, numero:e.numero, juzgado:e.juzgado, prestacion:e.prestacion, afiliado:e.afiliado, dni:e.dni||'[DNI]'};
     if(!ui.tplText) ui.tplText = tpl.cuerpo.replace(/\{(\w+)\}/g, (_,k)=>vars[k] ?? `{${k}}`);
     const faltan = (ui.tplText.match(/\[[^\]]+\]/g)||[]).length;
     body = `<div class="row"><button class="btn ghost sm" data-act="tplback2">${ic('back','sm')} Cambiar amparo</button><span class="pill acc">${esc(tpl.nombre)}</span><span class="pill">${esc(e.afiliado)}</span></div>
@@ -1023,55 +1024,211 @@ function openTour(i=0){
       ${i<TOUR.length-1?`<button class="btn pri" data-tour="${i+1}">Siguiente ${ic('next','sm')}</button>`:`<button class="btn pri" data-act="close">¡Empezar!</button>`}</div></div>`);
 }
 
+// ---------- juzgados (fuente: guía judicial, fuero Civil y Comercial Federal, Libertad 731, CABA) ----------
+const JUZGADOS = [];
+for(let n=1;n<=11;n++) for(const s of [2*n-1, 2*n]) JUZGADOS.push({key:`ccf-${n}-${s}`, n, s, label:`Juzgado Nacional en lo Civil y Comercial Federal N° ${n} · Secretaría N° ${s}`, corto:`Juzg. Nac. Civ. y Com. Fed. N° ${n} · Sec. ${s}`});
+const jzByKey = k => JUZGADOS.find(j=>j.key===k);
+function juzgadoSelect(sel){
+  let h = '<option value="">Elegí el juzgado y la secretaría…</option>';
+  for(let n=1;n<=11;n++){ h += `<optgroup label="Juzgado Civil y Comercial Federal N° ${n}">` + JUZGADOS.filter(j=>j.n===n).map(j=>`<option value="${j.key}" ${sel===j.key?'selected':''}>Juzgado N° ${n} · Secretaría N° ${j.s}</option>`).join('') + '</optgroup>'; }
+  return h + `<option value="otro" ${sel==='otro'?'selected':''}>Otro juzgado (lo escribo yo)</option>`;
+}
+
+// ---------- lectura de documentos ----------
+const LIB = {
+  pdf:'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js',
+  pdfWorker:'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js',
+  tess:'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js',
+  tessWorker:'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js',
+  tessCore:'https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1',
+  tessLang:'https://cdn.jsdelivr.net/npm/@tesseract.js-data/spa@1.0.0/4.0.0_best_int',
+  mammoth:'https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js'
+};
+const loaded = {};
+function loadScript(src){ return loaded[src] = loaded[src] || new Promise((res,rej)=>{ const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = ()=>{ delete loaded[src]; rej(new Error('No se pudo cargar el lector')); }; document.head.appendChild(s); }); }
+async function ocr(img, progress){
+  await loadScript(LIB.tess);
+  progress('Leyendo la imagen (reconocimiento de texto)…', 0);
+  const worker = await Tesseract.createWorker('spa', 1, {workerPath:LIB.tessWorker, corePath:LIB.tessCore, langPath:LIB.tessLang,
+    logger:m=>{ if(m.status==='recognizing text') progress('Leyendo la imagen…', m.progress); else if(/load/.test(m.status)) progress('Preparando el lector de imágenes (la primera vez tarda un poco)…', m.progress||0); }});
+  const {data:{text}} = await worker.recognize(img);
+  await worker.terminate();
+  return text;
+}
+async function readFile(file, progress){
+  const name = file.name.toLowerCase();
+  if(file.type==='application/pdf' || name.endsWith('.pdf')){
+    await loadScript(LIB.pdf);
+    pdfjsLib.GlobalWorkerOptions.workerSrc = LIB.pdfWorker;
+    progress('Abriendo el PDF…', .1);
+    const doc = await pdfjsLib.getDocument({data: await file.arrayBuffer()}).promise;
+    let text = '';
+    const pages = Math.min(doc.numPages, 15);
+    for(let i=1;i<=pages;i++){ const pg = await doc.getPage(i); const c = await pg.getTextContent(); text += c.items.map(it=>it.str + (it.hasEOL?'\n':' ')).join('') + '\n'; progress(`Leyendo la página ${i} de ${pages}…`, i/pages); }
+    if(text.replace(/\s/g,'').length > 80) return text;
+    // PDF escaneado: se pasa cada página por el lector de imágenes
+    let out = '';
+    for(let i=1;i<=Math.min(doc.numPages,3);i++){
+      const pg = await doc.getPage(i); const vp = pg.getViewport({scale:2});
+      const cv = document.createElement('canvas'); cv.width = vp.width; cv.height = vp.height;
+      await pg.render({canvasContext:cv.getContext('2d'), viewport:vp}).promise;
+      out += await ocr(cv, (t,p)=>progress(`Es un PDF escaneado. Página ${i}: ${t}`, p)) + '\n';
+    }
+    return out;
+  }
+  if(file.type.startsWith('image/')) return ocr(file, progress);
+  if(name.endsWith('.docx')){ await loadScript(LIB.mammoth); progress('Leyendo el Word…', .5); const r = await mammoth.extractRawText({arrayBuffer: await file.arrayBuffer()}); return r.value; }
+  if(file.type.startsWith('text/') || name.endsWith('.txt')) return file.text();
+  return '';
+}
+
+// ---------- extracción de datos del texto ----------
+const titleCase = s => /[a-záéíóúñ]/.test(s) ? s : s.toLowerCase().replace(/(^|[\s,(-])([a-záéíóúñ])/g, (m,a,b)=>a+b.toUpperCase());
+function addBusinessDays(n){ const d = today(); let k = 0; while(k<n){ d.setDate(d.getDate()+1); const w = d.getDay(); if(w!==0 && w!==6) k++; } return iso(d); }
+const NUM_WORDS = {un:1,uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,quince:15,veinte:20,'veinticuatro':24,'cuarenta y ocho':48,'setenta y dos':72};
+function extractFields(raw){
+  const t = raw.replace(/[ \t\r\f]+/g,' ').replace(/\n+/g,'\n');
+  const one = t.replace(/\n/g,' ');
+  const f = {};
+  // número de expediente
+  let m = one.match(/\b(CCF|CIV|COM|CAF|CNT|CSS|FSM|FLP|FRO|FCB|FMZ|FTU|FMP|FCR|FRE|FPO|FBB|FGR|FCT|FSA|FPA|FLP)\s*0*(\d{1,6})\s*\/\s*(\d{4})/i);
+  if(m) f.numero = `${m[1].toUpperCase()} ${m[2]}/${m[3]}`;
+  else if((m = one.match(/Exp(?:ediente|te)?\.?\s*(?:N[°ºo]\.?|Nro\.?|n[uú]mero)?\s*:?\s*([\d.]{1,9}\s*\/\s*\d{4})/i))) f.numero = 'Expte. ' + m[1].replace(/\s/g,'');
+  // carátula y afiliado
+  m = one.match(/(?:caratulad[oa]s?|autos|en los autos|expediente)?\s*[:"“«]?\s*([A-ZÁÉÍÓÚÑa-záéíóúñ][A-ZÁÉÍÓÚÑa-záéíóúñ.,' ]{3,90}?)\s+[cC]\s*\/\s*([^"”»\n]{3,120}?)\s+[sS]\s*\/\s*([A-ZÁÉÍÓÚÑa-záéíóúñ][^"”»\n.]{2,80})/);
+  if(m){
+    let af = m[1].replace(/^(?:en\s+)?(?:los\s+)?(?:autos\s+)?(?:caratulados\s*:?)?\s*/i,'').replace(/^(?:del?\s+)?(?:Sr\.?|Sra\.?)\s+/i,'').trim();
+    f.afiliado = titleCase(af);
+    f.caratula = `${f.afiliado} c/ ${titleCase(m[2].trim())} s/ ${m[3].trim().toLowerCase()}`;
+  }
+  // DNI
+  m = one.match(/D\.?\s?N\.?\s?I\.?\s*(?:N\s*[°ºo*”"'´.]*|Nro\.?)?\s*:?\s*(\d{1,2})[.\s]?(\d{3})[.\s]?(\d{3})\b/i);
+  if(m) f.dni = `${m[1]}.${m[2]}.${m[3]}`;
+  // juzgado y secretaría
+  m = one.match(/Juzgado[^.]{0,120}?Civil\s+y\s+Comercial\s+Federal\s*(?:N\s*[°ºo*”"'´.]*|Nro\.?|n[uú]mero)?\s*(\d{1,2})/i) || one.match(/Juzg\.?\s*Nac\.?\s*(?:de\s*1[°ª]?\s*Inst\.?\s*)?(?:en\s*lo\s*)?Civ\.?\s*y\s*Com\.?\s*Fed\.?\s*(?:N\s*[°ºo*”"'´.]*|Nro\.?)?\s*(\d{1,2})/i);
+  const sm = one.match(/Secretar[ií]a\s*(?:N\s*[°ºo*”"'´.]*|Nro\.?|n[uú]mero)?\s*(\d{1,2})/i);
+  if(m){
+    const n = +m[1], s = sm ? +sm[1] : null;
+    const j = JUZGADOS.find(x=>x.n===n && x.s===s) || JUZGADOS.find(x=>x.n===n);
+    if(j){ f.juzgado = j.key; if(!(sm && j.s===s)) f.secretariaDudosa = true; }
+  } else if((m = one.match(/(Juzgado\s+Federal[^.\n]{0,80})/i))) { f.juzgado = 'otro'; f.juzgadoOtro = m[1].trim(); }
+  // prestación
+  const P = [[/oncol|quimioterap|pembrolizumab|nivolumab|c[aá]ncer|tumor|neoplas/i,'Medicación oncológica'],[/discapacidad|24\.?901|\bCUD\b|acompa[ñn]ante terap|maestr[oa] integrador|m[oó]dulo de apoyo/i,'Discapacidad (Ley 24.901)'],
+    [/fertiliz|26\.?862|reproducci[oó]n (m[eé]dicamente )?asistida|ovodonaci|in vitro/i,'Fertilización (Ley 26.862)'],[/internaci[oó]n domiciliaria|cuidador domiciliario|enfermer[ií]a domiciliaria/i,'Internación domiciliaria'],
+    [/salud mental|psiqui[aá]tric|26\.?657/i,'Salud mental'],[/pr[oó]tesis|ortesis|implante/i,'Prótesis / ortesis'],[/cirug[ií]a|quir[uú]rgic/i,'Cirugía']];
+  for(const [re,v] of P) if(re.test(one)){ f.prestacion = v; break; }
+  // cautelar, etapa y plazo
+  const ordena = /(hacer|hace|h[aá]gase|h[aá]cese)\s+lugar|ord[eé]n(ase|a|ar)|decr[eé]tase|int[ií]m(ase|ar|a)/i.test(one);
+  if(/medida cautelar/i.test(one) && ordena) f.cautelar = true;
+  const informe = /art(?:[ií]culo|\.)?\s*8|informe circunstanciado|informe previsto/i.test(one);
+  if(informe && f.cautelar){ f.estado = 'Cautelar otorgada'; f.plazoDesc = 'Cumplir medida cautelar'; f.extra = [{desc:'Presentar informe art. 8 Ley 16.986', vence:addBusinessDays(5), hecho:false}]; }
+  else if(informe){ f.estado = 'Informe art. 8 pendiente'; f.plazoDesc = 'Presentar informe art. 8 Ley 16.986'; }
+  else if(f.cautelar){ f.estado = 'Cautelar otorgada'; f.plazoDesc = 'Cumplir medida cautelar'; }
+  else if(/int[ií]m/i.test(one)){ f.estado = 'Intimación recibida'; f.plazoDesc = 'Cumplir intimación'; }
+  else if(/traslado/i.test(one)){ f.estado = 'Intimación recibida'; f.plazoDesc = 'Contestar traslado'; }
+  m = one.match(/(?:plazo\s+de|dentro\s+de(?:l\s+plazo\s+de)?(?:\s+las)?|t[eé]rmino\s+de)\s+([a-záéíóúñ ]+?)?\s*\(?(\d{1,3})?\)?\s*(d[ií]as|horas|hs)/i);
+  if(m){
+    let num = m[2] ? +m[2] : NUM_WORDS[(m[1]||'').trim().toLowerCase()];
+    if(num){
+      if(/hora|hs/i.test(m[3])){ f.plazoFecha = dPlus(Math.max(1, Math.ceil(num/24))); f.plazoNota = `El documento dice ${num} horas (corridas).`; }
+      else { f.plazoFecha = addBusinessDays(num); f.plazoNota = `El documento dice ${num} días: los contamos como hábiles, sin feriados. Revisá la fecha.`; }
+    }
+  }
+  return f;
+}
+
+// ---------- carga de amparo nuevo ----------
 let W = null;
-function openNuevo(){ W = {step:1, afiliado:'', nroAf:'', prestacion:'', numero:'', juzgado:'', estado:'Intimación recibida', cautelar:false, plazoDesc:'', plazoDias:2, plazoFecha:dPlus(2), riesgo:'medio'}; drawWizard(); }
+function openNuevo(){ W = {step:1, files:[], text:'', found:{}, afiliado:'', dni:'', prestacion:'', numero:'', juzgado:'', juzgadoOtro:'', estado:'Intimación recibida', cautelar:false, plazoDesc:'', plazoFecha:dPlus(2), plazoNota:'', processing:false, readErr:''}; drawWizard(); }
+const fb = k => !W.files.length ? '' : W.found[k] ? `<span class="pill grn">${ic('check','sm')} Lo sacamos del documento</span>` : '<span class="pill yel">Completalo vos</span>';
 function drawWizard(){
   const s = W.step;
-  const titles = ['¿Quién presentó el amparo?','¿Qué reclama y dónde?','¿Qué hay que hacer ahora?','Revisá y confirmá'];
+  const titles = ['Subí lo que te llegó','Revisá los datos','Confirmá y listo'];
   let body = '';
-  if(s===1) body = `
-    <label class="fld">Nombre del afiliado <span class="hint">apellido y nombre</span><input type="text" id="wAf" value="${esc(W.afiliado)}" placeholder="Ej.: Pérez, María"></label>
-    <label class="fld">Número de afiliado <span class="hint">opcional</span><input type="text" id="wNro" value="${esc(W.nroAf)}" placeholder="Ej.: 0045-00000-01"></label>`;
-  if(s===2) body = `
-    <div class="fld">¿Qué reclama?<div class="opts">${PRESTACIONES.map(p=>`<button type="button" class="opt ${W.prestacion===p?'on':''}" data-w="prestacion" data-v="${esc(p)}">${esc(p)}</button>`).join('')}</div></div>
-    <label class="fld">Número de expediente<input type="text" id="wNum" value="${esc(W.numero)}" placeholder="Ej.: CCF 1234/2026"></label>
-    <label class="fld">Juzgado y secretaría<input type="text" id="wJz" value="${esc(W.juzgado)}" placeholder="Ej.: Juzg. Nac. Civ. y Com. Fed. N° 3 · Sec. 5"></label>`;
+  if(s===1) body = W.processing ? `
+    <div class="notice">${ic('spark')}<div><b>Estamos leyendo los documentos…</b><div class="small muted">No cierres esta ventana. Si es una foto o un PDF escaneado puede tardar un poco más.</div></div></div>
+    <div id="wProg" style="display:flex;flex-direction:column;gap:10px">${W.files.map((f,i)=>`<div class="mini"><b>${esc(f.name)}</b><div class="small muted" id="wpt${i}">En espera…</div><div class="track" style="height:8px;background:var(--sunken);border-radius:4px;margin-top:6px;overflow:hidden"><div id="wpb${i}" style="height:100%;width:0;background:var(--accent);transition:width .2s"></div></div></div>`).join('')}</div>` : `
+    <label class="drop" id="wdrop" for="wfile" style="padding:40px 20px">${ic('upload','lg')}<b style="font-size:18px">Arrastrá acá el oficio, la cédula o la demanda</b><span>PDF, Word o fotos. Podés subir varios archivos a la vez.<br>Fojas los lee y completa los datos por vos.</span><span class="btn pri" style="margin-top:6px">Elegir archivos</span></label>
+    <input type="file" id="wfile" multiple hidden accept=".pdf,.docx,.txt,image/*">
+    <div style="text-align:center"><button class="btn ghost" data-act="wmanual">Prefiero cargarlo a mano</button></div>`;
+  if(s===2){
+    const nFound = Object.keys(W.found).length;
+    body = `
+    ${W.files.length?(nFound?`<div class="notice good">${ic('check')}<div>Leímos ${W.files.length===1?'el documento':`${W.files.length} documentos`} y completamos <b>${nFound} dato${nFound===1?'':'s'}</b>. Revisá que estén bien y completá lo que falta.</div></div>`:`<div class="notice bad">${ic('alert')}<div>${W.readErr?esc(W.readErr):'No pudimos encontrar datos en el documento (puede ser una foto poco nítida).'} Completalos a mano; el archivo igual queda guardado en el amparo.</div></div>`):''}
+    <label class="fld">Afiliado que presentó el amparo ${fb('afiliado')}<input type="text" id="wAf" value="${esc(W.afiliado)}" placeholder="Apellido, Nombre"></label>
+    <label class="fld">DNI del afiliado ${fb('dni')}<input type="text" id="wDni" value="${esc(W.dni)}" placeholder="Ej.: 30.123.456" inputmode="numeric"></label>
+    <label class="fld">Número de expediente ${fb('numero')}<input type="text" id="wNum" value="${esc(W.numero)}" placeholder="Ej.: CCF 1234/2026"></label>
+    <label class="fld">Juzgado y secretaría ${fb('juzgado')}<select id="wJz">${juzgadoSelect(W.juzgado)}</select>
+      ${W.found.secretariaDudosa?'<span class="hint" style="color:var(--warn)">No encontramos la secretaría en el documento: elegimos la primera de ese juzgado. Revisala.</span>':''}
+      ${W.juzgado==='otro'?`<input type="text" id="wJzO" value="${esc(W.juzgadoOtro)}" placeholder="Escribí el juzgado y la secretaría" style="margin-top:6px">`:''}</label>
+    <div class="fld">¿Qué reclama? ${fb('prestacion')}<div class="opts">${PRESTACIONES.map(p=>`<button type="button" class="opt ${W.prestacion===p?'on':''}" data-w="prestacion" data-v="${esc(p)}">${esc(p)}</button>`).join('')}</div></div>
+    <div class="fld">¿En qué etapa está? ${fb('estado')}<div class="opts">${ESTADOS.slice(0,4).map(p=>`<button type="button" class="opt ${W.estado===p?'on':''}" data-w="estado" data-v="${esc(p)}">${esc(p)}</button>`).join('')}</div></div>
+    <div class="fld">¿Hay medida cautelar ordenada? ${fb('cautelar')}<div class="opts"><button type="button" class="opt ${W.cautelar?'on':''}" data-w="cautelar" data-v="1">Sí</button><button type="button" class="opt ${!W.cautelar?'on':''}" data-w="cautelar" data-v="0">No</button></div></div>
+    <label class="fld">¿Qué hay que hacer primero? ${fb('plazoDesc')}<input type="text" id="wPd" value="${esc(W.plazoDesc)}" placeholder="Ej.: Cumplir intimación"></label>
+    <div class="fld">¿Para cuándo? ${fb('plazoFecha')}
+      <div class="opts">${[[1,'En 24 hs'],[2,'En 48 hs'],[5,'5 días hábiles'],[10,'10 días hábiles']].map(([d,l])=>`<button type="button" class="opt" data-w="plazoQuick" data-v="${d}">${l}</button>`).join('')}</div>
+      <input type="date" id="wPv" value="${W.plazoFecha}" style="max-width:220px">
+      ${W.plazoNota?`<span class="hint">${esc(W.plazoNota)}</span>`:''}</div>
+    ${(W.extra||[]).length?`<div class="notice">${ic('cal')}<div>El documento también pide otra cosa. Vamos a agendar: ${W.extra.map(x=>`<b>${esc(x.desc)}</b> para el ${fmt(x.vence)}`).join(', ')}. Confirmá el plazo exacto en el documento.</div></div>`:''}
+    ${W.text.trim()?`<details><summary class="small muted" style="cursor:pointer">Ver el texto que leímos del documento</summary><textarea readonly rows="8" class="small" style="margin-top:8px;font-family:var(--f-mono)">${esc(W.text.slice(0,8000))}</textarea></details>`:''}`;
+  }
   if(s===3) body = `
-    <div class="fld">¿En qué etapa está?<div class="opts">${ESTADOS.slice(0,4).map(p=>`<button type="button" class="opt ${W.estado===p?'on':''}" data-w="estado" data-v="${esc(p)}">${esc(p)}</button>`).join('')}</div></div>
-    <div class="fld">¿El juez ya ordenó una medida cautelar?<div class="opts"><button type="button" class="opt ${W.cautelar?'on':''}" data-w="cautelar" data-v="1">Sí</button><button type="button" class="opt ${!W.cautelar?'on':''}" data-w="cautelar" data-v="0">No</button></div></div>
-    <label class="fld">¿Qué hay que hacer primero? <span class="hint">opcional</span><input type="text" id="wPd" value="${esc(W.plazoDesc)}" placeholder="Ej.: Cumplir intimación"></label>
-    <div class="fld">¿Para cuándo?<div class="opts">${[[2,'En 48 hs'],[5,'En 5 días'],[10,'En 10 días']].map(([d,l])=>`<button type="button" class="opt ${W.plazoDias===d?'on':''}" data-w="plazoDias" data-v="${d}">${l}</button>`).join('')}</div>
-      <input type="date" id="wPv" value="${W.plazoFecha}" style="max-width:220px"></div>`;
-  if(s===4) body = `
     <div class="facts">
-      <div class="fact"><span>Afiliado</span><b>${esc(W.afiliado)}</b></div>
+      <div class="fact"><span>Afiliado</span><b>${esc(W.afiliado)}</b>${W.dni?`<div class="small muted">DNI ${esc(W.dni)}</div>`:''}</div>
       <div class="fact"><span>Qué reclama</span><b>${esc(W.prestacion)}</b></div>
       <div class="fact"><span>Expediente</span><b class="mono">${esc(W.numero)}</b></div>
-      <div class="fact"><span>Juzgado</span><b>${esc(W.juzgado)}</b></div>
+      <div class="fact"><span>Juzgado</span><b>${esc(W.juzgado==='otro'?W.juzgadoOtro:jzByKey(W.juzgado).corto)}</b></div>
       <div class="fact"><span>Etapa</span><b>${esc(W.estado)}</b></div>
       <div class="fact"><span>Cautelar</span><b>${W.cautelar?'Sí':'No'}</b></div>
       ${W.plazoDesc?`<div class="fact"><span>Primer plazo</span><b>${esc(W.plazoDesc)}</b><div class="small muted">${fmt(W.plazoFecha)}</div></div>`:''}
+      ${(W.extra||[]).map(p=>`<div class="fact"><span>Otro plazo</span><b>${esc(p.desc)}</b><div class="small muted">${fmt(p.vence)}</div></div>`).join('')}
       <div class="fact"><span>A cargo de</span><b>${esc(me().nombre)}</b></div>
-    </div>`;
+    </div>
+    ${W.files.length?`<div><b>Documentos que se guardan en el amparo</b>${W.files.map(f=>`<div class="doc"><div class="ico a" style="width:36px;height:36px">${ic('file','sm')}</div><div>${esc(f.name)}</div></div>`).join('')}</div>`:''}`;
   showModal(`
-    <div class="row" style="justify-content:space-between"><span class="small muted">Paso ${s} de 4</span><button class="btn ghost sm" data-act="close">Cancelar</button></div>
-    <div class="wsteps">${[1,2,3,4].map(i=>`<span class="${i<=s?'on':''}"></span>`).join('')}</div>
+    <div class="row" style="justify-content:space-between"><span class="small muted">Paso ${s} de 3</span>${W.processing?'':'<button class="btn ghost sm" data-act="close">Cancelar</button>'}</div>
+    <div class="wsteps">${[1,2,3].map(i=>`<span class="${i<=s?'on':''}"></span>`).join('')}</div>
     <h2 style="font-size:24px">${titles[s-1]}</h2>
     <div id="wErr"></div>
     <div style="display:flex;flex-direction:column;gap:16px">${body}</div>
-    <div class="row" style="justify-content:space-between">${s>1?`<button class="btn" data-wnav="-1">${ic('back','sm')} Atrás</button>`:'<span></span>'}
-      ${s<4?`<button class="btn pri big" data-wnav="1">Siguiente ${ic('next','sm')}</button>`:`<button class="btn ok big" data-act="wcreate">${ic('check')} Crear amparo</button>`}</div>`);
-  const f = $('#modal input[type=text]'); if(f) setTimeout(()=>f.focus(), 30);
+    ${s>1?`<div class="row" style="justify-content:space-between"><button class="btn" data-wnav="-1">${ic('back','sm')} Atrás</button>
+      ${s<3?`<button class="btn pri big" data-wnav="1">Siguiente ${ic('next','sm')}</button>`:`<button class="btn ok big" data-act="wcreate">${ic('check')} Crear amparo</button>`}</div>`:''}`, W.processing);
+  if(s===2){ const f = $('#wAf'); if(f && !W.afiliado) setTimeout(()=>f.focus(), 30); }
+}
+async function wProcess(fileList){
+  const files = [...fileList]; if(!files.length) return;
+  W.files = files.map(f=>({name:f.name, size:f.size})); W.processing = true; W.readErr=''; drawWizard();
+  let text = '';
+  for(let i=0;i<files.length;i++){
+    const set = (t,p) => { const a=$('#wpt'+i), b=$('#wpb'+i); if(a) a.textContent = t; if(b) b.style.width = Math.round((p||0)*100)+'%'; };
+    try{ const tx = await readFile(files[i], set); text += '\n' + tx; set(tx.trim()?'Listo':'No tiene texto que se pueda leer', 1); }
+    catch(e){ set('No pudimos leer este archivo', 1); W.readErr = 'No pudimos leer el archivo automáticamente (revisá tu conexión a internet).'; }
+  }
+  W.text = text; W.processing = false;
+  const f = extractFields(text);
+  W.found = {};
+  for(const k of ['afiliado','dni','numero','juzgado','prestacion','estado','plazoDesc','plazoFecha']) if(f[k]){ W[k] = f[k]; W.found[k] = true; }
+  if(f.cautelar){ W.cautelar = true; W.found.cautelar = true; }
+  if(f.juzgadoOtro) W.juzgadoOtro = f.juzgadoOtro;
+  if(f.secretariaDudosa) W.found.secretariaDudosa = true;
+  W.plazoNota = f.plazoNota || ''; W.caratula = f.caratula || ''; W.extra = f.extra || [];
+  W.step = 2; drawWizard();
 }
 function wRead(){
   const v = id => { const el = $('#'+id); return el ? el.value.trim() : null; };
-  if(v('wAf')!==null) W.afiliado = v('wAf'); if(v('wNro')!==null) W.nroAf = v('wNro');
-  if(v('wNum')!==null) W.numero = v('wNum'); if(v('wJz')!==null) W.juzgado = v('wJz');
+  if(v('wAf')!==null) W.afiliado = v('wAf'); if(v('wDni')!==null) W.dni = v('wDni');
+  if(v('wNum')!==null) W.numero = v('wNum'); if(v('wJz')!==null) W.juzgado = v('wJz'); if(v('wJzO')!==null) W.juzgadoOtro = v('wJzO');
   if(v('wPd')!==null) W.plazoDesc = v('wPd'); if(v('wPv')!==null) W.plazoFecha = v('wPv');
 }
 function wCheck(){
-  if(W.step===1 && !W.afiliado) return 'Escribí el nombre del afiliado para seguir.';
-  if(W.step===2){ if(!W.prestacion) return 'Elegí qué reclama.'; if(!W.numero) return 'Escribí el número de expediente.'; if(S.exps.some(x=>x.numero.toLowerCase()===W.numero.toLowerCase())) return 'Ya hay un amparo cargado con ese número.'; if(!W.juzgado) return 'Escribí el juzgado.'; }
+  if(W.step===2){
+    if(!W.afiliado) return 'Escribí el nombre del afiliado.';
+    if(!W.numero) return 'Escribí el número de expediente.';
+    if(S.exps.some(x=>x.numero.toLowerCase()===W.numero.toLowerCase())) return 'Ya hay un amparo cargado con ese número de expediente.';
+    if(!W.juzgado) return 'Elegí el juzgado y la secretaría.';
+    if(W.juzgado==='otro' && !W.juzgadoOtro) return 'Escribí el juzgado.';
+    if(!W.prestacion) return 'Elegí qué reclama.';
+  }
   return '';
 }
 
@@ -1129,7 +1286,7 @@ document.addEventListener('click', async ev => {
   if(d.tpl){ ui.tpl = d.tpl; ui.tplText=''; render(); return; }
   if(d.tplexp){ ui.tplExp = +d.tplexp; ui.tplText=''; render(); return; }
   if(d.quick){ $('#plV').value = dPlus(+d.quick); document.querySelectorAll('[data-quick]').forEach(b=>b.classList.toggle('on', b===t)); return; }
-  if(d.w){ wRead(); const k = d.w; if(k==='cautelar') W.cautelar = d.v==='1'; else if(k==='plazoDias'){ W.plazoDias = +d.v; W.plazoFecha = dPlus(+d.v); } else W[k] = d.v; drawWizard(); return; }
+  if(d.w){ wRead(); const k = d.w; if(k==='cautelar') W.cautelar = d.v==='1'; else if(k==='plazoQuick'){ W.plazoFecha = +d.v<=2 ? dPlus(+d.v) : addBusinessDays(+d.v); W.plazoNota=''; } else W[k] = d.v; drawWizard(); return; }
   if(d.wnav){ wRead(); if(+d.wnav>0){ const err = wCheck(); if(err){ $('#wErr').innerHTML = `<div class="notice bad">${esc(err)}</div>`; return; } } W.step += +d.wnav; drawWizard(); return; }
   const a = d.act;
   if(a==='close') closeModal();
@@ -1140,11 +1297,17 @@ document.addEventListener('click', async ev => {
   if(a==='logout') logout();
   if(a==='pwd') openPwd(false);
   if(a==='nuevo') openNuevo();
+  if(a==='wmanual'){ W.step = 2; drawWizard(); }
   if(a==='wcreate'){
-    const x = {id:S.nextId++, numero:W.numero, afiliado:W.afiliado, nroAf:W.nroAf||'—', prestacion:W.prestacion, juzgado:W.juzgado, estado:W.estado, riesgo:/oncol|Discapacidad|domiciliaria/.test(W.prestacion)||W.cautelar?'alto':'medio', abogado:S.user, inicio:iso(today()), monto:0, cautelar:W.cautelar, plazos:[], movimientos:[{fecha:iso(today()), tipo:'Interno', desc:'Se cargó el amparo en Fojas.', user:S.user}], docs:[]};
+    const jz = W.juzgado==='otro' ? W.juzgadoOtro : jzByKey(W.juzgado).corto;
+    const x = {id:S.nextId++, numero:W.numero, afiliado:W.afiliado, dni:W.dni||'—', prestacion:W.prestacion, juzgado:jz, estado:W.estado, riesgo:/oncol|Discapacidad|domiciliaria/.test(W.prestacion)||W.cautelar?'alto':'medio', abogado:S.user, inicio:iso(today()), monto:0, cautelar:W.cautelar, plazos:[], movimientos:[], docs:[]};
     x.caratula = `${x.afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`;
+    const tipoDoc = /c[ée]dula/i.test(W.text) ? 'Cédula de notificación' : /oficio/i.test(W.text) ? 'Oficio' : 'Documento recibido';
+    W.files.forEach(f=>x.docs.push({nombre:f.name, tipo:tipoDoc, fecha:iso(today()), size: f.size>1e6?(f.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(f.size/1000))+' KB'}));
+    x.movimientos.push({fecha:iso(today()), tipo:'Notificación', desc: W.files.length ? `Se recibe ${tipoDoc.toLowerCase()}: ${W.files.map(f=>f.name).join(', ')}.` : 'Se cargó el amparo en Fojas.', user:S.user});
     if(W.plazoDesc) x.plazos.push({desc:W.plazoDesc, vence:W.plazoFecha, hecho:false});
-    S.exps.push(x); save(); closeModal(); audit('Cargó un amparo nuevo', x.numero, x.prestacion); location.hash = 'expediente-'+x.id; toast('¡Amparo cargado!');
+    (W.extra||[]).forEach(p=>x.plazos.push({...p}));
+    S.exps.push(x); save(); closeModal(); audit('Cargó un amparo nuevo', x.numero, `${x.prestacion}${W.files.length?` · leído automáticamente de ${W.files.length} documento(s)`:''}`); location.hash = 'expediente-'+x.id; toast('¡Amparo cargado!');
   }
   if(a==='done'){ const x = expById(d.e); if(x) markDone(x, +d.i); }
   if(a==='writefor'){ ui.tpl = null; ui.tplExp = +d.e; ui.tplText=''; location.hash='escritos'; }
@@ -1180,7 +1343,7 @@ document.addEventListener('click', async ev => {
     let ok=0, dup=0;
     lines.slice(1).forEach(l=>{ const c = l.split(';'); const g = k => (c[head.indexOf(k)]||'').trim();
       if(!g('numero')) return; if(S.exps.some(x=>x.numero===g('numero'))){ dup++; return; }
-      S.exps.push({id:S.nextId++, numero:g('numero'), caratula:`${g('afiliado')} c/ Salud Integral Demo S.A. s/ amparo de salud`, afiliado:g('afiliado'), nroAf:'—', prestacion:g('prestacion')||'Otra', juzgado:g('juzgado'), estado:ESTADOS.includes(g('estado'))?g('estado'):'Intimación recibida', riesgo:'medio', abogado:S.user, inicio:iso(today()), monto:0, cautelar:false, plazos:[], movimientos:[{fecha:iso(today()), tipo:'Interno', desc:'Expediente traído desde otro sistema.', user:S.user}], docs:[]}); ok++; });
+      S.exps.push({id:S.nextId++, numero:g('numero'), caratula:`${g('afiliado')} c/ Salud Integral Demo S.A. s/ amparo de salud`, afiliado:g('afiliado'), dni:head.includes('dni')?g('dni'):'—', prestacion:g('prestacion')||'Otra', juzgado:g('juzgado'), estado:ESTADOS.includes(g('estado'))?g('estado'):'Intimación recibida', riesgo:'medio', abogado:S.user, inicio:iso(today()), monto:0, cautelar:false, plazos:[], movimientos:[{fecha:iso(today()), tipo:'Interno', desc:'Expediente traído desde otro sistema.', user:S.user}], docs:[]}); ok++; });
     save(); if(ok) audit('Trajo expedientes','Migración',`${ok} expediente(s) desde planilla`);
     ui.csvMsg={ok:ok>0, t:`Listo: se trajeron ${ok} expediente(s).${dup?` ${dup} ya estaban cargados y no se repitieron.`:''}`}; await chain; render(); }
   if((a==='ureset'||a==='utoggle'||a==='uunlock') && isAdmin()){ const u = S.users.find(x=>x.id===d.u);
@@ -1206,6 +1369,8 @@ $('#overlay').addEventListener('click', ev => { if(ev.target.id==='overlay' && !
 document.addEventListener('change', async ev => {
   const t = ev.target; const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
   if(t.id==='fileIn' && e) addFiles(e, t.files);
+  if(t.id==='wfile' && W) wProcess(t.files);
+  if(t.id==='wJz' && W){ wRead(); drawWizard(); }
   if(t.dataset && t.dataset.reassign && t.value){ const x = expById(t.dataset.reassign); if(!x || !canManage(x) || t.value===x.abogado) return; const old = x.abogado; x.abogado = t.value; save();
     audit('Reasignó un amparo', x.numero, `De ${userName(old)} a ${userName(t.value)}`); render();
     toast(`${x.afiliado} ahora está a cargo de ${userName(t.value)}.`, ()=>{ x.abogado = old; save(); audit('Deshizo reasignación', x.numero, `Vuelve a ${userName(old)}`); render(); }); }
@@ -1216,9 +1381,9 @@ function addFiles(e, files){
   save(); render(); toast(files.length===1?'Documento agregado':`${files.length} documentos agregados`);
 }
 document.addEventListener('toggle', ev => { const d = ev.target; if(d.matches && d.matches('details[data-member]')) ui.open[d.dataset.member] = d.open; }, true);
-document.addEventListener('dragover', ev => { const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); dz.classList.add('over'); } });
-document.addEventListener('dragleave', ev => { const dz = ev.target.closest('#drop'); if(dz) dz.classList.remove('over'); });
-document.addEventListener('drop', ev => { const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); const e = expById(route().id); if(e) addFiles(e, ev.dataTransfer.files); } });
+document.addEventListener('dragover', ev => { const wz = ev.target.closest('#wdrop'); if(wz){ ev.preventDefault(); wz.classList.add('over'); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); dz.classList.add('over'); } });
+document.addEventListener('dragleave', ev => { const wz = ev.target.closest('#wdrop'); if(wz) wz.classList.remove('over'); const dz = ev.target.closest('#drop'); if(dz) dz.classList.remove('over'); });
+document.addEventListener('drop', ev => { const wz = ev.target.closest('#wdrop'); if(wz && W){ ev.preventDefault(); wProcess(ev.dataTransfer.files); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); const e = expById(route().id); if(e) addFiles(e, ev.dataTransfer.files); } });
 
 document.addEventListener('input', ev => {
   const t = ev.target;
