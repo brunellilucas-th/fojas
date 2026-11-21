@@ -704,7 +704,7 @@ function vExpediente(id){
   const tabs = [['resumen','list','Resumen'],['sugerencias','spark','Qué hacer'],['novedades','clock',`Novedades (${e.movimientos.length})`],['documentos','file',`Documentos (${e.docs.length})`],['plazos','cal',`Plazos (${pending(e).length})`],['asistente','help','Asistente'],['historial','history','Historial']];
   let body = '';
   if(t==='resumen') body = `
-    <div class="fact"><span>Carátula</span><b>${esc(e.caratula)}</b></div>
+    <div class="fact"><span>Autos</span><b>${esc(e.caratula)}</b></div>
     <div class="fact"><div class="row" style="justify-content:space-between"><span>Sumario del expediente</span>${ui.editSum?'':'<button class="btn sm ghost" data-act="editsum">'+ic('pen','sm')+' Editar</button>'}</div>
       ${ui.editSum?`<textarea id="sumEdit" rows="6" style="margin-top:6px">${esc(e.sumario || buildSumario({...e, plazoDesc:(nextPlazo(e)||{}).desc, plazoFecha:(nextPlazo(e)||{}).vence, flags:caseFlags(e)}))}</textarea><div class="row" style="margin-top:8px"><button class="btn pri sm" data-act="savesum">Guardar sumario</button><button class="btn ghost sm" data-act="cancelsum">Cancelar</button></div>`
       :`<p style="margin-top:4px">${esc(e.sumario || buildSumario({...e, plazoDesc:(nextPlazo(e)||{}).desc, plazoFecha:(nextPlazo(e)||{}).vence, flags:caseFlags(e)}))}</p>`}</div>
@@ -1162,7 +1162,7 @@ function buildSumario(o){
 }
 
 // ---------- extracción de datos del texto ----------
-const titleCase = s => /[a-záéíóúñ]/.test(s) ? s : s.toLowerCase().replace(/(^|[\s,(-])([a-záéíóúñ])/g, (m,a,b)=>a+b.toUpperCase());
+const titleCase = s => String(s||'').replace(/[A-ZÁÉÍÓÚÑÜ]{2,}/g, w => w[0] + w.slice(1).toLowerCase());
 function addBusinessDays(n){ const d = today(); let k = 0; while(k<n){ d.setDate(d.getDate()+1); const w = d.getDay(); if(w!==0 && w!==6) k++; } return iso(d); }
 const NUM_WORDS = {un:1,uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,quince:15,veinte:20,'veinticuatro':24,'cuarenta y ocho':48,'setenta y dos':72};
 function extractFields(raw){
@@ -1173,13 +1173,17 @@ function extractFields(raw){
   let m = one.match(/\b(CCF|CIV|COM|CAF|CNT|CSS|FSM|FLP|FRO|FCB|FMZ|FTU|FMP|FCR|FRE|FPO|FBB|FGR|FCT|FSA|FPA|FLP)\s*0*(\d{1,6})\s*\/\s*(\d{4})/i);
   if(m) f.numero = `${m[1].toUpperCase()} ${m[2]}/${m[3]}`;
   else if((m = one.match(/Exp(?:ediente|te)?\.?\s*(?:N[°ºo]\.?|Nro\.?|n[uú]mero)?\s*:?\s*([\d.]{1,9}\s*\/\s*\d{4})/i))) f.numero = 'Expte. ' + m[1].replace(/\s/g,'');
-  // carátula y afiliado
-  m = t.match(/(?:caratulad[oa]s?|autos|en los autos|expediente)?[ :"“«]*([A-ZÁÉÍÓÚÑa-záéíóúñ][A-ZÁÉÍÓÚÑa-záéíóúñ.,' ]{3,90}?)\s+[cC]\s*\/\s*([^"”»\n]{3,120}?)\s+[sS]\s*\/\s*([A-ZÁÉÍÓÚÑa-záéíóúñ][^"”»\n]{2,80})/);
+  // autos y asociado: primero se busca la mención expresa de "autos"; si no aparece, cualquier "X c/ Y s/ Z"
+  const AUT = /\bautos\s*(?:caratulados|rotulados|que\s+se\s+caratulan|n[°º.]*\s*[\w\/ ]{0,20})?\s*[:\-–]?\s*[“"«']*\s*([^"”»\n]{3,160}?)\s+[cC]\s*\/\s*([^"”»\n]{3,160}?)\s+[sS]\s*\/\s*([^"”»\n]{2,120})/;
+  const GEN = /([A-ZÁÉÍÓÚÑa-záéíóúñ][A-ZÁÉÍÓÚÑa-záéíóúñ.,'() ]{3,120}?)\s+[cC]\s*\/\s*([^"”»\n]{3,160}?)\s+[sS]\s*\/\s*([A-ZÁÉÍÓÚÑa-záéíóúñ][^"”»\n]{2,120})/;
+  m = t.match(AUT) || one.match(AUT) || t.match(GEN);
   if(m){
-    let af = m[1].replace(/^(?:en\s+)?(?:los\s+)?(?:autos\s+)?(?:caratulados\s*:?)?\s*/i,'').replace(/^(?:del?\s+)?(?:Sr\.?|Sra\.?)\s+/i,'').trim();
-    f.afiliado = titleCase(af);
-    const dem = titleCase(m[2].trim()).replace(/\bS\.?\s?a\.?(?=\s|$)/g,'S.A.').replace(/\bS\.?r\.?l\.?(?=\s|$)/gi,'S.R.L.').replace(/\b(Obra Social|Osde|Swiss Medical|Medife|Galeno|Omint|Sancor)\b/gi, x=>x);
-    f.caratula = `${f.afiliado} c/ ${dem} s/ ${m[3].trim().replace(/[.,;]+$/,'').toLowerCase()}`;
+    let af = m[1].replace(/^(?:en\s+)?(?:los\s+)?(?:autos\s+)?(?:caratulados\s*:?)?\s*/i,'').replace(/^(?:del?\s+)?(?:Sr\.?|Sra\.?)\s+/i,'').replace(/^[“"«'\s]+/,'').trim();
+    const dem = titleCase(m[2].trim()).replace(/\bS\.?\s?a\.?(?=\s|$)/g,'S.A.').replace(/\bS\.?r\.?l\.?(?=\s|$)/gi,'S.R.L.');
+    const obj = m[3].replace(/\s*(?:\(?\s*Expte?\.?|Expediente|N[°º]\s*\d|\/\/).*$/i,'').replace(/[.,;:\s]+$/,'').trim();
+    f.autos = `${titleCase(af)} c/ ${dem} s/ ${obj.toLowerCase()}`;
+    // el asociado es la parte actora de los autos (sin aclaraciones de representación)
+    f.afiliado = titleCase(af.replace(/\s*\((?:en\s+)?(?:rep|representaci)[^)]*\)/i,'').replace(/\s+(?:en\s+(?:nombre\s+y\s+)?representaci[oó]n|por\s+s[ií]\s+y\s+en).*$/i,'').trim());
   }
   // DNI
   m = one.match(/D\.?\s?N\.?\s?I\.?\s*(?:N\s*[°ºo*”"'´.]*|Nro\.?)?\s*:?\s*(\d{1,2})[.\s]?(\d{3})[.\s]?(\d{3})\b/i);
@@ -1343,7 +1347,7 @@ function sugText(e){ const s = sugerencias(e); return Object.values(s).flat().ma
 
 // ---------- carga de amparo nuevo ----------
 let W = null;
-function openNuevo(){ W = {step:1, files:[], text:'', found:{}, afiliado:'', dni:'', prestacion:'', otrasPrestaciones:[], detalle:'', caratula:'', sumario:'', sumarioEditado:false, numero:'', juzgado:'', secretaria:'', estado:'Intimación recibida', cautelar:false, plazoDesc:'', plazoFecha:dPlus(2), plazoNota:'', processing:false, readErr:''}; drawWizard(); }
+function openNuevo(){ W = {step:1, files:[], text:'', found:{}, afiliado:'', dni:'', prestacion:'', otrasPrestaciones:[], detalle:'', autos:'', sumario:'', sumarioEditado:false, numero:'', juzgado:'', secretaria:'', estado:'Intimación recibida', cautelar:false, plazoDesc:'', plazoFecha:dPlus(2), plazoNota:'', processing:false, readErr:''}; drawWizard(); }
 const fb = k => !W.files.length ? '' : W.found[k] ? `<span class="pill grn">${ic('check','sm')} Lo sacamos del documento</span>` : '<span class="pill yel">Completalo vos</span>';
 function drawWizard(){
   const s = W.step;
@@ -1362,10 +1366,10 @@ function drawWizard(){
     ${W.files.length?`<div class="fld">Documentos que subiste <span class="hint">Si alguno está mal clasificado, cambialo.</span>
       ${W.files.map((f,i)=>`<div class="docrow"><div class="ico a" style="width:36px;height:36px">${ic('file','sm')}</div><div style="flex:1;min-width:0;color:var(--ink)"><b style="word-break:break-all">${esc(f.name)}</b></div><select data-wdoc="${i}" aria-label="Tipo de documento">${DOC_TYPES.map(t=>`<option ${t===f.tipo?'selected':''}>${t}</option>`).join('')}</select></div>`).join('')}
       <label class="btn sm" for="wmore" style="align-self:flex-start;color:var(--ink)">${ic('plus','sm')} Agregar otro documento</label><input type="file" id="wmore" multiple hidden accept=".pdf,.docx,.txt,image/*"></div>`:''}
-    <label class="fld">Afiliado que presentó el amparo ${fb('afiliado')}<input type="text" id="wAf" value="${esc(W.afiliado)}" placeholder="Apellido, Nombre"></label>
+    <label class="fld">Asociado que presentó el amparo ${fb('afiliado')}${W.found.afiliado&&W.found.autos?'<span class="hint">Sacado de los autos.</span>':''}<input type="text" id="wAf" value="${esc(W.afiliado)}" placeholder="Apellido, Nombre"></label>
     <label class="fld">DNI del afiliado ${fb('dni')}<input type="text" id="wDni" value="${esc(W.dni)}" placeholder="Ej.: 30.123.456" inputmode="numeric"></label>
     <label class="fld">Número de expediente ${fb('numero')}<input type="text" id="wNum" value="${esc(W.numero)}" placeholder="Ej.: CCF 1234/2026"></label>
-    <label class="fld">Carátula ${fb('caratula')}<input type="text" id="wCar" value="${esc(W.caratula)}" placeholder="Apellido, Nombre c/ Salud Integral Demo S.A. s/ amparo de salud"></label>
+    <label class="fld">Autos ${fb('autos')}<span class="hint">Los tomamos de donde el documento dice «autos caratulados…». De ahí sale también el asociado.</span><input type="text" id="wCar" value="${esc(W.autos)}" placeholder="Apellido, Nombre c/ Salud Integral Demo S.A. s/ amparo de salud"></label>
     <label class="fld">Juzgado ${fb('juzgado')}<input type="text" id="wJz" list="jzlist" value="${esc(W.juzgado)}" placeholder="Escribí para buscar: «civil y comercial federal 7», «Córdoba», «Mar del Plata»…" autocomplete="off">
       <datalist id="jzlist">${JUZGADOS_ALL.map(([n,g])=>`<option value="${esc(n)}">${esc(g)}</option>`).join('')}</datalist>
       <span class="hint">Están los ${JUZGADOS_ALL.length} juzgados federales y nacionales de todo el país. Si es un juzgado provincial, escribilo igual.</span></label>
@@ -1387,7 +1391,7 @@ function drawWizard(){
     ${W.text.trim()?`<details><summary class="small muted" style="cursor:pointer">Ver el texto que leímos del documento</summary><textarea readonly rows="8" class="small" style="margin-top:8px;font-family:var(--f-mono)">${esc(W.text.slice(0,8000))}</textarea></details>`:''}`;
   }
   if(s===3) body = `
-    <div class="fact"><span>Carátula</span><b>${esc(W.caratula||`${W.afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`)}</b></div>
+    <div class="fact"><span>Autos</span><b>${esc(W.autos||`${W.afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`)}</b></div>
     <div class="fact"><span>Sumario</span><p style="margin-top:4px">${esc(W.sumario)}</p></div>
     <div class="facts">
       <div class="fact"><span>Afiliado</span><b>${esc(W.afiliado)}</b>${W.dni?`<div class="small muted">DNI ${esc(W.dni)}</div>`:''}</div>
@@ -1428,7 +1432,7 @@ async function wProcess(fileList, append){
   W.text = text; W.processing = false;
   const f = extractFields(text);
   if(!append) W.found = {};
-  for(const k of ['afiliado','dni','numero','juzgado','secretaria','prestacion','estado','plazoDesc','plazoFecha','caratula','detalle']) if(f[k] && (!append || !W.found[k])){ W[k] = f[k]; W.found[k] = true; }
+  for(const k of ['afiliado','dni','numero','juzgado','secretaria','prestacion','estado','plazoDesc','plazoFecha','autos','detalle']) if(f[k] && (!append || !W.found[k])){ W[k] = f[k]; W.found[k] = true; }
   if(f.otrasPrestaciones) W.otrasPrestaciones = f.otrasPrestaciones;
   if(f.juzgadoLibre) delete W.found.juzgado;
   delete W.found.detalle;
@@ -1442,7 +1446,7 @@ const wCase = () => ({prestacion:W.prestacion, cautelar:W.cautelar, estado:W.est
 function wRead(){
   const v = id => { const el = $('#'+id); return el ? el.value.trim() : null; };
   if(v('wAf')!==null) W.afiliado = v('wAf'); if(v('wDni')!==null) W.dni = v('wDni');
-  if(v('wNum')!==null) W.numero = v('wNum'); if(v('wJz')!==null) W.juzgado = v('wJz'); if(v('wSec')!==null) W.secretaria = v('wSec'); if(v('wCar')!==null) W.caratula = v('wCar');
+  if(v('wNum')!==null) W.numero = v('wNum'); if(v('wJz')!==null) W.juzgado = v('wJz'); if(v('wSec')!==null) W.secretaria = v('wSec'); if(v('wCar')!==null) W.autos = v('wCar');
   const sm = $('#wSum'); if(sm && sm.value.trim() !== W.sumario.trim()){ W.sumario = sm.value; W.sumarioEditado = true; }
   if(v('wPd')!==null) W.plazoDesc = v('wPd'); if(v('wPv')!==null) W.plazoFecha = v('wPv');
 }
@@ -1526,7 +1530,7 @@ document.addEventListener('click', async ev => {
   if(a==='wresum' && W){ wRead(); W.sumarioEditado = false; drawWizard(); }
   if(a==='wcreate'){
     const x = {id:S.nextId++, numero:W.numero, afiliado:W.afiliado, dni:W.dni||'—', prestacion:W.prestacion, juzgado:W.juzgado, secretaria:W.secretaria, sumario:W.sumario, estado:W.estado, riesgo:/oncol|Discapacidad|domiciliaria/.test(W.prestacion)||W.cautelar?'alto':'medio', abogado:S.user, inicio:iso(today()), monto:0, cautelar:W.cautelar, plazos:[], movimientos:[], docs:[]};
-    x.caratula = W.caratula || `${x.afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`;
+    x.caratula = W.autos || `${x.afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`;
     const tipoDoc = /c[ée]dula/i.test(W.text) ? 'Cédula de notificación' : /oficio/i.test(W.text) ? 'Oficio' : 'Documento recibido';
     W.files.forEach(f=>x.docs.push({nombre:f.name, tipo:f.tipo||tipoDoc, fecha:iso(today()), size: f.size>1e6?(f.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(f.size/1000))+' KB'}));
     x.movimientos.push({fecha:iso(today()), tipo:'Notificación', desc: W.files.length ? `Se recibe ${tipoDoc.toLowerCase()}: ${W.files.map(f=>f.name).join(', ')}.` : 'Se cargó el amparo en Fojas.', user:S.user});
