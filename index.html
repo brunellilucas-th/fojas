@@ -3,157 +3,245 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fojas — Prototipo Amparos</title>
+<title>Fojas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* Layout: barra lateral fija (núcleo + módulos) y área de trabajo; tablas densas, estado codificado en chips y franjas */
+/* Layout: menú lateral con íconos grandes + área de trabajo con tarjetas amplias; lo urgente siempre arriba y en color */
 :root{
-  --bg:#F3F5F6; --surface:#FFFFFF; --sunken:#E9EDEF; --line:#D5DCE0;
-  --ink:#1A2328; --muted:#5B6870; --faint:#8A969D;
-  --accent:#1F5866; --accent-ink:#FFFFFF; --accent-soft:#DCEAED;
-  --danger:#B3261E; --danger-soft:#F8E1DF; --warn:#8A5A00; --warn-soft:#F7ECD3; --ok:#2E6B3F; --ok-soft:#DFF0E3;
-  --f-display:"IBM Plex Serif", Georgia, serif; --f-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif; --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
-  --r:8px; color-scheme:light;
+  --bg:#EEF3F5; --surface:#FFFFFF; --sunken:#F4F7F8; --line:#DCE4E8;
+  --ink:#16252B; --muted:#56666E; --faint:#8C9AA1;
+  --accent:#16707F; --accent-ink:#FFFFFF; --accent-soft:#DDF0F2;
+  --danger:#C0352B; --danger-soft:#FCE6E3; --warn:#9A6200; --warn-soft:#FDF1D8; --ok:#26784A; --ok-soft:#DDF3E5;
+  --violet:#5B4BB7; --violet-soft:#ECE9FB;
+  --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif; --f-mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  --r:14px; --shadow:0 1px 2px rgba(16,40,48,.06), 0 4px 14px rgba(16,40,48,.06); color-scheme:light;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#12181B; --surface:#1A2226; --sunken:#151C1F; --line:#2B373D;
-  --ink:#E4EAED; --muted:#9AA8AF; --faint:#6E7C83;
-  --accent:#6FB3C2; --accent-ink:#0D1A1E; --accent-soft:#1E3A41;
-  --danger:#F08A80; --danger-soft:#3A1E1C; --warn:#E5B85C; --warn-soft:#352A14; --ok:#7CC48E; --ok-soft:#1B3222; color-scheme:dark;
+  --bg:#0F171A; --surface:#172227; --sunken:#1C292F; --line:#2A3A41;
+  --ink:#E6EEF1; --muted:#A0B0B7; --faint:#6F8189;
+  --accent:#5EC2D1; --accent-ink:#06191D; --accent-soft:#173A40;
+  --danger:#FF8F84; --danger-soft:#3E1F1C; --warn:#F2C062; --warn-soft:#3A2E14; --ok:#7FD29E; --ok-soft:#183526;
+  --violet:#B1A6F5; --violet-soft:#2A2547; --shadow:none; color-scheme:dark;
 }}
 :root[data-theme="dark"]{
-  --bg:#12181B; --surface:#1A2226; --sunken:#151C1F; --line:#2B373D;
-  --ink:#E4EAED; --muted:#9AA8AF; --faint:#6E7C83;
-  --accent:#6FB3C2; --accent-ink:#0D1A1E; --accent-soft:#1E3A41;
-  --danger:#F08A80; --danger-soft:#3A1E1C; --warn:#E5B85C; --warn-soft:#352A14; --ok:#7CC48E; --ok-soft:#1B3222; color-scheme:dark;
+  --bg:#0F171A; --surface:#172227; --sunken:#1C292F; --line:#2A3A41;
+  --ink:#E6EEF1; --muted:#A0B0B7; --faint:#6F8189;
+  --accent:#5EC2D1; --accent-ink:#06191D; --accent-soft:#173A40;
+  --danger:#FF8F84; --danger-soft:#3E1F1C; --warn:#F2C062; --warn-soft:#3A2E14; --ok:#7FD29E; --ok-soft:#183526;
+  --violet:#B1A6F5; --violet-soft:#2A2547; --shadow:none; color-scheme:dark;
 }
 *{box-sizing:border-box}
 html,body,#root{height:100%;margin:0}
-body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--f-body)}
-h1,h2,h3{font-family:var(--f-display);font-weight:600;margin:0;text-wrap:balance}
-h1{font-size:24px} h2{font-size:18px} h3{font-size:15px;font-family:var(--f-body)}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--f-body)}
+h1,h2,h3{margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:28px;font-weight:800} h2{font-size:20px;font-weight:700} h3{font-size:17px;font-weight:700}
 a{color:var(--accent)}
-.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
-.muted{color:var(--muted)} .small{font-size:12px}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:.92em}
+.muted{color:var(--muted)} .small{font-size:14px}
 button,input,select,textarea{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+svg.i{width:22px;height:22px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+svg.i.sm{width:18px;height:18px}
+svg.i.lg{width:30px;height:30px}
 
-.app{display:grid;grid-template-columns:232px 1fr;height:100%}
-.side{background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px;padding:16px 12px;overflow:auto}
-.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 14px}
-.brand .mark{width:30px;height:30px;border-radius:6px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--f-display);font-weight:600}
-.brand b{font-family:var(--f-display);font-size:18px}
-.navlabel{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);padding:12px 8px 4px}
-.nav a{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;border-radius:6px;color:var(--ink);text-decoration:none}
-.nav a:hover{background:var(--sunken)}
-.nav a.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
-.nav a.off{color:var(--faint)}
-.badge{font-size:11px;padding:1px 7px;border-radius:10px;background:var(--sunken);color:var(--muted)}
-.nav a.on .badge{background:var(--surface)}
-.side .foot{margin-top:auto;padding:12px 8px 0;border-top:1px solid var(--line);display:grid;gap:6px}
+.app{display:grid;grid-template-columns:250px 1fr;height:100%}
+.side{background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:2px;padding:18px 14px;overflow:auto}
+.brand{display:flex;align-items:center;gap:10px;padding:2px 10px 18px}
+.brand .mark{width:36px;height:36px;border-radius:10px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:800;font-size:19px}
+.brand b{font-size:21px;font-weight:800}
+.navlabel{font-size:13px;font-weight:600;color:var(--faint);padding:16px 12px 6px}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav a,.nav button{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;color:var(--ink);text-decoration:none;font-weight:600;border:0;background:none;cursor:pointer;text-align:left;width:100%}
+.nav a:hover,.nav button:hover{background:var(--sunken)}
+.nav a.on{background:var(--accent);color:var(--accent-ink)}
+.nav .badge{margin-left:auto}
+.badge{font-size:13px;font-weight:700;min-width:24px;text-align:center;padding:1px 8px;border-radius:12px;background:var(--sunken);color:var(--muted)}
+.badge.red{background:var(--danger);color:#fff}
+.nav a.on .badge{background:rgba(255,255,255,.25);color:inherit}
+.side .foot{margin-top:auto;padding-top:12px;border-top:1px solid var(--line)}
 
 .main{display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden}
-.top{display:flex;align-items:center;gap:12px;padding:10px 24px;background:var(--surface);border-bottom:1px solid var(--line);flex-wrap:wrap}
-.tenant{display:flex;flex-direction:column;line-height:1.2}
-.tenant span{font-size:11px;color:var(--muted)}
-.search{flex:1;min-width:180px;max-width:420px;margin-left:auto}
-.search input{width:100%}
-.view{flex:1;overflow:auto;padding:24px;display:flex;flex-direction:column;gap:20px}
-.demo{font-size:12px;background:var(--warn-soft);color:var(--warn);padding:6px 24px;border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:14px;padding:12px 28px;background:var(--surface);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.who{display:flex;align-items:center;gap:10px;margin-left:auto}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--violet-soft);color:var(--violet);display:grid;place-items:center;font-weight:800}
+.who div{line-height:1.2} .who span{font-size:13px;color:var(--muted)}
+.search{position:relative;flex:1;min-width:220px;max-width:520px}
+.search input[type=search]{width:100%;padding:11px 14px 11px 44px;border-radius:12px;border:1px solid var(--line);background:var(--sunken)}
+.search > svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--faint)}
+.results{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);z-index:5;overflow:hidden}
+.results a{display:block;padding:10px 14px;text-decoration:none;color:var(--ink);border-bottom:1px solid var(--line)}
+.results a:last-child{border-bottom:0}
+.results a:hover,.results a.sel{background:var(--accent-soft)}
+.view{flex:1;overflow:auto;padding:28px;display:flex;flex-direction:column;gap:24px}
+.demo{font-size:13px;background:var(--warn-soft);color:var(--warn);padding:6px 28px}
 
-input[type=text],input[type=password],input[type=date],input[type=search],select,textarea{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 10px}
-textarea{width:100%;resize:vertical}
-.btn{text-decoration:none;display:inline-block;border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:7px 12px;cursor:pointer}
-.btn:hover{border-color:var(--accent)}
+input[type=text],input[type=password],input[type=date],input[type=search],select,textarea{background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+textarea{resize:vertical}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px 16px;cursor:pointer;font-weight:600}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
 .btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.btn.pri:hover{filter:brightness(1.08)}
+.btn.pri:hover{filter:brightness(1.08);color:var(--accent-ink)}
+.btn.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+.btn.ok:hover{filter:brightness(1.08);color:#fff}
+.btn.big{padding:14px 22px;font-size:17px;border-radius:12px}
+.btn.sm{padding:6px 11px;font-size:14px}
+.btn.ghost{border-color:transparent;background:none}
 .btn.danger{color:var(--danger)}
-.btn.sm{padding:4px 9px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
-.grid{display:grid;gap:16px}
-.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
-.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
-.gtpl{grid-template-columns:minmax(260px,1fr) 2fr}
-@media (max-width:820px){.gtpl{grid-template-columns:1fr}}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
-.kpi b{font-size:28px;font-family:var(--f-display);font-variant-numeric:tabular-nums;line-height:1}
-.kpi.alert{border-left:4px solid var(--danger)}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.grid{display:grid;gap:18px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:flex;flex-direction:column;gap:14px;min-width:0;box-shadow:var(--shadow)}
+.sub{color:var(--muted);font-size:15px}
 
-.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
-table{border-collapse:collapse;width:100%;min-width:720px}
-th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-size:12px;font-weight:600;color:var(--muted);background:var(--sunken)}
-tr:last-child td{border-bottom:0}
-tbody tr.click{cursor:pointer}
-tbody tr.click:hover{background:var(--sunken)}
-.chip{display:inline-block;font-size:12px;padding:2px 8px;border-radius:10px;white-space:nowrap;background:var(--sunken);color:var(--muted)}
-.chip.alto{background:var(--danger-soft);color:var(--danger)}
-.chip.medio{background:var(--warn-soft);color:var(--warn)}
-.chip.bajo{background:var(--ok-soft);color:var(--ok)}
-.chip.acc{background:var(--accent-soft);color:var(--accent)}
-.due{font-family:var(--f-mono);font-size:12px;white-space:nowrap}
-.due.late{color:var(--danger);font-weight:600}
-.due.soon{color:var(--warn);font-weight:600}
+/* accesos grandes del inicio */
+.action{display:flex;flex-direction:column;gap:10px;align-items:flex-start;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:20px;cursor:pointer;text-decoration:none;color:var(--ink);box-shadow:var(--shadow);transition:transform .12s, border-color .12s}
+.action:hover{border-color:var(--accent);transform:translateY(-2px)}
+.action b{font-size:18px}
+.action span{color:var(--muted);font-size:14px}
+.ico{width:48px;height:48px;border-radius:12px;display:grid;place-items:center}
+.ico.a{background:var(--accent-soft);color:var(--accent)} .ico.r{background:var(--danger-soft);color:var(--danger)} .ico.v{background:var(--violet-soft);color:var(--violet)} .ico.g{background:var(--ok-soft);color:var(--ok)} .ico.y{background:var(--warn-soft);color:var(--warn)}
 
-.list{display:flex;flex-direction:column}
-.li{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
-.li:last-child{border-bottom:0}
-.stripe{border-left:3px solid var(--line);padding-left:10px}
-.stripe.late{border-color:var(--danger)} .stripe.soon{border-color:var(--warn)} .stripe.okk{border-color:var(--ok)}
+/* tareas */
+.task{display:flex;gap:14px;align-items:center;padding:14px 16px;border-radius:12px;background:var(--sunken);border-left:5px solid var(--line)}
+.task.late{border-color:var(--danger);background:var(--danger-soft)}
+.task.soon{border-color:var(--warn)}
+.task.okk{border-color:var(--ok)}
+.task .txt{flex:1;min-width:0}
+.task .txt a{color:var(--ink);text-decoration:none;font-weight:700}
+.task .txt a:hover{text-decoration:underline}
+.when{font-weight:700;font-size:14px;white-space:nowrap}
+.when.late{color:var(--danger)} .when.soon{color:var(--warn)} .when.okk{color:var(--ok)}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap;background:var(--sunken);color:var(--muted);border:1px solid var(--line)}
+.pill.red{background:var(--danger-soft);color:var(--danger);border-color:transparent}
+.pill.yel{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.pill.grn{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.pill.acc{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.empty{text-align:center;padding:26px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:8px}
+.empty .ico{margin-bottom:4px}
 
-.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);flex-wrap:wrap}
-.tabs button{border:0;background:none;padding:8px 12px;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted)}
-.tabs button.on{border-color:var(--accent);color:var(--ink);font-weight:600}
-.timeline{display:flex;flex-direction:column;gap:0}
-.tl{display:grid;grid-template-columns:96px 1fr;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line)}
-.dl{display:grid;grid-template-columns:150px 1fr;gap:6px 12px}
-.dl dt{color:var(--muted)} .dl dd{margin:0}
-.ia{background:var(--sunken);border:1px dashed var(--accent);border-radius:var(--r);padding:12px;white-space:pre-wrap}
-.hash{font-family:var(--f-mono);font-size:11px;color:var(--faint);word-break:break-all}
-.bar{display:grid;grid-template-columns:180px 1fr 36px;gap:10px;align-items:center}
-.bar .track{height:14px;background:var(--sunken);border-radius:3px;overflow:hidden}
-.bar .fill{height:100%;background:var(--accent)}
-.mod{position:relative}
-.mod.active{border-color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
-.switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
-.switch input{width:18px;height:18px;accent-color:var(--accent)}
-.notice{padding:10px 12px;border-radius:6px;background:var(--accent-soft);color:var(--ink)}
+/* filtros tipo chip */
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chipbtn{border:1.5px solid var(--line);background:var(--surface);border-radius:22px;padding:8px 16px;cursor:pointer;font-weight:600;display:inline-flex;gap:8px;align-items:center}
+.chipbtn:hover{border-color:var(--accent)}
+.chipbtn.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.chipbtn .badge{background:rgba(127,127,127,.18);color:inherit}
+
+/* lista de amparos como tarjetas */
+.cases{display:flex;flex-direction:column;gap:10px}
+.case{display:grid;grid-template-columns:6px 1fr auto;gap:16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 18px 14px 0;cursor:pointer;box-shadow:var(--shadow)}
+.case:hover{border-color:var(--accent)}
+.case .bar{align-self:stretch;border-radius:0 4px 4px 0;background:var(--line)}
+.case .bar.late{background:var(--danger)} .case .bar.soon{background:var(--warn)} .case .bar.okk{background:var(--ok)}
+.case .name{font-weight:700;font-size:17px}
+.case .meta{color:var(--muted);font-size:14px;display:flex;gap:6px 14px;flex-wrap:wrap;margin-top:2px}
+.case .right{text-align:right;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+
+/* expediente */
+.next{background:linear-gradient(0deg,var(--surface),var(--surface));border:2px solid var(--accent);border-radius:var(--r);padding:22px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;box-shadow:var(--shadow)}
+.next.late{border-color:var(--danger);background:var(--danger-soft)}
+.next .txt{flex:1;min-width:240px}
+.next .lbl{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.next h2{font-size:22px;margin:4px 0}
+.steps{display:flex;gap:0;overflow-x:auto;padding-bottom:4px}
+.step{flex:1;min-width:110px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;background:none;border:0;padding:4px;position:relative;color:var(--muted);font-size:13px;font-weight:600;text-align:center}
+.step::before{content:"";position:absolute;top:17px;left:-50%;right:50%;height:3px;background:var(--line);z-index:0}
+.step:first-child::before{display:none}
+.step .dot{width:34px;height:34px;border-radius:50%;background:var(--surface);border:3px solid var(--line);display:grid;place-items:center;z-index:1;font-weight:800;color:var(--faint)}
+.step.done{color:var(--ink)} .step.done .dot{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)} .step.done::before{background:var(--accent)}
+.step.cur{color:var(--accent)} .step.cur .dot{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 5px var(--accent-soft)} .step.cur::before{background:var(--accent)}
+.step:hover .dot{border-color:var(--accent)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:10px}
+.tabs button{border:0;background:none;padding:9px 14px;border-radius:10px;cursor:pointer;color:var(--muted);font-weight:600;display:inline-flex;gap:8px;align-items:center}
+.tabs button:hover{background:var(--sunken);color:var(--ink)}
+.tabs button.on{background:var(--accent-soft);color:var(--accent)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.fact{background:var(--sunken);border-radius:12px;padding:12px 14px}
+.fact span{display:block;font-size:13px;color:var(--muted);font-weight:600}
+.fact b{font-weight:600}
+.timeline{display:flex;flex-direction:column}
+.tl{display:grid;grid-template-columns:110px 1fr;gap:14px;padding:12px 0;border-bottom:1px dashed var(--line)}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:26px;text-align:center;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.doc{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.doc:last-child{border-bottom:0}
+.ia{background:var(--violet-soft);border-radius:14px;padding:18px;white-space:pre-wrap;line-height:1.6}
+.notice{padding:12px 14px;border-radius:12px;background:var(--accent-soft);color:var(--ink);display:flex;gap:10px;align-items:flex-start}
 .notice.bad{background:var(--danger-soft);color:var(--danger)}
 .notice.good{background:var(--ok-soft);color:var(--ok)}
-.overlay{position:fixed;inset:0;background:rgba(10,15,18,.45);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow:auto;z-index:10}
-.overlay.show{display:flex}
-.modal{background:var(--surface);border-radius:10px;border:1px solid var(--line);width:min(620px,100%);padding:20px;display:flex;flex-direction:column;gap:14px}
-.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.form label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}
+.hash{font-family:var(--f-mono);font-size:12px;color:var(--faint);word-break:break-all}
+.list{display:flex;flex-direction:column}
+.li{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border-bottom:0}
+.bars{display:grid;gap:10px}
+.barrow{display:grid;grid-template-columns:200px 1fr 40px;gap:12px;align-items:center}
+.barrow .track{height:18px;background:var(--sunken);border-radius:6px;overflow:hidden}
+.barrow .fill{height:100%;background:var(--accent);border-radius:6px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;font-weight:700;color:var(--muted);background:var(--sunken)}
+tr:last-child td{border-bottom:0}
+.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-weight:600}
+.switch input{width:20px;height:20px;accent-color:var(--accent)}
+.mod.active{border-color:var(--accent);box-shadow:inset 0 4px 0 var(--accent), var(--shadow)}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form label,.fld{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600;color:var(--muted)}
 .form .full{grid-column:1/-1}
-.toast{position:fixed;bottom:20px;right:20px;background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:6px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20}
-.toast.show{opacity:1}
+.hint{font-weight:400;font-size:13px;color:var(--faint)}
 
-/* Ingreso */
+/* modal y asistente de carga */
+.overlay{position:fixed;inset:0;background:rgba(8,20,24,.5);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow:auto;z-index:10}
+.overlay.show{display:flex}
+.modal{background:var(--surface);border-radius:18px;width:min(640px,100%);padding:26px;display:flex;flex-direction:column;gap:18px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.wsteps{display:flex;gap:8px}
+.wsteps span{flex:1;height:6px;border-radius:4px;background:var(--line)}
+.wsteps span.on{background:var(--accent)}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.opt{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 14px;cursor:pointer;text-align:left;font-weight:600}
+.opt:hover{border-color:var(--accent)}
+.opt.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.tour{text-align:center;align-items:center}
+.tour .ico{width:72px;height:72px;border-radius:20px}
+.dots{display:flex;gap:6px;justify-content:center}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--line)} .dots i.on{background:var(--accent);width:22px;border-radius:4px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:12px;opacity:0;transition:opacity .2s, transform .2s;pointer-events:none;z-index:20;display:flex;gap:14px;align-items:center;font-weight:600}
+.toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.toast button{background:none;border:0;color:var(--accent-soft);font-weight:800;cursor:pointer;text-decoration:underline}
+
+/* ingreso */
 .login{min-height:100%;display:grid;grid-template-columns:1.1fr 1fr}
-.login .pitch{background:var(--accent);color:var(--accent-ink);padding:48px;display:flex;flex-direction:column;gap:20px;justify-content:center}
-.login .pitch h1{font-size:34px;line-height:1.15;max-width:18ch}
-.login .pitch ul{margin:0;padding-left:18px;display:grid;gap:6px;max-width:48ch}
+.login .pitch{background:var(--accent);color:var(--accent-ink);padding:56px;display:flex;flex-direction:column;gap:22px;justify-content:center}
+.login .pitch h1{font-size:38px;line-height:1.15;max-width:16ch}
+.login .pitch .feat{display:flex;gap:12px;align-items:center;font-size:17px}
+.login .pitch .feat svg{opacity:.9}
 .login .box{display:flex;align-items:center;justify-content:center;padding:32px;background:var(--bg)}
-.login .box .card{width:min(380px,100%)}
-.login label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}
+.login .box .card{width:min(420px,100%);padding:30px}
 
-@media (max-width:820px){
+@media (max-width:860px){
   .app{grid-template-columns:1fr;grid-template-rows:auto 1fr}
-  .side{flex-direction:row;overflow-x:auto;padding:8px;border-right:0;border-bottom:1px solid var(--line);gap:2px}
-  .side .navlabel,.side .foot,.brand b{display:none}
+  .side{flex-direction:row;overflow-x:auto;padding:8px;border-right:0;border-bottom:1px solid var(--line)}
+  .side .navlabel,.brand b,.nav a span.lbl,.nav button span.lbl{display:none}
   .brand{padding:0 6px}
-  .nav{display:flex;gap:2px}
-  .nav a{white-space:nowrap}
-  .view{padding:16px}
+  .nav{flex-direction:row}
+  .side .foot{margin:0;padding:0;border:0;display:flex}
+  .view{padding:18px}
   .top{padding:10px 16px}
+  .who div{display:none}
   .form{grid-template-columns:1fr}
   .login{grid-template-columns:1fr}
-  .dl{grid-template-columns:1fr}
-  .bar{grid-template-columns:110px 1fr 30px}
+  .login .pitch{padding:32px}
+  .barrow{grid-template-columns:120px 1fr 32px}
+  .case{grid-template-columns:6px 1fr}
+  .case .right{grid-column:2;align-items:flex-start;text-align:left}
+  .tl{grid-template-columns:1fr;gap:4px}
 }
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
@@ -164,6 +252,38 @@ tbody tr.click:hover{background:var(--sunken)}
 <div class="toast" id="toast" role="status"></div>
 
 <script>
+// ---------- íconos ----------
+const IC = {
+  home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+  folder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
+  pen:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/>',
+  chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  cloud:'<path d="M7 18a5 5 0 1 1 1-9.9A6 6 0 0 1 19.5 10 4 4 0 0 1 18 18z"/><path d="M12 12v6M9 15l3 3 3-3"/>',
+  users:'<circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M17 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/>',
+  grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/>',
+  help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><path d="M12 17.5v.01"/>',
+  out:'<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="M10 17l-5-5 5-5M5 12h11"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+  check:'<path d="M5 12l5 5L20 7"/>',
+  spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  file:'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/>',
+  upload:'<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>',
+  back:'<path d="M15 18l-6-6 6-6"/>',
+  next:'<path d="M9 18l6-6-6-6"/>',
+  alert:'<path d="M12 3l10 18H2z"/><path d="M12 10v4M12 17.5v.01"/>',
+  list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+  copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+  lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  history:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/>',
+  key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>'
+};
+const ic = (n, cls='') => `<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]||''}</svg>`;
+
 // ---------- utilidades ----------
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -171,13 +291,19 @@ const today = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
 const iso = d => { const x = new Date(d); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); };
 const dPlus = n => { const d = today(); d.setDate(d.getDate()+n); return iso(d); };
 const fmt = s => { if(!s) return '—'; const [y,m,d] = s.slice(0,10).split('-'); return `${d}/${m}/${y}`; };
-const fmtTs = s => { const d = new Date(s); return d.toLocaleDateString('es-AR') + ' ' + d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); };
+const fmtLong = s => new Date(s+'T12:00:00').toLocaleDateString('es-AR',{weekday:'long', day:'numeric', month:'long'});
+const fmtTs = s => { const d = new Date(s); return d.toLocaleDateString('es-AR') + ' ' + d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}); };
 const daysTo = s => Math.round((new Date(s+'T00:00:00') - today())/86400000);
-const dueClass = n => n < 0 ? 'late' : n <= 3 ? 'soon' : '';
-const dueText = n => n < 0 ? `vencido hace ${-n} d` : n === 0 ? 'vence hoy' : n === 1 ? 'vence mañana' : `en ${n} días`;
-const money = n => n ? '$ ' + Number(n).toLocaleString('es-AR') : '—';
-function toast(t){ const el = $('#toast'); el.textContent = t; el.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(()=>el.classList.remove('show'), 2400); }
-async function copy(text){ try{ await navigator.clipboard.writeText(text); toast('Copiado al portapapeles'); }catch(e){ toast('No se pudo copiar: seleccioná el texto y copialo a mano'); } }
+const urg = n => n < 0 ? 'late' : n <= 3 ? 'soon' : 'okk';
+const whenText = n => n < 0 ? (n===-1?'Venció ayer':`Venció hace ${-n} días`) : n === 0 ? 'Vence hoy' : n === 1 ? 'Vence mañana' : `Faltan ${n} días`;
+const money = n => n ? '$ ' + Number(n).toLocaleString('es-AR') : 'Sin monto';
+const initials = s => s.split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+function toast(t, undo){
+  const el = $('#toast'); el.innerHTML = `<span>${esc(t)}</span>${undo?'<button id="undoBtn">Deshacer</button>':''}`;
+  el.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(()=>el.classList.remove('show'), undo?6000:2600);
+  if(undo) $('#undoBtn').onclick = () => { undo(); el.classList.remove('show'); };
+}
+async function copy(text){ try{ await navigator.clipboard.writeText(text); toast('Copiado. Ya lo podés pegar en Word o en el mail.'); }catch(e){ toast('No se pudo copiar automáticamente: seleccioná el texto y copialo a mano.'); } }
 
 // ---------- datos de ejemplo ----------
 const DEFAULT_USERS = [
@@ -188,6 +314,7 @@ const DEFAULT_USERS = [
 ];
 const ORG = 'saludintegral-demo';
 const ESTADOS = ['Intimación recibida','Cautelar otorgada','Informe art. 8 pendiente','En prueba','Para sentencia','Sentencia','Archivado'];
+const ESTADO_CORTO = ['Intimación','Cautelar','Informe','Prueba','Para sentencia','Sentencia','Archivado'];
 const PRESTACIONES = ['Medicación oncológica','Discapacidad (Ley 24.901)','Fertilización (Ley 26.862)','Internación domiciliaria','Cirugía','Prótesis / ortesis','Salud mental','Otra'];
 
 function seed(){
@@ -227,14 +354,14 @@ function seed(){
 }
 
 const MODULES = [
-  {id:'amparos', nombre:'Amparos de salud', desc:'Expedientes judiciales, cautelares, plazos procesales, control de cumplimiento y escritos tipo.', disponible:true},
-  {id:'administrativos', nombre:'Administrativos', desc:'Reclamos ante la Superintendencia de Servicios de Salud y Defensa del Consumidor, descargos y plazos administrativos.', disponible:false},
-  {id:'contratos', nombre:'Contratos', desc:'Ciclo de vida de contratos con prestadores y proveedores, versiones, firmantes y renovaciones.', disponible:false},
-  {id:'cartas', nombre:'Cartas documento', desc:'Redacción, envío y seguimiento de cartas documento e intimaciones.', disponible:false}
+  {id:'amparos', nombre:'Amparos de salud', desc:'Expedientes judiciales, cautelares, plazos, control de cumplimiento y escritos tipo.', disponible:true, icon:'shield'},
+  {id:'administrativos', nombre:'Administrativos', desc:'Reclamos ante la Superintendencia de Servicios de Salud y Defensa del Consumidor.', disponible:false, icon:'folder'},
+  {id:'contratos', nombre:'Contratos', desc:'Contratos con prestadores y proveedores: versiones, firmantes y renovaciones.', disponible:false, icon:'file'},
+  {id:'cartas', nombre:'Cartas documento', desc:'Redacción, envío y seguimiento de cartas documento e intimaciones.', disponible:false, icon:'pen'}
 ];
 
 const TEMPLATES = [
-  {id:'informe', nombre:'Presenta informe art. 8 Ley 16.986', cuerpo:
+  {id:'informe', nombre:'Informe del art. 8', para:'Cuando el juzgado pide el informe circunstanciado de la Ley 16.986.', icon:'file', cuerpo:
 `SE PRESENTA – PRODUCE INFORME CIRCUNSTANCIADO
 
 Señor Juez:
@@ -257,7 +384,7 @@ Por lo expuesto, solicito:
 
 Proveer de conformidad,
 SERÁ JUSTICIA.`},
-  {id:'cumplimiento', nombre:'Acredita cumplimiento de medida cautelar', cuerpo:
+  {id:'cumplimiento', nombre:'Acreditar cumplimiento de cautelar', para:'Para informar al juzgado que ya se dio la prestación ordenada.', icon:'check', cuerpo:
 `ACREDITA CUMPLIMIENTO DE MEDIDA CAUTELAR
 
 Señor Juez:
@@ -270,7 +397,7 @@ Por ello, solicito se tenga por cumplida la medida ordenada.
 
 Proveer de conformidad,
 SERÁ JUSTICIA.`},
-  {id:'prorroga', nombre:'Solicita ampliación de plazo', cuerpo:
+  {id:'prorroga', nombre:'Pedir más plazo', para:'Cuando necesitás más días para presentar algo.', icon:'clock', cuerpo:
 `SOLICITA AMPLIACIÓN DE PLAZO
 
 Señor Juez:
@@ -284,11 +411,11 @@ SERÁ JUSTICIA.`}
 ];
 
 // ---------- estado ----------
-const KEY = 'fojas-demo-v2';
+const KEY = 'fojas-demo-v3';
 let S;
 async function makeUser(u, pass, mustChange){ const salt = randId(16); return {id:u.id, nombre:u.nombre, rol:u.rol, activo:true, salt, hash: await hashPass(pass, salt), mustChange:!!mustChange}; }
 async function fresh(){ const users = []; for(const u of DEFAULT_USERS) users.push(await makeUser(u, u.pass, false));
-  return {user:null, users, lock:{}, modules:{amparos:true, administrativos:false, contratos:false, cartas:false}, exps:seed(), audit:[], nextId:8}; }
+  return {user:null, users, lock:{}, toured:{}, modules:{amparos:true, administrativos:false, contratos:false, cartas:false}, exps:seed(), audit:[], nextId:8}; }
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
 function load(){ try{ const r = localStorage.getItem(KEY); if(r) return JSON.parse(r); }catch(e){} return null; }
 const userName = id => ((S.users||[]).find(u=>u.id===id)||{nombre:id}).nombre;
@@ -296,6 +423,10 @@ const staff = () => S.users.filter(u=>u.activo && u.rol!=='Administrador');
 const me = () => S.users.find(u=>u.id===S.user);
 const isAdmin = () => (me()||{}).rol==='Administrador';
 const expById = id => S.exps.find(e=>e.id==id);
+const active = () => S.exps.filter(e=>e.estado!=='Archivado');
+const pending = e => e.plazos.filter(p=>!p.hecho).sort((a,b)=>a.vence.localeCompare(b.vence));
+const nextPlazo = e => pending(e)[0];
+const allPlazos = () => S.exps.flatMap(e => pending(e).map(p=>({...p, exp:e, idx:e.plazos.indexOf(p)}))).sort((a,b)=>a.vence.localeCompare(b.vence));
 
 // ---------- auditoría encadenada (SHA-256) ----------
 async function sha(text){
@@ -310,7 +441,6 @@ function audit(accion, objeto, detalle, opts={}){
     const e = {n:S.audit.length+1, ts:opts.ts || new Date().toISOString(), user:opts.user || S.user, accion, objeto, detalle, prev};
     e.hash = await sha(entryBody(e));
     S.audit.push(e); save();
-    if(route().name==='auditoria' || route().name==='inicio') render();
   });
   return chain;
 }
@@ -318,8 +448,7 @@ async function verifyChain(){
   let prev = 'GENESIS';
   for(const e of S.audit){
     if(e.prev !== prev) return {ok:false, n:e.n};
-    const h = await sha(entryBody(e));
-    if(h !== e.hash) return {ok:false, n:e.n};
+    if(await sha(entryBody(e)) !== e.hash) return {ok:false, n:e.n};
     prev = e.hash;
   }
   return {ok:true};
@@ -328,16 +457,16 @@ async function seedAudit(){
   const base = Date.now() - 3*86400000;
   const items = [
     ['admin','Activó módulo','Amparos de salud','Plan inicial del cliente'],
-    ['lbrunelli','Importó expedientes','Migración','7 expedientes desde planilla CSV'],
-    ['rperez','Cargó movimiento','CCF 5021/2026','Notificación: intimación 48 hs'],
+    ['lbrunelli','Importó expedientes','Migración','7 expedientes desde planilla'],
+    ['rperez','Cargó novedad','CCF 5021/2026','Notificación: intimación 48 hs'],
     ['jgomez','Subió documento','CCF 4512/2026','Dictamen auditoría médica.pdf'],
-    ['lbrunelli','Consultó expediente','CCF 3977/2026','Vista de detalle']
+    ['lbrunelli','Abrió expediente','CCF 3977/2026','Consulta']
   ];
   for(let i=0;i<items.length;i++){ const [u,a,o,d] = items[i]; await audit(a,o,d,{user:u, ts:new Date(base + i*5400000).toISOString()}); }
 }
 
 // ---------- contraseñas y sesión ----------
-function randId(n){ const a = new Uint8Array(n); (window.crypto||{}).getRandomValues ? crypto.getRandomValues(a) : a.forEach((_,i)=>a[i]=Math.random()*256|0); return [...a].map(x=>x.toString(16).padStart(2,'0')).join(''); }
+function randId(n){ const a = new Uint8Array(n); crypto.getRandomValues(a); return [...a].map(x=>x.toString(16).padStart(2,'0')).join(''); }
 function tempPass(){ const c = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789'; let s=''; const a = new Uint8Array(10); crypto.getRandomValues(a); a.forEach(x=>s+=c[x%c.length]); return s+'7'; }
 async function hashPass(pass, salt){
   if(!(window.crypto && crypto.subtle)) return sha(salt+':'+pass);
@@ -353,7 +482,7 @@ function setSession(s){ getSession.mem = s; try{ s ? sessionStorage.setItem('foj
 function logged(){ const s = getSession(); if(!s) return false; const u = S.users.find(x=>x.id===s.user && x.activo); if(!u) return false; S.user = u.id; return true; }
 function logout(msg){ if(getSession()) audit('Cerró sesión','Sistema', msg||'Salida manual'); setSession(null); S.user=null; save(); ui.loginMsg = msg ? {ok:false, t:msg} : null; closeModal(); render(); }
 ['click','keydown','input'].forEach(ev=>document.addEventListener(ev, ()=>{ lastActivity = Date.now(); }, true));
-setInterval(()=>{ if(getSession() && Date.now()-lastActivity > IDLE_MIN*60000) logout(`Sesión cerrada por ${IDLE_MIN} minutos de inactividad.`); }, 30000);
+setInterval(()=>{ if(getSession() && Date.now()-lastActivity > IDLE_MIN*60000) logout(`Por seguridad cerramos tu sesión después de ${IDLE_MIN} minutos sin uso. Volvé a ingresar.`); }, 30000);
 
 // ---------- cifrado de respaldo (AES-GCM + PBKDF2) ----------
 const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
@@ -380,187 +509,228 @@ async function decrypt(text, pass){
 function route(){
   const h = (location.hash||'').replace('#','') || 'inicio';
   const m = h.match(/^expediente-(\d+)$/);
-  if(m) return {name:'expediente', id:+m[1]};
-  return {name:h};
+  return m ? {name:'expediente', id:+m[1]} : {name:h};
 }
-window.addEventListener('hashchange', ()=>{ ui.tab='datos'; ui.ia=''; render(); });
-const ui = {tab:'datos', ia:'', q:'', fEstado:'', fRiesgo:'', fAbog:'', verify:null, tpl:'informe', tplExp:1, tplText:'', backupOut:'', backupMsg:null, csvMsg:null};
+window.addEventListener('hashchange', ()=>{ ui.q=''; ui.tab='resumen'; ui.ia=''; ui.addMov=false; ui.addPlazo=false; ui.results=false; render(); const v=$('#view'); if(v) v.scrollTop=0; });
+const ui = {tab:'resumen', ia:'', filtro:'todos', q:'', verify:null, tpl:null, tplExp:null, tplText:'', backupOut:'', backupMsg:null, csvMsg:null, results:false, addMov:false, addPlazo:false};
 
-// ---------- vistas ----------
-const allPlazos = () => S.exps.flatMap(e => e.plazos.filter(p=>!p.hecho).map(p=>({...p, exp:e}))).sort((a,b)=>a.vence.localeCompare(b.vence));
-
+// ---------- estructura ----------
 function shell(content){
   const r = route().name;
   const act = n => (r===n || (n==='amparos' && r==='expediente')) ? 'on' : '';
-  const open = S.exps.filter(e=>e.estado!=='Archivado').length;
-  const modLinks = MODULES.map(m => S.modules[m.id]
-      ? (m.id==='amparos' ? `<a href="#amparos" class="${act('amparos')}">Amparos de salud <span class="badge">${open}</span></a>` : `<a href="#modulos" class="off">${esc(m.nombre)} <span class="badge">próx.</span></a>`)
-      : '').join('');
+  const urgentes = allPlazos().filter(p=>daysTo(p.vence)<=1).length;
+  const link = (h, icon, label, badge='') => `<a href="#${h}" class="${act(h)}" title="${label}">${ic(icon)}<span class="lbl">${label}</span>${badge}</a>`;
+  const extra = MODULES.filter(m=>m.id!=='amparos' && S.modules[m.id]).map(m=>`<a href="#modulos" title="${esc(m.nombre)}">${ic(m.icon)}<span class="lbl">${esc(m.nombre)}</span><span class="badge">pronto</span></a>`).join('');
+  const u = me();
   return `
   <div class="app">
     <aside class="side">
       <div class="brand"><div class="mark">F</div><b>Fojas</b></div>
-      <div class="navlabel">Núcleo</div>
-      <nav class="nav" aria-label="Núcleo">
-        <a href="#inicio" class="${act('inicio')}">Inicio</a>
-        <a href="#plantillas" class="${act('plantillas')}">Plantillas y escritos</a>
-        <a href="#informes" class="${act('informes')}">Informes</a>
-        <a href="#auditoria" class="${act('auditoria')}">Auditoría <span class="badge">${S.audit.length}</span></a>
-        <a href="#respaldo" class="${act('respaldo')}">Respaldo y migración</a>
-        ${isAdmin()?`<a href="#usuarios" class="${act('usuarios')}">Usuarios <span class="badge">${S.users.filter(u=>u.activo).length}</span></a>`:''}
+      <nav class="nav" aria-label="Principal">
+        ${link('inicio','home','Inicio')}
+        ${link('amparos','folder','Amparos', `<span class="badge">${active().length}</span>`)}
+        ${link('vencimientos','cal','Vencimientos', urgentes?`<span class="badge red">${urgentes}</span>`:'')}
+        ${link('escritos','pen','Escritos')}
+        ${link('informes','chart','Informes')}
+        ${extra}
       </nav>
-      <div class="navlabel">Módulos activos</div>
-      <nav class="nav" aria-label="Módulos">
-        ${modLinks}
-        <a href="#modulos" class="${act('modulos')}">+ Gestionar módulos</a>
+      <div class="navlabel">Más opciones</div>
+      <nav class="nav" aria-label="Más opciones">
+        ${link('historial','history','Historial de cambios')}
+        ${link('respaldo','cloud','Copias y migración')}
+        ${link('modulos','grid','Módulos')}
+        ${isAdmin()?link('usuarios','users','Usuarios'):''}
       </nav>
-      <div class="foot small">
-        <a href="#" id="reset">Restablecer datos de ejemplo</a>
+      <div class="foot nav">
+        <button data-act="tour" title="Ayuda">${ic('help')}<span class="lbl">Ayuda</span></button>
+        <button data-act="logout" title="Salir">${ic('out')}<span class="lbl">Salir</span></button>
       </div>
     </aside>
     <div class="main">
-      <div class="demo">Prototipo con datos ficticios. La IA está simulada y los datos quedan guardados solo en este navegador. La sesión se cierra sola tras 15 minutos sin uso.</div>
+      <div class="demo">Versión de prueba con datos ficticios. No cargues datos reales de afiliados.</div>
       <header class="top">
-        <div class="tenant"><b>Salud Integral Demo S.A.</b><span>Gerencia de Legales · Plan Amparos</span></div>
-        <div class="search"><input type="search" id="gsearch" placeholder="Buscar por expediente, afiliado o juzgado" value="${esc(ui.q)}" aria-label="Buscar"></div>
-        <div class="tenant" style="text-align:right"><b>${esc(me().nombre)}</b><span>${esc(me().rol)} · ${esc(me().id)}</span></div>
-        <button class="btn sm" data-act="pwd">Cambiar contraseña</button>
-        <button class="btn sm" data-act="logout">Salir</button>
+        <div class="search">${ic('search')}
+          <input type="search" id="gsearch" placeholder="Buscar por nombre del afiliado o número de expediente" value="${esc(ui.q)}" aria-label="Buscar" autocomplete="off">
+          ${ui.results?searchResults():''}
+        </div>
+        <div class="who"><div><b>${esc(u.nombre)}</b><br><span>${esc(u.rol)}</span></div>
+          <button class="avatar" data-act="pwd" title="Cambiar contraseña" style="border:0;cursor:pointer">${initials(u.nombre)}</button></div>
       </header>
       <main class="view" id="view">${content}</main>
     </div>
   </div>`;
 }
+function matches(q){
+  q = q.trim().toLowerCase(); if(!q) return [];
+  return S.exps.filter(e => [e.numero,e.afiliado,e.juzgado,e.prestacion].join(' ').toLowerCase().includes(q));
+}
+function searchResults(){
+  const list = matches(ui.q).slice(0,6);
+  if(!ui.q.trim()) return '';
+  return `<div class="results">${list.map(e=>`<a href="#expediente-${e.id}"><b>${esc(e.afiliado)}</b><div class="small muted">${esc(e.numero)} · ${esc(e.prestacion)}</div></a>`).join('') || '<div class="empty small">No encontramos nada con esa búsqueda.</div>'}</div>`;
+}
 
+function taskRow(p, showExp=true){
+  const n = daysTo(p.vence), u = urg(n);
+  return `<div class="task ${u}">
+    <div class="txt"><a href="#expediente-${p.exp.id}">${esc(p.desc)}</a>${showExp?`<div class="small muted">${esc(p.exp.afiliado)} · ${esc(p.exp.numero)}</div>`:''}</div>
+    <div style="text-align:right"><div class="when ${u}">${whenText(n)}</div><div class="small muted">${fmt(p.vence)}</div></div>
+    <button class="btn sm" data-act="done" data-e="${p.exp.id}" data-i="${p.idx}" title="Marcar como hecho">${ic('check','sm')} Hecho</button>
+  </div>`;
+}
+
+// ---------- vistas ----------
 function vInicio(){
   const plazos = allPlazos();
+  const urgent = plazos.filter(p=>daysTo(p.vence)<=3);
   const vencidos = plazos.filter(p=>daysTo(p.vence)<0).length;
-  const semana = plazos.filter(p=>{const n=daysTo(p.vence); return n>=0 && n<=7;}).length;
-  const activos = S.exps.filter(e=>e.estado!=='Archivado');
-  const cautelares = activos.filter(e=>e.cautelar).length;
-  const monto = activos.reduce((a,e)=>a+(+e.monto||0),0);
   const u = me();
+  const h = new Date().getHours();
+  const saludo = h<12?'Buen día':h<20?'Buenas tardes':'Buenas noches';
   return `
-  <div class="head"><div><h1>Hola, ${esc(u.nombre.split(' ')[0])}</h1><div class="muted">${new Date().toLocaleDateString('es-AR',{weekday:'long', day:'numeric', month:'long', year:'numeric'})}</div></div>
-    <button class="btn pri" data-act="nuevo">+ Nuevo amparo</button></div>
+  <div><h1>${saludo}, ${esc(u.nombre.split(' ')[0])}</h1>
+    <p class="sub">${new Date().toLocaleDateString('es-AR',{weekday:'long', day:'numeric', month:'long'})} · ${vencidos?`<b style="color:var(--danger)">Tenés ${vencidos} ${vencidos===1?'plazo vencido':'plazos vencidos'}.</b>`:urgent.length?`Tenés ${urgent.length} ${urgent.length===1?'cosa urgente':'cosas urgentes'} para los próximos días.`:'Está todo al día.'}</p></div>
+
+  <section><h2 style="margin-bottom:12px">¿Qué querés hacer?</h2>
   <div class="grid g4">
-    <div class="card kpi ${vencidos?'alert':''}"><span class="muted">Plazos vencidos</span><b style="color:${vencidos?'var(--danger)':'inherit'}">${vencidos}</b></div>
-    <div class="card kpi"><span class="muted">Vencen en 7 días</span><b>${semana}</b></div>
-    <div class="card kpi"><span class="muted">Amparos activos</span><b>${activos.length}</b><span class="small muted">${cautelares} con cautelar vigente</span></div>
-    <div class="card kpi"><span class="muted">Monto reclamado en curso</span><b style="font-size:22px">${money(monto)}</b></div>
-  </div>
+    <button class="action" data-act="nuevo"><div class="ico a">${ic('plus','lg')}</div><b>Cargar un amparo nuevo</b><span>Te guiamos paso a paso.</span></button>
+    <a class="action" href="#vencimientos"><div class="ico r">${ic('cal','lg')}</div><b>Ver qué vence</b><span>Lo urgente, ordenado por fecha.</span></a>
+    <a class="action" href="#escritos"><div class="ico v">${ic('pen','lg')}</div><b>Hacer un escrito</b><span>Se completa solo con los datos.</span></a>
+    <a class="action" href="#amparos"><div class="ico g">${ic('folder','lg')}</div><b>Ver todos los amparos</b><span>${active().length} en curso.</span></a>
+  </div></section>
+
   <div class="grid g2">
-    <section class="card"><div class="head"><h2>Próximos vencimientos</h2><a href="#amparos" class="small">Ver todos los amparos</a></div>
-      <div class="list">${plazos.slice(0,6).map(p=>{const n=daysTo(p.vence);return `
-        <div class="li stripe ${dueClass(n)||'okk'}"><div><a href="#expediente-${p.exp.id}"><b>${esc(p.desc)}</b></a><div class="small muted">${esc(p.exp.numero)} · ${esc(p.exp.afiliado)}</div></div>
-        <div style="text-align:right"><div class="due ${dueClass(n)}">${dueText(n)}</div><div class="small muted mono">${fmt(p.vence)}</div></div></div>`;}).join('') || '<div class="muted">No hay plazos pendientes.</div>'}
-      </div></section>
-    <section class="card"><div class="head"><h2>Actividad reciente</h2><a href="#auditoria" class="small">Ver auditoría completa</a></div>
-      <div class="list">${S.audit.slice(-6).reverse().map(a=>`
-        <div class="li"><div><b>${esc(userName(a.user))}</b> · ${esc(a.accion)}<div class="small muted">${esc(a.objeto)} — ${esc(a.detalle)}</div></div><div class="small muted mono" style="white-space:nowrap">${fmtTs(a.ts)}</div></div>`).join('')}
+    <section class="card"><div class="head"><h2>Lo más urgente</h2><a href="#vencimientos" class="small">Ver todo</a></div>
+      ${urgent.length ? `<div class="cases">${urgent.slice(0,5).map(p=>taskRow(p)).join('')}</div>`
+        : `<div class="empty"><div class="ico g">${ic('check','lg')}</div><b>No hay nada urgente</b><span>Nada vence en los próximos 3 días.</span></div>`}
+    </section>
+    <section class="card"><div class="head"><h2>Últimos movimientos del equipo</h2><a href="#historial" class="small">Ver historial</a></div>
+      <div class="list">${S.audit.slice(-5).reverse().map(a=>`
+        <div class="li"><div style="display:flex;gap:10px"><div class="avatar" style="width:32px;height:32px;font-size:13px">${initials(userName(a.user))}</div><div><b>${esc(userName(a.user))}</b> <span class="muted">${esc(a.accion.toLowerCase())}</span><div class="small muted">${esc(a.objeto)}</div></div></div><div class="small muted" style="white-space:nowrap">${fmtTs(a.ts)}</div></div>`).join('')}
       </div></section>
   </div>
-  <section class="card"><h2>Módulos de este cliente</h2>
-    <div class="row">${MODULES.map(m=>`<span class="chip ${S.modules[m.id]?'acc':''}">${S.modules[m.id]?'● ':'○ '}${esc(m.nombre)}</span>`).join('')}<a href="#modulos" class="small">Gestionar</a></div>
+  <section class="card" style="flex-direction:row;align-items:center;gap:16px;flex-wrap:wrap">
+    <div class="ico y">${ic('help','lg')}</div>
+    <div style="flex:1;min-width:220px"><b>¿Es tu primera vez?</b><div class="muted small">Mirá la guía rápida: en un minuto te mostramos cómo se usa.</div></div>
+    <button class="btn" data-act="tour">Ver la guía</button>
   </section>`;
 }
 
-function filteredExps(){
-  const q = ui.q.trim().toLowerCase();
-  return S.exps.filter(e =>
-    (!q || [e.numero,e.afiliado,e.juzgado,e.prestacion,e.caratula].join(' ').toLowerCase().includes(q)) &&
-    (!ui.fEstado || e.estado===ui.fEstado) && (!ui.fRiesgo || e.riesgo===ui.fRiesgo) && (!ui.fAbog || e.abogado===ui.fAbog));
-}
-function nextPlazo(e){ return e.plazos.filter(p=>!p.hecho).sort((a,b)=>a.vence.localeCompare(b.vence))[0]; }
-
 function vAmparos(){
-  const list = filteredExps();
+  const all = S.exps;
+  const F = {
+    todos:{l:'En curso', f:e=>e.estado!=='Archivado'},
+    urgentes:{l:'Urgentes', f:e=>{const p=nextPlazo(e); return p && daysTo(p.vence)<=3;}},
+    cautelar:{l:'Con cautelar', f:e=>e.cautelar && e.estado!=='Archivado'},
+    mios:{l:'Míos', f:e=>e.abogado===S.user && e.estado!=='Archivado'},
+    archivados:{l:'Archivados', f:e=>e.estado==='Archivado'}
+  };
+  const list = all.filter(F[ui.filtro].f).sort((a,b)=>{ const pa=nextPlazo(a), pb=nextPlazo(b); return (pa?pa.vence:'9999').localeCompare(pb?pb.vence:'9999'); });
   return `
-  <div class="head"><div><h1>Amparos de salud</h1><div class="muted">${list.length} de ${S.exps.length} expedientes</div></div><button class="btn pri" data-act="nuevo">+ Nuevo amparo</button></div>
-  <div class="row">
-    <select id="fEstado" aria-label="Filtrar por estado"><option value="">Todos los estados</option>${ESTADOS.map(s=>`<option ${s===ui.fEstado?'selected':''}>${s}</option>`).join('')}</select>
-    <select id="fRiesgo" aria-label="Filtrar por riesgo"><option value="">Todo riesgo</option>${['alto','medio','bajo'].map(s=>`<option value="${s}" ${s===ui.fRiesgo?'selected':''}>Riesgo ${s}</option>`).join('')}</select>
-    <select id="fAbog" aria-label="Filtrar por responsable"><option value="">Todos los responsables</option>${staff().map(u=>`<option value="${u.id}" ${u.id===ui.fAbog?'selected':''}>${esc(u.nombre)}</option>`).join('')}</select>
-    ${(ui.q||ui.fEstado||ui.fRiesgo||ui.fAbog)?'<button class="btn sm" data-act="clearf">Limpiar filtros</button>':''}
-  </div>
-  <div class="tablewrap"><table>
-    <thead><tr><th>Expediente</th><th>Afiliado / prestación</th><th>Juzgado</th><th>Estado</th><th>Riesgo</th><th>Próximo plazo</th><th>Responsable</th></tr></thead>
-    <tbody>${list.map(e=>{const p=nextPlazo(e); const n=p?daysTo(p.vence):null; return `
-      <tr class="click" data-go="expediente-${e.id}" tabindex="0">
-        <td class="mono">${esc(e.numero)}${e.cautelar?'<div><span class="chip acc">Cautelar</span></div>':''}</td>
-        <td><b>${esc(e.afiliado)}</b><div class="small muted">${esc(e.prestacion)}</div></td>
-        <td class="small">${esc(e.juzgado)}</td>
-        <td><span class="chip">${esc(e.estado)}</span></td>
-        <td><span class="chip ${e.riesgo}">${e.riesgo}</span></td>
-        <td>${p?`<div class="due ${dueClass(n)}">${dueText(n)}</div><div class="small muted">${esc(p.desc)}</div>`:'<span class="muted">—</span>'}</td>
-        <td class="small">${esc(userName(e.abogado))}</td></tr>`;}).join('') || '<tr><td colspan="7" class="muted">Ningún expediente coincide con la búsqueda.</td></tr>'}
-    </tbody></table></div>`;
+  <div class="head"><div><h1>Amparos</h1><p class="sub">Tocá cualquier amparo para ver todo lo que tiene. Los más urgentes aparecen primero.</p></div>
+    <button class="btn pri big" data-act="nuevo">${ic('plus')} Cargar amparo</button></div>
+  <div class="chips">${Object.entries(F).map(([k,v])=>`<button class="chipbtn ${ui.filtro===k?'on':''}" data-filtro="${k}">${v.l} <span class="badge">${all.filter(v.f).length}</span></button>`).join('')}</div>
+  <div class="cases">${list.map(e=>{ const p=nextPlazo(e); const n=p?daysTo(p.vence):null; const u=p?urg(n):''; return `
+    <div class="case" data-go="expediente-${e.id}" tabindex="0" role="link">
+      <div class="bar ${u}"></div>
+      <div><div class="name">${esc(e.afiliado)}</div>
+        <div class="meta"><span>${esc(e.prestacion)}</span><span class="mono">${esc(e.numero)}</span><span>A cargo de ${esc(userName(e.abogado).split(' ')[0])}</span></div>
+        <div class="row" style="margin-top:8px"><span class="pill">${esc(e.estado)}</span>${e.cautelar?'<span class="pill acc">Con cautelar</span>':''}${e.riesgo==='alto'?'<span class="pill red">Riesgo alto</span>':''}</div></div>
+      <div class="right">${p?`<div class="when ${u}">${whenText(n)}</div><div class="small muted" style="max-width:240px">${esc(p.desc)}</div>`:'<span class="pill grn">Sin pendientes</span>'}</div>
+    </div>`;}).join('') || `<div class="card empty"><div class="ico g">${ic('folder','lg')}</div><b>No hay amparos en esta lista</b><span>Probá con otro filtro de arriba.</span></div>`}
+  </div>`;
+}
+
+function vVencimientos(){
+  const plazos = allPlazos();
+  const groups = [
+    ['Vencidos','late',p=>daysTo(p.vence)<0],
+    ['Hoy y mañana','soon',p=>{const n=daysTo(p.vence); return n>=0 && n<=1;}],
+    ['Esta semana','soon',p=>{const n=daysTo(p.vence); return n>=2 && n<=7;}],
+    ['Más adelante','okk',p=>daysTo(p.vence)>7]
+  ];
+  return `
+  <div><h1>Vencimientos</h1><p class="sub">Todo lo que hay que presentar o cumplir, ordenado por fecha. Cuando lo hagas, tocá "Hecho".</p></div>
+  ${groups.map(([t,c,f])=>{ const l = plazos.filter(f); if(!l.length) return ''; return `
+    <section class="card"><div class="row"><h2>${t}</h2><span class="badge ${c==='late'?'red':''}">${l.length}</span></div>
+      <div class="cases">${l.map(p=>taskRow(p)).join('')}</div></section>`; }).join('') || `<div class="card empty"><div class="ico g">${ic('check','lg')}</div><b>No hay vencimientos pendientes</b></div>`}`;
 }
 
 function vExpediente(id){
   const e = expById(id);
-  if(!e) return `<div class="card"><h2>No se encontró el expediente</h2><a href="#amparos">Volver a Amparos</a></div>`;
-  const t = ui.tab;
-  const tabs = [['datos','Datos'],['movimientos',`Movimientos (${e.movimientos.length})`],['documentos',`Documentos (${e.docs.length})`],['plazos',`Plazos (${e.plazos.filter(p=>!p.hecho).length})`],['ia','Asistente IA'],['huella','Huella del expediente']];
-  let body = '';
-  if(t==='datos') body = `
-    <dl class="dl">
-      <dt>Carátula</dt><dd>${esc(e.caratula)}</dd>
-      <dt>Afiliado</dt><dd>${esc(e.afiliado)} · <span class="mono">${esc(e.nroAf)}</span></dd>
-      <dt>Prestación reclamada</dt><dd>${esc(e.prestacion)}</dd>
-      <dt>Juzgado</dt><dd>${esc(e.juzgado)}</dd>
-      <dt>Inicio</dt><dd class="mono">${fmt(e.inicio)}</dd>
-      <dt>Monto estimado</dt><dd class="mono">${money(e.monto)}</dd>
-      <dt>Medida cautelar</dt><dd>${e.cautelar?'Otorgada, vigente':'No'}</dd>
-      <dt>Responsable</dt><dd>${esc(userName(e.abogado))}</dd>
-    </dl>
-    <div class="row"><label for="estSel" class="muted small">Cambiar estado</label>
-      <select id="estSel">${ESTADOS.map(s=>`<option ${s===e.estado?'selected':''}>${s}</option>`).join('')}</select>
-      <label for="riSel" class="muted small">Riesgo</label>
-      <select id="riSel">${['alto','medio','bajo'].map(s=>`<option ${s===e.riesgo?'selected':''}>${s}</option>`).join('')}</select>
-    </div>`;
-  if(t==='movimientos') body = `
-    <form class="form" id="movForm">
-      <label>Fecha<input type="date" id="mvF" value="${iso(today())}" required></label>
-      <label>Tipo<select id="mvT"><option>Notificación</option><option>Resolución</option><option>Escrito propio</option><option>Escrito de la actora</option><option>Interno</option></select></label>
-      <label class="full">Descripción<input type="text" id="mvD" required placeholder="Ej.: Se notifica providencia que tiene por presentado el informe"></label>
-      <div class="full"><button class="btn pri" type="submit">Agregar movimiento</button></div>
-    </form>
-    <div class="timeline">${[...e.movimientos].sort((a,b)=>b.fecha.localeCompare(a.fecha)).map(m=>`
-      <div class="tl"><div class="mono small">${fmt(m.fecha)}</div><div><span class="chip">${esc(m.tipo)}</span> ${esc(m.desc)}<div class="small muted">Cargado por ${esc(userName(m.user))}</div></div></div>`).join('')}</div>`;
-  if(t==='documentos') body = `
-    <div class="row"><label class="btn" for="fileIn">Subir documentos</label><input type="file" id="fileIn" multiple hidden>
-      <select id="docTipo" aria-label="Tipo de documento"><option>Escrito propio</option><option>Escrito de la actora</option><option>Resolución</option><option>Notificación</option><option>Prueba documental</option><option>Interno</option></select>
-      <span class="small muted">En el prototipo se guarda solo el nombre y el tamaño del archivo.</span></div>
-    <div class="tablewrap"><table style="min-width:520px"><thead><tr><th>Documento</th><th>Tipo</th><th>Fecha</th><th>Tamaño</th></tr></thead><tbody>
-      ${e.docs.map(d=>`<tr><td>${esc(d.nombre)}</td><td><span class="chip">${esc(d.tipo)}</span></td><td class="mono small">${fmt(d.fecha)}</td><td class="small muted">${esc(d.size)}</td></tr>`).join('') || '<tr><td colspan="4" class="muted">Sin documentos.</td></tr>'}
-    </tbody></table></div>`;
-  if(t==='plazos') body = `
-    <form class="form" id="plForm">
-      <label>Acto procesal<input type="text" id="plD" required placeholder="Ej.: Contestar traslado"></label>
-      <label>Vence<input type="date" id="plV" value="${dPlus(5)}" required></label>
-      <div class="full"><button class="btn pri" type="submit">Agregar plazo</button></div>
-    </form>
-    <div class="list">${[...e.plazos].sort((a,b)=>a.vence.localeCompare(b.vence)).map((p,i)=>{const n=daysTo(p.vence); const idx=e.plazos.indexOf(p); return `
-      <div class="li stripe ${p.hecho?'okk':(dueClass(n)||'okk')}"><div><b style="${p.hecho?'text-decoration:line-through;color:var(--muted)':''}">${esc(p.desc)}</b><div class="small muted mono">${fmt(p.vence)}</div></div>
-      <div class="row">${p.hecho?'<span class="chip bajo">Cumplido</span>':`<span class="due ${dueClass(n)}">${dueText(n)}</span><button class="btn sm" data-act="cumplir" data-i="${idx}">Marcar cumplido</button>`}</div></div>`;}).join('') || '<div class="muted">Sin plazos cargados.</div>'}</div>`;
-  if(t==='ia') body = `
-    <div class="notice small">En la versión real, el asistente lee los documentos del expediente, cita de dónde saca cada dato y deja registro en la auditoría. Acá muestra un ejemplo armado con los datos cargados.</div>
-    <div class="row"><button class="btn" data-ia="resumen">Resumir expediente</button><button class="btn" data-ia="paso">Sugerir próximo paso</button><button class="btn" data-ia="riesgo">Evaluar riesgo</button><a class="btn" href="#plantillas" data-tplfor="${e.id}">Redactar escrito</a></div>
-    ${ui.ia?`<div class="ia">${esc(ui.ia)}</div><div class="row"><button class="btn sm" data-act="copyia">Copiar</button><span class="small muted">Borrador generado: requiere revisión profesional.</span></div>`:''}`;
-  if(t==='huella'){
-    const evs = S.audit.filter(a=>a.objeto===e.numero);
-    body = `<div class="muted small">Todas las acciones registradas sobre este expediente, en orden. Se toman del registro general de auditoría.</div>
-    <div class="list">${evs.slice().reverse().map(a=>`<div class="li"><div><b>${esc(userName(a.user))}</b> · ${esc(a.accion)}<div class="small muted">${esc(a.detalle)}</div><div class="hash">#${a.n} · ${a.hash.slice(0,24)}…</div></div><div class="small mono muted" style="white-space:nowrap">${fmtTs(a.ts)}</div></div>`).join('') || '<div class="muted">Todavía no hay acciones registradas.</div>'}</div>`;
-  }
+  if(!e) return `<div class="card empty"><b>No encontramos ese expediente</b><a class="btn" href="#amparos">Volver a Amparos</a></div>`;
   const p = nextPlazo(e), n = p?daysTo(p.vence):null;
+  const si = ESTADOS.indexOf(e.estado);
+  const t = ui.tab;
+  const tabs = [['resumen','list','Resumen'],['novedades','clock',`Novedades (${e.movimientos.length})`],['documentos','file',`Documentos (${e.docs.length})`],['plazos','cal',`Plazos (${pending(e).length})`],['asistente','spark','Asistente'],['historial','history','Historial']];
+  let body = '';
+  if(t==='resumen') body = `
+    <div class="facts">
+      <div class="fact"><span>Afiliado</span><b>${esc(e.afiliado)}</b><div class="small muted mono">${esc(e.nroAf)}</div></div>
+      <div class="fact"><span>Qué reclama</span><b>${esc(e.prestacion)}</b></div>
+      <div class="fact"><span>Juzgado</span><b>${esc(e.juzgado)}</b></div>
+      <div class="fact"><span>Número de expediente</span><b class="mono">${esc(e.numero)}</b></div>
+      <div class="fact"><span>Fecha de inicio</span><b>${fmt(e.inicio)}</b></div>
+      <div class="fact"><span>Monto estimado</span><b>${money(e.monto)}</b></div>
+      <div class="fact"><span>Medida cautelar</span><b>${e.cautelar?'Sí, vigente':'No'}</b></div>
+      <div class="fact"><span>A cargo de</span><b>${esc(userName(e.abogado))}</b></div>
+    </div>
+    <div class="fld">¿Qué tan riesgoso es?
+      <div class="chips">${[['alto','Alto'],['medio','Medio'],['bajo','Bajo']].map(([k,l])=>`<button class="chipbtn ${e.riesgo===k?'on':''}" data-riesgo="${k}">${l}</button>`).join('')}</div></div>`;
+  if(t==='novedades') body = `
+    ${ui.addMov?`<form class="form card" id="movForm" style="box-shadow:none;background:var(--sunken)">
+      <label>¿Cuándo pasó?<input type="date" id="mvF" value="${iso(today())}" required></label>
+      <label>¿Qué tipo de novedad es?<select id="mvT"><option>Notificación</option><option>Resolución</option><option>Escrito propio</option><option>Escrito de la actora</option><option>Interno</option></select></label>
+      <label class="full">Contá brevemente qué pasó<input type="text" id="mvD" required placeholder="Ej.: El juzgado tuvo por presentado el informe"></label>
+      <div class="full row"><button class="btn pri" type="submit">${ic('check','sm')} Guardar novedad</button><button class="btn ghost" type="button" data-act="cancelmov">Cancelar</button></div>
+    </form>`:`<div><button class="btn pri" data-act="addmov">${ic('plus','sm')} Agregar novedad</button></div>`}
+    <div class="timeline">${[...e.movimientos].sort((a,b)=>b.fecha.localeCompare(a.fecha)).map(m=>`
+      <div class="tl"><div><b>${fmt(m.fecha)}</b></div><div><span class="pill">${esc(m.tipo)}</span> ${esc(m.desc)}<div class="small muted">Lo cargó ${esc(userName(m.user))}</div></div></div>`).join('')}</div>`;
+  if(t==='documentos') body = `
+    <label class="drop" id="drop" for="fileIn">${ic('upload','lg')}<b>Arrastrá archivos acá o tocá para elegirlos</b><span class="small">PDF, Word o imágenes. En esta versión de prueba se guarda solo el nombre.</span></label>
+    <input type="file" id="fileIn" multiple hidden>
+    <div>${e.docs.map(d=>`<div class="doc"><div class="ico a" style="width:40px;height:40px">${ic('file')}</div><div style="flex:1"><b>${esc(d.nombre)}</b><div class="small muted">${esc(d.tipo)} · ${fmt(d.fecha)} · ${esc(d.size)}</div></div></div>`).join('') || '<div class="empty small">Todavía no hay documentos.</div>'}</div>`;
+  if(t==='plazos') body = `
+    ${ui.addPlazo?`<form class="form card" id="plForm" style="box-shadow:none;background:var(--sunken)">
+      <label class="full">¿Qué hay que hacer?<input type="text" id="plD" required placeholder="Ej.: Contestar traslado"></label>
+      <div class="fld full">¿Para cuándo?
+        <div class="chips">${[[2,'En 48 hs'],[5,'En 5 días'],[10,'En 10 días']].map(([d,l])=>`<button type="button" class="chipbtn" data-quick="${d}">${l}</button>`).join('')}</div>
+        <input type="date" id="plV" value="${dPlus(5)}" required style="max-width:220px"></div>
+      <div class="full row"><button class="btn pri" type="submit">${ic('check','sm')} Guardar plazo</button><button class="btn ghost" type="button" data-act="cancelplazo">Cancelar</button></div>
+    </form>`:`<div><button class="btn pri" data-act="addplazo">${ic('plus','sm')} Agregar plazo</button></div>`}
+    <div class="cases">${pending(e).map(q=>taskRow({...q, exp:e, idx:e.plazos.indexOf(q)}, false)).join('') || '<div class="empty small">No hay plazos pendientes.</div>'}</div>
+    ${e.plazos.some(q=>q.hecho)?`<details><summary class="muted small" style="cursor:pointer">Ver plazos ya cumplidos (${e.plazos.filter(q=>q.hecho).length})</summary><div class="list">${e.plazos.filter(q=>q.hecho).map(q=>`<div class="li"><span style="text-decoration:line-through" class="muted">${esc(q.desc)}</span><span class="pill grn">${ic('check','sm')} Hecho</span></div>`).join('')}</div></details>`:''}`;
+  if(t==='asistente') body = `
+    <div class="notice">${ic('spark')}<div>Elegí qué necesitás y el asistente te lo prepara. <span class="muted">En esta versión de prueba las respuestas son de ejemplo; en la versión real lee los documentos del expediente.</span></div></div>
+    <div class="grid g3">
+      <button class="action" data-ia="resumen"><div class="ico v">${ic('list')}</div><b>Resumime el caso</b><span>Qué pasó hasta ahora, en simple.</span></button>
+      <button class="action" data-ia="paso"><div class="ico v">${ic('next')}</div><b>¿Qué hago ahora?</b><span>Los próximos pasos, en orden.</span></button>
+      <button class="action" data-ia="riesgo"><div class="ico v">${ic('alert')}</div><b>¿Qué tan riesgoso es?</b><span>Los puntos a cuidar.</span></button>
+    </div>
+    ${ui.ia?`<div class="ia">${esc(ui.ia)}</div><div class="row"><button class="btn sm" data-act="copyia">${ic('copy','sm')} Copiar</button><span class="small muted">Es un borrador: revisalo antes de usarlo.</span></div>`:''}`;
+  if(t==='historial'){
+    const evs = S.audit.filter(a=>a.objeto===e.numero);
+    body = `<p class="muted small">Todo lo que se hizo sobre este expediente, quién y cuándo. Este registro no se puede borrar ni modificar.</p>
+    <div class="list">${evs.slice().reverse().map(a=>`<div class="li"><div><b>${esc(userName(a.user))}</b> · ${esc(a.accion)}<div class="small muted">${esc(a.detalle)}</div></div><div class="small muted" style="white-space:nowrap">${fmtTs(a.ts)}</div></div>`).join('') || '<div class="empty small">Todavía no hay acciones registradas.</div>'}</div>`;
+  }
   return `
-  <div><a href="#amparos" class="small">← Amparos de salud</a></div>
-  <div class="head"><div><div class="mono muted">${esc(e.numero)}</div><h1>${esc(e.caratula)}</h1>
-    <div class="row" style="margin-top:8px"><span class="chip">${esc(e.estado)}</span><span class="chip ${e.riesgo}">Riesgo ${e.riesgo}</span>${e.cautelar?'<span class="chip acc">Cautelar vigente</span>':''}${p?`<span class="due ${dueClass(n)}">Próximo: ${esc(p.desc)} · ${dueText(n)}</span>`:''}</div></div>
-    <a class="btn pri" href="#plantillas" data-tplfor="${e.id}">Generar escrito</a></div>
+  <div><a href="#amparos" class="btn ghost sm" style="padding-left:0">${ic('back','sm')} Volver a Amparos</a></div>
+  <div class="head"><div><div class="muted mono">${esc(e.numero)}</div><h1>${esc(e.afiliado)}</h1><p class="sub">${esc(e.prestacion)} · ${esc(e.juzgado)}</p></div>
+    <div class="row">${e.cautelar?'<span class="pill acc">Con cautelar</span>':''}<span class="pill ${e.riesgo==='alto'?'red':e.riesgo==='medio'?'yel':'grn'}">Riesgo ${e.riesgo}</span></div></div>
+
+  ${p?`<section class="next ${n<0?'late':''}">
+    <div class="ico ${n<0?'r':n<=3?'y':'a'}">${ic(n<0?'alert':'clock','lg')}</div>
+    <div class="txt"><div class="lbl">Lo próximo que hay que hacer</div><h2>${esc(p.desc)}</h2><div class="when ${urg(n)}">${whenText(n)} · ${fmtLong(p.vence)}</div></div>
+    <div class="row"><button class="btn ok big" data-act="done" data-e="${e.id}" data-i="${e.plazos.indexOf(p)}">${ic('check')} Ya lo hice</button>
+      <button class="btn big" data-act="writefor" data-e="${e.id}">${ic('pen')} Hacer el escrito</button></div>
+  </section>`:`<section class="next"><div class="ico g">${ic('check','lg')}</div><div class="txt"><div class="lbl">Lo próximo</div><h2>No hay nada pendiente</h2><div class="muted">Cuando llegue una novedad, cargala para no perder el hilo.</div></div><button class="btn big" data-act="addplazo" data-tabgo="plazos">${ic('plus')} Agregar plazo</button></section>`}
+
+  <section class="card"><div class="row" style="justify-content:space-between"><h3>¿En qué etapa está?</h3><span class="small muted">Tocá una etapa para cambiarla</span></div>
+    <div class="steps">${ESTADOS.map((s,i)=>`<button class="step ${i<si?'done':i===si?'cur':''}" data-estado="${i}" title="${esc(s)}"><span class="dot">${i<si?'✓':i+1}</span>${ESTADO_CORTO[i]}</button>`).join('')}</div>
+  </section>
+
   <section class="card">
-    <div class="tabs" role="tablist">${tabs.map(([k,l])=>`<button role="tab" data-tab="${k}" class="${t===k?'on':''}" aria-selected="${t===k}">${l}</button>`).join('')}</div>
+    <div class="tabs" role="tablist">${tabs.map(([k,i,l])=>`<button role="tab" data-tab="${k}" class="${t===k?'on':''}" aria-selected="${t===k}">${ic(i,'sm')} ${l}</button>`).join('')}</div>
     ${body}
   </section>`;
 }
@@ -568,88 +738,98 @@ function vExpediente(id){
 function iaText(kind, e){
   const movs = [...e.movimientos].sort((a,b)=>a.fecha.localeCompare(b.fecha));
   const p = nextPlazo(e);
-  if(kind==='resumen') return `RESUMEN · ${e.numero}\n\n${e.afiliado} (afiliado ${e.nroAf}) promovió acción de amparo reclamando ${e.prestacion.toLowerCase()} ante el ${e.juzgado}. Inicio: ${fmt(e.inicio)}.\n\nEstado actual: ${e.estado}.${e.cautelar?' Hay medida cautelar otorgada y vigente.':' No hay medida cautelar dictada.'}\n\nMovimientos relevantes:\n${movs.map(m=>`• ${fmt(m.fecha)} — ${m.desc}`).join('\n')}\n\nDocumentos en el expediente: ${e.docs.length ? e.docs.map(d=>d.nombre).join(', ') : 'ninguno cargado'}.\n${p?`\nPróximo vencimiento: ${p.desc} (${fmt(p.vence)}, ${dueText(daysTo(p.vence))}).`:''}`;
+  if(kind==='resumen') return `RESUMEN DEL CASO\n\n${e.afiliado} presentó un amparo para que se le cubra: ${e.prestacion.toLowerCase()}. Tramita en el ${e.juzgado} desde el ${fmt(e.inicio)}.\n\nHoy está en la etapa: ${e.estado}.${e.cautelar?' El juez ya ordenó una medida cautelar, así que hay que cumplir la cobertura mientras dura el juicio.':' No hay medida cautelar.'}\n\nLo que pasó hasta ahora:\n${movs.map(m=>`• ${fmt(m.fecha)}: ${m.desc}`).join('\n')}\n${p?`\nLo próximo: ${p.desc} (${whenText(daysTo(p.vence)).toLowerCase()}, ${fmt(p.vence)}).`:''}`;
   if(kind==='paso'){
     const n = p?daysTo(p.vence):null;
-    let s = `PRÓXIMO PASO SUGERIDO · ${e.numero}\n\n`;
-    if(p && n<0) s += `1. Urgente: el plazo "${p.desc}" está vencido desde el ${fmt(p.vence)}. Verificar si se cumplió y, si no, presentar de inmediato y evaluar el riesgo de astreintes.\n`;
-    else if(p) s += `1. Preparar "${p.desc}" antes del ${fmt(p.vence)} (${dueText(n)}).\n`;
-    if(e.cautelar) s += `2. Confirmar con Auditoría Médica la entrega efectiva de la prestación y acreditar el cumplimiento en autos (plantilla "Acredita cumplimiento de medida cautelar").\n`;
-    if(e.estado==='Informe art. 8 pendiente') s += `2. Pedir al área técnica el legajo completo del afiliado y usar la plantilla "Presenta informe art. 8 Ley 16.986".\n`;
-    if(e.estado==='Sentencia') s += `2. Analizar la sentencia y decidir sobre la apelación dentro del plazo.\n`;
-    s += `3. Registrar el resultado como movimiento para mantener la huella del expediente completa.`;
+    let s = `PRÓXIMOS PASOS\n\n`;
+    if(p && n<0) s += `1. URGENTE: "${p.desc}" venció el ${fmt(p.vence)}. Confirmá si se cumplió. Si no, presentalo hoy y avisá al abogado a cargo por el riesgo de multas (astreintes).\n`;
+    else if(p) s += `1. Preparar "${p.desc}" antes del ${fmt(p.vence)}.\n`;
+    if(e.cautelar) s += `2. Pedirle a Auditoría Médica la constancia de que la prestación se entregó, y presentarla en el juzgado (escrito "Acreditar cumplimiento de cautelar").\n`;
+    if(e.estado==='Informe art. 8 pendiente') s += `2. Pedir al área técnica el legajo del afiliado y armar el "Informe del art. 8".\n`;
+    if(e.estado==='Sentencia') s += `2. Leer la sentencia y decidir con el abogado a cargo si se apela, dentro del plazo.\n`;
+    s += `3. Cuando esté hecho, tocá "Ya lo hice" y cargá la novedad, así todo el equipo lo ve.`;
     return s;
   }
   const pts = (e.riesgo==='alto'?3:e.riesgo==='medio'?2:1) + (e.cautelar?1:0) + (p && daysTo(p.vence)<0 ? 2 : 0);
-  return `EVALUACIÓN DE RIESGO · ${e.numero}\n\nRiesgo asignado: ${e.riesgo.toUpperCase()}\nIndicadores:\n• Prestación: ${e.prestacion}${/oncol|Discapacidad|domiciliaria/.test(e.prestacion)?' (tiende a resolverse a favor del afiliado en jurisprudencia de la materia)':''}\n• Medida cautelar: ${e.cautelar?'sí, con riesgo de sanciones si no se cumple':'no'}\n• Plazos vencidos: ${e.plazos.filter(x=>!x.hecho && daysTo(x.vence)<0).length}\n• Monto estimado: ${money(e.monto)}\n\nPuntaje orientativo: ${pts}/6. ${pts>=4?'Se recomienda revisión del abogado a cargo hoy.':'Seguimiento habitual.'}`;
+  return `¿QUÉ TAN RIESGOSO ES?\n\nNivel: ${pts>=4?'ALTO':pts>=3?'MEDIO':'BAJO'} (${pts} de 6 puntos)\n\nPuntos a cuidar:\n• Qué se reclama: ${e.prestacion}.${/oncol|Discapacidad|domiciliaria/.test(e.prestacion)?' En estos temas los jueces suelen darle la razón al afiliado.':''}\n• Medida cautelar: ${e.cautelar?'sí. Si no se cumple, puede haber multas.':'no.'}\n• Plazos vencidos: ${e.plazos.filter(x=>!x.hecho && daysTo(x.vence)<0).length}.\n• Monto en juego: ${money(e.monto)}.\n\n${pts>=4?'Recomendación: que el abogado a cargo lo revise hoy.':'Recomendación: seguimiento normal.'}`;
 }
 
-function vPlantillas(){
-  const e = expById(ui.tplExp) || S.exps[0];
+function vEscritos(){
+  const step = !ui.tpl ? 1 : !ui.tplExp ? 2 : 3;
   const tpl = TEMPLATES.find(t=>t.id===ui.tpl);
-  const vars = {abogado:userName(e.abogado), caratula:e.caratula, numero:e.numero, juzgado:e.juzgado, prestacion:e.prestacion, afiliado:e.afiliado, nroAf:e.nroAf};
-  if(!ui.tplText) ui.tplText = tpl.cuerpo.replace(/\{(\w+)\}/g, (_,k)=>vars[k] ?? `{${k}}`);
+  const e = expById(ui.tplExp);
+  let body = '';
+  if(step===1) body = `<h2>1. ¿Qué escrito necesitás?</h2>
+    <div class="grid g3">${TEMPLATES.map(t=>`<button class="action" data-tpl="${t.id}"><div class="ico v">${ic(t.icon)}</div><b>${esc(t.nombre)}</b><span>${esc(t.para)}</span></button>`).join('')}</div>`;
+  if(step===2) body = `<div class="row"><button class="btn ghost sm" data-act="tplback1">${ic('back','sm')} Cambiar escrito</button><span class="pill acc">${esc(tpl.nombre)}</span></div>
+    <h2>2. ¿Para qué amparo es?</h2>
+    <div class="cases">${active().map(x=>`<button class="case" data-tplexp="${x.id}" style="text-align:left;font:inherit;color:inherit"><div class="bar"></div><div><div class="name">${esc(x.afiliado)}</div><div class="meta"><span class="mono">${esc(x.numero)}</span><span>${esc(x.prestacion)}</span></div></div><div class="right">${ic('next')}</div></button>`).join('')}</div>`;
+  if(step===3){
+    const vars = {abogado:userName(e.abogado), caratula:e.caratula, numero:e.numero, juzgado:e.juzgado, prestacion:e.prestacion, afiliado:e.afiliado, nroAf:e.nroAf};
+    if(!ui.tplText) ui.tplText = tpl.cuerpo.replace(/\{(\w+)\}/g, (_,k)=>vars[k] ?? `{${k}}`);
+    const faltan = (ui.tplText.match(/\[[^\]]+\]/g)||[]).length;
+    body = `<div class="row"><button class="btn ghost sm" data-act="tplback2">${ic('back','sm')} Cambiar amparo</button><span class="pill acc">${esc(tpl.nombre)}</span><span class="pill">${esc(e.afiliado)}</span></div>
+    <h2>3. Revisalo y completalo</h2>
+    <div class="notice ${faltan?'':'good'}" id="faltan">${ic(faltan?'pen':'check')}<div>${faltan?`Ya completamos los datos del expediente. ${faltan===1?'Te queda':'Te quedan'} <b>${faltan}</b> ${faltan===1?'parte':'partes'} para escribir vos: están entre [CORCHETES].`:'¡Listo! No quedan partes por completar.'}</div></div>
+    <textarea id="tplText" rows="20" style="font-family:var(--f-mono);font-size:14px;line-height:1.6">${esc(ui.tplText)}</textarea>
+    <div class="row"><button class="btn pri big" data-act="tplcopy">${ic('copy')} Copiar para pegar en Word</button><button class="btn big" data-act="tplsave">${ic('file')} Guardar en el expediente</button><button class="btn ghost" data-act="tplreset">Empezar de nuevo</button></div>`;
+  }
   return `
-  <div class="head"><div><h1>Plantillas y escritos</h1><div class="muted">Elegí un modelo y un expediente: los datos se completan solos. Lo que queda entre corchetes es para completar a mano.</div></div></div>
-  <div class="grid gtpl">
-    <section class="card">
-      <h2>Modelo</h2>
-      <div class="list">${TEMPLATES.map(t=>`<label class="li switch"><span><input type="radio" name="tpl" value="${t.id}" ${t.id===ui.tpl?'checked':''}> ${esc(t.nombre)}</span></label>`).join('')}</div>
-      <label class="small muted" for="tplExp">Expediente</label>
-      <select id="tplExp">${S.exps.map(x=>`<option value="${x.id}" ${x.id===e.id?'selected':''}>${esc(x.numero)} · ${esc(x.afiliado)}</option>`).join('')}</select>
-      <div class="small muted">Variables disponibles: ${Object.keys(vars).map(k=>`<span class="mono">{${k}}</span>`).join(' ')}</div>
-    </section>
-    <section class="card">
-      <div class="head"><h2>${esc(tpl.nombre)}</h2><div class="row"><button class="btn" data-act="tplreset">Regenerar</button><button class="btn" data-act="tplcopy">Copiar</button><button class="btn pri" data-act="tplsave">Guardar en el expediente</button></div></div>
-      <textarea id="tplText" rows="22" class="mono" style="font-size:13px">${esc(ui.tplText)}</textarea>
-    </section>
-  </div>`;
+  <div><h1>Escritos</h1><p class="sub">En tres pasos: elegís el escrito, elegís el amparo, y el texto se completa solo con los datos.</p></div>
+  <div class="wsteps" style="max-width:420px">${[1,2,3].map(i=>`<span class="${i<=step?'on':''}"></span>`).join('')}</div>
+  <section class="card">${body}</section>`;
 }
 
 function count(arr, key){ const m = {}; arr.forEach(x=>{ m[x[key]] = (m[x[key]]||0)+1; }); return Object.entries(m).sort((a,b)=>b[1]-a[1]); }
 function bars(title, rows){
   const max = Math.max(1, ...rows.map(r=>r[1]));
-  return `<section class="card"><h2>${title}</h2><div class="grid" style="gap:8px">${rows.map(([k,v])=>`<div class="bar"><span class="small">${esc(k)}</span><div class="track"><div class="fill" style="width:${v/max*100}%"></div></div><span class="mono small">${v}</span></div>`).join('')}</div></section>`;
+  return `<section class="card"><h2>${title}</h2><div class="bars">${rows.map(([k,v])=>`<div class="barrow"><span class="small">${esc(k)}</span><div class="track"><div class="fill" style="width:${v/max*100}%"></div></div><b class="mono">${v}</b></div>`).join('')}</div></section>`;
 }
 function vInformes(){
-  const act = S.exps.filter(e=>e.estado!=='Archivado');
-  const resp = count(act.map(e=>({r:userName(e.abogado)})),'r');
+  const act = active();
+  const plazos = allPlazos();
   return `
-  <div class="head"><div><h1>Informes</h1><div class="muted">Corte al ${fmt(iso(today()))} · ${act.length} amparos activos</div></div>
-    <div class="row"><button class="btn" data-act="csv">Copiar planilla (CSV)</button></div></div>
-  <div class="grid g2">
-    ${bars('Por estado', count(S.exps,'estado'))}
-    ${bars('Por prestación reclamada', count(S.exps,'prestacion'))}
-    ${bars('Activos por riesgo', count(act,'riesgo'))}
-    ${bars('Activos por responsable', resp)}
+  <div class="head"><div><h1>Informes</h1><p class="sub">Una foto de cómo vienen los amparos al día de hoy.</p></div>
+    <button class="btn" data-act="csv">${ic('copy','sm')} Copiar planilla para Excel</button></div>
+  <div class="grid g4">
+    <div class="card"><span class="muted">Amparos en curso</span><b style="font-size:34px">${act.length}</b></div>
+    <div class="card"><span class="muted">Con cautelar</span><b style="font-size:34px">${act.filter(e=>e.cautelar).length}</b></div>
+    <div class="card"><span class="muted">Plazos vencidos</span><b style="font-size:34px;color:${plazos.some(p=>daysTo(p.vence)<0)?'var(--danger)':'inherit'}">${plazos.filter(p=>daysTo(p.vence)<0).length}</b></div>
+    <div class="card"><span class="muted">Monto reclamado</span><b style="font-size:24px">${money(act.reduce((a,e)=>a+(+e.monto||0),0))}</b></div>
   </div>
-  <section class="card"><h2>Vencimientos de los próximos 30 días</h2>
-    <div class="tablewrap"><table style="min-width:560px"><thead><tr><th>Vence</th><th>Acto</th><th>Expediente</th><th>Responsable</th></tr></thead><tbody>
-    ${allPlazos().filter(p=>daysTo(p.vence)<=30).map(p=>{const n=daysTo(p.vence);return `<tr><td class="due ${dueClass(n)}">${fmt(p.vence)}</td><td>${esc(p.desc)}</td><td class="mono small"><a href="#expediente-${p.exp.id}">${esc(p.exp.numero)}</a></td><td class="small">${esc(userName(p.exp.abogado))}</td></tr>`;}).join('')}
-    </tbody></table></div></section>`;
+  <div class="grid g2">
+    ${bars('¿En qué etapa están?', count(S.exps,'estado'))}
+    ${bars('¿Qué se reclama?', count(S.exps,'prestacion'))}
+    ${bars('¿Quién los lleva?', count(act.map(e=>({r:userName(e.abogado)})),'r'))}
+    ${bars('Riesgo de los que están en curso', count(act.map(e=>({r:'Riesgo '+e.riesgo})),'r'))}
+  </div>`;
 }
 
-function vAuditoria(){
+function vHistorial(){
   const v = ui.verify;
   return `
-  <div class="head"><div><h1>Auditoría</h1><div class="muted">Cada acción queda registrada con usuario, fecha y hora. Cada registro incluye la huella (SHA-256) del anterior, así que cualquier alteración rompe la cadena.</div></div>
-    <div class="row"><button class="btn pri" data-act="verify">Verificar integridad</button><button class="btn danger" data-act="tamper">Simular alteración</button></div></div>
-  ${v?`<div class="notice ${v.ok?'good':'bad'}">${v.ok?`Cadena íntegra: los ${S.audit.length} registros coinciden con sus huellas.`:`Alteración detectada en el registro #${v.n}. A partir de ahí la cadena no coincide.`}</div>`:''}
-  <div class="tablewrap"><table><thead><tr><th>#</th><th>Fecha y hora</th><th>Usuario</th><th>Acción</th><th>Sobre</th><th>Detalle</th><th>Huella</th></tr></thead><tbody>
-  ${S.audit.slice().reverse().map(a=>`<tr><td class="mono small">${a.n}</td><td class="mono small" style="white-space:nowrap">${fmtTs(a.ts)}</td><td class="small">${esc(userName(a.user))}</td><td>${esc(a.accion)}</td><td class="mono small">${esc(a.objeto)}</td><td class="small">${esc(a.detalle)}</td><td class="hash" title="${a.hash}">${a.hash.slice(0,16)}…</td></tr>`).join('')}
-  </tbody></table></div>`;
+  <div><h1>Historial de cambios</h1><p class="sub">Cada cosa que se hace en Fojas queda anotada: quién, qué y cuándo. Nadie puede borrar ni modificar este historial sin que se note.</p></div>
+  <section class="card" style="flex-direction:row;align-items:center;gap:16px;flex-wrap:wrap">
+    <div class="ico ${v?(v.ok?'g':'r'):'a'}">${ic(v?(v.ok?'shield':'alert'):'shield','lg')}</div>
+    <div style="flex:1;min-width:240px">${v?(v.ok?`<b>Todo en orden.</b><div class="muted small">Revisamos los ${S.audit.length} registros y ninguno fue alterado.</div>`:`<b style="color:var(--danger)">Alguien modificó el registro N° ${v.n}.</b><div class="muted small">Fojas lo detectó porque cada registro está encadenado con el anterior.</div>`):`<b>¿Querés comprobar que nadie tocó el historial?</b><div class="muted small">Tarda un segundo.</div>`}</div>
+    <button class="btn pri" data-act="verify">Comprobar ahora</button>
+    <button class="btn ghost danger small" data-act="tamper" title="Solo para la demostración">Probar: simular una alteración</button>
+  </section>
+  <section class="card"><div class="list">${S.audit.slice().reverse().map(a=>`
+    <div class="li"><div style="display:flex;gap:12px"><div class="avatar" style="width:34px;height:34px;font-size:13px;flex:none">${initials(userName(a.user))}</div>
+      <div><b>${esc(userName(a.user))}</b> · ${esc(a.accion)}<div class="small muted">${esc(a.objeto)} — ${esc(a.detalle)}</div><div class="hash">Registro N° ${a.n} · huella ${a.hash.slice(0,16)}…</div></div></div>
+      <div class="small muted" style="white-space:nowrap">${fmtTs(a.ts)}</div></div>`).join('')}</div></section>`;
 }
 
 function vModulos(){
   return `
-  <div class="head"><div><h1>Módulos</h1><div class="muted">Cada cliente activa solo las áreas que necesita. Los módulos comparten el núcleo: usuarios, documentos, plazos, plantillas, informes y auditoría.</div></div></div>
+  <div><h1>Módulos</h1><p class="sub">Cada organización usa solo las áreas que necesita. Prendé o apagá un módulo y aparece en el menú.</p></div>
   <div class="grid g2">${MODULES.map(m=>`
     <section class="card mod ${S.modules[m.id]?'active':''}">
-      <div class="head"><h2>${esc(m.nombre)}</h2>${m.disponible?'<span class="chip bajo">Disponible</span>':'<span class="chip">En desarrollo</span>'}</div>
-      <div class="muted">${esc(m.desc)}</div>
-      <label class="switch"><input type="checkbox" data-mod="${m.id}" ${S.modules[m.id]?'checked':''} ${m.id==='amparos'?'disabled':''}> ${S.modules[m.id]?'Activo para este cliente':'Inactivo'}</label>
-      ${!m.disponible && S.modules[m.id]?'<div class="small muted">Aparece en el menú como "próx.": en el prototipo solo está construido Amparos.</div>':''}
-      ${m.id==='amparos'?'<div class="small muted">Módulo base de este plan: no se puede desactivar en el prototipo.</div>':''}
+      <div class="row"><div class="ico ${S.modules[m.id]?'a':'y'}">${ic(m.icon)}</div><h2 style="flex:1">${esc(m.nombre)}</h2>${m.disponible?'<span class="pill grn">Disponible</span>':'<span class="pill">Próximamente</span>'}</div>
+      <p class="muted">${esc(m.desc)}</p>
+      <label class="switch"><input type="checkbox" data-mod="${m.id}" ${S.modules[m.id]?'checked':''} ${m.id==='amparos'?'disabled':''}> ${S.modules[m.id]?'Activado':'Apagado'}</label>
+      ${m.id==='amparos'?'<span class="small muted">Es el módulo principal de esta versión.</span>':''}
     </section>`).join('')}</div>`;
 }
 
@@ -659,202 +839,286 @@ CCF 6188/2026;Vera, Gonzalo;Discapacidad (Ley 24.901);Juzg. Nac. Civ. y Com. Fed
 function vRespaldo(){
   const bm = ui.backupMsg, cm = ui.csvMsg;
   return `
-  <div class="head"><div><h1>Respaldo y migración</h1><div class="muted">Copias de seguridad cifradas y carga de expedientes desde otros sistemas.</div></div></div>
+  <div><h1>Copias y migración</h1><p class="sub">Guardá una copia de seguridad o traé expedientes desde otro sistema.</p></div>
   <div class="grid g2">
-    <section class="card"><h2>Copia de seguridad cifrada</h2>
-      <div class="muted small">Se cifra en tu navegador con AES-256 y una contraseña. Sin la contraseña, el contenido no se puede leer. En la versión real las copias son automáticas y quedan guardadas en un servidor aparte.</div>
-      <label class="small muted" for="bkPass">Contraseña</label><input type="password" id="bkPass" autocomplete="new-password" placeholder="Mínimo 8 caracteres" value="${esc(ui.bkPass||'')}">
-      <div class="row"><button class="btn pri" data-act="backup">Generar copia cifrada</button><button class="btn" data-act="restore">Restaurar desde texto</button></div>
+    <section class="card"><div class="row"><div class="ico a">${ic('lock')}</div><h2>Copia de seguridad</h2></div>
+      <p class="muted small">Elegí una contraseña y generamos una copia cifrada de todo. Sin esa contraseña nadie la puede leer, así que no la pierdas.</p>
+      <label class="fld" for="bkPass">Contraseña para la copia<input type="password" id="bkPass" autocomplete="new-password" placeholder="Mínimo 8 caracteres" value="${esc(ui.bkPass||'')}"></label>
+      <div class="row"><button class="btn pri" data-act="backup">Generar copia</button><button class="btn" data-act="restore">Recuperar una copia</button></div>
       ${bm?`<div class="notice ${bm.ok?'good':'bad'}">${esc(bm.t)}</div>`:''}
-      <textarea id="bkOut" rows="6" class="mono small" placeholder="Acá aparece la copia cifrada. Para restaurar, pegá una copia y usá la misma contraseña.">${esc(ui.backupOut)}</textarea>
-      <div class="row"><button class="btn sm" data-act="copybk">Copiar copia cifrada</button><span class="small muted">El prototipo no puede descargar archivos: copiá el texto y guardalo.</span></div>
+      <textarea id="bkOut" rows="5" class="small" style="font-family:var(--f-mono)" placeholder="Acá aparece la copia. Para recuperar una, pegala acá y usá la misma contraseña.">${esc(ui.backupOut)}</textarea>
+      <div><button class="btn sm" data-act="copybk">${ic('copy','sm')} Copiar la copia</button></div>
     </section>
-    <section class="card"><h2>Migrar expedientes desde otro sistema</h2>
-      <div class="muted small">Pegá una planilla exportada desde Lex Doctor, Excel u otra app (separada por punto y coma). Columnas: numero; afiliado; prestacion; juzgado; estado. En la versión real hay un importador por sistema, que también trae movimientos y documentos.</div>
-      <textarea id="csvIn" rows="8" class="mono small" placeholder="numero;afiliado;prestacion;juzgado;estado"></textarea>
-      <div class="row"><button class="btn" data-act="csvsample">Cargar ejemplo</button><button class="btn pri" data-act="csvimport">Importar</button></div>
+    <section class="card"><div class="row"><div class="ico v">${ic('upload')}</div><h2>Traer expedientes de otro sistema</h2></div>
+      <p class="muted small">Exportá tus expedientes desde Lex Doctor o Excel como planilla, y pegala acá. Columnas: número, afiliado, prestación, juzgado y estado, separadas por punto y coma.</p>
+      <textarea id="csvIn" rows="6" class="small" style="font-family:var(--f-mono)" placeholder="numero;afiliado;prestacion;juzgado;estado"></textarea>
+      <div class="row"><button class="btn" data-act="csvsample">Ver un ejemplo</button><button class="btn pri" data-act="csvimport">Traer expedientes</button></div>
       ${cm?`<div class="notice ${cm.ok?'good':'bad'}">${esc(cm.t)}</div>`:''}
     </section>
   </div>`;
+}
+
+function vUsuarios(){
+  if(!isAdmin()) return `<div class="card empty"><b>Esta sección es solo para el administrador.</b></div>`;
+  const m = ui.userMsg;
+  return `
+  <div><h1>Usuarios</h1><p class="sub">Quién puede entrar a Fojas. Las contraseñas se guardan cifradas: nadie puede verlas, ni el administrador.</p></div>
+  ${m?`<div class="notice ${m.ok?'good':'bad'}">${m.html||esc(m.t)}</div>`:''}
+  <div class="grid g3">${S.users.map(u=>{ const l = (S.lock||{})[u.id]; const locked = l && l.until > Date.now(); return `
+    <section class="card"><div class="row"><div class="avatar">${initials(u.nombre)}</div><div style="flex:1"><b>${esc(u.nombre)}</b><div class="small muted">${esc(u.rol)} · <span class="mono">${esc(u.id)}</span></div></div></div>
+      <div class="row">${u.activo?(locked?'<span class="pill yel">Bloqueado</span>':'<span class="pill grn">Puede entrar</span>'):'<span class="pill">Desactivado</span>'}${u.mustChange?'<span class="pill">Debe cambiar su contraseña</span>':''}</div>
+      ${u.id===S.user?'<span class="small muted">Sos vos</span>':`<div class="row"><button class="btn sm" data-act="ureset" data-u="${u.id}">${ic('key','sm')} Nueva contraseña</button><button class="btn sm" data-act="utoggle" data-u="${u.id}">${u.activo?'Desactivar':'Activar'}</button>${locked?`<button class="btn sm" data-act="uunlock" data-u="${u.id}">Desbloquear</button>`:''}</div>`}
+    </section>`;}).join('')}</div>
+  <section class="card"><h2>Agregar una persona</h2>
+    <form class="form" id="userForm">
+      <label>Nombre y apellido<input type="text" id="nuNom" required></label>
+      <label>Usuario para entrar <span class="hint">minúsculas, sin espacios</span><input type="text" id="nuId" required pattern="[a-z0-9._-]{3,30}" placeholder="ej.: mlopez"></label>
+      <label>Rol<select id="nuRol"><option>Abogada/o a cargo</option><option>Analista legal</option><option>Procurador</option><option>Administrador</option></select></label>
+      <div class="full"><button class="btn pri" type="submit">${ic('plus','sm')} Agregar</button> <span class="small muted">Le vamos a dar una contraseña provisoria que cambia la primera vez que entra.</span></div>
+    </form></section>`;
 }
 
 function vIngreso(){
   return `
   <div class="login">
     <div class="pitch">
-      <div class="brand" style="padding:0"><div class="mark" style="background:var(--accent-ink);color:var(--accent)">F</div><b style="font-size:20px">Fojas</b></div>
-      <h1>Gestión jurídica modular, con huella de cada acción</h1>
-      <ul>
-        <li>Expedientes, plazos y documentos en un solo lugar</li>
-        <li>Activá solo los módulos de tu área: amparos, administrativos, contratos</li>
-        <li>Escritos generados con los datos del expediente y asistencia de IA</li>
-        <li>Auditoría a prueba de alteraciones y respaldos cifrados</li>
-      </ul>
+      <div class="brand" style="padding:0"><div class="mark" style="background:var(--accent-ink);color:var(--accent)">F</div><b style="font-size:24px">Fojas</b></div>
+      <h1>Tus amparos, ordenados y sin plazos perdidos</h1>
+      <div class="feat">${ic('cal')} Te avisa qué vence y qué hacer primero</div>
+      <div class="feat">${ic('pen')} Escritos que se completan solos</div>
+      <div class="feat">${ic('shield')} Todo queda registrado: quién, qué y cuándo</div>
+      <div class="feat">${ic('lock')} Copias de seguridad cifradas</div>
     </div>
     <div class="box"><form class="card" id="loginForm" autocomplete="on">
-      <h2>Ingresar</h2>
+      <h2 style="font-size:24px">Ingresá a tu cuenta</h2>
       ${ui.loginMsg?`<div class="notice ${ui.loginMsg.ok?'good':'bad'}" role="alert">${esc(ui.loginMsg.t)}</div>`:''}
-      <label for="lgOrg">Organización<input type="text" id="lgOrg" required autocomplete="organization" value="${esc(ui.lastOrg||'')}"></label>
-      <label for="lgUser">Usuario<input type="text" id="lgUser" required autocomplete="username" autocapitalize="off"></label>
-      <label for="lgPass">Contraseña<input type="password" id="lgPass" required autocomplete="current-password"></label>
-      <button class="btn pri" type="submit" id="lgBtn">Ingresar</button>
-      <details class="small muted"><summary>Datos de prueba</summary>
+      <label class="fld" for="lgOrg">Organización<input type="text" id="lgOrg" required autocomplete="organization" value="${esc(ui.lastOrg||'')}"></label>
+      <label class="fld" for="lgUser">Usuario<input type="text" id="lgUser" required autocomplete="username" autocapitalize="off"></label>
+      <label class="fld" for="lgPass">Contraseña<input type="password" id="lgPass" required autocomplete="current-password"></label>
+      <button class="btn pri big" type="submit" id="lgBtn">Ingresar</button>
+      <p class="small muted">¿Olvidaste tu contraseña? Pedile al administrador de tu organización que te dé una nueva.</p>
+      <details class="small muted"><summary style="cursor:pointer">Datos para probar</summary>
         <div style="margin-top:6px">Organización: <span class="mono">saludintegral-demo</span><br>
-        Usuarios: <span class="mono">lbrunelli</span>, <span class="mono">jgomez</span>, <span class="mono">rperez</span> · contraseña <span class="mono">Fojas2026!</span><br>
-        Administrador: <span class="mono">admin</span> · contraseña <span class="mono">Admin2026!</span><br>
-        Tras 5 intentos fallidos, el usuario queda bloqueado 5 minutos.</div></details>
+        Usuario <span class="mono">lbrunelli</span> · contraseña <span class="mono">Fojas2026!</span><br>
+        Administrador: <span class="mono">admin</span> · contraseña <span class="mono">Admin2026!</span></div></details>
     </form></div>
   </div>`;
 }
 
-function vUsuarios(){
-  if(!isAdmin()) return `<div class="card"><h2>Sin permiso</h2><div class="muted">Solo el administrador puede gestionar usuarios.</div></div>`;
-  const m = ui.userMsg;
-  return `
-  <div class="head"><div><h1>Usuarios</h1><div class="muted">Altas, bajas y restablecimiento de contraseñas. Las contraseñas se guardan cifradas (PBKDF2): nadie puede verlas, ni el administrador.</div></div></div>
-  ${m?`<div class="notice ${m.ok?'good':'bad'}">${m.html||esc(m.t)}</div>`:''}
-  <div class="tablewrap"><table><thead><tr><th>Usuario</th><th>Nombre</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
-  ${S.users.map(u=>{ const l = (S.lock||{})[u.id]; const locked = l && l.until > Date.now(); return `<tr>
-    <td class="mono">${esc(u.id)}</td><td>${esc(u.nombre)}</td><td class="small">${esc(u.rol)}</td>
-    <td>${u.activo?(locked?'<span class="chip medio">Bloqueado</span>':'<span class="chip bajo">Activo</span>'):'<span class="chip">Inactivo</span>'}${u.mustChange?' <span class="chip">Debe cambiar contraseña</span>':''}</td>
-    <td class="row">${u.id===S.user?'<span class="small muted">Sesión actual</span>':`<button class="btn sm" data-act="ureset" data-u="${u.id}">Restablecer contraseña</button><button class="btn sm" data-act="utoggle" data-u="${u.id}">${u.activo?'Desactivar':'Activar'}</button>${locked?`<button class="btn sm" data-act="uunlock" data-u="${u.id}">Desbloquear</button>`:''}`}</td></tr>`;}).join('')}
-  </tbody></table></div>
-  <section class="card"><h2>Nuevo usuario</h2>
-    <form class="form" id="userForm">
-      <label>Usuario (sin espacios)<input type="text" id="nuId" required pattern="[a-z0-9._-]{3,30}" placeholder="ej.: mlopez"></label>
-      <label>Nombre y apellido<input type="text" id="nuNom" required></label>
-      <label>Rol<select id="nuRol"><option>Abogada/o a cargo</option><option>Analista legal</option><option>Procurador</option><option>Administrador</option></select></label>
-      <div class="full"><button class="btn pri" type="submit">Crear usuario</button> <span class="small muted">Se genera una contraseña provisoria que se cambia en el primer ingreso.</span></div>
-    </form></section>`;
+// ---------- modales ----------
+function showModal(html, forced){ $('#modal').innerHTML = html; $('#overlay').dataset.forced = forced?'1':''; $('#overlay').classList.add('show'); }
+const closeModal = () => { $('#overlay').classList.remove('show'); $('#overlay').dataset.forced=''; };
+
+const TOUR = [
+  ['home','a','Bienvenido a Fojas','Acá vas a tener todos los amparos de tu equipo en un solo lugar. Te mostramos lo básico en cuatro pasos.'],
+  ['cal','r','Lo urgente, siempre primero','En Inicio y en Vencimientos ves qué vence. Rojo es vencido, amarillo es urgente y verde está al día. Cuando lo hacés, tocás "Hecho".'],
+  ['folder','g','Cada amparo te dice qué sigue','Al abrir un amparo, arriba ves "Lo próximo que hay que hacer". Debajo, la etapa en la que está, las novedades y los documentos.'],
+  ['pen','v','Escritos en tres pasos','Elegís el escrito, elegís el amparo y el texto se completa solo. Solo escribís lo que está entre [corchetes].'],
+  ['help','y','Si te perdés, tocá Ayuda','Está abajo en el menú. Y todo lo que hagas queda registrado, así que no hay forma de romper nada sin que se note.']
+];
+function openTour(i=0){
+  const [icon,col,t,d] = TOUR[i];
+  showModal(`<div class="tour" style="display:flex;flex-direction:column;gap:16px">
+    <div class="ico ${col}">${ic(icon,'lg')}</div><h2 style="font-size:24px">${t}</h2><p class="muted" style="max-width:46ch">${d}</p>
+    <div class="dots">${TOUR.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>
+    <div class="row" style="justify-content:center">${i>0?`<button class="btn" data-tour="${i-1}">Anterior</button>`:`<button class="btn ghost" data-act="close">Saltear</button>`}
+      ${i<TOUR.length-1?`<button class="btn pri" data-tour="${i+1}">Siguiente ${ic('next','sm')}</button>`:`<button class="btn pri" data-act="close">¡Empezar!</button>`}</div></div>`);
 }
+
+let W = null;
+function openNuevo(){ W = {step:1, afiliado:'', nroAf:'', prestacion:'', numero:'', juzgado:'', estado:'Intimación recibida', cautelar:false, plazoDesc:'', plazoDias:2, plazoFecha:dPlus(2), riesgo:'medio'}; drawWizard(); }
+function drawWizard(){
+  const s = W.step;
+  const titles = ['¿Quién presentó el amparo?','¿Qué reclama y dónde?','¿Qué hay que hacer ahora?','Revisá y confirmá'];
+  let body = '';
+  if(s===1) body = `
+    <label class="fld">Nombre del afiliado <span class="hint">apellido y nombre</span><input type="text" id="wAf" value="${esc(W.afiliado)}" placeholder="Ej.: Pérez, María"></label>
+    <label class="fld">Número de afiliado <span class="hint">opcional</span><input type="text" id="wNro" value="${esc(W.nroAf)}" placeholder="Ej.: 0045-00000-01"></label>`;
+  if(s===2) body = `
+    <div class="fld">¿Qué reclama?<div class="opts">${PRESTACIONES.map(p=>`<button type="button" class="opt ${W.prestacion===p?'on':''}" data-w="prestacion" data-v="${esc(p)}">${esc(p)}</button>`).join('')}</div></div>
+    <label class="fld">Número de expediente<input type="text" id="wNum" value="${esc(W.numero)}" placeholder="Ej.: CCF 1234/2026"></label>
+    <label class="fld">Juzgado y secretaría<input type="text" id="wJz" value="${esc(W.juzgado)}" placeholder="Ej.: Juzg. Nac. Civ. y Com. Fed. N° 3 · Sec. 5"></label>`;
+  if(s===3) body = `
+    <div class="fld">¿En qué etapa está?<div class="opts">${ESTADOS.slice(0,4).map(p=>`<button type="button" class="opt ${W.estado===p?'on':''}" data-w="estado" data-v="${esc(p)}">${esc(p)}</button>`).join('')}</div></div>
+    <div class="fld">¿El juez ya ordenó una medida cautelar?<div class="opts"><button type="button" class="opt ${W.cautelar?'on':''}" data-w="cautelar" data-v="1">Sí</button><button type="button" class="opt ${!W.cautelar?'on':''}" data-w="cautelar" data-v="0">No</button></div></div>
+    <label class="fld">¿Qué hay que hacer primero? <span class="hint">opcional</span><input type="text" id="wPd" value="${esc(W.plazoDesc)}" placeholder="Ej.: Cumplir intimación"></label>
+    <div class="fld">¿Para cuándo?<div class="opts">${[[2,'En 48 hs'],[5,'En 5 días'],[10,'En 10 días']].map(([d,l])=>`<button type="button" class="opt ${W.plazoDias===d?'on':''}" data-w="plazoDias" data-v="${d}">${l}</button>`).join('')}</div>
+      <input type="date" id="wPv" value="${W.plazoFecha}" style="max-width:220px"></div>`;
+  if(s===4) body = `
+    <div class="facts">
+      <div class="fact"><span>Afiliado</span><b>${esc(W.afiliado)}</b></div>
+      <div class="fact"><span>Qué reclama</span><b>${esc(W.prestacion)}</b></div>
+      <div class="fact"><span>Expediente</span><b class="mono">${esc(W.numero)}</b></div>
+      <div class="fact"><span>Juzgado</span><b>${esc(W.juzgado)}</b></div>
+      <div class="fact"><span>Etapa</span><b>${esc(W.estado)}</b></div>
+      <div class="fact"><span>Cautelar</span><b>${W.cautelar?'Sí':'No'}</b></div>
+      ${W.plazoDesc?`<div class="fact"><span>Primer plazo</span><b>${esc(W.plazoDesc)}</b><div class="small muted">${fmt(W.plazoFecha)}</div></div>`:''}
+      <div class="fact"><span>A cargo de</span><b>${esc(me().nombre)}</b></div>
+    </div>`;
+  showModal(`
+    <div class="row" style="justify-content:space-between"><span class="small muted">Paso ${s} de 4</span><button class="btn ghost sm" data-act="close">Cancelar</button></div>
+    <div class="wsteps">${[1,2,3,4].map(i=>`<span class="${i<=s?'on':''}"></span>`).join('')}</div>
+    <h2 style="font-size:24px">${titles[s-1]}</h2>
+    <div id="wErr"></div>
+    <div style="display:flex;flex-direction:column;gap:16px">${body}</div>
+    <div class="row" style="justify-content:space-between">${s>1?`<button class="btn" data-wnav="-1">${ic('back','sm')} Atrás</button>`:'<span></span>'}
+      ${s<4?`<button class="btn pri big" data-wnav="1">Siguiente ${ic('next','sm')}</button>`:`<button class="btn ok big" data-act="wcreate">${ic('check')} Crear amparo</button>`}</div>`);
+  const f = $('#modal input[type=text]'); if(f) setTimeout(()=>f.focus(), 30);
+}
+function wRead(){
+  const v = id => { const el = $('#'+id); return el ? el.value.trim() : null; };
+  if(v('wAf')!==null) W.afiliado = v('wAf'); if(v('wNro')!==null) W.nroAf = v('wNro');
+  if(v('wNum')!==null) W.numero = v('wNum'); if(v('wJz')!==null) W.juzgado = v('wJz');
+  if(v('wPd')!==null) W.plazoDesc = v('wPd'); if(v('wPv')!==null) W.plazoFecha = v('wPv');
+}
+function wCheck(){
+  if(W.step===1 && !W.afiliado) return 'Escribí el nombre del afiliado para seguir.';
+  if(W.step===2){ if(!W.prestacion) return 'Elegí qué reclama.'; if(!W.numero) return 'Escribí el número de expediente.'; if(S.exps.some(x=>x.numero.toLowerCase()===W.numero.toLowerCase())) return 'Ya hay un amparo cargado con ese número.'; if(!W.juzgado) return 'Escribí el juzgado.'; }
+  return '';
+}
+
 function openPwd(forced){
-  $('#modal').innerHTML = `
-    <h2>${forced?'Elegí una contraseña nueva':'Cambiar contraseña'}</h2>
-    ${forced?'<div class="notice small">Ingresaste con una contraseña provisoria. Para seguir, elegí una propia.</div>':''}
+  showModal(`
+    <h2>${forced?'Elegí tu contraseña':'Cambiar contraseña'}</h2>
+    ${forced?'<div class="notice">Entraste con una contraseña provisoria. Elegí una tuya para seguir.</div>':''}
     <form class="form" id="pwdForm">
       <label class="full">Contraseña actual<input type="password" id="pwOld" required autocomplete="current-password"></label>
       <label>Nueva contraseña<input type="password" id="pwNew" required autocomplete="new-password"></label>
-      <label>Repetir nueva<input type="password" id="pwRep" required autocomplete="new-password"></label>
-      <div class="full small muted">Mínimo 8 caracteres, con letras y números.</div>
+      <label>Repetila<input type="password" id="pwRep" required autocomplete="new-password"></label>
+      <div class="full hint">Mínimo 8 caracteres, con letras y números.</div>
       <div class="full" id="pwMsg"></div>
-      <div class="full row"><button class="btn pri" type="submit">Guardar</button>${forced?'<button class="btn" type="button" data-act="logout">Salir</button>':'<button class="btn" type="button" data-act="close">Cancelar</button>'}</div>
-    </form>`;
-  $('#overlay').dataset.forced = forced ? '1' : '';
-  $('#overlay').classList.add('show');
+      <div class="full row"><button class="btn pri" type="submit">Guardar</button>${forced?'<button class="btn ghost" type="button" data-act="logout">Salir</button>':'<button class="btn ghost" type="button" data-act="close">Cancelar</button>'}</div>
+    </form>`, forced);
   setTimeout(()=>$('#pwOld').focus(), 30);
 }
 
-// ---------- modal nuevo amparo ----------
-function openNuevo(){
-  $('#modal').innerHTML = `
-    <h2>Nuevo amparo</h2>
-    <form class="form" id="newForm">
-      <label>N° de expediente<input type="text" id="nNum" required placeholder="CCF 0000/2026"></label>
-      <label>Afiliado (apellido, nombre)<input type="text" id="nAf" required></label>
-      <label>N° de afiliado<input type="text" id="nNro" placeholder="0045-00000-01"></label>
-      <label>Prestación<select id="nPr">${PRESTACIONES.map(p=>`<option>${p}</option>`).join('')}</select></label>
-      <label class="full">Juzgado y secretaría<input type="text" id="nJz" required placeholder="Juzg. Nac. Civ. y Com. Fed. N° 0 · Sec. 0"></label>
-      <label>Estado<select id="nEs">${ESTADOS.map(s=>`<option>${s}</option>`).join('')}</select></label>
-      <label>Riesgo<select id="nRi"><option>alto</option><option selected>medio</option><option>bajo</option></select></label>
-      <label>Responsable<select id="nAb">${staff().map(u=>`<option value="${u.id}" ${u.id===S.user?'selected':''}>${esc(u.nombre)}</option>`).join('')}</select></label>
-      <label>Monto estimado ($)<input type="text" id="nMo" inputmode="numeric" placeholder="0"></label>
-      <label class="full switch" style="flex-direction:row;color:var(--ink)"><input type="checkbox" id="nCa"> Tiene medida cautelar otorgada</label>
-      <label>Primer plazo (opcional)<input type="text" id="nPd" placeholder="Ej.: Presentar informe art. 8"></label>
-      <label>Vence<input type="date" id="nPv" value="${dPlus(5)}"></label>
-      <div class="full row"><button class="btn pri" type="submit">Crear expediente</button><button class="btn" type="button" data-act="close">Cancelar</button></div>
-    </form>`;
-  $('#overlay').classList.add('show');
-  setTimeout(()=>$('#nNum').focus(), 30);
-}
-const closeModal = () => { $('#overlay').classList.remove('show'); $('#overlay').dataset.forced=''; };
-
-// ---------- render y eventos ----------
+// ---------- render ----------
 function render(){
+  if(!logged()){ $('#root').innerHTML = vIngreso(); document.title='Fojas · Ingresar'; return; }
+  document.title='Fojas';
   const r = route();
-  if(!logged()){ $('#root').innerHTML = vIngreso(); document.title='Fojas — Ingresar'; return; }
-  document.title='Fojas — Prototipo Amparos';
-  const views = {usuarios:vUsuarios, inicio:vInicio, amparos:vAmparos, plantillas:vPlantillas, informes:vInformes, auditoria:vAuditoria, modulos:vModulos, respaldo:vRespaldo};
+  const views = {inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, informes:vInformes, historial:vHistorial, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios};
   const html = r.name==='expediente' ? vExpediente(r.id) : (views[r.name]||vInicio)();
   const scroll = $('#view') ? $('#view').scrollTop : 0;
   $('#root').innerHTML = shell(html);
-  if(r.name==='expediente' || r.name===shell.last) $('#view').scrollTop = scroll;
-  shell.last = r.name;
+  $('#view').scrollTop = scroll;
+}
+async function rerenderAfterAudit(){ await chain; render(); }
+
+function markDone(e, i){
+  const p = e.plazos[i]; if(!p || p.hecho) return;
+  p.hecho = true; save(); audit('Marcó como hecho', e.numero, p.desc); render();
+  toast(`Listo: "${p.desc}" quedó como hecho.`, () => { p.hecho = false; save(); audit('Deshizo "hecho"', e.numero, p.desc); render(); });
 }
 
+// ---------- eventos ----------
 document.addEventListener('click', async ev => {
-  const t = ev.target.closest('[data-act],[data-tab],[data-go],[data-ia],[data-tplfor],#reset');
+  if(!ev.target.closest('.search')) { if(ui.results){ ui.results=false; const r=$('.results'); if(r) r.remove(); } }
+  const t = ev.target.closest('[data-act],[data-tab],[data-go],[data-ia],[data-filtro],[data-riesgo],[data-estado],[data-tour],[data-tpl],[data-tplexp],[data-w],[data-wnav],[data-quick]');
   if(!t) return;
   const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
-  if(t.id==='reset'){ ev.preventDefault(); setSession(null); S = await fresh(); ui.verify=null; save(); await seedAudit(); ui.loginMsg={ok:true,t:'Datos de ejemplo restablecidos. Volvé a ingresar.'}; location.hash='inicio'; render(); return; }
-  if(t.dataset.tplfor){ ui.tplExp = +t.dataset.tplfor; ui.tplText=''; return; }
-  if(t.dataset.go){ location.hash = t.dataset.go; return; }
-  if(t.dataset.tab){ ui.tab = t.dataset.tab; render(); return; }
-  if(t.dataset.ia && e){ ui.ia = iaText(t.dataset.ia, e); audit('Usó asistente IA', e.numero, {resumen:'Resumen del expediente', paso:'Sugerencia de próximo paso', riesgo:'Evaluación de riesgo'}[t.dataset.ia]); render(); return; }
-  const a = t.dataset.act;
-  if(a==='nuevo') openNuevo();
+  const d = t.dataset;
+  if(d.tour!==undefined){ openTour(+d.tour); return; }
+  if(d.go){ location.hash = d.go; return; }
+  if(d.tab){ ui.tab = d.tab; render(); return; }
+  if(d.filtro){ ui.filtro = d.filtro; render(); return; }
+  if(d.riesgo && e){ const old=e.riesgo; if(old===d.riesgo) return; e.riesgo = d.riesgo; save(); audit('Cambió el riesgo', e.numero, `${old} → ${d.riesgo}`); render(); toast('Riesgo actualizado'); return; }
+  if(d.estado!==undefined && e){ const nuevo = ESTADOS[+d.estado], old = e.estado; if(nuevo===old) return; e.estado = nuevo; save(); audit('Cambió la etapa', e.numero, `${old} → ${nuevo}`); render();
+    toast(`Etapa cambiada a "${nuevo}".`, ()=>{ e.estado = old; save(); audit('Deshizo cambio de etapa', e.numero, `${nuevo} → ${old}`); render(); }); return; }
+  if(d.ia && e){ ui.ia = iaText(d.ia, e); audit('Usó el asistente', e.numero, {resumen:'Resumen del caso', paso:'Próximos pasos', riesgo:'Evaluación de riesgo'}[d.ia]); render(); return; }
+  if(d.tpl){ ui.tpl = d.tpl; ui.tplText=''; render(); return; }
+  if(d.tplexp){ ui.tplExp = +d.tplexp; ui.tplText=''; render(); return; }
+  if(d.quick){ $('#plV').value = dPlus(+d.quick); document.querySelectorAll('[data-quick]').forEach(b=>b.classList.toggle('on', b===t)); return; }
+  if(d.w){ wRead(); const k = d.w; if(k==='cautelar') W.cautelar = d.v==='1'; else if(k==='plazoDias'){ W.plazoDias = +d.v; W.plazoFecha = dPlus(+d.v); } else W[k] = d.v; drawWizard(); return; }
+  if(d.wnav){ wRead(); if(+d.wnav>0){ const err = wCheck(); if(err){ $('#wErr').innerHTML = `<div class="notice bad">${esc(err)}</div>`; return; } } W.step += +d.wnav; drawWizard(); return; }
+  const a = d.act;
   if(a==='close') closeModal();
+  if(a==='tour') openTour(0);
   if(a==='logout') logout();
   if(a==='pwd') openPwd(false);
-  if((a==='ureset'||a==='utoggle'||a==='uunlock') && isAdmin()){ const u = S.users.find(x=>x.id===t.dataset.u);
-    if(a==='ureset'){ const p = tempPass(); u.salt = randId(16); u.hash = await hashPass(p, u.salt); u.mustChange = true; delete S.lock[u.id]; save(); audit('Restableció contraseña','Usuarios',u.id);
-      ui.userMsg={ok:true, html:`Contraseña provisoria de <b>${esc(u.id)}</b>: <span class="mono">${esc(p)}</span>. Pasásela por un canal seguro: no se vuelve a mostrar.`}; }
-    if(a==='utoggle'){ u.activo = !u.activo; save(); audit(u.activo?'Activó usuario':'Desactivó usuario','Usuarios',u.id); ui.userMsg={ok:true,t:`${u.nombre}: ${u.activo?'activado':'desactivado'}.`}; }
-    if(a==='uunlock'){ delete S.lock[u.id]; save(); audit('Desbloqueó usuario','Usuarios',u.id); ui.userMsg={ok:true,t:`${u.nombre}: desbloqueado.`}; }
-    render(); }
-  if(a==='clearf'){ ui.q=ui.fEstado=ui.fRiesgo=ui.fAbog=''; render(); }
+  if(a==='nuevo') openNuevo();
+  if(a==='wcreate'){
+    const x = {id:S.nextId++, numero:W.numero, afiliado:W.afiliado, nroAf:W.nroAf||'—', prestacion:W.prestacion, juzgado:W.juzgado, estado:W.estado, riesgo:/oncol|Discapacidad|domiciliaria/.test(W.prestacion)||W.cautelar?'alto':'medio', abogado:S.user, inicio:iso(today()), monto:0, cautelar:W.cautelar, plazos:[], movimientos:[{fecha:iso(today()), tipo:'Interno', desc:'Se cargó el amparo en Fojas.', user:S.user}], docs:[]};
+    x.caratula = `${x.afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`;
+    if(W.plazoDesc) x.plazos.push({desc:W.plazoDesc, vence:W.plazoFecha, hecho:false});
+    S.exps.push(x); save(); closeModal(); audit('Cargó un amparo nuevo', x.numero, x.prestacion); location.hash = 'expediente-'+x.id; toast('¡Amparo cargado!');
+  }
+  if(a==='done'){ const x = expById(d.e); if(x) markDone(x, +d.i); }
+  if(a==='writefor'){ ui.tpl = null; ui.tplExp = +d.e; ui.tplText=''; location.hash='escritos'; }
+  if(a==='addmov'){ ui.addMov = true; render(); setTimeout(()=>$('#mvD').focus(),20); }
+  if(a==='cancelmov'){ ui.addMov = false; render(); }
+  if(a==='addplazo'){ ui.addPlazo = true; ui.tab='plazos'; render(); setTimeout(()=>{ const f=$('#plD'); if(f) f.focus(); },20); }
+  if(a==='cancelplazo'){ ui.addPlazo = false; render(); }
   if(a==='copyia') copy(ui.ia);
-  if(a==='cumplir' && e){ const p = e.plazos[+t.dataset.i]; p.hecho = true; save(); audit('Marcó plazo cumplido', e.numero, p.desc); render(); toast('Plazo marcado como cumplido'); }
-  if(a==='tplreset'){ ui.tplText=''; render(); }
-  if(a==='tplcopy') copy($('#tplText').value);
-  if(a==='tplsave'){ const x = expById(ui.tplExp) || S.exps[0]; const tpl = TEMPLATES.find(q=>q.id===ui.tpl);
+  if(a==='tplback1'){ ui.tpl=null; ui.tplText=''; render(); }
+  if(a==='tplback2'){ ui.tplExp=null; ui.tplText=''; render(); }
+  if(a==='tplreset'){ ui.tpl=null; ui.tplExp=null; ui.tplText=''; render(); }
+  if(a==='tplcopy'){ copy($('#tplText').value); audit('Copió un escrito', expById(ui.tplExp).numero, TEMPLATES.find(q=>q.id===ui.tpl).nombre); }
+  if(a==='tplsave'){ const x = expById(ui.tplExp); const tpl = TEMPLATES.find(q=>q.id===ui.tpl);
     x.docs.push({nombre:`${tpl.nombre}.docx`, tipo:'Escrito propio', fecha:iso(today()), size:`${Math.max(1,Math.round($('#tplText').value.length/1000))} KB`});
-    x.movimientos.push({fecha:iso(today()), tipo:'Escrito propio', desc:`Se genera borrador: ${tpl.nombre}.`, user:S.user}); save();
-    audit('Generó escrito', x.numero, tpl.nombre); toast('Escrito guardado en Documentos del expediente'); }
-  if(a==='csv'){ const rows = [['numero','afiliado','prestacion','juzgado','estado','riesgo','responsable','proximo_plazo','vence']].concat(S.exps.map(x=>{const p=nextPlazo(x);return [x.numero,x.afiliado,x.prestacion,x.juzgado,x.estado,x.riesgo,userName(x.abogado),p?p.desc:'',p?p.vence:''];}));
-    copy(rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(';')).join('\n')); audit('Exportó informe', 'Informes', 'Planilla CSV de amparos'); }
+    x.movimientos.push({fecha:iso(today()), tipo:'Escrito propio', desc:`Se preparó el escrito: ${tpl.nombre}.`, user:S.user}); save();
+    audit('Preparó un escrito', x.numero, tpl.nombre); toast('Guardado en los documentos del amparo'); }
+  if(a==='csv'){ const rows = [['numero','afiliado','prestacion','juzgado','etapa','riesgo','a_cargo','proximo_plazo','vence']].concat(S.exps.map(x=>{const p=nextPlazo(x);return [x.numero,x.afiliado,x.prestacion,x.juzgado,x.estado,x.riesgo,userName(x.abogado),p?p.desc:'',p?fmt(p.vence):''];}));
+    copy(rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(';')).join('\n')); audit('Exportó informe', 'Informes', 'Planilla de amparos'); }
   if(a==='verify'){ await chain; ui.verify = await verifyChain(); render(); }
-  if(a==='tamper'){ await chain; if(S.audit.length>2){ const i = Math.floor(S.audit.length/2); S.audit[i].detalle += ' (editado a mano)'; save(); ui.verify = await verifyChain(); render(); toast('Se modificó un registro sin pasar por la app'); } }
+  if(a==='tamper'){ await chain; if(S.audit.length>2){ const i = Math.floor(S.audit.length/2); S.audit[i].detalle += ' (editado a escondidas)'; save(); ui.verify = await verifyChain(); render(); } }
   if(a==='backup'){ const pass = $('#bkPass').value; if(pass.length<8){ ui.backupMsg={ok:false,t:'La contraseña tiene que tener al menos 8 caracteres.'}; render(); return; }
-    try{ ui.backupOut = await encrypt({exps:S.exps, modules:S.modules, audit:S.audit, nextId:S.nextId}, pass); ui.backupMsg={ok:true,t:`Copia cifrada generada (${S.exps.length} expedientes, ${S.audit.length} registros de auditoría).`}; audit('Generó copia de seguridad','Respaldo','Copia cifrada AES-256'); }
-    catch(x){ ui.backupMsg={ok:false,t:'Este navegador no permite cifrar acá. Probá abriendo la página directamente.'}; } render(); }
+    try{ ui.backupOut = await encrypt({exps:S.exps, modules:S.modules, audit:S.audit, nextId:S.nextId}, pass); ui.backupMsg={ok:true,t:`Copia lista: ${S.exps.length} amparos y ${S.audit.length} registros del historial. Copiala y guardala en un lugar seguro.`}; audit('Generó una copia de seguridad','Copias','Copia cifrada'); }
+    catch(x){ ui.backupMsg={ok:false,t:'Este navegador no permitió cifrar la copia.'}; } await chain; render(); }
   if(a==='restore'){ const pass = $('#bkPass').value, txt = $('#bkOut').value;
-    try{ const d = await decrypt(txt, pass); Object.assign(S, {exps:d.exps, modules:d.modules, audit:d.audit, nextId:d.nextId}); ui.backupOut = txt; ui.backupMsg={ok:true,t:`Copia restaurada: ${d.exps.length} expedientes.`}; save(); audit('Restauró copia de seguridad','Respaldo','Desde copia cifrada'); }
-    catch(x){ ui.backupMsg={ok:false,t:'No se pudo restaurar: revisá que el texto esté completo y que la contraseña sea la misma.'}; } render(); }
+    try{ const dd = await decrypt(txt, pass); Object.assign(S, {exps:dd.exps, modules:dd.modules, audit:dd.audit, nextId:dd.nextId}); ui.backupOut = txt; ui.backupMsg={ok:true,t:`Copia recuperada: ${dd.exps.length} amparos.`}; save(); audit('Recuperó una copia de seguridad','Copias','Desde copia cifrada'); }
+    catch(x){ ui.backupMsg={ok:false,t:'No pudimos recuperarla. Revisá que la copia esté completa y que la contraseña sea la misma que usaste.'}; } await chain; render(); }
   if(a==='copybk') copy($('#bkOut').value);
   if(a==='csvsample'){ $('#csvIn').value = SAMPLE_CSV; }
   if(a==='csvimport'){ const lines = $('#csvIn').value.trim().split(/\r?\n/).filter(Boolean);
     if(lines.length<2){ ui.csvMsg={ok:false,t:'Pegá la planilla con la fila de títulos y al menos un expediente.'}; render(); return; }
     const head = lines[0].split(';').map(h=>h.trim().toLowerCase()); const need = ['numero','afiliado','prestacion','juzgado','estado'];
-    const miss = need.filter(n=>!head.includes(n)); if(miss.length){ ui.csvMsg={ok:false,t:'Faltan columnas: '+miss.join(', ')}; render(); return; }
+    const miss = need.filter(n=>!head.includes(n)); if(miss.length){ ui.csvMsg={ok:false,t:'A la planilla le faltan estas columnas: '+miss.join(', ')}; render(); return; }
     let ok=0, dup=0;
     lines.slice(1).forEach(l=>{ const c = l.split(';'); const g = k => (c[head.indexOf(k)]||'').trim();
       if(!g('numero')) return; if(S.exps.some(x=>x.numero===g('numero'))){ dup++; return; }
-      S.exps.push({id:S.nextId++, numero:g('numero'), caratula:`${g('afiliado')} c/ Salud Integral Demo S.A. s/ amparo de salud`, afiliado:g('afiliado'), nroAf:'—', prestacion:g('prestacion')||'Otra', juzgado:g('juzgado'), estado:ESTADOS.includes(g('estado'))?g('estado'):'Intimación recibida', riesgo:'medio', abogado:S.user, inicio:iso(today()), monto:0, cautelar:false, plazos:[], movimientos:[{fecha:iso(today()), tipo:'Interno', desc:'Expediente migrado desde otro sistema.', user:S.user}], docs:[]}); ok++; });
-    save(); if(ok) audit('Importó expedientes','Migración',`${ok} expediente(s) desde planilla CSV`);
-    ui.csvMsg={ok:ok>0, t:`Importados: ${ok}.${dup?` Omitidos por estar repetidos: ${dup}.`:''}`}; render(); }
+      S.exps.push({id:S.nextId++, numero:g('numero'), caratula:`${g('afiliado')} c/ Salud Integral Demo S.A. s/ amparo de salud`, afiliado:g('afiliado'), nroAf:'—', prestacion:g('prestacion')||'Otra', juzgado:g('juzgado'), estado:ESTADOS.includes(g('estado'))?g('estado'):'Intimación recibida', riesgo:'medio', abogado:S.user, inicio:iso(today()), monto:0, cautelar:false, plazos:[], movimientos:[{fecha:iso(today()), tipo:'Interno', desc:'Expediente traído desde otro sistema.', user:S.user}], docs:[]}); ok++; });
+    save(); if(ok) audit('Trajo expedientes','Migración',`${ok} expediente(s) desde planilla`);
+    ui.csvMsg={ok:ok>0, t:`Listo: se trajeron ${ok} expediente(s).${dup?` ${dup} ya estaban cargados y no se repitieron.`:''}`}; await chain; render(); }
+  if((a==='ureset'||a==='utoggle'||a==='uunlock') && isAdmin()){ const u = S.users.find(x=>x.id===d.u);
+    if(a==='ureset'){ const p = tempPass(); u.salt = randId(16); u.hash = await hashPass(p, u.salt); u.mustChange = true; delete S.lock[u.id]; save(); audit('Dio una contraseña nueva','Usuarios',u.id);
+      ui.userMsg={ok:true, html:`Contraseña provisoria para <b>${esc(u.nombre)}</b>: <span class="mono">${esc(p)}</span>. Pasásela en persona o por un canal seguro; no se vuelve a mostrar.`}; }
+    if(a==='utoggle'){ u.activo = !u.activo; save(); audit(u.activo?'Activó un usuario':'Desactivó un usuario','Usuarios',u.id); ui.userMsg={ok:true,t:`${u.nombre} ${u.activo?'ya puede entrar':'ya no puede entrar'}.`}; }
+    if(a==='uunlock'){ delete S.lock[u.id]; save(); audit('Desbloqueó un usuario','Usuarios',u.id); ui.userMsg={ok:true,t:`${u.nombre} ya puede volver a intentar.`}; }
+    await chain; render(); }
 });
 
 document.addEventListener('keydown', ev => {
-  if(ev.key==='Enter' && ev.target.matches('tr[data-go]')) location.hash = ev.target.dataset.go;
-  if(ev.key==='Escape' && !$('#overlay').dataset.forced) closeModal();
+  if(ev.key==='Enter' && ev.target.matches('[data-go]')) location.hash = ev.target.dataset.go;
+  if(ev.key==='Escape' && $('#overlay').classList.contains('show') && !$('#overlay').dataset.forced) closeModal();
+  if(ev.target.id==='gsearch'){
+    const links = [...document.querySelectorAll('.results a')];
+    if(ev.key==='Enter' && links.length){ ev.preventDefault(); location.hash = links[0].getAttribute('href').slice(1); ui.q=''; }
+    if(ev.key==='Escape'){ ui.q=''; ui.results=false; render(); }
+  }
+  if(ev.key==='Enter' && $('#overlay').classList.contains('show') && W && ev.target.matches('#modal input[type=text]')){ ev.preventDefault(); const b = $('[data-wnav="1"]') || $('[data-act=wcreate]'); if(b) b.click(); }
 });
 $('#overlay').addEventListener('click', ev => { if(ev.target.id==='overlay' && !$('#overlay').dataset.forced) closeModal(); });
 
-document.addEventListener('change', ev => {
+document.addEventListener('change', async ev => {
   const t = ev.target; const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
-  if(t.id==='fEstado'){ ui.fEstado=t.value; render(); } if(t.id==='fRiesgo'){ ui.fRiesgo=t.value; render(); } if(t.id==='fAbog'){ ui.fAbog=t.value; render(); }
-  if(t.id==='estSel' && e){ const old = e.estado; e.estado = t.value; save(); audit('Cambió estado', e.numero, `${old} → ${t.value}`); render(); }
-  if(t.id==='riSel' && e){ const old = e.riesgo; e.riesgo = t.value; save(); audit('Cambió riesgo', e.numero, `${old} → ${t.value}`); render(); }
-  if(t.id==='fileIn' && e){ const tipo = $('#docTipo').value; [...t.files].forEach(f=>{ e.docs.push({nombre:f.name, tipo, fecha:iso(today()), size: f.size>1e6?(f.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(f.size/1000))+' KB'}); audit('Subió documento', e.numero, f.name); }); save(); render(); }
-  if(t.name==='tpl'){ ui.tpl = t.value; ui.tplText=''; render(); }
-  if(t.id==='tplExp'){ ui.tplExp = +t.value; ui.tplText=''; render(); }
-  if(t.dataset && t.dataset.mod){ S.modules[t.dataset.mod] = t.checked; save(); const m = MODULES.find(x=>x.id===t.dataset.mod); audit(t.checked?'Activó módulo':'Desactivó módulo', m.nombre, 'Configuración del cliente'); render(); toast(t.checked?`${m.nombre} activado`:`${m.nombre} desactivado`); }
+  if(t.id==='fileIn' && e) addFiles(e, t.files);
+  if(t.dataset && t.dataset.mod){ S.modules[t.dataset.mod] = t.checked; save(); const m = MODULES.find(x=>x.id===t.dataset.mod); audit(t.checked?'Activó un módulo':'Apagó un módulo', m.nombre, 'Configuración'); render(); toast(t.checked?`${m.nombre} activado: ya aparece en el menú`:`${m.nombre} apagado`); }
 });
+function addFiles(e, files){
+  [...files].forEach(f=>{ e.docs.push({nombre:f.name, tipo:'Documento', fecha:iso(today()), size: f.size>1e6?(f.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(f.size/1000))+' KB'}); audit('Subió un documento', e.numero, f.name); });
+  save(); render(); toast(files.length===1?'Documento agregado':`${files.length} documentos agregados`);
+}
+document.addEventListener('dragover', ev => { const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); dz.classList.add('over'); } });
+document.addEventListener('dragleave', ev => { const dz = ev.target.closest('#drop'); if(dz) dz.classList.remove('over'); });
+document.addEventListener('drop', ev => { const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); const e = expById(route().id); if(e) addFiles(e, ev.dataTransfer.files); } });
+
 document.addEventListener('input', ev => {
-  if(ev.target.id==='gsearch'){ ui.q = ev.target.value; if(route().name!=='amparos'){ location.hash='amparos'; } else { const pos = ev.target.selectionStart; render(); const s = $('#gsearch'); s.focus(); s.setSelectionRange(pos,pos); } }
-  if(ev.target.id==='tplText') ui.tplText = ev.target.value;
-  if(ev.target.id==='bkPass') ui.bkPass = ev.target.value;
-  if(ev.target.id==='bkOut') ui.backupOut = ev.target.value;
+  const t = ev.target;
+  if(t.id==='gsearch'){ ui.q = t.value; ui.results = true; const box = $('.search'); const old = box.querySelector('.results'); if(old) old.remove(); box.insertAdjacentHTML('beforeend', searchResults()); }
+  if(t.id==='tplText'){ ui.tplText = t.value; const f = (t.value.match(/\[[^\]]+\]/g)||[]).length; const n = $('#faltan'); if(n){ n.className = 'notice '+(f?'':'good'); n.innerHTML = `${ic(f?'pen':'check')}<div>${f?`${f===1?'Te queda':'Te quedan'} <b>${f}</b> ${f===1?'parte':'partes'} para escribir vos: están entre [CORCHETES].`:'¡Listo! No quedan partes por completar.'}</div>`; } }
+  if(t.id==='bkPass') ui.bkPass = t.value;
+  if(t.id==='bkOut') ui.backupOut = t.value;
 });
 document.addEventListener('submit', async ev => {
   ev.preventDefault();
@@ -863,48 +1127,44 @@ document.addEventListener('submit', async ev => {
     const org = $('#lgOrg').value.trim().toLowerCase(), uid = $('#lgUser').value.trim().toLowerCase(), pass = $('#lgPass').value;
     ui.lastOrg = org; S.lock = S.lock || {};
     const fail = t => { ui.loginMsg = {ok:false, t}; render(); setTimeout(()=>{ const f = $('#lgUser'); if(f){ f.value = uid; $('#lgPass').focus(); } }, 0); };
-    if(org !== ORG) return fail('No existe esa organización. Revisá cómo está escrita.');
+    if(org !== ORG) return fail('No encontramos esa organización. Revisá cómo está escrita.');
     const l = S.lock[uid];
-    if(l && l.until > Date.now()) return fail(`Usuario bloqueado por intentos fallidos. Probá de nuevo en ${Math.ceil((l.until-Date.now())/60000)} min o pedile al administrador que lo desbloquee.`);
-    $('#lgBtn').disabled = true;
+    if(l && l.until > Date.now()) return fail(`Por seguridad, este usuario está bloqueado unos minutos. Probá de nuevo en ${Math.ceil((l.until-Date.now())/60000)} min o pedile al administrador que lo desbloquee.`);
+    $('#lgBtn').disabled = true; $('#lgBtn').textContent = 'Ingresando…';
     const u = S.users.find(x=>x.id===uid);
     const ok = u && u.activo && (await hashPass(pass, u.salt)) === u.hash;
     if(!ok){
       const rec = S.lock[uid] = {fails:((l && l.until && l.until <= Date.now()) ? 0 : (l?l.fails:0)) + 1, until:0};
       if(rec.fails >= 5){ rec.until = Date.now() + 5*60000; rec.fails = 0; }
       save(); audit('Intento de ingreso fallido','Sistema', `Usuario "${uid}"`, {user: uid || 'desconocido'});
-      return fail(rec.until ? 'Demasiados intentos. El usuario quedó bloqueado 5 minutos.' : `Usuario o contraseña incorrectos. Te quedan ${5-rec.fails} intento(s).`);
+      return fail(rec.until ? 'Hubo demasiados intentos. Por seguridad, el usuario quedó bloqueado 5 minutos.' : `El usuario o la contraseña no son correctos. Te quedan ${5-rec.fails} ${5-rec.fails===1?'intento':'intentos'}.`);
     }
-    delete S.lock[uid]; S.user = uid; setSession({user:uid, at:Date.now()}); lastActivity = Date.now(); ui.loginMsg = null; save();
+    delete S.lock[uid]; S.user = uid; setSession({user:uid, at:Date.now()}); lastActivity = Date.now(); ui.loginMsg = null;
+    const firstTime = !(S.toured||{})[uid]; S.toured = S.toured || {}; S.toured[uid] = true; save();
     audit('Inició sesión','Sistema', u.nombre);
-    if(!location.hash) location.hash = 'inicio';
-    render(); if(u.mustChange) openPwd(true);
+    location.hash = 'inicio'; render();
+    if(u.mustChange) openPwd(true); else if(firstTime) openTour(0);
   }
   if(id==='pwdForm'){
     const u = me(), msg = t => { $('#pwMsg').innerHTML = `<div class="notice bad">${esc(t)}</div>`; };
     const o = $('#pwOld').value, n = $('#pwNew').value, r2 = $('#pwRep').value;
     if((await hashPass(o, u.salt)) !== u.hash) return msg('La contraseña actual no es correcta.');
     if(!passOk(n)) return msg('La nueva contraseña tiene que tener al menos 8 caracteres, con letras y números.');
-    if(n !== r2) return msg('Las contraseñas nuevas no coinciden.');
-    if(n === o) return msg('La nueva contraseña tiene que ser distinta de la actual.');
+    if(n !== r2) return msg('Las dos contraseñas nuevas no son iguales.');
+    if(n === o) return msg('Elegí una contraseña distinta de la actual.');
+    const wasForced = u.mustChange;
     u.salt = randId(16); u.hash = await hashPass(n, u.salt); u.mustChange = false; save();
     audit('Cambió su contraseña','Usuarios',u.id); closeModal(); toast('Contraseña actualizada');
+    if(wasForced) openTour(0);
   }
+  if(id==='movForm' && e){ const m = {fecha:$('#mvF').value, tipo:$('#mvT').value, desc:$('#mvD').value.trim(), user:S.user}; if(!m.desc) return; e.movimientos.push(m); save(); ui.addMov=false; audit('Cargó una novedad', e.numero, `${m.tipo}: ${m.desc}`); render(); toast('Novedad guardada'); }
+  if(id==='plForm' && e){ const p = {desc:$('#plD').value.trim(), vence:$('#plV').value, hecho:false}; if(!p.desc||!p.vence) return; e.plazos.push(p); save(); ui.addPlazo=false; audit('Agregó un plazo', e.numero, `${p.desc} (${fmt(p.vence)})`); render(); toast('Plazo guardado'); }
   if(id==='userForm' && isAdmin()){
     const uid = $('#nuId').value.trim().toLowerCase();
-    if(S.users.some(x=>x.id===uid)){ ui.userMsg={ok:false,t:'Ya existe un usuario con ese nombre.'}; render(); return; }
+    if(S.users.some(x=>x.id===uid)){ ui.userMsg={ok:false,t:'Ya hay alguien con ese usuario. Probá con otro.'}; render(); return; }
     const p = tempPass(); S.users.push(await makeUser({id:uid, nombre:$('#nuNom').value.trim(), rol:$('#nuRol').value}, p, true)); save();
-    audit('Creó usuario','Usuarios', `${uid} (${$('#nuRol').value})`);
-    ui.userMsg={ok:true, html:`Usuario <b>${esc(uid)}</b> creado. Contraseña provisoria: <span class="mono">${esc(p)}</span>. Pasásela por un canal seguro: no se vuelve a mostrar.`}; render();
-  }
-  if(id==='movForm' && e){ const m = {fecha:$('#mvF').value, tipo:$('#mvT').value, desc:$('#mvD').value.trim(), user:S.user}; if(!m.desc) return; e.movimientos.push(m); save(); audit('Cargó movimiento', e.numero, `${m.tipo}: ${m.desc}`); render(); toast('Movimiento agregado'); }
-  if(id==='plForm' && e){ const p = {desc:$('#plD').value.trim(), vence:$('#plV').value, hecho:false}; if(!p.desc||!p.vence) return; e.plazos.push(p); save(); audit('Agregó plazo', e.numero, `${p.desc} (${fmt(p.vence)})`); render(); toast('Plazo agregado'); }
-  if(id==='newForm'){
-    const num = $('#nNum').value.trim(); if(S.exps.some(x=>x.numero===num)){ toast('Ya existe un expediente con ese número'); return; }
-    const x = {id:S.nextId++, numero:num, afiliado:$('#nAf').value.trim(), nroAf:$('#nNro').value.trim()||'—', prestacion:$('#nPr').value, juzgado:$('#nJz').value.trim(), estado:$('#nEs').value, riesgo:$('#nRi').value, abogado:$('#nAb').value, inicio:iso(today()), monto:+($('#nMo').value.replace(/\D/g,''))||0, cautelar:$('#nCa').checked, plazos:[], movimientos:[{fecha:iso(today()), tipo:'Interno', desc:'Alta del expediente.', user:S.user}], docs:[]};
-    x.caratula = `${x.afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`;
-    if($('#nPd').value.trim()) x.plazos.push({desc:$('#nPd').value.trim(), vence:$('#nPv').value, hecho:false});
-    S.exps.push(x); save(); closeModal(); audit('Creó expediente', x.numero, x.prestacion); location.hash = 'expediente-'+x.id; toast('Expediente creado');
+    audit('Agregó un usuario','Usuarios', `${uid} (${$('#nuRol').value})`);
+    ui.userMsg={ok:true, html:`Listo. <b>${esc(uid)}</b> ya puede entrar con la contraseña provisoria <span class="mono">${esc(p)}</span>. Pasásela en persona o por un canal seguro; no se vuelve a mostrar.`}; await chain; render();
   }
 });
 
@@ -912,7 +1172,7 @@ document.addEventListener('submit', async ev => {
 (async function init(){
   S = load();
   if(!S || !S.exps || !S.users){ S = await fresh(); save(); await seedAudit(); }
-  S.lock = S.lock || {};
+  S.lock = S.lock || {}; S.toured = S.toured || {};
   render();
   const u = getSession() && me(); if(u && u.mustChange) openPwd(true);
 })();
