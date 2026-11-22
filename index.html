@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.12">
+<meta name="fojas-version" content="2026-11-22.14">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -1561,6 +1561,9 @@ async function migrate(d){
     (d.notifs = d.notifs||[]).push({id:'nct1', para:'jpaz', de:'mgimenez', texto:'Marcos Giménez (Compras) pidió locación de servicios con Limpiezas del Sur S.R.L. CT-2026-0001.', link:'contrato-cej1', tipo:'tarea', ts:new Date().toISOString(), leida:false},
       {id:'nct2', para:'sruiz', de:'cortiz', texto:'Contratos necesita información para CT-2026-0002 (Juana Benítez): ¿Nos pasás la cesión de derechos de imagen firmada por la creadora?', link:'contrato-cej2', tipo:'alerta', ts:new Date().toISOString(), leida:false},
       {id:'nct3', para:'lbrunelli', de:'jpaz', texto:'Julieta Paz te asignó CT-2026-0003: acuerdo de confidencialidad (nda) con Datasalud Analytics S.A.', link:'contrato-cej3', tipo:'tarea', ts:new Date().toISOString(), leida:false}); }
+  if(!d.modContratos2){ d.modContratos2 = true;
+    // quienes ya estaban no reciben Contratos de golpe como solicitantes: el administrador decide
+    (d.users||[]).forEach(u=>{ if(u.rol==='Administrador') return; if(['dfraerman','lbrunelli','fzaurdo','rperez'].includes(u.id) && !u.area) u.area = 'Legales'; if(!Array.isArray(u.modulos) && !u.ctPerfil) u.modulos = ['amparos','administrativos']; }); }
   if(!d.ejemploTareas){ d.ejemploTareas = true; try{ ejemplosTareas(d); }catch(err){ console.warn(err); } }
   if(!d.ejemploAdm){ d.ejemploAdm = true; try{ ejemplosAdm(d); }catch(err){ console.warn(err); } d.nextId = Math.max(d.nextId||1, ...d.exps.map(e=>+e.id||0)) + 1; }
   d.schema = SCHEMA; d.user = null;
@@ -2280,6 +2283,14 @@ function teamEditor(){
   </section>`;
 }
 
+function ctPerfilBloque(pref, perfil){ const leg = perfil==='analista' || perfil==='jefe';
+  return `<div class="fld ctperfil">En el módulo Contratos, esta persona es… <span class="hint">lo elige solo el administrador</span>
+    <div class="opts" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+      <button type="button" class="opt ${!leg?'on':''}" data-act="ctp" data-ctp="${pref}" data-v="solicitante"><b>Solicitante</b><br><span class="small">Es de otra área (Compras, Marketing…). Pide contratos y ve solo sus pedidos.</span></button>
+      <button type="button" class="opt ${leg?'on':''}" data-act="ctp" data-ctp="${pref}" data-v="${leg?perfil:'analista'}"><b>Área de Contratos de Legales</b><br><span class="small">Recibe los pedidos de todas las áreas y arma los documentos.</span></button></div>
+    ${leg?`<div class="opts" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:8px">
+      <button type="button" class="opt ${perfil==='analista'?'on':''}" data-act="ctp" data-ctp="${pref}" data-v="analista">Analista: arma lo que le asignan</button>
+      <button type="button" class="opt ${perfil==='jefe'?'on':''}" data-act="ctp" data-ctp="${pref}" data-v="jefe">Jefa/e: recibe los pedidos y los asigna</button></div>`:''}</div>`; }
 const ROLES = ['Abogada/o a cargo','Analista legal','Procurador','Jefa/e de Contratos','Analista de Contratos','Solicitante','Administrador'];
 let UE = null;
 function openUserEdit(uid){ const u = S.users.find(x=>x.id===uid); if(!u) return; UE = {id:uid, nombre:u.nombre, nuevoId:u.id, rol:u.rol, modulos: modsDe(u), area:u.area||'', ctPerfil:ctPerfil(u), pw:'no', p1:'', p2:'', cambiar:true, err:''}; drawUserEdit(); }
@@ -2294,9 +2305,9 @@ function drawUserEdit(){
       <label>Usuario para entrar <span class="hint">${yo?'no podés cambiar tu propio usuario mientras estás adentro':'minúsculas, sin espacios'}</span><input type="text" id="ueId" value="${esc(UE.nuevoId)}" ${yo?'disabled':''} autocomplete="off"></label>
       <label>Rol<select id="ueRol">${roles.map(r=>`<option ${r===UE.rol?'selected':''}>${esc(r)}</option>`).join('')}</select></label>
       <label>Área<input type="text" id="ueArea" list="ueAreas" value="${esc(UE.area||'')}" placeholder="Ej.: Compras"><datalist id="ueAreas">${CT_AREAS.map(a=>`<option value="${esc(a)}">`).join('')}</datalist></label>
-      <label>En Contratos es<select id="ueCt">${[['solicitante','Solicitante (pide contratos)'],['analista','Analista de Contratos'],['jefe','Jefa/e de Contratos (asigna)']].map(([k,l])=>`<option value="${k}" ${UE.ctPerfil===k?'selected':''}>${l}</option>`).join('')}</select></label>
     </div>
     <div class="fld">Módulos que puede usar <span class="hint">${UE.rol==='Administrador'?'el administrador ve todos los módulos':'tildá uno, varios o todos'}</span>${modChecks('ueMod', UE.modulos, UE.rol==='Administrador')}</div>
+    ${(UE.rol==='Administrador' || (UE.modulos||[]).includes('contratos')) ? ctPerfilBloque('ue', UE.ctPerfil) : ''}
     <div class="fld">Contraseña
       <div class="opts" style="grid-template-columns:repeat(3,1fr)">
         <button type="button" class="opt ${UE.pw==='no'?'on':''}" data-uepw="no">No cambiarla</button>
@@ -2311,7 +2322,7 @@ function drawUserEdit(){
     ${UE.pw==='ini'?`<div class="notice">La contraseña vuelve a ser igual a su usuario (<span class="mono">${esc((UE.nuevoId||u.id).trim().toLowerCase())}</span>) y la tiene que cambiar al entrar.</div>`:''}
     <div class="row" style="justify-content:flex-end"><button class="btn" data-act="close">Cancelar</button><button class="btn ok big" data-act="uesave">${ic('check')} Guardar cambios</button></div>`);
 }
-function ueRead(){ if(!UE) return; const g = id => $(id); if(g('#ueNom')) UE.nombre = g('#ueNom').value; if(g('#ueId') && !g('#ueId').disabled) UE.nuevoId = g('#ueId').value; if(g('#ueRol')) UE.rol = g('#ueRol').value; if(g('#ueArea')) UE.area = g('#ueArea').value.trim(); if(g('#ueCt')) UE.ctPerfil = g('#ueCt').value; if(g('.modchecks') && UE.rol!=='Administrador') UE.modulos = modLeer('ueMod'); if(g('#ueP1')) UE.p1 = g('#ueP1').value; if(g('#ueP2')) UE.p2 = g('#ueP2').value; if(g('#ueCambiar')) UE.cambiar = g('#ueCambiar').checked; }
+function ueRead(){ if(!UE) return; const g = id => $(id); if(g('#ueNom')) UE.nombre = g('#ueNom').value; if(g('#ueId') && !g('#ueId').disabled) UE.nuevoId = g('#ueId').value; if(g('#ueRol')) UE.rol = g('#ueRol').value; if(g('#ueArea')) UE.area = g('#ueArea').value.trim();  if(g('.modchecks') && UE.rol!=='Administrador') UE.modulos = modLeer('ueMod'); if(g('#ueP1')) UE.p1 = g('#ueP1').value; if(g('#ueP2')) UE.p2 = g('#ueP2').value; if(g('#ueCambiar')) UE.cambiar = g('#ueCambiar').checked; }
 async function ueSave(){
   ueRead(); const u = S.users.find(x=>x.id===UE.id); const yo = u.id===S.user; const err = t => { UE.err = t; drawUserEdit(); };
   const nombre = UE.nombre.trim().replace(/\s+/g,' '), nid = UE.nuevoId.trim().toLowerCase();
@@ -2327,6 +2338,7 @@ async function ueSave(){
   if(nombre !== u.nombre){ cambios.push(`nombre: ${u.nombre} → ${nombre}`); u.nombre = nombre; }
   if(UE.rol !== u.rol){ cambios.push(`rol: ${u.rol} → ${UE.rol}`); u.rol = UE.rol; }
   if((UE.area||'') !== (u.area||'')){ cambios.push(`área: ${u.area||'—'} → ${UE.area||'—'}`); u.area = UE.area; }
+  if(UE.ctPerfil==='solicitante' && (UE.rol==='Administrador' || (UE.modulos||[]).includes('contratos')) && !(UE.area||'').trim()){ UE.err = 'Para un solicitante de Contratos, completá su área (Compras, Marketing…).'; drawUserEdit(); return; }
   if(UE.ctPerfil && UE.ctPerfil !== ctPerfil(u)){ cambios.push(`en Contratos: ${ctPerfil(u)} → ${UE.ctPerfil}`); u.ctPerfil = UE.ctPerfil; }
   if(UE.rol!=='Administrador'){ const antes = modsDe(u).join(','), nuevos = (UE.modulos||[]); if(antes !== modsOrg().filter(id=>nuevos.includes(id)).join(',') || !Array.isArray(u.modulos)){ if(antes !== modsOrg().filter(id=>nuevos.includes(id)).join(',')) cambios.push(`módulos: ${antes||'ninguno'} → ${nuevos.join(',')||'ninguno'}`); u.modulos = [...nuevos]; } }
   if(nid !== u.id){ const old = u.id; cambios.push(`usuario: ${old} → ${nid}`); u.id = nid;
@@ -2365,11 +2377,13 @@ function vUsuarios(){
   if(!isAdmin()) return `<div class="card empty"><b>Esta sección es solo para el administrador.</b></div>`;
   const m = ui.userMsg;
   return `
-  <div><h1>Usuarios</h1><p class="sub">Quién puede entrar a Fojas. Desde acá podés cambiar el nombre, el usuario, el rol y la contraseña de cada persona. Las contraseñas se guardan cifradas: nadie puede verlas, ni el administrador, pero sí ponerles una nueva.</p></div>
+  <div><h1>Usuarios</h1><p class="sub">Solo el administrador agrega personas y les asigna rol, área, módulos y qué son en Contratos (solicitante de otra área o equipo de Legales). Las contraseñas se guardan cifradas: nadie puede verlas, ni el administrador, pero sí ponerles una nueva.</p></div>
   ${m?`<div class="notice ${m.ok?'good':'bad'}">${m.html||esc(m.t)}</div>`:''}
-  <div class="grid g3">${S.users.map(u=>{ const l = (S.lock||{})[u.id]; const locked = l && l.until > Date.now(); return `
+  ${(()=>{ const solo = u => u.rol!=='Administrador' && modsDe(u).length===1 && modsDe(u)[0]==='contratos' && ctPerfil(u)==='solicitante'; const F = {todos:{l:'Todos', f:()=>true}, legales:{l:'Legales', f:u=>!solo(u)}, sol:{l:'Solicitantes de otras áreas', f:solo}}; if(!F[ui.uFil]) ui.uFil = 'todos'; ui._uF = F[ui.uFil].f;
+    return `<div class="chips">${Object.entries(F).map(([k,v])=>`<button class="chipbtn ${ui.uFil===k?'on':''}" data-act="ufil" data-v="${k}">${v.l} <span class="badge">${S.users.filter(v.f).length}</span></button>`).join('')}</div>`; })()}
+  <div class="grid g3">${S.users.filter(u=>ui._uF(u)).map(u=>{ const l = (S.lock||{})[u.id]; const locked = l && l.until > Date.now(); return `
     <section class="card"><div class="row"><div class="avatar">${initials(u.nombre)}</div><div style="flex:1"><b>${esc(u.nombre)}</b><div class="small muted">${esc(u.rol)} · <span class="mono">${esc(u.id)}</span></div></div></div>
-      ${u.area||modsDe(u).includes('contratos')?`<div class="small"><span class="muted">${u.area?'Área: '+esc(u.area):''}${u.area&&modsDe(u).includes('contratos')?' · ':''}${modsDe(u).includes('contratos')?'En Contratos: '+({solicitante:'solicitante',analista:'analista',jefe:'jefa/e'})[ctPerfil(u)]:''}</span></div>`:''}<div class="small"><span class="muted">Módulos:</span> ${u.rol==='Administrador'?'todos (es administrador)':(modsDe(u).map(id=>esc((MODULES.find(m=>m.id===id)||{}).nombre||id)).join(' · ')||'<b style="color:var(--danger)">ninguno</b>')}</div>
+      ${u.area?`<div class="small"><span class="muted">Área:</span> ${esc(u.area)}</div>`:''}${modsDe(u).includes('contratos')?`<div class="row" style="gap:6px"><span class="pill ${ctPerfil(u)==='solicitante'?'':'acc'}">${ic('file','sm')} Contratos · ${({solicitante:'Solicitante'+(u.area?' de '+esc(u.area):''), analista:'Legales · Analista', jefe:'Legales · Jefa/e (asigna)'})[ctPerfil(u)]}</span></div>`:''}<div class="small"><span class="muted">Módulos:</span> ${u.rol==='Administrador'?'todos (es administrador)':(modsDe(u).map(id=>esc((MODULES.find(m=>m.id===id)||{}).nombre||id)).join(' · ')||'<b style="color:var(--danger)">ninguno</b>')}</div>
       <div class="row">${u.activo?(locked?'<span class="pill yel">Bloqueado</span>':'<span class="pill grn">Puede entrar</span>'):'<span class="pill">Desactivado</span>'}${u.mustChange?'<span class="pill">Debe cambiar su contraseña</span>':''}</div>
       <div class="row"><button class="btn sm pri" data-act="uedit" data-u="${u.id}">${ic('pen','sm')} Editar</button></div>
       ${u.id===S.user?'<span class="small muted">Sos vos</span>':`<div class="row"><button class="btn sm" data-act="ureset" data-u="${u.id}">${ic('key','sm')} Restablecer contraseña</button><button class="btn sm" data-act="utoggle" data-u="${u.id}">${u.activo?'Desactivar':'Activar'}</button>${locked?`<button class="btn sm" data-act="uunlock" data-u="${u.id}">Desbloquear</button>`:''}<button class="btn sm ghost danger" data-act="udel" data-u="${u.id}">${ic('trash','sm')} Eliminar</button></div>`}
@@ -2380,7 +2394,7 @@ function vUsuarios(){
       <label>Usuario para entrar <span class="hint">minúsculas, sin espacios</span><input type="text" id="nuId" required pattern="[a-z0-9._-]{3,30}" placeholder="ej.: mlopez"></label>
       <label>Rol<select id="nuRol">${ROLES.map(r=>`<option>${esc(r)}</option>`).join('')}</select></label>
       <label>Área<input type="text" id="nuArea" list="nuAreas" placeholder="Ej.: Compras"><datalist id="nuAreas">${CT_AREAS.map(a=>`<option value="${esc(a)}">`).join('')}</datalist></label>
-      <label>En Contratos es<select id="nuCt"><option value="solicitante">Solicitante (pide contratos)</option><option value="analista">Analista de Contratos</option><option value="jefe">Jefa/e de Contratos (asigna)</option></select></label>
+      <div class="full" id="nuCtWrap">${ctPerfilBloque('nu', ui.nuCt||'solicitante')}</div>
       <div class="full"><span class="small" style="font-weight:600">Módulos que puede usar</span>${modChecks('nuMod', null, false)}</div>
       <div class="full"><button class="btn pri" type="submit">${ic('plus','sm')} Agregar</button> <span class="small muted">La primera vez entra con su usuario como contraseña y Fojas le pide cambiarla.</span></div>
     </form></section>`;
@@ -3233,6 +3247,8 @@ document.addEventListener('click', async ev => {
   if(a==='close') closeModal();
   if(a==='upcancel'){ UP = null; closeModal(); }
   if(a==='mcerrar'){ ui.miembro = null; render(); }
+  if(d.ctp && isAdmin()){ if(d.ctp==='ue' && UE){ ueRead(); UE.ctPerfil = d.v; drawUserEdit(); } else if(d.ctp==='nu'){ ui.nuCt = d.v; const w = $('#nuCtWrap'); if(w) w.innerHTML = ctPerfilBloque('nu', d.v); } return; }
+  if(a==='ufil' && isAdmin()){ ui.uFil = d.v; render(); return; }
   if(a==='uedit' && isAdmin()) openUserEdit(d.u);
   if(a==='udel' && isAdmin()){ const u = S.users.find(x=>x.id===d.u); if(u) eliminarUsuario(u); }
   if(a==='uesave' && UE && isAdmin()) await ueSave();
@@ -3483,7 +3499,7 @@ document.addEventListener('submit', async ev => {
   if(id==='userForm' && isAdmin()){
     const uid = $('#nuId').value.trim().toLowerCase();
     if(S.users.some(x=>x.id===uid)){ ui.userMsg={ok:false,t:'Ya hay alguien con ese usuario. Probá con otro.'}; render(); return; }
-    const nu = await makeUser({id:uid, nombre:$('#nuNom').value.trim(), rol:$('#nuRol').value}, uid, true); nu.modulos = modLeer('nuMod'); nu.area = ($('#nuArea')||{}).value ? $('#nuArea').value.trim() : ''; nu.ctPerfil = ($('#nuCt')||{}).value || 'solicitante'; S.users.push(nu); save();
+    const nu = await makeUser({id:uid, nombre:$('#nuNom').value.trim(), rol:$('#nuRol').value}, uid, true); nu.modulos = modLeer('nuMod'); nu.area = ($('#nuArea')||{}).value ? $('#nuArea').value.trim() : ''; nu.ctPerfil = nu.modulos.includes('contratos') ? (ui.nuCt||'solicitante') : undefined; if(!nu.ctPerfil) delete nu.ctPerfil; if(nu.ctPerfil==='solicitante' && !nu.area){ toast('Para un solicitante de Contratos, completá su área (Compras, Marketing…)'); const ar = $('#nuArea'); if(ar){ ar.focus(); ar.setAttribute('aria-invalid','true'); } return; } ui.nuCt = null; S.users.push(nu); save();
     audit('Agregó un usuario','Usuarios', `${uid} (${$('#nuRol').value}) · módulos: ${nu.modulos.join(', ')||'ninguno'}`);
     ui.userMsg={ok:true, html:`Listo. <b>${esc(uid)}</b> ya puede entrar: la primera vez su contraseña es <span class="mono">${esc(uid)}</span> (igual al usuario) y al ingresar la tiene que cambiar sí o sí.`}; await chain; render();
   }
@@ -4311,7 +4327,7 @@ document.addEventListener('click', async ev => {
   if(a==='guiadel'){ const i = (S.guiaPropia||[]).findIndex(x=>x.id===d.g); if(i<0) return; const g = S.guiaPropia.splice(i,1)[0]; S.trBorrados = [...new Set([...(S.trBorrados||[]), g.id])]; save(); audit('Quitó un trámite de la guía', g.t, ''); render(); toast('Quitado de la guía', ()=>{ S.guiaPropia.splice(i,0,g); S.trBorrados = S.trBorrados.filter(x=>x!==g.id); save(); render(); }); return; }
 });
 document.addEventListener('input', ev => { if(ev.target.id==='guiaQ'){ ui.guiaQ = ev.target.value; const pos = ev.target.selectionStart; render(); const n = $('#guiaQ'); if(n){ n.focus(); try{ n.setSelectionRange(pos,pos); }catch(e){} } } });
-document.addEventListener('change', ev => { if(ev.target.id==='ueRol' && UE){ ueRead(); drawUserEdit(); return; } if(ev.target.id==='trOrg' && TRF){ const o = orgById(ev.target.value), r = o.plazo||{}; const n = $('#trNota'); if(n) n.textContent = o.plazoNota||''; const lab = $('#trVence') && $('#trVence').closest('label'); if(lab) lab.firstChild.textContent = o.plazoDesc||'Próximo vencimiento'; if(r.modo && r.modo!=='fecha'){ const ini = ($('#trIni')||{}).value || iso(today()); $('#trVence').value = calcPlazo({...r, desde:ini}).vence; } } });
+document.addEventListener('change', ev => { if((ev.target.id==='ueRol' || /^ueMod/.test(ev.target.id)) && UE){ ueRead(); drawUserEdit(); return; } if(ev.target.id==='nuModcontratos'){ const w = $('#nuCtWrap'); if(w) w.style.display = ev.target.checked ? '' : 'none'; } if(ev.target.id==='trOrg' && TRF){ const o = orgById(ev.target.value), r = o.plazo||{}; const n = $('#trNota'); if(n) n.textContent = o.plazoNota||''; const lab = $('#trVence') && $('#trVence').closest('label'); if(lab) lab.firstChild.textContent = o.plazoDesc||'Próximo vencimiento'; if(r.modo && r.modo!=='fecha'){ const ini = ($('#trIni')||{}).value || iso(today()); $('#trVence').value = calcPlazo({...r, desde:ini}).vence; } } });
 
 // ---------- Tareas diarias: las propone cada persona, las valida su superior; el superior también asigna ----------
 const DIAS_SEM = [['1','Lun'],['2','Mar'],['3','Mié'],['4','Jue'],['5','Vie']];
@@ -4677,7 +4693,7 @@ function ctInicioBlock(){ if(!tieneMod('contratos')) return ''; const eq = esEqu
     <div class="cases">${top.slice(0,6).map(ctRow).join('') || `<div class="empty small">${eq?'No tenés pedidos pendientes.':'No tenés solicitudes en curso.'}</div>`}</div></section>`; }
 document.addEventListener('click', async ev => {
   if(!S || !S.user) return; const el = ev.target.closest('[data-act]'); if(!el) return; const a = el.dataset.act, d = el.dataset;
-  if(!/^(ct|cn)/.test(a)) return;
+  if(!/^(ct|cn)/.test(a) || a==='ctp') return;
   if(a==='ctf'){ ui.ctF = d.v; render(); return; }
   if(a==='ctver'){ ui.ctU = d.u || null; if(d.u) ui.ctF = 'abiertas'; render(); return; }
   if(a==='cntipo'){ ctnRead(); CTN.tipo = d.v; CTN.checklist = {}; render(); return; }
