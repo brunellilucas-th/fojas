@@ -398,60 +398,148 @@ const MODULES = [
   {id:'cartas', nombre:'Cartas documento', desc:'Redacción, envío y seguimiento de cartas documento e intimaciones.', disponible:false, icon:'pen'}
 ];
 
+// ---------- redacción completa de escritos ----------
+const CONFIG_DEF = {empresa:'SALUD INTEGRAL DEMO S.A.', cuitEmpresa:'30-71234567-8', letrado:'', matricula:'T° 120 F° 345 del CPACF', domicilio:'Av. Corrientes 1234, piso 5°, Ciudad Autónoma de Buenos Aires', electronico:'20-28123456-7', poder:'poder general judicial que acompaño en copia y declaro vigente'};
+const cfg = () => ({...CONFIG_DEF, ...(S.config||{})});
 const TEMPLATES = [
-  {id:'informe', nombre:'Informe del art. 8', para:'Cuando el juzgado pide el informe circunstanciado de la Ley 16.986.', icon:'file', cuerpo:
-`SE PRESENTA – PRODUCE INFORME CIRCUNSTANCIADO
-
-Señor Juez:
-
-{abogado}, en representación de SALUD INTEGRAL DEMO S.A., conforme el poder que acompaño, con domicilio constituido en [DOMICILIO PROCESAL], en los autos caratulados "{caratula}" (Expte. {numero}), que tramitan ante el {juzgado}, a V.S. respetuosamente digo:
-
-I. OBJETO
-Que vengo en legal tiempo y forma a producir el informe previsto en el art. 8 de la Ley 16.986, respecto de la prestación reclamada: {prestacion}.
-
-II. ANTECEDENTES
-El/la afiliado/a {afiliado} (DNI {dni}) [DESCRIBIR ANTECEDENTES DE LA SOLICITUD Y SU TRÁMITE INTERNO].
-
-III. FUNDAMENTOS
-[DESARROLLAR].
-
-IV. PETITORIO
-Por lo expuesto, solicito:
-1. Se tenga por presentado el informe en tiempo y forma.
-2. Oportunamente, se rechace la acción de amparo, con costas.
-
-Proveer de conformidad,
-SERÁ JUSTICIA.`},
-  {id:'cumplimiento', nombre:'Acreditar cumplimiento de cautelar', para:'Para informar al juzgado que ya se dio la prestación ordenada.', icon:'check', cuerpo:
-`ACREDITA CUMPLIMIENTO DE MEDIDA CAUTELAR
-
-Señor Juez:
-
-{abogado}, por la representación acreditada de SALUD INTEGRAL DEMO S.A., en los autos "{caratula}" (Expte. {numero}), a V.S. digo:
-
-Que vengo a acreditar el cumplimiento de la medida cautelar dispuesta en autos, habiéndose otorgado la cobertura de {prestacion} a favor de {afiliado}, conforme surge de la documental que se acompaña [DETALLAR: autorización N°, fecha de entrega, prestador].
-
-Por ello, solicito se tenga por cumplida la medida ordenada.
-
-Proveer de conformidad,
-SERÁ JUSTICIA.`},
-  {id:'prorroga', nombre:'Pedir más plazo', para:'Cuando necesitás más días para presentar algo.', icon:'clock', cuerpo:
-`SOLICITA AMPLIACIÓN DE PLAZO
-
-Señor Juez:
-
-{abogado}, por SALUD INTEGRAL DEMO S.A., en autos "{caratula}" (Expte. {numero}), a V.S. digo:
-
-Que, atento la complejidad de la prestación reclamada ({prestacion}) y la necesidad de recabar información de las áreas técnicas, solicito se amplíe el plazo para [INDICAR ACTO PROCESAL] por [CANTIDAD] días.
-
-Proveer de conformidad,
-SERÁ JUSTICIA.`}
+  {id:'informe', nombre:'Informe del art. 8', para:'Contesta el informe circunstanciado de la Ley 16.986: antecedentes, fundamentos, prueba y petitorio.', icon:'file'},
+  {id:'cumplimiento', nombre:'Acreditar cumplimiento de cautelar', para:'Informa que se otorgó la prestación ordenada y pide que se tenga por cumplida.', icon:'check'},
+  {id:'apelacion', nombre:'Apelar la medida cautelar', para:'Recurso fundado contra la cautelar, con los argumentos que surgen de lo presentado.', icon:'alert'},
+  {id:'prorroga', nombre:'Pedir más plazo', para:'Solicita la ampliación del plazo del próximo vencimiento, con su motivo.', icon:'clock'}
 ];
+const romanos = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+function nombreNatural(af){
+  let s = String(af||'').trim(), extra = '';
+  const m = s.match(/\(([^)]*)\)/); if(m){ s = s.replace(m[0],'').trim(); const x = m[1].replace(/^\s*(?:por|en\s+rep\.?(?:resentaci[oó]n)?\s+de)\s+/i,'').trim(); extra = `, en representación de ${x}`; }
+  const p = s.split(','); const n = p.length>1 ? `${p[1].trim()} ${p[0].trim()}` : s;
+  return n + extra;
+}
+const PREST_FRASE = {'Medicación oncológica':'la medicación oncológica indicada a su favor','Medicamentos':'la medicación indicada a su favor','Discapacidad (Ley 24.901)':'las prestaciones previstas en la Ley 24.901 para personas con discapacidad','Fertilización (Ley 26.862)':'el tratamiento de reproducción médicamente asistida previsto en la Ley 26.862','Internación domiciliaria':'la internación domiciliaria','Internación':'la internación','Cirugía':'la práctica quirúrgica indicada','Prótesis / ortesis':'la prótesis u órtesis indicada','Salud mental':'el tratamiento de salud mental indicado','Diabetes e insumos':'los medicamentos e insumos para el tratamiento de la diabetes','Estudios y diagnóstico':'la práctica diagnóstica indicada','Rehabilitación':'el tratamiento de rehabilitación indicado','Trasplante':'el trasplante indicado y sus prestaciones asociadas','Diálisis':'el tratamiento dialítico','Odontología':'la prestación odontológica indicada','Cobertura integral':'la cobertura integral de las prestaciones indicadas'};
+function jzFormal(e){
+  let j = String(e.juzgado||'');
+  const m = j.match(/^Juzg\.?\s*Nac\.?\s*Civ\.?\s*y\s*Com\.?\s*Fed\.?\s*N[°º]\s*(\d+)(?:\s*·\s*Sec\.?\s*(\d+))?/i);
+  if(m) return `el Juzgado Nacional de Primera Instancia en lo Civil y Comercial Federal N° ${m[1]}${(e.secretaria||m[2])?`, Secretaría ${e.secretaria||'N° '+m[2]}`:''}`;
+  return j ? `el ${j}${e.secretaria?`, Secretaría ${e.secretaria}`:''}` : 'ese Juzgado';
+}
+function datosEscrito(e){
+  const c = cfg(), f = caseFlags(e);
+  const letrado = c.letrado || userName(e.abogado);
+  const pend = pending(e);
+  const docs = (e.docs||[]).filter(d=>d.tipo!=='Escrito propio');
+  const movs = [...(e.movimientos||[])].sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  const pide = e.detalle ? `la cobertura de ${e.detalle}` : `la cobertura de ${PREST_FRASE[e.prestacion]||'la prestación reclamada'}`;
+  return {c, f, letrado, pend, docs, movs, pide, quien:nombreNatural(e.afiliado), autos:e.caratula || `${e.afiliado} c/ ${c.empresa} s/ amparo de salud`,
+    juzgado: jzFormal(e), dni: e.dni && e.dni!=='—' ? e.dni : null};
+}
+function encabezado(d, e, rubro){
+  return `${rubro}\n\nSeñor/a Juez/a:\n\n${d.letrado}, abogado/a, inscripto/a al ${d.c.matricula}, en mi carácter de apoderado/a de ${d.c.empresa} (CUIT ${d.c.cuitEmpresa}), conforme el ${d.c.poder}, con domicilio procesal constituido en ${d.c.domicilio} y domicilio electrónico en CUIT ${d.c.electronico}, en los autos caratulados "${d.autos}" (Expte. N° ${e.numero}), que tramitan ante ${d.juzgado}, a V.S. respetuosamente digo:`;
+}
+function fundamentosPrestacion(e, d, enfoque){
+  const P = e.prestacion||'', out = [];
+  const allana = enfoque==='cartilla';
+  if(/oncol/i.test(P)) out.push(`Mi mandante no desconoce que el Programa Médico Obligatorio (Res. MS 201/2002 y sus modificatorias), aplicable a las entidades de medicina prepaga en virtud del art. 7 de la Ley 26.682, contempla la cobertura de la medicación oncológica conforme a protocolos. Precisamente por ello, la cobertura debe ajustarse a la indicación aprobada por la ANMAT para la patología y el estadio del paciente, a los protocolos vigentes y a la provisión a través de los prestadores y droguerías con los que mi mandante opera, sin que el asociado pueda imponer unilateralmente una marca comercial o un canal de provisión determinado.`);
+  if(/Discapacidad/i.test(P)) out.push(`La Ley 24.901 establece un sistema de prestaciones básicas para personas con discapacidad que mi mandante no desconoce. Sin embargo, dicho régimen supone la acreditación de la discapacidad mediante el Certificado Único de Discapacidad vigente (Ley 22.431), la prescripción del equipo tratante con indicación de modalidad, carga horaria y duración, y la intervención de prestadores inscriptos en el Registro Nacional de Prestadores. Asimismo, los valores de cobertura se encuentran fijados por el Nomenclador de Prestaciones Básicas para Personas con Discapacidad, que constituye la referencia razonable para la cobertura de prestadores ajenos a la cartilla.`);
+  if(/Fertiliz/i.test(P)) out.push(`La Ley 26.862 y su Decreto reglamentario 956/2013 garantizan el acceso a las técnicas de reproducción médicamente asistida, pero establecen límites objetivos: hasta cuatro tratamientos anuales de baja complejidad y hasta tres tratamientos de alta complejidad, con intervalos mínimos de tres meses entre estos últimos (art. 8 del Decreto 956/2013). La cobertura debe brindarse dentro de esos parámetros y en centros habilitados.`);
+  if(/domiciliaria/i.test(P)) out.push(`La internación domiciliaria es una modalidad de atención médica que requiere indicación fundada y evaluación de la Auditoría Médica, y que no debe confundirse con la asistencia de un cuidador para actividades de la vida diaria, prestación de naturaleza distinta que no integra el Programa Médico Obligatorio. Mi mandante ha evaluado la situación del asociado y la cobertura debe ajustarse a las necesidades médicas acreditadas.`);
+  if(/^Internación$/.test(P)) out.push(`La pretensión debe analizarse distinguiendo la internación por cuadro agudo, comprendida en el Programa Médico Obligatorio, de la institucionalización de larga estadía, cuya cobertura depende del encuadre normativo aplicable y de la acreditación de los presupuestos correspondientes.`);
+  if(/Salud mental/i.test(P)) out.push(`La Ley 26.657 de Salud Mental prioriza el abordaje interdisciplinario y ambulatorio, y dispone que la internación es un recurso terapéutico de carácter restrictivo. Mi mandante cuenta con prestadores de cartilla con capacidad para brindar el tratamiento indicado, por lo que no se configura la omisión que se le imputa.`);
+  if(/Prótesis/i.test(P)) out.push(`El Programa Médico Obligatorio prevé la cobertura del 100 % de las prótesis e implantes de colocación interna permanente y del 50 % de las órtesis y prótesis externas, en principio de origen nacional. Sólo excepcionalmente, y ante la inexistencia de un equivalente nacional, procede la provisión de material importado, extremo que no ha sido acreditado en autos.`);
+  if(/Cirug/i.test(P)) out.push(`Mi mandante no se ha negado a la cobertura de la práctica quirúrgica, sino que la ofrece a través de los prestadores de su cartilla, con profesionales y centros idóneos para realizarla. La elección de un prestador ajeno a la cartilla no constituye un derecho del asociado ni torna ilegítima la conducta de mi mandante.`);
+  if(/^Medicamentos$/.test(P)) out.push(`La cobertura de medicamentos se encuentra regulada por el Programa Médico Obligatorio, que establece porcentajes diferenciados según el tipo de tratamiento y la patología. Mi mandante ha otorgado la cobertura en los términos de la normativa vigente, sin que se haya acreditado la procedencia de un porcentaje superior.`);
+  if(/Diabetes/i.test(P)) out.push(`La Ley 23.753, modificada por la Ley 26.914, garantiza la cobertura de los medicamentos e insumos para el tratamiento de la diabetes en los términos que fija la autoridad de aplicación. La tecnología específica que se reclama debe estar comprendida en dicha normativa y contar con indicación médica fundada.`);
+  if(/Trasplante/i.test(P)) out.push(`Mi mandante no desconoce las obligaciones que surgen de la Ley 27.447 de Trasplante de Órganos, Tejidos y Células, cuya cobertura brinda a través de centros habilitados y con intervención del INCUCAI.`);
+  if(/Diálisis/i.test(P)) out.push(`El tratamiento dialítico se encuentra cubierto por mi mandante a través de los centros de su cartilla, y la pretensión de realizarlo en un centro distinto no encuentra sustento normativo.`);
+  if(/Estudios/i.test(P)) out.push(`La práctica diagnóstica solicitada se encuentra a disposición del asociado a través de los prestadores de la cartilla de mi mandante, previa presentación de la indicación médica correspondiente.`);
+  if(/Rehabilitación/i.test(P)) out.push(`El Programa Médico Obligatorio establece topes anuales para las sesiones de rehabilitación, salvo los supuestos alcanzados por la Ley 24.901, que requieren la acreditación de la discapacidad mediante certificado vigente.`);
+  if(/Odontolog/i.test(P)) out.push(`El Programa Médico Obligatorio comprende prácticas odontológicas básicas; las prestaciones de ortodoncia e implantología no integran la cobertura obligatoria salvo indicaciones específicas que no se acreditan en autos.`);
+  if(!out.length) out.push(`La prestación reclamada debe analizarse a la luz del Programa Médico Obligatorio y del art. 7 de la Ley 26.682, que delimitan la cobertura que las entidades de medicina prepaga deben brindar a sus asociados.`);
+  const fl = d.f;
+  if(!fl.prescripcion) out.push(`Por otra parte, no se ha acompañado una prescripción médica actual que indique la prestación, su modalidad y su duración, por lo que no se encuentra acreditada la necesidad que sustenta el reclamo (art. 377 CPCCN).`);
+  if(/Discapacidad/i.test(P) && !fl.cud) out.push(`Tampoco se ha acompañado el Certificado Único de Discapacidad vigente, presupuesto indispensable para el encuadre de la pretensión en el régimen de la Ley 24.901 (art. 3 de la Ley 22.431).`);
+  if(fl.offlabel) out.push(`Cabe destacar que, según surge de la propia documentación acompañada, lo solicitado constituiría un uso fuera de las indicaciones aprobadas por la ANMAT, extremo que excede la cobertura obligatoria y que requiere un análisis riguroso de evidencia científica.`);
+  if(fl.importado || fl.marca) out.push(`En cuanto a la marca o el origen del producto requerido, la Ley 25.649 de promoción de la utilización de medicamentos por su nombre genérico respalda la provisión de un equivalente con igual principio activo, concentración y forma farmacéutica, por lo que mi mandante ofrece cubrir la alternativa equivalente disponible.`);
+  if(fl.fueraCartilla) out.push(`Respecto del prestador elegido por la parte actora, ajeno a la cartilla, mi mandante ofrece brindar la prestación a través de sus prestadores propios o contratados. Subsidiariamente, y para el supuesto de que V.S. entienda que corresponde la cobertura con el prestador elegido, solicito que se limite a los valores que mi mandante abona a sus prestadores.`);
+  if(fl.menor) out.push(`Mi mandante tiene especialmente presente que se encuentra involucrado un niño, niña o adolescente, y por ello ha procurado en todo momento que la atención no se vea interrumpida, ofreciendo alternativas adecuadas a su situación.`);
+  if(allana) out.push(`Sin perjuicio de lo expuesto, y con el objeto de resguardar la salud de ${d.quien}, mi mandante ofrece brindar la prestación requerida a través de los prestadores de su cartilla, en las condiciones indicadas por el profesional tratante, lo que torna abstracta la necesidad de un pronunciamiento sobre el fondo en ese aspecto.`);
+  return out;
+}
+function buildEscrito(id, e, enfoque='rechazo'){
+  const d = datosEscrito(e), parts = []; let n = 0; const sec = t => `\n\n${romanos[n++]}. ${t}\n\n`;
+  const docsLista = d.docs.length ? d.docs.map((x,i)=>`${i+1}. ${x.tipo}: ${x.nombre.replace(/\.[a-z0-9]+$/i,'')}.`).join('\n') : '1. Copia del legajo administrativo del asociado.';
+  const cronologia = d.movs.length ? d.movs.map(m=>`- ${fmt(m.fecha)}: ${m.desc.replace(/\.$/,'')}.`).join('\n') : '';
+  if(id==='informe'){
+    parts.push(encabezado(d, e, 'SE PRESENTA – PRODUCE INFORME CIRCUNSTANCIADO (ART. 8 LEY 16.986) – OFRECE PRUEBA – HACE RESERVA DEL CASO FEDERAL'));
+    parts.push(sec('OBJETO') + `Que, en legal tiempo y forma, vengo a producir el informe circunstanciado requerido por V.S. en los términos del art. 8 de la Ley 16.986, respecto de la acción de amparo promovida por ${d.quien}${d.dni?` (DNI ${d.dni})`:''}, por la cual se reclama ${d.pide}, solicitando desde ya su rechazo, con costas${enfoque==='cartilla'?', sin perjuicio del ofrecimiento de cobertura que se formula en el punto pertinente':''}.`);
+    parts.push(sec('PERSONERÍA') + `Acredito la personería invocada conforme el ${d.c.poder}.`);
+    parts.push(sec('ANTECEDENTES') + `${d.quien.replace(/, en representación de .*/,'')} es asociado/a de mi mandante${/representación/.test(d.quien)?` y actúa ${d.quien.match(/en representación de .*/)[0].replace(/\.$/,'')}`:''}. Según surge del escrito de inicio, pretende ${d.pide}.\n\n` +
+      (d.f.reclamoPrevio ? `La solicitud fue analizada por mi mandante con intervención de su Auditoría Médica, y la respuesta brindada al asociado se ajustó a la normativa aplicable, conforme surge de la documentación que se acompaña.` : `De los registros de mi mandante no surge que el asociado haya formulado un pedido previo de la prestación con anterioridad a la promoción de estas actuaciones, de modo que no existe una negativa que pueda calificarse de arbitraria o ilegítima.`) +
+      (e.cautelar ? `\n\nV.S. dispuso una medida cautelar ordenando a mi mandante otorgar la cobertura reclamada, la cual ha sido o está siendo cumplida, sin que ello importe reconocimiento de derecho alguno ni consentimiento de sus fundamentos.` : '') +
+      (cronologia ? `\n\nLas principales actuaciones registradas son las siguientes:\n${cronologia}` : ''));
+    parts.push(sec('INEXISTENCIA DE ARBITRARIEDAD O ILEGALIDAD MANIFIESTA') + `La acción de amparo es una vía excepcional que sólo procede frente a actos u omisiones que, en forma actual o inminente, lesionen derechos constitucionales con arbitrariedad o ilegalidad manifiesta (art. 43 de la Constitución Nacional y art. 1 de la Ley 16.986). Ese recaudo no se verifica en autos: mi mandante ha actuado dentro del marco normativo que regula su actividad y, como se expondrá, ha ofrecido alternativas razonables para atender la situación del asociado.\n\nAsimismo, la cuestión requiere un mayor debate y prueba (art. 2, inc. d, de la Ley 16.986), en particular sobre la necesidad médica de la prestación y su alcance, lo que excede el limitado marco cognoscitivo de esta vía.`);
+    parts.push(sec('FUNDAMENTOS SOBRE LA PRESTACIÓN RECLAMADA') + fundamentosPrestacion(e, d, enfoque).join('\n\n'));
+    parts.push(sec('PRUEBA') + `a) Documental: se acompaña y se tiene presente la siguiente:\n${docsLista}\n\nb) Informativa: se libre oficio a la Superintendencia de Servicios de Salud a fin de que informe la normativa vigente aplicable a la prestación reclamada y si se registran reclamos administrativos del asociado.\n\nc) Pericial médica: para el caso de que V.S. lo considere necesario, se designe perito médico de oficio a fin de que dictamine sobre la necesidad, modalidad y alcance de la prestación reclamada, y sobre la existencia de alternativas terapéuticas equivalentes disponibles en la cartilla de mi mandante.`);
+    parts.push(sec('RESERVA DEL CASO FEDERAL') + `Para el hipotético supuesto de que V.S. no hiciera lugar a lo solicitado, hago expresa reserva de ocurrir ante la Corte Suprema de Justicia de la Nación por la vía del recurso extraordinario previsto en el art. 14 de la Ley 48, por encontrarse comprometidas garantías constitucionales (arts. 14, 17, 18 y 43 de la Constitución Nacional).`);
+    parts.push(sec('PETITORIO') + `Por todo lo expuesto, a V.S. solicito:\n1. Se me tenga por presentado/a, por parte en el carácter invocado y por constituidos los domicilios indicados.\n2. Se tenga por producido en término el informe del art. 8 de la Ley 16.986.\n3. Se tenga presente la prueba ofrecida y se ordene su producción.\n${e.cautelar?'4. Se tenga presente el cumplimiento de la medida cautelar, sin que ello implique reconocimiento de derecho alguno.\n5':'4'}. ${enfoque==='cartilla'?'Se tenga presente el ofrecimiento de cobertura formulado y, en su caso, se declare abstracta la cuestión en ese aspecto, con costas por su orden.':'Oportunamente, se rechace la acción de amparo, con costas.'}\n${e.cautelar?'6':'5'}. Se tenga presente la reserva del caso federal.\n\nProveer de conformidad,\nSERÁ JUSTICIA.`);
+  }
+  if(id==='cumplimiento'){
+    parts.push(encabezado(d, e, 'ACREDITA CUMPLIMIENTO DE MEDIDA CAUTELAR'));
+    parts.push(sec('OBJETO') + `Que vengo a acreditar el cumplimiento de la medida cautelar dispuesta por V.S. en las presentes actuaciones, mediante la cual se ordenó a mi mandante otorgar a ${d.quien}${d.dni?` (DNI ${d.dni})`:''} ${d.pide}.`);
+    parts.push(sec('CUMPLIMIENTO') + `Mi mandante, con intervención de su Auditoría Médica, autorizó y puso a disposición del asociado la prestación ordenada, conforme surge de la constancia de autorización y entrega que se acompaña como Anexo I.\n\nEl cumplimiento se efectúa en estricto acatamiento de la manda judicial y no importa reconocimiento de los hechos ni del derecho invocados por la parte actora, ni consentimiento de los fundamentos de la resolución, todo lo cual se discutirá en la oportunidad procesal pertinente.`);
+    parts.push(sec('DOCUMENTAL') + `Anexo I: constancia de autorización y entrega de la prestación.`);
+    parts.push(sec('PETITORIO') + `Por lo expuesto, a V.S. solicito:\n1. Se tenga presente lo manifestado y por acompañada la documental.\n2. Se tenga por cumplida la medida cautelar ordenada en autos.\n3. Se tenga presente que el cumplimiento no implica reconocimiento de derecho alguno.\n\nProveer de conformidad,\nSERÁ JUSTICIA.`);
+  }
+  if(id==='apelacion'){
+    const ag = [];
+    if(d.f.fueraCartilla) ag.push(`La medida ordena la cobertura a través de un prestador ajeno a la cartilla de mi mandante, cuando existen prestadores propios o contratados idóneos para brindar la misma prestación. Ello excede lo necesario para tutelar el derecho invocado y genera a mi mandante un perjuicio de imposible reparación ulterior.`);
+    if(!d.f.prescripcion) ag.push(`La resolución se dictó sin que se encuentre acreditada, con una prescripción médica actual, la necesidad, modalidad y duración de la prestación, por lo que falta la verosimilitud del derecho exigida por el art. 230 del CPCCN.`);
+    if(d.f.importado || d.f.marca) ag.push(`La medida impone la provisión de una marca o un producto importado determinado, cuando existe un equivalente con igual principio activo cuya provisión mi mandante ofrece, en consonancia con la Ley 25.649.`);
+    if(d.f.offlabel) ag.push(`Lo ordenado comprende un uso no aprobado por la ANMAT para la indicación del paciente, extremo que excede la cobertura obligatoria y que no puede ser impuesto en el marco de una medida precautoria.`);
+    if(/Discapacidad/i.test(e.prestacion||'') && !d.f.cud) ag.push(`No se encuentra acreditada la discapacidad mediante el Certificado Único de Discapacidad vigente, presupuesto del régimen de la Ley 24.901 en que se funda la medida.`);
+    ag.push(`La medida dictada coincide sustancialmente con el objeto de la pretensión de fondo, por lo que importa un adelanto de jurisdicción que debió ser evaluado con criterio especialmente estricto.`);
+    parts.push(encabezado(d, e, 'INTERPONE RECURSO DE APELACIÓN – FUNDA'));
+    parts.push(sec('OBJETO') + `Que, en legal tiempo y forma, vengo a interponer recurso de apelación contra la resolución que hizo lugar a la medida cautelar solicitada por la parte actora, por causar a mi mandante un gravamen irreparable, solicitando que se eleven las actuaciones a la Excma. Cámara del fuero para su tratamiento. El recurso se interpone y funda en este acto, conforme el art. 15 de la Ley 16.986 y, en lo pertinente, los arts. 198 y concordantes del CPCCN.`);
+    parts.push(sec('AGRAVIOS') + ag.map((t,i)=>`${i+1}. ${t}`).join('\n\n'));
+    parts.push(sec('MANTENIMIENTO DEL CUMPLIMIENTO') + `Sin perjuicio del presente recurso, que se concede con efecto devolutivo, mi mandante da cumplimiento a lo ordenado, sin que ello implique consentimiento de la resolución ni reconocimiento de derecho alguno.`);
+    parts.push(sec('RESERVA DEL CASO FEDERAL') + `Hago expresa reserva de ocurrir ante la Corte Suprema de Justicia de la Nación por la vía del art. 14 de la Ley 48.`);
+    parts.push(sec('PETITORIO') + `Por lo expuesto, a V.S. solicito:\n1. Se tenga por interpuesto y fundado en término el recurso de apelación.\n2. Se conceda el recurso y se eleven las actuaciones a la Excma. Cámara.\n3. Oportunamente, se revoque la medida cautelar dictada o, subsidiariamente, se la limite a la cobertura a través de los prestadores de la cartilla de mi mandante.\n4. Se tenga presente la reserva del caso federal.\n\nProveer de conformidad,\nSERÁ JUSTICIA.`);
+  }
+  if(id==='prorroga'){
+    const p = d.pend[0];
+    const acto = p ? p.desc.charAt(0).toLowerCase() + p.desc.slice(1) : 'producir el informe requerido';
+    parts.push(encabezado(d, e, 'SOLICITA AMPLIACIÓN DE PLAZO'));
+    parts.push(sec('OBJETO') + `Que vengo a solicitar a V.S. que amplíe por cinco (5) días hábiles el plazo conferido a mi mandante para ${acto}${p?`, cuyo vencimiento opera el ${fmt(p.vence)}`:''}.`);
+    parts.push(sec('FUNDAMENTOS') + `El pedido obedece a la necesidad de recabar información médica y administrativa de distintas áreas técnicas de mi mandante, en particular de su Auditoría Médica, respecto de ${d.pide}, a fin de brindar a V.S. una respuesta completa y documentada. La ampliación solicitada es breve, no causa perjuicio a la parte actora ni afecta la continuidad de la atención del asociado, y se formula antes del vencimiento del plazo en curso.`);
+    parts.push(sec('PETITORIO') + `Por lo expuesto, a V.S. solicito:\n1. Se tenga presente lo manifestado.\n2. Se amplíe por cinco (5) días hábiles el plazo conferido a mi mandante para ${acto}.\n\nProveer de conformidad,\nSERÁ JUSTICIA.`);
+  }
+  return parts.join('');
+}
+
+// ---------- modelos propios ----------
+const MODEL_VARS = [['afiliado','Asociado'],['dni','DNI'],['autos','Autos'],['numero','N° de expediente'],['juzgado','Juzgado y secretaría'],['prestacion','Qué reclama'],['detalle','Qué pide exactamente'],['letrado','Letrado/a'],['empresa','Empresa'],['domicilio','Domicilio procesal'],['fecha','Fecha de hoy']];
+function guessCategoria(t){ t = t||''; if(/informe\s+circunstanciado|art\.?\s*8/i.test(t)) return 'Informe del art. 8'; if(/acredita\s+cumplimiento|cumplimiento\s+de\s+(la\s+)?medida/i.test(t)) return 'Cumplimiento de cautelar'; if(/apelaci[oó]n|apela\b|agravios/i.test(t)) return 'Apelación'; if(/ampliaci[oó]n\s+de\s+plazo|pr[oó]rroga/i.test(t)) return 'Pedido de plazo'; if(/contesta|traslado/i.test(t)) return 'Contestación'; return 'Otro'; }
+const MODEL_CATS = ['Informe del art. 8','Cumplimiento de cautelar','Apelación','Pedido de plazo','Contestación','Carta documento','Otro'];
+function applyModel(m, e){
+  const d = datosEscrito(e);
+  const vals = {afiliado:e.afiliado, dni:d.dni||'', autos:d.autos, numero:e.numero, juzgado:jzLabel(e.juzgado, e.secretaria), prestacion:e.prestacion||'', detalle:e.detalle||d.pide, letrado:d.letrado, empresa:d.c.empresa, domicilio:d.c.domicilio, fecha:new Date().toLocaleDateString('es-AR',{day:'numeric', month:'long', year:'numeric'})};
+  let t = m.texto.replace(/\{(\w+)\}/g, (all,k)=> vals[k]!==undefined ? vals[k] : all);
+  const hechos = [];
+  const r = (re, val, label) => { let c = 0; t = t.replace(re, ()=>{ c++; return val; }); if(c) hechos.push(label); };
+  const viejo = (t.match(/[“"«]\s*([^"”»\n,]{2,60}?)(?:,\s*[^"”»\n]{2,60}?)?\s+c\s*\/\s*/)||[])[1];
+  r(/[“"«]([^"”»\n]{3,200}?\s+c\s*\/\s*[^"”»\n]{3,200}?\s+s\s*\/\s*[^"”»\n]{2,140})[”"»]/g, `"${d.autos}"`, 'los autos');
+  const nuevoApellido = String(e.afiliado||'').split(',')[0].replace(/\(.*\)/,'').trim();
+  if(viejo && nuevoApellido){ const ap = viejo.trim().split(/\s+/)[0]; if(ap.length>2 && ap.toLowerCase()!==nuevoApellido.toLowerCase()){ const re = new RegExp('\\b'+ap.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[aeiou]/gi, c=>`[${c}${'áéíóú'['aeiou'.indexOf(c.toLowerCase())]}]`)+'\\b','gi'); r(re, titleCase(nuevoApellido), 'el apellido del asociado anterior'); } }
+  r(/\b(CCF|CIV|COM|CAF|CNT|CSS|FSM|FLP|FRO|FCB|FMZ|FTU|FMP|FCR|FRE|FPO|FBB|FGR|FCT|FSA|FPA)\s*0*\d{1,6}\s*\/\s*\d{4}\b/g, e.numero, 'el número de expediente');
+  if(d.dni) r(/D\.?\s?N\.?\s?I\.?\s*(?:N\s*[°º.]*\s*)?:?\s*\d{1,2}\.?\d{3}\.?\d{3}/gi, `DNI ${d.dni}`, 'el DNI');
+  if(e.juzgado) r(/(?:el\s+)?Juzgado\s+(?:Nacional|Federal)[^,.;\n]{5,160}?(?=,|\.|;|\n|\s+Secretar)(?:,?\s*Secretar[ií]a\s*(?:N\s*[°º.]*\s*)?\w+)?/g, jzFormal(e), 'el juzgado');
+  return {texto:t, hechos};
+}
+
+
 
 // ---------- estado ----------
 // Los datos se guardan siempre con el mismo nombre. Si cambia la estructura, se migran: nunca se borran.
 const KEY = 'fojas-datos';
-const SCHEMA = 10;
+const SCHEMA = 11;
 const OLD_KEYS = ['fojas-demo-v9','fojas-demo-v8','fojas-demo-v7','fojas-demo-v6','fojas-demo-v5','fojas-demo-v4','fojas-demo-v3','fojas-demo-v2','fojas-demo-v1'];
 let S;
 async function makeUser(u, pass, mustChange){ const salt = randId(16); return {id:u.id, nombre:u.nombre, rol:u.rol, activo:true, salt, hash: await hashPass(pass, salt), mustChange:!!mustChange}; }
@@ -471,7 +559,7 @@ async function migrate(d){
   d.users = Array.isArray(d.users) && d.users.length ? d.users : base.users;
   base.users.forEach(u=>{ if(!d.users.some(x=>x.id===u.id)) d.users.push(u); });
   d.teams = Array.isArray(d.teams) ? d.teams : base.teams;
-  d.lock = d.lock || {}; d.toured = d.toured || {}; d.audit = Array.isArray(d.audit) ? d.audit : [];
+  d.lock = d.lock || {}; d.toured = d.toured || {}; d.modelos = Array.isArray(d.modelos) ? d.modelos : []; d.config = d.config || {}; d.audit = Array.isArray(d.audit) ? d.audit : [];
   d.modules = {...base.modules, ...(d.modules||{})};
   d.exps = (d.exps||[]).map(e=>{
     const x = {dni:'—', docs:[], movimientos:[], plazos:[], flags:{}, riesgo:'medio', monto:0, cautelar:false, estado:'Intimación recibida', prestacion:'Otra', juzgado:'', ...e};
@@ -609,6 +697,7 @@ function shell(content){
         ${link('amparos','folder','Amparos', `<span class="badge">${active().length}</span>`)}
         ${link('vencimientos','cal','Vencimientos', urgentes?`<span class="badge red">${urgentes}</span>`:'')}
         ${link('escritos','pen','Escritos')}
+        ${link('modelos','file','Modelos', (S.modelos||[]).length?`<span class="badge">${S.modelos.length}</span>`:'')}
         ${link('informes','chart','Informes')}
         ${(teamOf()||isAdmin())?link('equipo','users',isLeader()?'Mi equipo':'Equipo', isLeader()&&myPeople().some(u=>statsOf(u).vencidos)?`<span class="badge red">${myPeople().reduce((a,u)=>a+statsOf(u).vencidos,0)}</span>`:''):''}
         ${extra}
@@ -852,30 +941,92 @@ function iaText(kind, e){
   return `¿QUÉ TAN RIESGOSO ES?\n\nNivel: ${pts>=4?'ALTO':pts>=3?'MEDIO':'BAJO'} (${pts} de 6 puntos)\n\nPuntos a cuidar:\n• Qué se reclama: ${e.prestacion}.${/oncol|Discapacidad|domiciliaria/.test(e.prestacion)?' En estos temas los jueces suelen darle la razón al afiliado.':''}\n• Medida cautelar: ${e.cautelar?'sí. Si no se cumple, puede haber multas.':'no.'}\n• Plazos vencidos: ${e.plazos.filter(x=>!x.hecho && daysTo(x.vence)<0).length}.\n• Monto en juego: ${money(e.monto)}.\n\n${pts>=4?'Recomendación: que el abogado a cargo lo revise hoy.':'Recomendación: seguimiento normal.'}`;
 }
 
+const tplById = id => id && id.startsWith('m:') ? (S.modelos||[]).find(m=>'m:'+m.id===id) : TEMPLATES.find(t=>t.id===id);
+const tplName = id => { const t = tplById(id); return t ? t.nombre : 'Escrito'; };
 function vEscritos(){
   const step = !ui.tpl ? 1 : !ui.tplExp ? 2 : 3;
-  const tpl = TEMPLATES.find(t=>t.id===ui.tpl);
+  const tpl = tplById(ui.tpl);
   const e = expById(ui.tplExp);
+  const mods = S.modelos||[];
   let body = '';
   if(step===1) body = `<h2>1. ¿Qué escrito necesitás?</h2>
-    <div class="grid g3">${TEMPLATES.map(t=>`<button class="action" data-tpl="${t.id}"><div class="ico v">${ic(t.icon)}</div><b>${esc(t.nombre)}</b><span>${esc(t.para)}</span></button>`).join('')}</div>`;
+    <div class="slbl" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Escritos que Fojas redacta completos</div>
+    <div class="grid g4">${TEMPLATES.map(t=>`<button class="action" data-tpl="${t.id}"><div class="ico v">${ic(t.icon)}</div><b>${esc(t.nombre)}</b><span>${esc(t.para)}</span></button>`).join('')}</div>
+    <div class="row" style="justify-content:space-between;margin-top:8px"><div class="slbl" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)">Tus modelos (${mods.length})</div><a href="#modelos" class="small">Administrar modelos</a></div>
+    ${mods.length?`<div class="grid g4">${mods.map(m=>`<button class="action" data-tpl="m:${m.id}"><div class="ico g">${ic('file')}</div><b>${esc(m.nombre)}</b><span>${esc(m.categoria)} · subido por ${esc(userName(m.autor).split(' ')[0])}</span></button>`).join('')}</div>`
+      :`<div class="empty small">Todavía no subiste modelos propios. <a href="#modelos">Subí tus escritos modelo</a> y Fojas los completa con los datos de cada amparo.</div>`}`;
   if(step===2) body = `<div class="row"><button class="btn ghost sm" data-act="tplback1">${ic('back','sm')} Cambiar escrito</button><span class="pill acc">${esc(tpl.nombre)}</span></div>
     <h2>2. ¿Para qué amparo es?</h2>
     <div class="cases">${active().map(x=>`<button class="case" data-tplexp="${x.id}" style="text-align:left;font:inherit;color:inherit"><div class="bar"></div><div><div class="name">${esc(x.afiliado)}</div><div class="meta"><span class="mono">${esc(x.numero)}</span><span>${esc(x.prestacion)}</span></div></div><div class="right">${ic('next')}</div></button>`).join('')}</div>`;
   if(step===3){
-    const vars = {abogado:userName(e.abogado), caratula:e.caratula, numero:e.numero, juzgado:jzLabel(e.juzgado, e.secretaria), prestacion:e.prestacion, afiliado:e.afiliado, dni:e.dni||'[DNI]'};
-    if(!ui.tplText) ui.tplText = tpl.cuerpo.replace(/\{(\w+)\}/g, (_,k)=>vars[k] ?? `{${k}}`);
-    const faltan = (ui.tplText.match(/\[[^\]]+\]/g)||[]).length;
+    const esModelo = ui.tpl.startsWith('m:');
+    let hechos = [];
+    if(!ui.tplText){ if(esModelo){ const r = applyModel(tpl, e); ui.tplText = r.texto; ui.tplHechos = r.hechos; } else ui.tplText = buildEscrito(ui.tpl, e, ui.enfoque||'rechazo'); }
+    hechos = ui.tplHechos || [];
+    const pend = (ui.tplText.match(/\[[^\]]+\]|\{\w+\}/g)||[]).length;
     body = `<div class="row"><button class="btn ghost sm" data-act="tplback2">${ic('back','sm')} Cambiar amparo</button><span class="pill acc">${esc(tpl.nombre)}</span><span class="pill">${esc(e.afiliado)}</span></div>
-    <h2>3. Revisalo y completalo</h2>
-    <div class="notice ${faltan?'':'good'}" id="faltan">${ic(faltan?'pen':'check')}<div>${faltan?`Ya completamos los datos del expediente. ${faltan===1?'Te queda':'Te quedan'} <b>${faltan}</b> ${faltan===1?'parte':'partes'} para escribir vos: están entre [CORCHETES].`:'¡Listo! No quedan partes por completar.'}</div></div>
-    <textarea id="tplText" rows="20" style="font-family:var(--f-mono);font-size:14px;line-height:1.6">${esc(ui.tplText)}</textarea>
-    <div class="row"><button class="btn pri big" data-act="tplcopy">${ic('copy')} Copiar para pegar en Word</button><button class="btn big" data-act="tplsave">${ic('file')} Guardar en el expediente</button><button class="btn ghost" data-act="tplreset">Empezar de nuevo</button></div>`;
+    <h2>3. Revisalo</h2>
+    ${ui.tpl==='informe'?`<div class="fld">¿Qué postura toma el escrito?<div class="chips"><button class="chipbtn ${(ui.enfoque||'rechazo')==='rechazo'?'on':''}" data-enfoque="rechazo">Pedir el rechazo del amparo</button><button class="chipbtn ${ui.enfoque==='cartilla'?'on':''}" data-enfoque="cartilla">Ofrecer la cobertura en cartilla</button></div></div>`:''}
+    <div class="notice ${pend?'':'good'}" id="faltan">${ic(pend?'pen':'check')}<div>${esModelo
+      ? `Usamos tu modelo y lo completamos con los datos del amparo.${hechos.length?` Reemplazamos ${hechos.join(', ')} del modelo original.`:''} Revisá que no queden hechos o nombres de otro caso.${pend?` Quedan <b>${pend}</b> partes marcadas para completar.`:''}`
+      : `Escrito completo, armado con los datos del amparo, lo que se reclama y los documentos presentados. Solo tenés que revisarlo. Los datos del letrado y el domicilio se cambian en <a href="#modelos">Modelos › Datos para los escritos</a>.`}</div></div>
+    <textarea id="tplText" rows="26" style="font-family:var(--f-mono);font-size:14px;line-height:1.6">${esc(ui.tplText)}</textarea>
+    <div class="row"><button class="btn pri big" data-act="tplcopy">${ic('copy')} Copiar para pegar en Word</button><button class="btn big" data-act="tplsave">${ic('file')} Guardar en el expediente</button><button class="btn ghost" data-act="tplregen">${ic('history','sm')} Volver a generarlo</button><button class="btn ghost" data-act="tplreset">Empezar de nuevo</button></div>`;
   }
   return `
-  <div><h1>Escritos</h1><p class="sub">En tres pasos: elegís el escrito, elegís el amparo, y el texto se completa solo con los datos.</p></div>
+  <div><h1>Escritos</h1><p class="sub">Elegís el escrito y el amparo, y Fojas lo redacta completo con los datos y los documentos del caso.</p></div>
   <div class="wsteps" style="max-width:420px">${[1,2,3].map(i=>`<span class="${i<=step?'on':''}"></span>`).join('')}</div>
   <section class="card">${body}</section>`;
+}
+function vModelos(){
+  const mods = S.modelos||[], c = cfg();
+  return `
+  <div><h1>Modelos</h1><p class="sub">Tu repositorio de escritos modelo. Subí los que usan en el equipo y Fojas los completa con los datos de cada amparo.</p></div>
+  <section class="card">
+    <label class="drop" id="mdrop" for="mfile">${ic('upload','lg')}<b>Arrastrá acá tus modelos o tocá para elegirlos</b><span class="small">Word, PDF o texto. Podés subir varios a la vez: Fojas los lee completos y los guarda como modelos.</span></label>
+    <input type="file" id="mfile" multiple hidden accept=".pdf,.docx,.txt">
+    <div id="mprog" class="small muted"></div>
+  </section>
+  <section class="card"><div class="head"><h2>Tus modelos</h2><span class="badge">${mods.length}</span></div>
+    ${mods.length ? MODEL_CATS.filter(cat=>mods.some(m=>m.categoria===cat)).map(cat=>`<div class="slbl" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-top:6px">${esc(cat)}</div>
+      ${mods.filter(m=>m.categoria===cat).map(m=>`<div class="docrow"><div class="ico g" style="width:40px;height:40px">${ic('file')}</div>
+        <div style="flex:1;min-width:0"><b>${esc(m.nombre)}</b><div class="small muted">Subido por ${esc(userName(m.autor))} el ${fmt(m.fecha)} · ${Math.round(m.texto.length/1000)||1} mil caracteres · ${(m.texto.match(/\{\w+\}/g)||[]).length} datos automáticos</div></div>
+        <button class="btn sm pri" data-act="muse" data-m="${m.id}">Usar</button><button class="btn sm" data-act="medit" data-m="${m.id}">${ic('pen','sm')} Editar</button><button class="btn sm ghost danger" data-act="mdel" data-m="${m.id}">Eliminar</button></div>`).join('')}`).join('')
+      : '<div class="empty small">Todavía no hay modelos. Subí el primero arriba.</div>'}
+  </section>
+  <section class="card"><h2>Datos para los escritos</h2><p class="muted small">Fojas usa estos datos en el encabezado de todos los escritos. Los que vienen cargados son de ejemplo: reemplazalos por los reales.</p>
+    <form class="form" id="cfgForm">
+      <label>Empresa (como figura en los escritos)<input type="text" id="cfEmp" value="${esc(c.empresa)}"></label>
+      <label>CUIT de la empresa<input type="text" id="cfCuit" value="${esc(c.cuitEmpresa)}"></label>
+      <label>Letrado/a que firma <span class="hint">vacío = quien tiene el amparo a cargo</span><input type="text" id="cfLet" value="${esc(c.letrado)}"></label>
+      <label>Matrícula<input type="text" id="cfMat" value="${esc(c.matricula)}"></label>
+      <label class="full">Domicilio procesal<input type="text" id="cfDom" value="${esc(c.domicilio)}"></label>
+      <label>Domicilio electrónico (CUIT del letrado)<input type="text" id="cfEle" value="${esc(c.electronico)}"></label>
+      <label>Cómo se acredita la personería<input type="text" id="cfPod" value="${esc(c.poder)}"></label>
+      <div class="full"><button class="btn pri" type="submit">Guardar datos</button></div>
+    </form></section>`;
+}
+function openModelEditor(id){
+  const m = (S.modelos||[]).find(x=>x.id===id); if(!m) return;
+  showModal(`
+    <div class="row" style="justify-content:space-between"><h2 style="font-size:22px">Editar modelo</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div>
+    <div class="form"><label>Nombre<input type="text" id="meNom" value="${esc(m.nombre)}"></label><label>Tipo de escrito<select id="meCat">${MODEL_CATS.map(c=>`<option ${c===m.categoria?'selected':''}>${c}</option>`).join('')}</select></label></div>
+    <div class="fld">Datos automáticos <span class="hint">Poné el cursor donde va el dato y tocá el botón: Fojas lo completa en cada amparo.</span>
+      <div class="chips">${MODEL_VARS.map(([k,l])=>`<button type="button" class="chipbtn" data-mvar="${k}" style="padding:6px 12px;font-size:14px">${l}</button>`).join('')}</div></div>
+    <textarea id="meTxt" rows="18" style="font-family:var(--f-mono);font-size:13px;line-height:1.55">${esc(m.texto)}</textarea>
+    <div class="row"><button class="btn pri big" data-act="msave" data-m="${m.id}">${ic('check')} Guardar modelo</button></div>`);
+}
+async function addModels(files){
+  files = [...files]; if(!files.length) return;
+  S.modelos = S.modelos || []; const box = $('#mprog');
+  for(const f of files){
+    let r = {text:''}; try{ r = await readFile(f, (t)=>{ if(box) box.textContent = `${f.name}: ${t}`; }); }catch(err){}
+    const texto = (r.text||'').replace(/\[P[aá]gina \d+\]\n?/g,'').replace(/\n{3,}/g,'\n\n').trim();
+    if(!texto){ toast(`No pudimos leer ${f.name}`); continue; }
+    const m = {id:randId(6), nombre:f.name.replace(/\.[a-z0-9]+$/i,''), categoria:guessCategoria(texto), texto:texto.slice(0,150000), fecha:iso(today()), autor:S.user};
+    S.modelos.push(m); audit('Subió un modelo','Modelos',`${m.nombre} (${m.categoria})`);
+  }
+  save(); render(); toast(files.length===1?'Modelo guardado':'Modelos guardados');
 }
 
 function count(arr, key){ const m = {}; arr.forEach(x=>{ m[x[key]] = (m[x[key]]||0)+1; }); return Object.entries(m).sort((a,b)=>b[1]-a[1]); }
@@ -1466,7 +1617,7 @@ function sugerencias(e){
         'Revisá si fija un prestador fuera de cartilla, un monto sin tope o una prestación sin indicación médica actual.',
         'Confirmá en la providencia qué régimen aplica el juzgado: si tramita por la Ley 16.986, el recurso se presenta fundado dentro de las 48 horas de notificado; si tramita como proceso sumarísimo, rige el CPCCN.',
         'Si decidís apelar, cumplí igual la medida mientras se resuelve el recurso.'],
-      normas:['Ley 16.986 art. 15','CPCCN arts. 198 y 498'],
+      normas:['Ley 16.986 art. 15','CPCCN arts. 198 y 498'], escrito:'apelacion',
       plazo:{match:/apela/i, desc:'Evaluar y, si corresponde, apelar la cautelar', regla:{modo:'horas', cant:48}}});
   }
   if(informePend){
@@ -1587,7 +1738,7 @@ function renderSug(e, compact){
         <div><div class="slbl">Normativa</div><div class="row" style="gap:6px">${x.normas.map(n=>`<span class="pill law">${ic('file','sm')} ${esc(n)}</span>`).join('')}</div></div>
         ${real && x.plazo ? `<div class="splazo">${ic('cal')}<div style="flex:1">${p?`<b>Vence el ${fmtLargo(p.vence)}</b><div class="small muted">${esc(p.desc)}${p.regla?` · ${esc(reglaTexto(p.regla))}`:''}</div>`:`<b>Todavía no hay un plazo agendado para esto</b><div class="small muted">Te proponemos: ${esc(x.plazo.desc)} (${x.plazo.regla.cant} ${x.plazo.regla.modo==='horas'?'horas':'días hábiles'}).</div>`}</div>
           <button class="btn sm ${p?'':'pri'}" data-act="plazoedit" data-e="${real.id}" ${p?`data-i="${pi}"`:`data-sg="${g}" data-si="${i}"`}>${ic('pen','sm')} ${p?'Modificar plazo':'Agendar plazo'}</button></div>`:''}
-        ${real && x.escrito ? `<div><button class="btn sm" data-act="writefor" data-e="${real.id}">${ic('pen','sm')} Preparar el escrito</button></div>`:''}
+        ${real && x.escrito ? `<div><button class="btn sm" data-act="writefor" data-wt="${x.escrito}" data-e="${real.id}">${ic('pen','sm')} Preparar el escrito</button></div>`:''}
       </div></details>`; };
   if(compact){ const top = [...s.urgente.map((x,i)=>['urgente',x,i]), ...s.fondo.map((x,i)=>['fondo',x,i]), ...s.prueba.map((x,i)=>['prueba',x,i])].slice(0,4); return top.map(([g,x,i])=>item(x,g,i)).join(''); }
   return groups.filter(([k])=>s[k].length).map(([k,i,c,t])=>`<div class="sgroup"><div class="row"><div class="ico ${c}" style="width:36px;height:36px">${ic(i,'sm')}</div><h3>${t}</h3><span class="badge">${s[k].length}</span></div>${s[k].map((x,j)=>item(x,k,j)).join('')}</div>`).join('')
@@ -1736,7 +1887,7 @@ function render(){
   if(!logged()){ $('#root').innerHTML = vIngreso(); document.title='Fojas · Ingresar'; return; }
   document.title='Fojas';
   const r = route();
-  const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, informes:vInformes, historial:vHistorial, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios};
+  const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, modelos:vModelos, informes:vInformes, historial:vHistorial, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios};
   const html = r.name==='expediente' ? vExpediente(r.id) : (views[r.name]||vInicio)();
   const scroll = $('#view') ? $('#view').scrollTop : 0;
   $('#root').innerHTML = shell(html);
@@ -1757,7 +1908,7 @@ document.addEventListener('click', async ev => {
   if(om){ ui.open[om.dataset.openmember] = true; if(route().name!=='equipo'){ ui.scrollTo = om.dataset.openmember; return; } render(); const d = document.querySelector(`[data-member="${om.dataset.openmember}"]`); if(d) d.scrollIntoView({behavior:'smooth', block:'start'}); return; }
   const pe = ev.target.closest('[data-pe]');
   if(pe && PE){ peRead(); PE[pe.dataset.pe] = pe.dataset.pe==='cant' ? +pe.dataset.v : pe.dataset.v; drawPlazoEditor(); return; }
-  const t = ev.target.closest('[data-act],[data-tab],[data-go],[data-ia],[data-filtro],[data-riesgo],[data-estado],[data-tour],[data-tpl],[data-tplexp],[data-w],[data-wnav],[data-quick]');
+  const t = ev.target.closest('[data-enfoque],[data-mvar],[data-act],[data-tab],[data-go],[data-ia],[data-filtro],[data-riesgo],[data-estado],[data-tour],[data-tpl],[data-tplexp],[data-w],[data-wnav],[data-quick]');
   if(!t) return;
   const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
   const d = t.dataset;
@@ -1769,13 +1920,19 @@ document.addEventListener('click', async ev => {
   if(d.estado!==undefined && e){ const nuevo = ESTADOS[+d.estado], old = e.estado, oldC = e.cautelar; if(nuevo===old && (nuevo!=='Cautelar otorgada' || e.cautelar)) return; e.estado = nuevo; if(nuevo==='Cautelar otorgada') e.cautelar = true; save(); audit('Cambió la etapa', e.numero, `${old} → ${nuevo}${nuevo==='Cautelar otorgada'&&!oldC?' (con medida cautelar)':''}`); render();
     toast(`Etapa cambiada a "${nuevo}".`, ()=>{ e.estado = old; e.cautelar = oldC; save(); audit('Deshizo cambio de etapa', e.numero, `${nuevo} → ${old}`); render(); }); return; }
   if(d.ia && e){ ui.ia = iaText(d.ia, e); audit('Usó el asistente', e.numero, {resumen:'Resumen del caso', paso:'Próximos pasos', riesgo:'Evaluación de riesgo'}[d.ia]); render(); return; }
-  if(d.tpl){ ui.tpl = d.tpl; ui.tplText=''; render(); return; }
+  if(d.tpl){ ui.tpl = d.tpl; ui.tplText=''; ui.tplHechos=[]; render(); return; }
+  if(d.enfoque){ ui.enfoque = d.enfoque; ui.tplText=''; render(); return; }
+  if(d.mvar){ const ta = $('#meTxt'); if(ta){ const s0 = ta.selectionStart, s1 = ta.selectionEnd, ins = `{${d.mvar}}`; ta.value = ta.value.slice(0,s0) + ins + ta.value.slice(s1); ta.focus(); ta.selectionStart = ta.selectionEnd = s0 + ins.length; } return; }
   if(d.tplexp){ ui.tplExp = +d.tplexp; ui.tplText=''; render(); return; }
   if(d.quick){ $('#plV').value = dPlus(+d.quick); document.querySelectorAll('[data-quick]').forEach(b=>b.classList.toggle('on', b===t)); return; }
   if(d.w){ wRead(); const k = d.w; if(k==='cautelar') W.cautelar = d.v==='1'; else if(k==='prestacion' && W.verTodas){ W.prestacion = d.v; W.verTodas = false; if(W.found.prestacion && !(W.otrasPrestaciones||[]).includes(d.v) && d.v!==W.prestacion) {} W.otrasPrestaciones = [...new Set([...(W.otrasPrestaciones||[])])]; W.found.prestacion = true; W.prestElegida = d.v; } else if(k==='plazoQuick'){ const r = +d.v<=2 ? {modo:'horas', cant:+d.v*24, desde:iso(today())} : {modo:'habiles', cant:+d.v, desde:iso(today())}; const c = calcPlazo(r); W.plazoFecha = c.vence; W.plazoRegla = r; W.plazoNota = (r.modo==='habiles' ? `${r.cant} días hábiles desde mañana, salteando fines de semana y feriados nacionales.` : `${r.cant} horas corridas.`) + (c.aviso?' '+c.aviso:''); } else W[k] = d.v; drawWizard(); return; }
   if(d.wnav){ wRead(); if(+d.wnav>0){ const err = wCheck(); if(err){ $('#wErr').innerHTML = `<div class="notice bad">${esc(err)}</div>`; return; } } W.step += +d.wnav; drawWizard(); return; }
   const a = d.act;
   if(a==='close') closeModal();
+  if(a==='muse'){ ui.tpl = 'm:'+d.m; ui.tplExp = null; ui.tplText=''; location.hash = 'escritos'; }
+  if(a==='medit') openModelEditor(d.m);
+  if(a==='msave'){ const m = S.modelos.find(x=>x.id===d.m); m.nombre = $('#meNom').value.trim()||m.nombre; m.categoria = $('#meCat').value; m.texto = $('#meTxt').value; save(); audit('Editó un modelo','Modelos',m.nombre); closeModal(); render(); toast('Modelo guardado'); }
+  if(a==='mdel'){ const i = S.modelos.findIndex(x=>x.id===d.m); const m = S.modelos[i]; S.modelos.splice(i,1); save(); audit('Eliminó un modelo','Modelos',m.nombre); render(); toast(`Modelo "${m.nombre}" eliminado.`, ()=>{ S.modelos.splice(i,0,m); save(); render(); }); }
   if(a==='plazoedit'){ const ex = expById(d.e); if(!ex) return; if(d.i!==undefined) openPlazoEditor(ex.id, +d.i); else { const sg = sugerencias(ex)[d.sg][+d.si]; openPlazoEditor(ex.id, null, sg.plazo); } }
   if(a==='pesave' && PE){ peRead(); if(!PE.desc){ toast('Escribí qué hay que hacer'); return; } const ex = expById(PE.expId); const c = calcPlazo(PE);
     const regla = PE.modo==='fecha' ? null : {modo:PE.modo, cant:+PE.cant, desde:PE.desde, feria:PE.feria};
@@ -1807,7 +1964,7 @@ document.addEventListener('click', async ev => {
     S.exps.push(x); save(); closeModal(); audit('Cargó un amparo nuevo', x.numero, `${x.prestacion}${W.files.length?` · leído automáticamente de ${W.files.length} documento(s)`:''}`); ui.nextTab = 'sugerencias'; location.hash = 'expediente-'+x.id; toast('¡Amparo cargado! Mirá las sugerencias de qué hacer.');
   }
   if(a==='done'){ const x = expById(d.e); if(x) markDone(x, +d.i); }
-  if(a==='writefor'){ ui.tpl = null; ui.tplExp = +d.e; ui.tplText=''; location.hash='escritos'; }
+  if(a==='writefor'){ ui.tpl = d.wt || null; ui.tplExp = +d.e; ui.tplText=''; location.hash='escritos'; }
   if(a==='addmov'){ ui.addMov = true; render(); setTimeout(()=>$('#mvD').focus(),20); }
   if(a==='cancelmov'){ ui.addMov = false; render(); }
   if(a==='addplazo'){ ui.tab='plazos'; render(); const ex = expById(route().id); if(ex) openPlazoEditor(ex.id, null, null); }
@@ -1820,8 +1977,9 @@ document.addEventListener('click', async ev => {
   if(a==='tplback1'){ ui.tpl=null; ui.tplText=''; render(); }
   if(a==='tplback2'){ ui.tplExp=null; ui.tplText=''; render(); }
   if(a==='tplreset'){ ui.tpl=null; ui.tplExp=null; ui.tplText=''; render(); }
-  if(a==='tplcopy'){ copy($('#tplText').value); audit('Copió un escrito', expById(ui.tplExp).numero, TEMPLATES.find(q=>q.id===ui.tpl).nombre); }
-  if(a==='tplsave'){ const x = expById(ui.tplExp); const tpl = TEMPLATES.find(q=>q.id===ui.tpl);
+  if(a==='tplregen'){ ui.tplText=''; render(); }
+  if(a==='tplcopy'){ copy($('#tplText').value); audit('Copió un escrito', expById(ui.tplExp).numero, tplName(ui.tpl)); }
+  if(a==='tplsave'){ const x = expById(ui.tplExp); const tpl = {nombre:tplName(ui.tpl)};
     x.docs.push({nombre:`${tpl.nombre}.docx`, tipo:'Escrito propio', fecha:iso(today()), size:`${Math.max(1,Math.round($('#tplText').value.length/1000))} KB`});
     x.movimientos.push({fecha:iso(today()), tipo:'Escrito propio', desc:`Se preparó el escrito: ${tpl.nombre}.`, user:S.user}); save();
     audit('Preparó un escrito', x.numero, tpl.nombre); toast('Guardado en los documentos del amparo'); }
@@ -1870,6 +2028,7 @@ $('#overlay').addEventListener('click', ev => { if(ev.target.id==='overlay' && !
 document.addEventListener('change', async ev => {
   const t = ev.target; const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
   if(t.id==='fileIn' && e) addFiles(e, t.files);
+  if(t.id==='mfile') addModels(t.files);
   if(PE && /^pe(Cant|Desde|Fecha|Feria)$/.test(t.id)){ peRead(); drawPlazoEditor(); }
   if(t.id==='wfile' && W) wProcess(t.files);
   if(t.id==='wmore' && W){ wRead(); await wProcess(t.files, true); }
@@ -1909,9 +2068,9 @@ async function addFiles(e, files){
   toast(`Listo: ${tipos.join(', ')}.${novedades.length?' Además, '+novedades.join('; ')+'.':''} Las sugerencias se actualizaron.`);
 }
 document.addEventListener('toggle', ev => { const d = ev.target; if(d.matches && d.matches('details[data-sugkey]')){ if(d.open) ui.openSug = d.dataset.sugkey; else if(ui.openSug===d.dataset.sugkey) ui.openSug = null; } if(d.matches && d.matches('details[data-member]')) ui.open[d.dataset.member] = d.open; }, true);
-document.addEventListener('dragover', ev => { const wz = ev.target.closest('#wdrop'); if(wz){ ev.preventDefault(); wz.classList.add('over'); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); dz.classList.add('over'); } });
+document.addEventListener('dragover', ev => { const md = ev.target.closest('#mdrop'); if(md){ ev.preventDefault(); md.classList.add('over'); return; } const wz = ev.target.closest('#wdrop'); if(wz){ ev.preventDefault(); wz.classList.add('over'); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); dz.classList.add('over'); } });
 document.addEventListener('dragleave', ev => { const wz = ev.target.closest('#wdrop'); if(wz) wz.classList.remove('over'); const dz = ev.target.closest('#drop'); if(dz) dz.classList.remove('over'); });
-document.addEventListener('drop', ev => { const wz = ev.target.closest('#wdrop'); if(wz && W){ ev.preventDefault(); wProcess(ev.dataTransfer.files); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); const e = expById(route().id); if(e) addFiles(e, ev.dataTransfer.files); } });
+document.addEventListener('drop', ev => { const md = ev.target.closest('#mdrop'); if(md){ ev.preventDefault(); md.classList.remove('over'); addModels(ev.dataTransfer.files); return; } const wz = ev.target.closest('#wdrop'); if(wz && W){ ev.preventDefault(); wProcess(ev.dataTransfer.files); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); const e = expById(route().id); if(e) addFiles(e, ev.dataTransfer.files); } });
 
 document.addEventListener('input', ev => {
   const t = ev.target;
@@ -1967,6 +2126,7 @@ document.addEventListener('submit', async ev => {
     tm.nombre = f.nombre.value.trim() || tm.nombre; tm.jefe = jefe; tm.miembros = miembros; save();
     audit('Actualizó un equipo','Equipos',`${tm.nombre}: jefa/e ${userName(jefe)}, ${miembros.length} analista(s)`); await chain; render(); toast('Equipo guardado');
   }
+  if(id==='cfgForm'){ S.config = {empresa:$('#cfEmp').value.trim(), cuitEmpresa:$('#cfCuit').value.trim(), letrado:$('#cfLet').value.trim(), matricula:$('#cfMat').value.trim(), domicilio:$('#cfDom').value.trim(), electronico:$('#cfEle').value.trim(), poder:$('#cfPod').value.trim()}; save(); audit('Actualizó los datos para escritos','Modelos','Encabezado de escritos'); toast('Datos guardados: se usan en los próximos escritos'); render(); }
   if(id==='userForm' && isAdmin()){
     const uid = $('#nuId').value.trim().toLowerCase();
     if(S.users.some(x=>x.id===uid)){ ui.userMsg={ok:false,t:'Ya hay alguien con ese usuario. Probá con otro.'}; render(); return; }
