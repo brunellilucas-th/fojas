@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.5">
+<meta name="fojas-version" content="2026-11-22.6">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -216,6 +216,8 @@ textarea{resize:vertical}
 .ag-send{width:44px;height:44px;flex:none;border-radius:50%;border:0;background:var(--accent);color:#fff;display:grid;place-items:center;cursor:pointer} .ag-send:disabled{opacity:.5}
 .ag-dots{display:flex;gap:4px;padding:14px} .ag-dots span{width:7px;height:7px;border-radius:50%;background:var(--faint);animation:agDot 1s infinite} .ag-dots span:nth-child(2){animation-delay:.15s} .ag-dots span:nth-child(3){animation-delay:.3s}
 @keyframes agDot{0%,100%{opacity:.3}50%{opacity:1}}
+.ag-vote{display:flex;gap:6px;align-items:center;margin-top:8px;font-size:12.5px;color:var(--muted)} .ag-vote button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:2px 9px;cursor:pointer;font-size:14px} .ag-vote button:hover{background:var(--sunken)}
+.ag-teach{margin-top:10px;display:flex;flex-direction:column;gap:6px;border-top:1px dashed var(--line);padding-top:10px} .ag-teach textarea{font:inherit;font-size:14px}
 .inf-wrap{border:1px solid var(--line);border-radius:12px;padding:22px;max-height:70vh;overflow:auto;background:#fff}
 @media (max-width:700px){ .ag-panel{right:8px;left:8px;width:auto;bottom:86px;height:calc(100vh - 110px)} .ag-fab{right:14px;bottom:14px} }
 #nuevaVersion{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:400;background:var(--ink);color:#fff;padding:10px 12px 10px 18px;border-radius:14px;display:flex;gap:12px;align-items:center;box-shadow:var(--shadow);font-size:15px}
@@ -748,6 +750,9 @@ function unir(base, otro){
   (otro.docCats||[]).forEach(c=>{ base.docCats = base.docCats||[]; if(!base.docCats.some(x=>x.id===c.id)) base.docCats.push(c); });
   base.catEdit = {...(otro.catEdit||{}), ...(base.catEdit||{})};
   (otro.modelos||[]).forEach(m=>{ base.modelos = base.modelos||[]; if(!base.modelos.some(x=>x.id===m.id)) base.modelos.push(m); });
+  base.agBorrados = [...new Set([...(base.agBorrados||[]), ...(otro.agBorrados||[])])]; const agB = new Set(base.agBorrados);
+  base.agSaber = (base.agSaber||[]).filter(x=>!agB.has(x.id)); (otro.agSaber||[]).forEach(x=>{ if(!agB.has(x.id) && !base.agSaber.some(y=>y.id===x.id)) base.agSaber.push(x); });
+  (otro.agPend||[]).forEach(x=>{ base.agPend = base.agPend||[]; if(!base.agPend.some(y=>y.id===x.id) && !base.agSaber.some(y=>normTxt(y.q)===normTxt(x.q))) base.agPend.push(x); });
   base._sumados = (base._sumados||[]).concat(sum);
   return base;
 }
@@ -1478,7 +1483,7 @@ async function migrate(d){
   d.users = Array.isArray(d.users) && d.users.length ? d.users : base.users;
   base.users.forEach(u=>{ if(!d.users.some(x=>x.id===u.id)) d.users.push(u); });
   d.teams = Array.isArray(d.teams) ? d.teams : base.teams;
-  d.lock = d.lock || {}; d.toured = d.toured || {}; d.modelos = Array.isArray(d.modelos) ? d.modelos : []; d.docCats = Array.isArray(d.docCats) ? d.docCats : []; d.catEdit = d.catEdit || {}; d.papelera = Array.isArray(d.papelera) ? d.papelera : []; d.borrados = Array.isArray(d.borrados) ? d.borrados : []; d.config = d.config || {}; d.audit = Array.isArray(d.audit) ? d.audit : [];
+  d.lock = d.lock || {}; d.toured = d.toured || {}; d.modelos = Array.isArray(d.modelos) ? d.modelos : []; d.agSaber = Array.isArray(d.agSaber) ? d.agSaber : []; d.agPend = Array.isArray(d.agPend) ? d.agPend : []; d.docCats = Array.isArray(d.docCats) ? d.docCats : []; d.catEdit = d.catEdit || {}; d.papelera = Array.isArray(d.papelera) ? d.papelera : []; d.borrados = Array.isArray(d.borrados) ? d.borrados : []; d.config = d.config || {}; d.audit = Array.isArray(d.audit) ? d.audit : [];
   d.modules = {...base.modules, ...(d.modules||{})};
   d.exps = (d.exps||[]).map(e=>migExp(e, d.users));
   d.nextId = Math.max(d.nextId||0, ...d.exps.map(e=>+e.id||0)) + 1;
@@ -1624,6 +1629,7 @@ function shell(content){
       </nav>
       <div class="navlabel">Más opciones</div>
       <nav class="nav" aria-label="Más opciones">
+        ${link('asistente','bot','Asistente IA', (S.agPend||[]).length?`<span class="badge">${S.agPend.length}</span>`:'')}
         ${link('historial','history','Historial de cambios')}
         ${link('respaldo','cloud','Copias y migración')}
         ${link('modulos','grid','Módulos')}
@@ -3024,7 +3030,7 @@ function render(){
   if(!logged()){ $('#root').innerHTML = vIngreso(); document.title='Fojas · Ingresar'; try{ drawAgente(); }catch(err){} return; }
   document.title='Fojas';
   const r = route();
-  const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, modelos:vModelos, informes:vInformes, historial:vHistorial, papelera:vPapelera, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios};
+  const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, modelos:vModelos, informes:vInformes, historial:vHistorial, papelera:vPapelera, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios, asistente:vAsistente};
   const html = r.name==='expediente' ? vExpediente(r.id) : (views[r.name]||vInicio)();
   const scroll = $('#view') ? $('#view').scrollTop : 0;
   $('#root').innerHTML = shell(html);
@@ -3490,8 +3496,6 @@ function agResponder(q){
     return R(l.length ? `**${tit}${d.length?' '+d.join(', '):''}${est||/archiv|todos/.test(t)?'':' en curso'}: ${l.length}**\n${l.map(e=>'• '+agExpCorto(e)).join('\n')}` : `No hay expedientes${d.length?' '+d.join(', '):''}${per?(per===S.user?' a tu cargo':` a cargo de ${userName(per).split(' ')[0]}`):''}.`, l.length===1?{ir:'expediente-'+l[0].id, irL:'Abrir expediente'}:{});
   }
   // ayuda de la app
-  const sc = AYUDA.map(a=>({a, s:a.k.reduce((n,k)=>n+(t.includes(normTxt(k))?k.split(' ').length:0),0) + (/\b(como|donde|que es|para que|se puede|puedo)\b/.test(t)?0.5:0)})).sort((x,y)=>y.s-x.s);
-  if(sc[0].s>=1) return R(`**${sc[0].a.t}**\n${sc[0].a.r}`, sc[0].a.ir?{ir:sc[0].a.ir, irL:'Ir ahí'}:{});
   return null;
 }
 function agChips(){
@@ -3507,6 +3511,8 @@ function agContexto(){
 Hoy es ${fmt(iso(today()))}. Usuario: ${userName(S.user)} (${(me()||{}).rol}). Pantalla actual: ${r.name}${cur?` (expediente ${cur.numero})`:''}.
 CÓMO SE USA LA APP:
 ${AYUDA.map(a=>`- ${a.t}: ${a.r.replace(/\*\*/g,'')}`).join('\n')}
+LO QUE EL EQUIPO LE ENSEÑÓ AL ASISTENTE (usalo con prioridad):
+${agSaber().slice(-80).map(s=>`- P: ${s.q}\n  R: ${s.r}`).join('\n') || '(nada todavía)'}
 DATOS (JSON):
 ${JSON.stringify({usuarios:S.users.map(u=>({usuario:u.id, nombre:u.nombre, rol:u.rol})), equipos:S.teams, expedientes:S.exps.map(exp)})}`;
 }
@@ -3535,10 +3541,13 @@ function drawAgente(){
       <select id="agModel">${['claude-sonnet-5-5','claude-opus-5-5','claude-haiku-5-5'].map(m=>`<option ${((k&&k.model)||'claude-sonnet-5-5')===m?'selected':''}>${m}</option>`).join('')}</select>
       <div class="row" style="gap:8px"><button class="btn sm pri" data-ag="cfgok">Guardar</button>${k&&k.key?'<button class="btn sm ghost danger" data-ag="cfgdel">Desconectar</button>':''}<button class="btn sm ghost" data-ag="cfgno">Cerrar</button></div></div>`:''}
     <div class="ag-msgs" id="agMsgs">
-      ${msgs.length?'':`<div class="ag-m ag-ia"><div class="ag-b">¡Hola, ${esc(userName(S.user).split(' ')[0])}! Preguntame lo que no entiendas de la app, lo que quieras de cualquier expediente, o pedime un informe.</div></div>`}
+      ${msgs.length?'':`<div class="ag-m ag-ia"><div class="ag-b">¡Hola, ${esc(userName(S.user).split(' ')[0])}! Preguntame lo que necesites: cómo se usa la app, cualquier expediente, temas de amparos de salud, o pedime un informe. Si algo no lo sé, enseñámelo y lo aprendo para todo el equipo.</div></div>`}
       ${msgs.map((m,i)=>`<div class="ag-m ag-${m.de}"><div class="ag-b">${m.inf?`${agMd(m.inf.resumen)}<div class="ag-acts"><button class="btn sm pri" data-ag="verinf" data-i="${i}">${ic('file','sm')} Ver e imprimir</button><button class="btn sm" data-ag="copinf" data-i="${i}">${ic('copy','sm')} Copiar</button></div>`:agMd(m.texto||'')}
         ${m.ir?`<div class="ag-acts"><a class="btn sm" href="#${m.ir}" data-ag="ir">${esc(m.irL||'Abrir')} ${ic('next','sm')}</a></div>`:''}
-        ${m.elegir?`<div class="ag-acts">${m.elegir.map(c=>`<button class="ag-chip" data-agq="${esc(c.q)}">${esc(c.l)}</button>`).join('')}</div>`:''}</div></div>`).join('')}
+        ${m.elegir?`<div class="ag-acts">${m.elegir.map(c=>`<button class="ag-chip" data-agq="${esc(c.q)}">${esc(c.l)}</button>`).join('')}</div>`:''}
+        ${m.de==='ia' && AG.ensenando===i?`<div class="ag-teach"><b>${m.ensenar?'¿Cuál es la respuesta?':'¿Cuál era la respuesta correcta?'}</b><textarea id="agTeach" rows="4" placeholder="Escribila como querés que la responda la próxima vez…"></textarea><div class="ag-acts"><button class="btn sm ok" data-ag="teachok" data-i="${i}">${ic('check','sm')} Enseñar</button><button class="btn sm ghost" data-ag="teachno">Cancelar</button></div></div>`
+          : m.de==='ia' && m.ensenar && !m.ensenado ? `<div class="ag-acts"><button class="btn sm pri" data-ag="teach" data-i="${i}">${ic('pen','sm')} Enseñarme la respuesta</button></div>` : ''}
+        ${m.de==='ia' && !m.ensenar && !m.inf && !m.sistema && AG.ensenando!==i ? `<div class="ag-vote">${m.voto?`<span>${m.voto==='si'?'¡Gracias!':'Gracias, ya lo corrigieron.'}</span>`:`<span>¿Te sirvió?</span><button data-ag="votosi" data-i="${i}" title="Sí">👍</button><button data-ag="votono" data-i="${i}" title="No, enseñarle la correcta">👎</button>`}</div>`:''}</div></div>`).join('')}
       ${AG.cargando?'<div class="ag-m ag-ia"><div class="ag-b ag-dots"><span></span><span></span><span></span></div></div>':''}
     </div>
     <div class="ag-chips">${(msgs.length && msgs[msgs.length-1].chips ? msgs[msgs.length-1].chips : agChips()).map(c=>`<button class="ag-chip" data-agq="${esc(c)}">${esc(c)}</button>`).join('')}</div>
@@ -3551,12 +3560,13 @@ function drawAgente(){
 async function agPreguntar(q){
   q = String(q||'').trim(); if(!q || AG.cargando) return;
   const msgs = agMsgs(); msgs.push({de:'yo', texto:q}); AG.borrador = ''; AG.cargando = true; drawAgente();
-  let res = null;
+  let res = agResponderAmplio(q);
   const quiereInf = /\b(informe|reporte)\b/i.test(normTxt(q)) && !/art\.? ?8|circunstanciado/i.test(q);
   const k = agKey();
-  if(k && k.key && !quiereInf){ try{ const txt = await agClaude(q); if(txt) res = {texto:txt}; }catch(err){ res = agResponder(q); if(res) res.texto = (res.texto||'') + `\n\n_(La IA avanzada no respondió: ${err.message}. Te contesté con la ayuda local.)_`; } }
+  if(!res && k && k.key && !quiereInf){ try{ const txt = await agClaude(q); if(txt) res = {texto:txt, ia:true}; }catch(err){ res = agResponder(q) || agResponderBusqueda(q); if(res) res.texto = (res.texto||'') + `\n\n_(La IA avanzada no respondió: ${err.message}. Te contesté con lo que sé.)_`; } }
   if(!res) res = agResponder(q);
-  if(!res) res = {texto:'No estoy seguro de haber entendido. Probá preguntarme, por ejemplo:\n• "¿Qué vence esta semana?"\n• "Resumen de Romero" o "¿Qué hago en CCF 3977/2026?"\n• "Expedientes de Florencia con cautelar"\n• "¿Cómo subo un mail con un PDF?"\n• "Armame un informe del equipo"'};
+  if(!res) res = agResponderBusqueda(q);
+  if(!res){ agAnotarPendiente(q); res = {texto:`Todavía no sé responder eso con seguridad, y prefiero no inventarte una respuesta.\n\nLo anoté en **Asistente IA › Preguntas que todavía no sabe** para que alguien del equipo me lo enseñe. Si sabés la respuesta, enseñámela acá abajo y la próxima vez la voy a responder.${k&&k.key?'':(isAdmin()?'\n\nPara que responda cualquier pregunta abierta, podés conectar la IA avanzada con la llavecita de arriba.':'')}`, ensenar:true}; }
   await new Promise(r=>setTimeout(r, 250));
   msgs.push({de:'ia', ...res}); AG.cargando = false; agGuardar(); AG.focus = true; drawAgente();
   if(res.inf) audit('Generó un informe con el asistente', 'Asistente', res.inf.titulo);
@@ -3587,10 +3597,137 @@ document.addEventListener('click', async ev => {
   if(a==='verinf'){ const m = agMsgs()[+g.dataset.i]; if(m && m.inf) agVerInforme(m.inf); }
   if(a==='copinf'){ const m = agMsgs()[+g.dataset.i]; if(m && m.inf){ try{ await navigator.clipboard.writeText(agTextoPlano(m.inf)); toast('Informe copiado'); }catch(e){ toast('No se pudo copiar'); } } }
   if(a==='imprimir' && AG.infActual) agImprimir(AG.infActual);
+  if(a==='teach' || a==='votono'){ AG.ensenando = +g.dataset.i; if(a==='votono'){ const m = agMsgs()[AG.ensenando]; if(m && m.saberId){ const s = agSaber().find(x=>x.id===m.saberId); if(s) s.malas = (s.malas||0)+1; } } drawAgente(); setTimeout(()=>{ const t = $('#agTeach'); if(t) t.focus(); }, 30); }
+  if(a==='teachno'){ AG.ensenando = null; drawAgente(); }
+  if(a==='teachok'){ const i = +g.dataset.i, msgs = agMsgs(), r = ($('#agTeach')||{}).value||''; if(!r.trim()){ toast('Escribí la respuesta'); return; }
+    let qi = i-1; while(qi>=0 && msgs[qi].de!=='yo') qi--; const q = qi>=0 ? msgs[qi].texto : '';
+    const m = msgs[i]; if(m.saberId && !m.ensenar){ const s = agSaber().find(x=>x.id===m.saberId); if(s && agSim(agTok(s.q), agTok(q))>=0.7){ s.r = r.trim(); save(); audit('Corrigió al asistente','Asistente', s.q.slice(0,120)); } else agAprender(q, r); } else agAprender(q, r);
+    m.ensenado = true; m.voto = 'no'; AG.ensenando = null; msgs.push({de:'ia', sistema:true, texto:'¡Gracias! Ya lo aprendí. La próxima vez que alguien del equipo pregunte algo parecido, voy a responder eso.'}); agGuardar(); drawAgente(); }
+  if(a==='votosi'){ const m = agMsgs()[+g.dataset.i]; if(m){ m.voto = 'si'; if(m.saberId){ const s = agSaber().find(x=>x.id===m.saberId); if(s){ s.buenas = (s.buenas||0)+1; save(); } } agGuardar(); drawAgente(); } }
   if(a==='ir' && window.innerWidth < 760){ AG.open = false; setTimeout(drawAgente, 50); }
 });
 document.addEventListener('submit', async ev => { if(ev.target.id!=='agForm') return; ev.preventDefault(); ev.stopPropagation(); await agPreguntar($('#agTxt').value); }, true);
 document.addEventListener('input', ev => { if(ev.target.id==='agTxt') AG.borrador = ev.target.value; });
+
+// ---------- el asistente aprende: conocimiento del equipo, glosario legal y búsqueda en todo ----------
+const AG_STOP = new Set('a al algo algun alguna alguno como con cual cuales cuando de del desde donde el ella ellas ellos en entre era es esa esas ese eso esos esta estan estas este esto estos fue fueron ha han hay la las le les lo los mas me mi mis muy nada ni no nos o otra otro para pero por porque que se sea ser si sin sobre son su sus tambien te ti tiene tienen tengo tu tus un una uno unos unas y ya yo vos hacer hago hace puedo puede podes quiero queria saber sabes decime dime explicame explica contame cuanto cuanta cuantos cuantas cual seria significa quiere decir favor hola gracias necesito tenes tenemos quien quienes esta estan esto algun alguno alguna caso casos pasa pasaria cosa cosas dato datos'.split(' '));
+const AG_SIN = {subo:'subir', subi:'subir', subis:'subir', sube:'subir', subimos:'subir', adjunto:'subir', adjuntar:'subir', correo:'mail', email:'mail', mails:'mail', juzgado:'juez', juzg:'juez', juzgados:'juez', jueza:'juez', juez:'juez', peritos:'perito', pericia:'perito', pericial:'perito', perito:'perito', cobra:'cobrar', cobran:'cobrar', honorario:'cobrar', honorarios:'cobrar', pido:'pedir', pide:'pedir', pedido:'pedir', vence:'plazo', vencimiento:'plazo', vencen:'plazo', termino:'plazo', precautoria:'cautelar', innovar:'cautelar', medicacion:'medica', medicamento:'medica', remedio:'medica', droga:'medica', farmaco:'medica', prepaga:'prepag', obra:'obrasocial', multa:'astrein', astreintes:'astrein', apelar:'apela', recurso:'apela', recurrir:'apela', informe:'inform', contestar:'contest', contestacion:'contest', discapacitado:'discap', discapacidad:'discap', cud:'discap', jueza:'juez', juzgado:'juez', tribunal:'juez'};
+function agTok(s){ return normTxt(String(s||'')).replace(/[^a-z0-9ñ ]/g,' ').split(/\s+/).filter(w=>(w.length>2 || /^\d+$/.test(w)) && !AG_STOP.has(w)).map(w=>(AG_SIN[w] || w).slice(0,5)); }
+function agSim(qt, dt){ const A = new Set(qt), B = new Set(dt); if(!A.size || !B.size) return 0; let i = 0; A.forEach(x=>{ if(B.has(x)) i++; }); return i / Math.sqrt(A.size * Math.min(B.size, A.size*3)); }
+const GLOSARIO = [
+  {t:'Acción de amparo', k:'amparo accion que es amparo ley 16986 articulo 43', r:'Es una acción rápida para proteger derechos constitucionales frente a un acto u omisión que los lesiona de forma actual o inminente, con arbitrariedad o ilegalidad manifiesta (art. 43 de la Constitución Nacional). En salud se usa para exigir coberturas a prepagas y obras sociales. Contra particulares se aplica el art. 321 inc. 2 del CPCCN (proceso sumarísimo) y, por analogía, la Ley 16.986.'},
+  {t:'Informe circunstanciado (art. 8, Ley 16.986)', k:'informe circunstanciado art 8 articulo 8 contestar amparo responder demanda', r:'Es la "contestación" en el amparo: el juez pide a la demandada un informe sobre los antecedentes y fundamentos de lo que hizo u omitió, en el plazo que fija (suele ser de 3 a 5 días). Ahí se ofrece la prueba y se plantean las defensas. En Fojas lo armás desde Escritos › Informe art. 8.'},
+  {t:'Medida cautelar', k:'cautelar medida innovar precautoria verosimilitud peligro demora contracautela 230 199 195 cumplir incumplir no cumplo', r:'Es una orden provisoria del juez para que se cubra la prestación mientras dura el juicio. Requiere verosimilitud del derecho y peligro en la demora (arts. 195 y 230 CPCCN); el juez puede exigir contracautela (art. 199). Hay que cumplirla en el plazo fijado; si no, pueden aplicarse astreintes. Si se considera improcedente, puede apelarse, pero la apelación en general no suspende el cumplimiento.'},
+  {t:'Astreintes', k:'astreinte astreintes multa sancion conminatoria incumplimiento incumplir no cumplir 804', r:'Son multas diarias que fija el juez para forzar el cumplimiento de una orden (art. 804 del Código Civil y Comercial y art. 37 CPCCN). En amparos de salud suelen aparecer cuando no se cumple la cautelar a tiempo. Para evitarlas: cumplir o acreditar en el expediente las gestiones realizadas y los motivos de cualquier demora.'},
+  {t:'Apelación en el amparo', k:'apelacion apelar recurso camara 48 horas articulo 15 sentencia plazo apelar', r:'En el régimen de la Ley 16.986 (art. 15) el recurso de apelación se interpone dentro de las 48 horas de notificada la resolución, por escrito y fundado. Solo son apelables la sentencia definitiva, las resoluciones que rechazan in limine y las que disponen medidas de no innovar o su suspensión. Verificá siempre el plazo que corresponda según el tribunal y la vía elegida.'},
+  {t:'PMO (Programa Médico Obligatorio)', k:'pmo programa medico obligatorio cobertura minima 201 2002 prestaciones basicas', r:'Es la canasta mínima de prestaciones que obras sociales y prepagas deben cubrir (Res. 201/2002 del Ministerio de Salud y normas posteriores). La jurisprudencia lo considera un piso, no un techo: igual pueden ordenarse coberturas fuera del PMO si están médicamente justificadas.'},
+  {t:'Ley 26.682 (medicina prepaga)', k:'26682 prepaga marco regulatorio empresas medicina prepaga superintendencia', r:'Es el marco regulatorio de las empresas de medicina prepaga. Las obliga a cubrir como mínimo el PMO y el sistema de discapacidad (art. 7), regula carencias, preexistencias y aumentos, y las pone bajo control de la Superintendencia de Servicios de Salud.'},
+  {t:'Ley 24.901 (discapacidad)', k:'24901 discapacidad prestaciones basicas cud certificado transporte terapias integral', r:'Establece el sistema de prestaciones básicas de atención integral a favor de las personas con discapacidad (terapias, transporte, educación, rehabilitación, etc.). Con certificado único de discapacidad (CUD), la cobertura debe ser integral (100 %). Las prepagas también están obligadas (Ley 26.682, art. 7).'},
+  {t:'Ley 23.661 y 23.660 (obras sociales)', k:'23661 23660 obras sociales sistema nacional seguro salud', r:'La Ley 23.660 regula las obras sociales y la 23.661 crea el Sistema Nacional del Seguro de Salud. Fijan el marco de cobertura y control de la Superintendencia de Servicios de Salud.'},
+  {t:'Ley 26.529 (derechos del paciente)', k:'26529 derechos paciente historia clinica consentimiento informado', r:'Regula los derechos del paciente: asistencia, trato digno, intimidad, confidencialidad, autonomía, información y consentimiento informado. También regula la historia clínica, que es del paciente y puede pedirse en copia.'},
+  {t:'Ley 26.862 (fertilización asistida)', k:'26862 fertilizacion asistida reproduccion fiv tratamientos', r:'Garantiza el acceso integral a técnicas de reproducción médicamente asistida. Obliga a obras sociales y prepagas a cubrirlas, con los límites de cantidad de tratamientos que fija su reglamentación (Decreto 956/2013).'},
+  {t:'Ley 27.043 (TEA)', k:'27043 tea autismo espectro autista abordaje integral', r:'Declara de interés nacional el abordaje integral e interdisciplinario de las personas con trastornos del espectro autista (TEA). Se suele invocar junto con la Ley 24.901 para terapias y acompañantes.'},
+  {t:'Preexistencias', k:'preexistencia preexistencias enfermedad previa carencia', r:'Por la Ley 26.682 (art. 10), las prepagas no pueden rechazar a alguien por enfermedades preexistentes; solo pueden fijar una cuota diferencial autorizada por la Superintendencia. Las carencias no pueden aplicarse a prestaciones del PMO.'},
+  {t:'Superintendencia de Servicios de Salud', k:'superintendencia sss reclamo organo control', r:'Es el organismo que controla a obras sociales y prepagas. Los afiliados pueden reclamar ahí antes o en paralelo al amparo. Sus resoluciones fijan coberturas, aumentos y procedimientos.'},
+  {t:'Sentencia y costas', k:'sentencia costas honorarios condena hacer lugar rechazo', r:'La sentencia resuelve si se hace lugar o no al amparo y decide las costas (quién paga los gastos del juicio y los honorarios). Como regla, las costas las paga quien pierde (art. 68 CPCCN y art. 14 de la Ley 16.986), aunque el juez puede eximir con fundamento.'},
+  {t:'Días hábiles judiciales y feria', k:'dias habiles feria judicial enero julio plazos computo gracia 124', r:'Los plazos procesales se cuentan en días hábiles: no cuentan sábados, domingos, feriados ni las ferias judiciales (enero y dos semanas en invierno). El escrito puede presentarse dentro de las dos primeras horas del día hábil siguiente al vencimiento (plazo de gracia, art. 124 CPCCN). En amparo, la habilitación de feria es frecuente por la urgencia.'},
+  {t:'Habilitación de feria', k:'habilitacion feria urgencia enero', r:'Durante la feria judicial los plazos no corren, salvo que el juzgado habilite la feria por urgencia, algo común en amparos de salud. Si el juzgado habilitó la feria, los plazos corren igual: revisalo en la cédula o la providencia.'},
+  {t:'Cédula de notificación', k:'cedula notificacion notificar electronica', r:'Es el documento con el que el juzgado comunica una resolución a las partes. Hoy es mayormente electrónica (en el sistema del Poder Judicial). La fecha de notificación es la que dispara los plazos. En Fojas, al subir una cédula, se toman los plazos que trae.'},
+  {t:'Traslado', k:'traslado correr traslado contestar', r:'Es la orden del juez para que una parte conozca un escrito o documento de la otra y pueda responderlo dentro de un plazo. Si no se contesta en término, se pierde la oportunidad de hacerlo.'},
+  {t:'Prueba en el amparo', k:'prueba pericial documental testigos ofrecer producir apertura', r:'En el amparo la prueba es acotada: principalmente documental y, a veces, pericial médica. Se ofrece al presentar el informe del art. 8. Si el juez abre a prueba, hay que producirla en el plazo fijado.'},
+  {t:'Competencia', k:'competencia federal civil comercial juez competente', r:'En la Ciudad de Buenos Aires, los amparos contra obras sociales nacionales y prepagas suelen tramitar ante la Justicia Nacional en lo Civil y Comercial Federal. Si se plantea ante un juez incompetente, puede pedirse que se declare la incompetencia.'},
+  {t:'Ley 25.326 (datos personales)', k:'datos personales 25326 privacidad confidencialidad sensibles salud', r:'Protege los datos personales. Los datos de salud son sensibles y requieren protección reforzada: confidencialidad, seguridad y uso solo para la finalidad para la que se obtuvieron.'}
+];
+function agSaber(){ return Array.isArray(S.agSaber) ? S.agSaber : (S.agSaber = []); }
+function agPend(){ return Array.isArray(S.agPend) ? S.agPend : (S.agPend = []); }
+function agCorpus(){ return [...AYUDA.map(a=>({tipo:'ayuda', t:a.t, k:a.k.join(' '), r:a.r, ir:a.ir})), ...GLOSARIO.map(g=>({tipo:'glosario', t:g.t, k:g.k, r:g.r})), ...agSaber().map(s=>({tipo:'saber', t:s.q, k:'', r:s.r, s}))]; }
+function agKB(q){
+  const qt = [...new Set(agTok(q))]; if(!qt.length) return [];
+  const docs = agCorpus().map(d=>({d, head:new Set(agTok(d.t+' '+d.k)), body:new Set(agTok(d.r))})); const N = docs.length, idf = {};
+  qt.forEach(w=>{ const df = docs.filter(x=>x.head.has(w)||x.body.has(w)).length; idf[w] = df ? Math.log(1 + (N+1)/(df+0.5)) : 1.2; });
+  const tot = qt.reduce((a,w)=>a+idf[w],0);
+  return docs.map(x=>{ let s = 0; qt.forEach(w=>{ if(x.head.has(w)) s += idf[w]; else if(x.body.has(w)) s += idf[w]*0.6; }); let sc = s/tot;
+    if(x.d.tipo==='saber'){ const qs = new Set(agTok(x.d.t)); const inter = qt.filter(w=>qs.has(w)).length; sc = Math.max(sc, inter/Math.sqrt(qt.length*Math.max(1,qs.size))) * 1.1; }
+    return {d:x.d, sc}; }).filter(x=>x.sc>0).sort((a,b)=>b.sc-a.sc);
+}
+function agBuscarSaber(q){
+  const qt = agTok(q); if(!qt.length) return null; let best = null;
+  agSaber().forEach(s=>{ const sc = Math.max(agSim(qt, agTok(s.q)), agSim(qt, agTok(s.q + ' ' + s.r)) * 0.85); if(sc > (best?best.sc:0)) best = {s, sc}; });
+  return best && best.sc >= 0.5 ? best : null;
+}
+function agBuscarGlosario(q){
+  const qt = agTok(q); if(!qt.length) return [];
+  return GLOSARIO.map(g=>({g, sc: Math.max(agSim(qt, agTok(g.t+' '+g.k)), agSim(qt, agTok(g.t+' '+g.k+' '+g.r))*0.8)})).filter(x=>x.sc>=0.34).sort((a,b)=>b.sc-a.sc);
+}
+function agBuscarDatos(q){
+  const qt = agTok(q).filter(w=>!/^(exped|ampar|afili|cuale|tiene|tengo|lista|mostr)$/.test(w)); if(!qt.length) return [];
+  return S.exps.map(e=>{ const blob = [e.afiliado, e.dni, e.prestacion, e.juzgado, e.estado, e.caratula, e.sumario, e.riesgo, userName(e.abogado), ...(e.plazos||[]).map(p=>p.desc), ...(e.movimientos||[]).map(m=>(m.titulo||'')+' '+(m.desc||'')), ...(e.docs||[]).map(d=>d.nombre+' '+(d.tipo||''))].join(' ');
+    const dt = new Set(agTok(blob)); const hits = qt.filter(w=>dt.has(w)).length; return {e, sc: hits/qt.length, hits}; })
+    .filter(x=>x.hits>=1 && x.sc>=0.75).sort((a,b)=>b.sc-a.sc || alfa(a.e,b.e)).slice(0,6);
+}
+function agAnotarPendiente(q){ const t = normTxt(q).trim(); if(!t) return; const p = agPend(); if(!p.some(x=>normTxt(x.q)===t)){ p.push({id:randId(8), q:String(q).trim(), user:S.user, fecha:iso(today()), veces:1}); } else p.find(x=>normTxt(x.q)===t).veces++; save(); }
+function agAprender(q, r, origen){
+  const s = {id:randId(8), q:String(q).trim(), r:String(r).trim(), autor:S.user, fecha:iso(today()), usos:0, origen:origen||'enseñado'};
+  agSaber().push(s); S.agPend = agPend().filter(x=>agSim(agTok(x.q), agTok(s.q))<0.75); save(); audit('Le enseñó al asistente', 'Asistente', s.q.slice(0,120)); return s;
+}
+// respuesta de búsqueda amplia, para que nunca quede sin contestar
+function agResponderAmplio(q){
+  const t = normTxt(q);
+  const rec = t.match(/^(?:recorda|recordate|aprende|aprendete|anota|anotate|guarda|tene en cuenta)\s+(?:que\s+)?(.{6,})$/);
+  if(rec){ const txt = q.replace(/^\s*\S+\s+(que\s+)?/i,'').trim(); const s = agAprender(txt, txt, 'recordado'); return {texto:`Listo, lo anoté y lo voy a tener en cuenta para todo el equipo:\n“${s.r}”`, saberId:s.id, sistema:true}; }
+  const kb = agKB(q), top = kb[0];
+  if(top && top.d.tipo==='saber' && top.sc>=0.55){ const s = top.d.s; s.usos = (s.usos||0)+1; save(); return {texto:`${s.r}\n\n_(Lo aprendí de ${userName(s.autor).split(' ')[0]} el ${fmt(s.fecha)}.)_`, saberId:s.id}; }
+  return null;
+}
+function agResponderBusqueda(q){
+  const kb = agKB(q).filter(x=>x.d.tipo!=='saber' || x.sc>=0.55), dt = agBuscarDatos(q);
+  const partes = []; let ir = null, irL = null;
+  if(kb[0] && kb[0].sc>=0.5){ const a = kb[0]; partes.push(`**${a.d.tipo==='saber'?'':a.d.t}**${a.d.tipo==='saber'?'':'\n'}${a.d.r}`.replace(/^\*\*\*\*/,'')); if(a.d.ir){ ir = a.d.ir; irL = 'Ir ahí'; }
+    const b = kb[1]; if(b && b.sc>=0.6 && b.sc>=a.sc*0.85 && b.d.tipo!=='ayuda') partes.push(`**${b.d.t}**\n${b.d.r}`); }
+  if(dt.length) { (/\b(expediente|expedientes|caso|casos|amparo|amparos|afiliado|afiliados|quien|quienes)\b/.test(normTxt(q)) ? partes.unshift.bind(partes) : partes.push.bind(partes))(`**En los expedientes encontré:**\n${dt.map(x=>'• '+agExpCorto(x.e)).join('\n')}`); if(dt.length===1){ ir = 'expediente-'+dt[0].e.id; irL = 'Abrir expediente'; } }
+  if(!partes.length) return null;
+  return {texto:partes.join('\n\n'), ir, irL, busqueda:true};
+}
+
+// vista de entrenamiento
+function vAsistente(){
+  const sab = [...agSaber()].sort((a,b)=>String(b.fecha).localeCompare(String(a.fecha))), pend = [...agPend()].sort((a,b)=>(b.veces||1)-(a.veces||1));
+  const puede = s => isAdmin() || isLeader() || s.autor===S.user;
+  return `<div><h1>Asistente IA</h1><p class="sub">Lo que el asistente aprendió del equipo y las preguntas que todavía no sabe responder. Todo lo que le enseñen sirve para todos.</p></div>
+  <div class="grid2">
+    <section class="card"><div class="row" style="justify-content:space-between"><h3>Preguntas que todavía no sabe</h3><span class="badge">${pend.length}</span></div>
+      <p class="small muted">Respondelas y el asistente las va a contestar la próxima vez.</p>
+      <div class="list">${pend.map(p=>`<div class="li" style="flex-direction:column;align-items:stretch;gap:8px">
+        <div class="row" style="justify-content:space-between;gap:8px"><b>“${esc(p.q)}”</b><span class="small muted">${p.veces>1?p.veces+' veces · ':''}${esc(userName(p.user).split(' ')[0])} · ${fmt(p.fecha)}</span></div>
+        ${ui.agResp===p.id?`<textarea id="agRespTxt" rows="4" placeholder="Escribí la respuesta que debería dar…"></textarea><div class="row" style="gap:8px"><button class="btn sm ok" data-ag="pendok" data-id="${p.id}">${ic('check','sm')} Guardar respuesta</button><button class="btn sm ghost" data-ag="pendno">Cancelar</button></div>`
+          :`<div class="row" style="gap:8px"><button class="btn sm pri" data-ag="pendresp" data-id="${p.id}">${ic('pen','sm')} Responder</button><button class="btn sm ghost" data-ag="penddel" data-id="${p.id}">Descartar</button></div>`}</div>`).join('') || '<div class="empty small">No hay preguntas pendientes.</div>'}</div></section>
+    <section class="card"><div class="row" style="justify-content:space-between"><h3>Lo que aprendió</h3><span class="badge">${sab.length}</span></div>
+      <p class="small muted">Podés enseñarle algo nuevo acá, desde el chat con "Recordá que…", o tocando 👎 en una respuesta.</p>
+      ${ui.agNuevo?`<div class="li" style="flex-direction:column;align-items:stretch;gap:8px;border:1px solid var(--line);border-radius:12px;padding:12px"><input type="text" id="agNQ" placeholder="Pregunta (ej.: ¿A quién le pido la historia clínica?)"><textarea id="agNR" rows="4" placeholder="Respuesta"></textarea><div class="row" style="gap:8px"><button class="btn sm ok" data-ag="nuevook">${ic('check','sm')} Guardar</button><button class="btn sm ghost" data-ag="nuevono">Cancelar</button></div></div>`
+        :`<button class="btn sm pri" data-ag="nuevo">${ic('plus','sm')} Enseñarle algo</button>`}
+      <div class="list" style="margin-top:10px">${sab.map(s=>`<div class="li" style="flex-direction:column;align-items:stretch;gap:6px">
+        ${ui.agEdit===s.id?`<input type="text" id="agEQ" value="${esc(s.q)}"><textarea id="agER" rows="4">${esc(s.r)}</textarea><div class="row" style="gap:8px"><button class="btn sm ok" data-ag="editok" data-id="${s.id}">${ic('check','sm')} Guardar</button><button class="btn sm ghost" data-ag="editno">Cancelar</button></div>`
+          :`<b>${esc(s.q)}</b><div class="small">${agMd(s.r)}</div><div class="row" style="justify-content:space-between;gap:8px"><span class="small muted">${esc(userName(s.autor))} · ${fmt(s.fecha)}${s.usos?` · usada ${s.usos} ${s.usos===1?'vez':'veces'}`:''}</span>${puede(s)?`<span class="row" style="gap:6px"><button class="btn sm ghost" data-ag="edit" data-id="${s.id}">${ic('pen','sm')} Editar</button>${ui.agDel===s.id?`<button class="btn sm danger-solid" data-ag="delok" data-id="${s.id}">Sí, eliminar</button><button class="btn sm" data-ag="delno">Cancelar</button>`:`<button class="btn sm ghost danger" data-ag="del" data-id="${s.id}">${ic('trash','sm')}</button>`}</span>`:''}</div>`}</div>`).join('') || '<div class="empty small">Todavía no le enseñaron nada.</div>'}</div></section>
+  </div>
+  <section class="card"><h3>Además sabe</h3><p class="small muted">Cómo se usa cada parte de Fojas, ${GLOSARIO.length} temas legales de amparos de salud (${GLOSARIO.slice(0,6).map(g=>g.t).join(', ')}…) y todo lo que está cargado en los expedientes.${agKey()&&agKey().key?' Con la IA avanzada conectada, además responde cualquier pregunta abierta.':''}</p></section>`;
+}
+document.addEventListener('click', ev => {
+  const g = ev.target.closest('[data-ag]'); if(!g) return; const a = g.dataset.ag, id = g.dataset.id;
+  const s = id ? agSaber().find(x=>x.id===id) : null;
+  if(a==='pendresp'){ ui.agResp = id; render(); setTimeout(()=>{ const t = $('#agRespTxt'); if(t) t.focus(); }, 30); }
+  if(a==='pendno'){ ui.agResp = null; render(); }
+  if(a==='pendok'){ const p = agPend().find(x=>x.id===id), r = ($('#agRespTxt')||{}).value||''; if(!r.trim()){ toast('Escribí la respuesta'); return; } if(p) agAprender(p.q, r); ui.agResp = null; render(); toast('Aprendido. Ya lo va a responder.'); }
+  if(a==='penddel'){ S.agPend = agPend().filter(x=>x.id!==id); save(); render(); }
+  if(a==='nuevo'){ ui.agNuevo = true; render(); setTimeout(()=>{ const t = $('#agNQ'); if(t) t.focus(); }, 30); }
+  if(a==='nuevono'){ ui.agNuevo = false; render(); }
+  if(a==='nuevook'){ const q = ($('#agNQ')||{}).value||'', r = ($('#agNR')||{}).value||''; if(!q.trim() || !r.trim()){ toast('Completá la pregunta y la respuesta'); return; } agAprender(q, r); ui.agNuevo = false; render(); toast('Aprendido'); }
+  if(a==='edit'){ ui.agEdit = id; render(); }
+  if(a==='editno'){ ui.agEdit = null; render(); }
+  if(a==='editok' && s){ const q = ($('#agEQ')||{}).value||'', r = ($('#agER')||{}).value||''; if(q.trim()) s.q = q.trim(); if(r.trim()) s.r = r.trim(); save(); audit('Editó lo que sabe el asistente','Asistente', s.q.slice(0,120)); ui.agEdit = null; render(); toast('Guardado'); }
+  if(a==='del'){ ui.agDel = id; render(); }
+  if(a==='delno'){ ui.agDel = null; render(); }
+  if(a==='delok' && s){ S.agSaber = agSaber().filter(x=>x.id!==id); S.agBorrados = [...new Set([...(S.agBorrados||[]), id])]; save(); audit('Borró algo que sabía el asistente','Asistente', s.q.slice(0,120)); ui.agDel = null; render(); toast('Eliminado'); }
+});
 
 // ---------- actualización automática: si hay una versión nueva publicada, se carga sola ----------
 const APP_VERSION = (document.querySelector('meta[name=fojas-version]')||{}).content || '';
