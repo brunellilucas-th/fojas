@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.8">
+<meta name="fojas-version" content="2026-11-22.9">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -58,6 +58,13 @@ svg.i.lg{width:30px;height:30px}
 .main{display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden}
 .top{display:flex;align-items:center;gap:14px;padding:12px 28px;background:var(--surface);border-bottom:1px solid var(--line);flex-wrap:wrap}
 .who{display:flex;align-items:center;gap:10px;margin-left:auto}
+.umenu-wrap{position:relative} .umenu-wrap .avatar{position:relative}
+.av-dot{position:absolute;top:-1px;right:-1px;width:12px;height:12px;border-radius:50%;background:var(--danger);border:2px solid var(--surface)}
+.umenu{position:absolute;right:0;top:calc(100% + 8px);z-index:300;min-width:260px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:6px;display:flex;flex-direction:column}
+.umenu-h{display:flex;flex-direction:column;gap:2px;padding:10px 12px 12px;border-bottom:1px solid var(--line);margin-bottom:4px} .umenu-h span{font-size:13px;color:var(--muted)}
+.umenu a,.umenu button{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;border:0;background:none;color:var(--ink);font:inherit;font-weight:600;text-align:left;cursor:pointer;text-decoration:none;width:100%}
+.umenu a span:not(.badge),.umenu button span{flex:1} .umenu a:hover,.umenu button:hover,.umenu a:focus-visible,.umenu button:focus-visible{background:var(--sunken)}
+.umenu .danger{color:var(--danger)} .umenu-sep{height:1px;background:var(--line);margin:4px 6px}
 .avatar{width:38px;height:38px;border-radius:50%;background:var(--violet-soft);color:var(--violet);display:grid;place-items:center;font-weight:800}
 .who div{line-height:1.2} .who span{font-size:13px;color:var(--muted)}
 .search{position:relative;flex:1;min-width:220px;max-width:520px}
@@ -382,7 +389,7 @@ details.sug ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap
   .side .foot{margin:0;padding:0;border:0;display:flex}
   .view{padding:18px}
   .top{padding:10px 16px}
-  .who div{display:none}
+  .who > div:first-child{display:none}
   .form{grid-template-columns:1fr}
   .login{grid-template-columns:1fr}
   .login .pitch{padding:32px}
@@ -1629,7 +1636,7 @@ const ui = {orden:(()=>{ try{ return localStorage.getItem('fojasOrden')||'alfa';
 function shell(content){
   const r = route().name;
   const act = n => (r===n || (n==='amparos' && r==='expediente') || (n==='administrativos' && r==='tramite')) ? 'on' : '';
-  const urgentes = allPlazos().filter(p=>daysTo(p.vence)<=1).length;
+  const misV = misVenc(), urgentes = misV.filter(p=>daysTo(p.vence)<=1).length;
   const link = (h, icon, label, badge='') => `<a href="#${h}" class="${act(h)}" title="${label}">${ic(icon)}<span class="lbl">${label}</span>${badge}</a>`;
   const amp = tieneMod('amparos');
   const extra = MODULES.filter(m=>m.id!=='amparos' && S.modules[m.id] && (!m.disponible || tieneMod(m.id))).map(m=> m.id==='administrativos' ? link('administrativos','book','Administrativos', (()=>{ const n = trs().filter(t=>{ const p = trPend(t)[0]; return p && daysTo(p.vence)<=3; }).length; return n?`<span class="badge red">${n}</span>`:''; })()) : `<a href="#modulos" title="${esc(m.nombre)}">${ic(m.icon)}<span class="lbl">${esc(m.nombre)}</span><span class="badge">pronto</span></a>`).join('');
@@ -1641,7 +1648,6 @@ function shell(content){
       <nav class="nav" aria-label="Principal">
         ${link('inicio','home','Inicio')}
         ${amp?link('amparos','folder','Amparos', `<span class="badge">${active().length}</span>`):''}
-        ${link('vencimientos','cal','Vencimientos', urgentes?`<span class="badge red">${urgentes}</span>`:'')}
         ${amp?link('escritos','pen','Escritos'):''}
         ${amp?link('modelos','file','Modelos', (S.modelos||[]).length?`<span class="badge">${S.modelos.length}</span>`:''):''}
         ${amp?link('informes','chart','Informes'):''}
@@ -1650,17 +1656,11 @@ function shell(content){
       </nav>
       <div class="navlabel">Más opciones</div>
       <nav class="nav" aria-label="Más opciones">
-        ${link('asistente','bot','Asistente IA', (S.agPend||[]).length?`<span class="badge">${S.agPend.length}</span>`:'')}
         ${link('historial','history','Historial de cambios')}
         ${link('respaldo','cloud','Copias y migración')}
         ${link('modulos','grid','Módulos')}
-        ${link('papelera','trash','Papelera', (S.papelera||[]).length?`<span class="badge">${S.papelera.length}</span>`:'')}
         ${isAdmin()?link('usuarios','key','Usuarios'):''}
       </nav>
-      <div class="foot nav">
-        <button data-act="tour" title="Ayuda">${ic('help')}<span class="lbl">Ayuda</span></button>
-        <button data-act="logout" title="Salir">${ic('out')}<span class="lbl">Salir</span></button>
-      </div>
     </aside>
     <div class="main">
       <div class="demo">Versión de prueba con datos ficticios. No cargues datos reales de afiliados.</div>
@@ -1671,7 +1671,17 @@ function shell(content){
         </div>
         <a href="#respaldo" id="saveBadge" class="savebadge ${saveState().cls}" title="${esc(saveState().tip)}" ${PERSIST.fileNeeds?'data-act="reconnect"':''}>${ic(saveState().icon,'sm')} ${saveState().txt}</a>
         <div class="who"><div><b>${esc(u.nombre)}</b><br><span>${esc(u.rol)}</span></div>
-          <button class="avatar" data-act="pwd" title="Cambiar contraseña" style="border:0;cursor:pointer">${initials(u.nombre)}</button></div>
+          <div class="umenu-wrap"><button class="avatar" data-act="umenu" title="Tu menú" aria-haspopup="menu" aria-expanded="${ui.umenu?'true':'false'}" style="border:0;cursor:pointer">${initials(u.nombre)}${urgentes?'<span class="av-dot"></span>':''}</button>
+          ${ui.umenu?`<div class="umenu" role="menu">
+            <div class="umenu-h"><b>${esc(u.nombre)}</b><span>${esc(u.rol)} · <span class="mono">${esc(u.id)}</span></span></div>
+            <a href="#vencimientos" role="menuitem" data-act="umvenc">${ic('cal','sm')}<span>Vencimientos</span>${misV.length?`<span class="badge ${urgentes?'red':''}">${misV.length}</span>`:''}</a>
+            <a href="#asistente" role="menuitem" data-act="umclose">${ic('bot','sm')}<span>Asistente IA</span>${(S.agPend||[]).length?`<span class="badge">${S.agPend.length}</span>`:''}</a>
+            <a href="#papelera" role="menuitem" data-act="umclose">${ic('trash','sm')}<span>Papelera</span>${(S.papelera||[]).length?`<span class="badge">${S.papelera.length}</span>`:''}</a>
+            <button role="menuitem" data-act="umpwd">${ic('key','sm')}<span>Cambiar contraseña</span></button>
+            <button role="menuitem" data-act="umtour">${ic('help','sm')}<span>Ayuda</span></button>
+            <div class="umenu-sep"></div>
+            <button role="menuitem" data-act="umsalir" class="danger">${ic('out','sm')}<span>Salir</span></button>
+          </div>`:''}</div></div>
       </header>
       <main class="view" id="view">${content}</main>
     </div>
@@ -1799,6 +1809,7 @@ function vAmparos(){
   </div>`;
 }
 
+function misVenc(){ const yo = S.user; return [...allPlazos().filter(p=>p.exp.abogado===yo), ...(tieneMod('administrativos') ? trs().filter(t=>t.abogado===yo).flatMap(t=>(t.plazos||[]).filter(p=>!p.hecho).map(p=>({...p, tr:t}))) : [])].sort((a,b)=>a.vence.localeCompare(b.vence)); }
 function vInicioSinAmparos(){
   const u = me(), hr = new Date().getHours(), saludo = hr<12?'Buen día':hr<20?'Buenas tardes':'Buenas noches';
   const adm = tieneMod('administrativos');
@@ -1815,7 +1826,8 @@ function vInicioSinAmparos(){
   : `<section class="card empty"><b>Todavía no tenés módulos asignados.</b><span class="muted">Pedile al administrador que te habilite el que necesitás.</span></section>`}`;
 }
 function vVencimientos(){
-  const plazos = allPlazos();
+  const mios = ui.vencMios !== false;
+  const plazos = mios ? misVenc().filter(p=>p.exp) : allPlazos();
   const groups = [
     ['Vencidos','late',p=>daysTo(p.vence)<0],
     ['Hoy y mañana','soon',p=>{const n=daysTo(p.vence); return n>=0 && n<=1;}],
@@ -1823,7 +1835,8 @@ function vVencimientos(){
     ['Más adelante','okk',p=>daysTo(p.vence)>7]
   ];
   return `
-  <div><h1>Vencimientos</h1><p class="sub">Todo lo que hay que presentar o cumplir, ordenado por fecha. Cuando lo hagas, tocá "Hecho".</p></div>
+  <div><h1>${mios?'Mis vencimientos':'Vencimientos de todos'}</h1><p class="sub">${mios?'Lo que tenés a tu cargo':'Todo lo que hay que presentar o cumplir'}, ordenado por fecha. Cuando lo hagas, tocá "Hecho".</p></div>
+  <div class="chips"><button class="chipbtn ${mios?'on':''}" data-act="vencq" data-v="1">${ic('user','sm')} Míos <span class="badge">${misVenc().length}</span></button><button class="chipbtn ${mios?'':'on'}" data-act="vencq" data-v="0">${ic('users','sm')} Todos <span class="badge">${allPlazos().length + (tieneMod('administrativos') ? trs().reduce((a,t)=>a+(t.plazos||[]).filter(p=>!p.hecho).length,0) : 0)}</span></button></div>
   <details class="card" style="gap:8px"><summary style="cursor:pointer;font-weight:700">${ic('cal','sm')} Próximos feriados y días inhábiles que tenemos en cuenta</summary>
     <div class="list">${upcomingHolidays(10).map(([d,m])=>`<div class="li"><span>${esc(m)}</span><span class="small muted">${fmtLargo(d)}</span></div>`).join('')}</div>
     <p class="small muted">Feriados nacionales según la Ley 27.399 y el Decreto 614/2025; días no laborables con fines turísticos de 2026 según la Resolución 164/2025. Los de 2027 todavía no fueron publicados. La feria judicial de enero se descuenta solo si la elegís al cargar el plazo.</p></details>
@@ -2363,7 +2376,7 @@ const TOUR = [
   ['cal','r','Lo urgente, siempre primero','En Inicio y en Vencimientos ves qué vence. Rojo es vencido, amarillo es urgente y verde está al día. Cuando lo hacés, tocás "Hecho".'],
   ['folder','g','Cada amparo te dice qué sigue','Al abrir un amparo, arriba ves "Lo próximo que hay que hacer". Debajo, la etapa en la que está, las novedades y los documentos.'],
   ['pen','v','Escritos en tres pasos','Elegís el escrito, elegís el amparo y el texto se completa solo. Solo escribís lo que está entre [corchetes].'],
-  ['help','y','Si te perdés, tocá Ayuda','Está abajo en el menú. Y todo lo que hagas queda registrado, así que no hay forma de romper nada sin que se note.']
+  ['help','y','Si te perdés, tocá Ayuda','Tocá el círculo con tus iniciales, arriba a la derecha: ahí están Ayuda, tus Vencimientos, el Asistente IA, la Papelera, Cambiar contraseña y Salir. Y todo lo que hagas queda registrado, así que no hay forma de romper nada sin que se note.']
 ];
 function openTour(i=0){
   const [icon,col,t,d] = TOUR[i];
@@ -3114,6 +3127,7 @@ function markDone(e, i){
 
 // ---------- eventos ----------
 document.addEventListener('click', async ev => {
+  if(ui.umenu && !ev.target.closest('.umenu-wrap')){ ui.umenu = false; render(); }
   if(!ev.target.closest('.search')) { if(ui.results){ ui.results=false; const r=$('.results'); if(r) r.remove(); } }
   const dt = ev.target.closest('[data-dtree]'); if(dt){ ev.preventDefault(); const box = dt.closest('.dtree'); const on = !box.classList.contains('open'); box.classList.toggle('open', on); dt.setAttribute('aria-expanded', on); const hn = dt.querySelector('.dtree-hint'); if(hn) hn.textContent = on ? 'Ocultar' : 'Ver los '+box.querySelectorAll('.dtree-kid').length; ui.dtOpen = ui.dtOpen||{}; ui.dtOpen[dt.dataset.dtree] = on; return; }
   const om = ev.target.closest('[data-openmember]');
@@ -3223,6 +3237,13 @@ document.addEventListener('click', async ev => {
   if(a==='tour') openTour(0);
   if(a==='logout') logout();
   if(a==='pwd') openPwd(false);
+  if(a==='vencq'){ ui.vencMios = d.v==='1'; render(); return; }
+  if(a==='umenu'){ ui.umenu = !ui.umenu; render(); return; }
+  if(a==='umclose'){ ui.umenu = false; }
+  if(a==='umvenc'){ ui.umenu = false; ui.vencMios = true; if(location.hash==='#vencimientos'){ ev.preventDefault(); render(); } }
+  if(a==='umpwd'){ ui.umenu = false; render(); openPwd(false); }
+  if(a==='umtour'){ ui.umenu = false; render(); openTour(0); }
+  if(a==='umsalir'){ ui.umenu = false; logout(); }
   if(a==='nuevo') openNuevo();
   if(a==='wmanual'){ W.step = 2; drawWizard(); }
   if(a==='wtodas' && W){ wRead(); W.verTodas = true; drawWizard(); }
@@ -3297,6 +3318,7 @@ document.addEventListener('click', async ev => {
 document.addEventListener('keydown', ev => {
   if(ev.key==='Enter' && ev.target.matches('[data-go]')) location.hash = ev.target.dataset.go;
   if(ev.key==='Escape' && $('#overlay').classList.contains('show') && !$('#overlay').dataset.forced) closeModal();
+  if(ev.key==='Escape' && ui.umenu){ ui.umenu = false; render(); const b = $('[data-act=umenu]'); if(b) b.focus(); }
   if(ev.target.id==='gsearch'){
     const links = [...document.querySelectorAll('.results a')];
     if(ev.key==='Enter' && links.length){ ev.preventDefault(); location.hash = links[0].getAttribute('href').slice(1); ui.q=''; }
@@ -3416,6 +3438,7 @@ IC.send = '<path d="M4 12l16-8-6 16-2.5-6.5z" fill="none" stroke="currentColor" 
 IC.x = '<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>';
 IC.bot = '<rect x="4" y="7" width="16" height="12" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7V4M9 13h.01M15 13h.01" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M2 12v3M22 12v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
 const AYUDA = [
+  {t:'Menú de tu usuario', k:['menu','iniciales','circulo','salir','cerrar sesion','contrasena','clave','papelera','ayuda','vencimientos','asistente'], r:'Tocá el **círculo con tus iniciales**, arriba a la derecha. Ahí están **Vencimientos** (tus próximos vencimientos), **Asistente IA**, **Papelera**, **Cambiar contraseña**, **Ayuda** y **Salir**.', ir:null},
   {t:'Asignar módulos a cada usuario', k:['modulo','modulos','asignar','habilitar','permisos','acceso','usuario','ver'], r:'El administrador entra a **Usuarios**, toca **Editar** en la persona y tilda los **Módulos que puede usar**: uno, varios o todos. También se eligen al agregar a alguien. Cada persona ve en el menú solo sus módulos; el administrador ve todos. Para prender o apagar un módulo para toda la organización, andá a **Módulos**.', ir:'usuarios'},
   {k:['cargar','nuevo expediente','crear expediente','alta','amparo nuevo','ingresar un amparo'], t:'Cargar un expediente nuevo', ir:'amparos',
    r:'En **Amparos** tocá **Nuevo expediente**. Arrastrá la demanda, el oficio y la prueba (PDF, Word, fotos o mails): Fojas los lee completos y completa solo los autos, el DNI, el juzgado, qué reclama, la cautelar y los plazos. Revisás lo que propone y guardás.'},
@@ -3428,7 +3451,7 @@ const AYUDA = [
   {k:['etapa','etapas','cautelar','sin cautelar','con cautelar'], t:'Etapas y cautelar', ir:null,
    r:'En **¿En qué etapa está?** tocás una etapa para cambiarla. **Un click sobre la cautelar** marca si tiene o no (verde ✓ o rojo ✕). Las etapas son: Demanda, Cautelar, Contestación de demanda, Prueba, Para sentencia, Sentencia, Apelación y Archivado.'},
   {k:['plazo','plazos','feriado','feriados','dias habiles','calendario','modificar plazo','vencimiento'], t:'Plazos', ir:'vencimientos',
-   r:'Los plazos se cuentan en **días hábiles con los feriados nacionales oficiales** (y la feria judicial de enero si la activás). En cada expediente podés **Modificar plazo**, y en **Vencimientos** ves todo lo que vence, ordenado por fecha. Cuando lo cumplís, tocás **Ya lo hice**.'},
+   r:'Los plazos se cuentan en **días hábiles con los feriados nacionales oficiales** (y la feria judicial de enero si la activás). En cada expediente podés **Modificar plazo**, y en **Vencimientos** (tocá el círculo con tus iniciales, arriba a la derecha) ves lo que te vence a vos —o lo de todos—, ordenado por fecha. Cuando lo cumplís, tocás **Ya lo hice**.'},
   {k:['escrito','escritos','informe art','contestacion','apelacion','prorroga','redactar'], t:'Escritos', ir:'escritos',
    r:'En **Escritos** elegís el tipo (informe del art. 8, acreditar cumplimiento, apelación, prórroga o uno de tus modelos) y el expediente: Fojas lo redacta completo con antecedentes, fundamentos y petitorio para que solo lo revises.'},
   {k:['modelo','modelos','plantilla'], t:'Modelos', ir:'modelos',
@@ -3440,7 +3463,7 @@ const AYUDA = [
   {k:['buscar','busqueda','dni','varios reclamos','arbol'], t:'Buscar', ir:null,
    r:'Usá el **buscador de arriba**: por afiliado, DNI (con o sin puntos) o número de expediente. Si un DNI tiene varios reclamos, aparece como **árbol** que se despliega con cada expediente.'},
   {k:['eliminar','borrar','papelera','recuperar','restaurar'], t:'Eliminar y recuperar', ir:'papelera',
-   r:'Dentro del expediente está **Eliminar expediente** (te pregunta "¿Eliminar?"). Lo eliminado va a la **Papelera**, desde donde se puede **restaurar**.'},
+   r:'Dentro del expediente está **Eliminar expediente** (te pregunta "¿Eliminar?"). Lo eliminado va a la **Papelera** (en el círculo con tus iniciales, arriba a la derecha), desde donde se puede **restaurar**.'},
   {k:['copia','copias','respaldo','backup','migrar','migracion','importar','excel','planilla'], t:'Copias y migración', ir:'respaldo',
    r:'En **Copias y migración** hacés copias de seguridad cifradas y traés expedientes desde otras apps: Excel, CSV, Word, PDF, zip y casi cualquier archivo. También podés importar desde **Amparos › Importar / migrar**.'},
   {k:['historial','auditoria','huella','quien hizo','registro'], t:'Historial de cambios', ir:'historial',
@@ -4178,7 +4201,7 @@ function ejemplosAdm(d){
 // eventos del módulo Administrativos
 function trTaskRow(t, p, i){ const n = daysTo(p.vence), u = urg(n); return `<div class="task ${u}"><div class="txt"><a href="#tramite-${t.id}">${esc(p.desc)}</a><div class="small muted">${esc(orgById(t.org).c)} · ${esc(trNombre(t))}${t.numero?' · '+esc(t.numero):''}</div></div>
   <div style="text-align:right"><div class="when ${u}">${whenText(n)}</div><div class="small muted">${fmt(p.vence)}</div></div><button class="btn sm" data-act="trhecho" data-t="${t.id}" data-i="${i}">${ic('check','sm')} Hecho</button></div>`; }
-function vencAdm(){ if(!tieneMod('administrativos')) return ''; const l = trs().flatMap(t=>(t.plazos||[]).map((p,i)=>({t,p,i})).filter(x=>!x.p.hecho)).sort((a,b)=>a.p.vence.localeCompare(b.p.vence));
+function vencAdm(){ if(!tieneMod('administrativos')) return ''; const mios = ui.vencMios !== false; const l = trs().filter(t=>!mios || t.abogado===S.user).flatMap(t=>(t.plazos||[]).map((p,i)=>({t,p,i})).filter(x=>!x.p.hecho)).sort((a,b)=>a.p.vence.localeCompare(b.p.vence));
   if(!l.length) return ''; return `<section class="card"><div class="row"><h2>Administrativos</h2><span class="badge">${l.length}</span></div><div class="cases">${l.map(x=>trTaskRow(x.t,x.p,x.i)).join('')}</div></section>`; }
 document.addEventListener('click', async ev => {
   if(!S || !S.user) return;
