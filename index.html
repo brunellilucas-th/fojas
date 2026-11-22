@@ -160,6 +160,32 @@ textarea{resize:vertical}
 .fact span{display:block;font-size:13px;color:var(--muted);font-weight:600}
 .fact b{font-weight:600}
 .timeline{display:flex;flex-direction:column}
+.duo{position:relative;display:flex;flex-direction:column;gap:12px}
+.duo::before{content:'';position:absolute;left:50%;top:58px;bottom:6px;width:2px;background:var(--line);transform:translateX(-1px)}
+.duo-h,.duo-r{display:grid;grid-template-columns:1fr minmax(200px,250px) 1fr;gap:14px;align-items:center;position:relative}
+.duo-h{padding-bottom:6px}
+.duo-hd{font-weight:700;padding:8px 12px;border-radius:12px;text-align:center;display:flex;flex-direction:column;line-height:1.25}
+.duo-hd small{font-weight:500;font-size:12px;opacity:.8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.duo-hd.actora{background:var(--violet-soft);color:var(--violet)} .duo-hd.demandada{background:var(--accent-soft);color:var(--accent)} .duo-hd.juzgado{background:var(--sunken);color:var(--muted)}
+.duo-m{display:flex;justify-content:center;position:relative;z-index:1}
+.duo-dot{width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--faint)}
+.duo-r.actora .duo-dot{border-color:var(--violet)} .duo-r.demandada .duo-dot{border-color:var(--accent)} .duo-dot.ghost{border-style:dashed}
+.duo-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:var(--shadow);position:relative;width:100%}
+.duo-r.actora .duo-card{border-left:4px solid var(--violet)} .duo-r.demandada .duo-card{border-left:4px solid var(--accent)}
+.duo-r.juzgado .duo-card{background:var(--sunken);text-align:center}
+.duo-c{position:relative;display:flex}
+.duo-r.actora .duo-m::before,.duo-r.demandada .duo-m::before{content:'';position:absolute;top:50%;height:2px;margin-top:-1px;z-index:-1}
+.duo-r.actora .duo-m::before{left:-14px;right:50%;background:var(--violet)} .duo-r.demandada .duo-m::before{left:50%;right:-14px;background:var(--accent)}
+.duo-card.ghost{border-style:dashed;box-shadow:none;background:transparent}
+.duo-card.duo-fin{background:var(--ink);color:#fff;border-color:var(--ink)}
+.duo-meta{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);margin-bottom:2px}
+.duo-r.juzgado .duo-meta{justify-content:center}
+.duo-chip{font-weight:700;padding:0 8px;border-radius:99px;font-size:11px;text-transform:uppercase;letter-spacing:.03em}
+.duo-chip.actora{background:var(--violet-soft);color:var(--violet)} .duo-chip.demandada{background:var(--accent-soft);color:var(--accent)} .duo-chip.juzgado{background:#fff;color:var(--muted);border:1px solid var(--line)}
+.duo-foot{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:6px;flex-wrap:wrap}
+.duo-r.juzgado .duo-foot{justify-content:center}
+.duo-sel{font:inherit;font-size:12px;padding:2px 6px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--muted);width:auto}
+@media (max-width:820px){ .duo::before{display:none} .duo-h{display:none} .duo-r{grid-template-columns:1fr;padding-left:22px} .duo-c:empty,.duo-m:has(.duo-dot){display:none} .duo-r.actora .duo-m::before,.duo-r.demandada .duo-m::before{display:none} .duo-r.juzgado .duo-card{text-align:left} }
 .tl{display:grid;grid-template-columns:110px 1fr;gap:14px;padding:12px 0;border-bottom:1px dashed var(--line)}
 .drop{border:2px dashed var(--line);border-radius:14px;padding:26px;text-align:center;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px}
 .drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
@@ -363,8 +389,9 @@ const DEFAULT_USERS = [
 ];
 const DEFAULT_TEAMS = [{id:'t1', nombre:'Amparos', jefe:'dfraerman', miembros:['lbrunelli','fzaurdo']}];
 const ORG = 'saludintegral-demo';
-const ESTADOS = ['Intimación recibida','Cautelar otorgada','Informe art. 8 pendiente','En prueba','Para sentencia','Sentencia','Archivado'];
-const ESTADO_CORTO = ['Intimación','Cautelar','Informe','Prueba','Para sentencia','Sentencia','Archivado'];
+const ESTADOS = ['Demanda','Cautelar otorgada','Contestación de demanda','En prueba','Para sentencia','Sentencia','Apelación','Archivado'];
+const ESTADO_ALIAS = {'Intimación recibida':'Demanda','Informe art. 8 pendiente':'Contestación de demanda'};
+const ESTADO_CORTO = ['Demanda','Cautelar','Contestación','Prueba','Para sentencia','Sentencia','Apelación','Archivado'];
 const PRESTACIONES = ['Medicación oncológica','Medicamentos','Discapacidad (Ley 24.901)','Fertilización (Ley 26.862)','Internación domiciliaria','Internación','Cirugía','Prótesis / ortesis','Salud mental','Diabetes e insumos','Estudios y diagnóstico','Rehabilitación','Trasplante','Diálisis','Odontología','Cobertura integral','Otra'];
 
 const hab = n => n<=0 ? dPlus(n) : addBusinessDays(n);
@@ -378,7 +405,7 @@ function seed(){
        {fecha:dPlus(-20),tipo:'Resolución',desc:'Se hace lugar a la medida cautelar: cobertura del 100 % de pembrolizumab.',user:'dfraerman'},
        {fecha:dPlus(-19),tipo:'Interno',desc:'Se envía pedido de autorización a Auditoría Médica.',user:'lbrunelli'}],
       [{nombre:'Demanda y cautelar.pdf',tipo:'Escrito de la actora',fecha:dPlus(-24),size:'1,2 MB'},{nombre:'Resolución cautelar.pdf',tipo:'Resolución',fecha:dPlus(-20),size:'340 KB'},{nombre:'Dictamen auditoría médica.pdf',tipo:'Interno',fecha:dPlus(-18),size:'210 KB'}]),
-    E(2,'CCF 3977/2026','Benítez, Tomás (por su hijo L.B.)','35.902.447','Discapacidad (Ley 24.901)','Juzg. Nac. Civ. y Com. Fed. N° 8 · Sec. 15','Informe art. 8 pendiente','medio','lbrunelli',dPlus(-12),1320000,false,
+    E(2,'CCF 3977/2026','Benítez, Tomás (por su hijo L.B.)','35.902.447','Discapacidad (Ley 24.901)','Juzg. Nac. Civ. y Com. Fed. N° 8 · Sec. 15','Contestación de demanda','medio','lbrunelli',dPlus(-12),1320000,false,
       [{desc:'Presentar informe art. 8 Ley 16.986',vence:hab(2),hecho:false}],
       [{fecha:dPlus(-12),tipo:'Notificación',desc:'Se requiere informe circunstanciado en el plazo de 5 días.',user:'rperez'},
        {fecha:dPlus(-10),tipo:'Interno',desc:'Se solicita a Discapacidad el legajo de prestaciones.',user:'lbrunelli'}],
@@ -387,7 +414,7 @@ function seed(){
       [{desc:'Control de pericia médica',vence:hab(9),hecho:false}],
       [{fecha:dPlus(-95),tipo:'Notificación',desc:'Traslado de demanda.',user:'rperez'},{fecha:dPlus(-60),tipo:'Escrito propio',desc:'Se contesta informe y se ofrece prueba.',user:'fzaurdo'},{fecha:dPlus(-15),tipo:'Resolución',desc:'Se abre a prueba. Se designa perito médico.',user:'rperez'}],
       [{nombre:'Contestación informe.docx',tipo:'Escrito propio',fecha:dPlus(-60),size:'95 KB'}]),
-    E(4,'CCF 5021/2026','Herrera, Julio César','14.733.601','Internación domiciliaria','Juzg. Nac. Civ. y Com. Fed. N° 11 · Sec. 21','Intimación recibida','alto','lbrunelli',dPlus(-2),980000,false,
+    E(4,'CCF 5021/2026','Herrera, Julio César','14.733.601','Internación domiciliaria','Juzg. Nac. Civ. y Com. Fed. N° 11 · Sec. 21','Demanda','alto','lbrunelli',dPlus(-2),980000,false,
       [{desc:'Cumplir intimación (48 hs)',vence:hab(-1),hecho:false}],
       [{fecha:dPlus(-2),tipo:'Notificación',desc:'Intimación a otorgar internación domiciliaria bajo apercibimiento de astreintes.',user:'rperez'}],
       [{nombre:'Cédula de intimación.pdf',tipo:'Notificación',fecha:dPlus(-2),size:'120 KB'}]),
@@ -412,7 +439,7 @@ const MODULES = [
 ];
 
 // ---------- redacción completa de escritos ----------
-const CONFIG_DEF = {empresa:'SALUD INTEGRAL DEMO S.A.', cuitEmpresa:'30-71234567-8', letrado:'', matricula:'T° 120 F° 345 del CPACF', domicilio:'Av. Corrientes 1234, piso 5°, Ciudad Autónoma de Buenos Aires', electronico:'20-28123456-7', poder:'poder general judicial que acompaño en copia y declaro vigente'};
+const CONFIG_DEF = {parteNombre:'Medifé', empresa:'SALUD INTEGRAL DEMO S.A.', cuitEmpresa:'30-71234567-8', letrado:'', matricula:'T° 120 F° 345 del CPACF', domicilio:'Av. Corrientes 1234, piso 5°, Ciudad Autónoma de Buenos Aires', electronico:'20-28123456-7', poder:'poder general judicial que acompaño en copia y declaro vigente'};
 const cfg = () => ({...CONFIG_DEF, ...(S.config||{})});
 const TEMPLATES = [
   {id:'informe', nombre:'Informe del art. 8', para:'Contesta el informe circunstanciado de la Ley 16.986: antecedentes, fundamentos, prueba y petitorio.', icon:'file'},
@@ -786,7 +813,7 @@ function xDate(v){
   const m2 = String(v).trim().match(/^(\d{4})-(\d{2})-(\d{2})/); if(m2) return `${m2[1]}-${m2[2]}-${m2[3]}`;
   return null;
 }
-function xEstado(v){ const s = xNorm(v); if(!s) return null; if(/archiv/.test(s)) return 'Archivado'; if(/sentencia/.test(s) && /para|autos/.test(s)) return 'Para sentencia'; if(/sentencia/.test(s)) return 'Sentencia'; if(/prueba/.test(s)) return 'En prueba'; if(/informe/.test(s)) return 'Informe art. 8 pendiente'; if(/cautelar/.test(s)) return 'Cautelar otorgada'; if(/intim|inicio|nuevo|traslado/.test(s)) return 'Intimación recibida'; return null; }
+function xEstado(v){ const s = xNorm(v); if(!s) return null; if(/archiv/.test(s)) return 'Archivado'; if(/sentencia/.test(s) && /para|autos/.test(s)) return 'Para sentencia'; if(/sentencia/.test(s)) return 'Sentencia'; if(/prueba/.test(s)) return 'En prueba'; if(/informe/.test(s)) return 'Contestación de demanda'; if(/cautelar/.test(s)) return 'Cautelar otorgada'; if(/intim|inicio|nuevo|traslado/.test(s)) return 'Demanda'; return null; }
 function xRow(r){
   const g = k => XL.map[k]!=null ? r[XL.map[k]] : '';
   const str = k => String(g(k)==null?'':g(k)).trim();
@@ -796,7 +823,7 @@ function xRow(r){
   const dniD = str('dni').replace(/\D/g,''); const dni = dniD.length>=7 ? dniD.replace(/(\d{1,2})(\d{3})(\d{3})$/,'$1.$2.$3') : (str('dni')||'—');
   const prestTxt = str('prestacion'); const sc = scorePrestaciones(prestTxt); const prestacion = PRESTACIONES.find(p=>xNorm(p)===xNorm(prestTxt)) || (sc[0]&&sc[0][0]) || (prestTxt ? 'Otra' : 'Otra');
   const cautelar = /^(si|sí|s|x|1|true|verdadero|otorgada|vigente)$/i.test(str('cautelar'));
-  let estado = xEstado(str('estado')) || (cautelar ? 'Cautelar otorgada' : 'Intimación recibida');
+  let estado = xEstado(str('estado')) || (cautelar ? 'Cautelar otorgada' : 'Demanda');
   const jzTxt = str('juzgado'); const jz = jzTxt ? (matchJuzgado(/juzgado/i.test(jzTxt) ? jzTxt : 'Juzgado '+jzTxt) || matchJuzgado('Juzgado Nacional en lo '+jzTxt.replace(/^juzgado\s*/i,'')) || jzTxt) : '';
   const vence = xDate(g('vence')); const plazoDesc = str('plazo');
   const respTxt = xNorm(str('abogado')); const resp = respTxt ? (S.users.find(u=>xNorm(u.nombre)===respTxt || xNorm(u.id)===respTxt || xNorm(u.nombre).includes(respTxt) || respTxt.includes(xNorm(u.nombre.split(' ').slice(-1)[0]))) || null) : null;
@@ -1039,8 +1066,9 @@ function upSugerir(){
   if(bt==='sentencia') proponer('Sentencia');
   if(/abr[ae]\w*\s+a\s+prueba|[aá]brase\s+a\s+prueba|apertura\s+a\s+prueba/i.test(text)) proponer('En prueba');
   if(/autos?\s+para\s+sentencia|pasen\s+los\s+autos\s+a\s+(dictar\s+)?sentencia|llamamiento\s+de\s+autos/i.test(text)) proponer('Para sentencia');
+  if(/conc[eé]d[eé]se\s+(el\s+)?recurso|recurso\s+de\s+apelaci[oó]n|el[eé]vense\s+(los\s+autos\s+)?a\s+la\s+(excma\.?\s+)?c[aá]mara/i.test(text) || (/propio|actora/.test(bt) && /apel[oa]|interpongo\s+recurso/i.test(text))) proponer('Apelación');
   if(/arch[ií]vese|arch[ií]vense|archivo\s+de\s+las\s+actuaciones/i.test(text)) proponer('Archivado');
-  if(/informe\s+circunstanciado|art(?:[ií]culo|\.)?\s*8/i.test(text) && /cedula|resolucion/.test(bt) && cur < idx('Informe art. 8 pendiente') && !e.cautelar) proponer('Informe art. 8 pendiente');
+  if(/informe\s+circunstanciado|art(?:[ií]culo|\.)?\s*8/i.test(text) && /cedula|resolucion/.test(bt) && cur < idx('Contestación de demanda') && !e.cautelar) proponer('Contestación de demanda');
   // plazos nuevos que da el juzgado
   if(/cedula|resolucion|cautelar|sentencia/.test(bt)){
     const nuevos = [];
@@ -1062,6 +1090,7 @@ function upSugerir(){
   }
   if(bt==='cumplimiento') marcar(/cautelar|intimaci|cumplir/i);
   u.ac = ac;
+  if(!u.parteEditada) u.parte = PARTE_DE_BASE[bt] || 'juzgado';
   if(!u.descEditada) u.desc = upResumen(text, upTipo(u.tipo).base) || `Se incorpora ${upTipo(u.tipo).l.toLowerCase()}: ${it.file.name}.`;
   if(!u.fechaEditada) u.fecha = fechaDelTexto(text) || iso(today());
 }
@@ -1078,7 +1107,7 @@ async function addFiles(e, files){
   UP = {exp:e.id, queue, i:0};
   upStart();
 }
-function upStart(){ const it = UP.queue[UP.i]; UP.tipo = upTipoSugerido(it.text, it.file.name); UP.tipoSug = UP.tipo; UP.descEditada = false; UP.fechaEditada = false; upSugerir(); drawUp(); }
+function upStart(){ const it = UP.queue[UP.i]; UP.tipo = upTipoSugerido(it.text, it.file.name); UP.tipoSug = UP.tipo; UP.descEditada = false; UP.fechaEditada = false; UP.parteEditada = false; upSugerir(); drawUp(); }
 function drawUp(){
   const u = UP, it = u.queue[u.i], e = expById(u.exp), ac = u.ac;
   const cambios = (ac.etapa.on && ac.etapa.val!==e.estado ? 1:0) + (ac.cautelar.on?1:0) + ac.plazos.filter(p=>p.on).length + ac.cumplir.filter(c=>c.on).length;
@@ -1093,6 +1122,7 @@ function drawUp(){
         <label class="small muted" style="display:flex;gap:6px;align-items:center">Se trata como <select id="upNewBase" style="max-width:220px">${UP_TIPOS.map(t=>`<option value="${t.id}" ${t.id==='otro'?'selected':''}>${esc(upTipo(t.id).l)}</option>`).join('')}</select></label>
         <button type="button" class="btn pri sm" data-act="upnewcat">${ic('plus','sm')} Crear y usar</button></div>
       <span class="hint">Queda guardada para todo el equipo y la vas a ver en la lista la próxima vez. «Se trata como» le dice a Fojas qué cambios proponer (plazos, etapa, cautelar).</span></div>`:''}
+    <div class="fld">¿De qué parte es? <span class="hint">define de qué lado de la línea de tiempo aparece</span><div class="row" style="gap:8px;flex-wrap:wrap">${['actora','juzgado','demandada'].map(p=>`<button type="button" class="chipbtn ${u.parte===p?'on':''}" data-upparte="${p}">${esc(parteNom(p))}</button>`).join('')}</div></div>
     <div class="form">
       <label>Fecha del documento<input type="date" id="upFecha" value="${u.fecha}"></label>
       <label class="full">Qué dice, en una línea <span class="hint">queda como novedad del expediente</span><input type="text" id="upDesc" value="${esc(u.desc)}"></label>
@@ -1120,8 +1150,20 @@ function upRead(){
 async function upSave(){
   upRead(); const u = UP, it = u.queue[u.i], e = expById(u.exp), ac = u.ac, tipo = upTipo(u.tipo);
   const fid = await saveFileBlob(it.file, it.text);
-  e.docs.push({nombre:it.file.name, fid, tipo:tipo.doc, ...(tipo.propia?{cat:tipo.id}:{}), fecha:u.fecha||iso(today()), paginas:it.paginas, size: it.file.size>1e6?(it.file.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(it.file.size/1000))+' KB'});
-  e.movimientos.push({fecha:u.fecha||iso(today()), tipo:tipo.mov, ...(tipo.propia?{cat:tipo.id}:{}), desc:u.desc || `Se incorpora ${tipo.l.toLowerCase()}.`, user:S.user});
+  e.docs.push({nombre:it.file.name, fid, tipo:tipo.doc, parte:u.parte, ...(tipo.propia?{cat:tipo.id}:{}), fecha:u.fecha||iso(today()), paginas:it.paginas, size: it.file.size>1e6?(it.file.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(it.file.size/1000))+' KB'});
+  const bt0 = tipo.base, tx = it.text||'';
+  const titulo = bt0==='propio' && /informe\s+circunstanciado|contesta\w*\s+(la\s+)?demanda|art(?:[ií]culo|\.)?\s*8/i.test(tx) ? 'Contestación de demanda (informe art. 8)'
+    : bt0==='propio' && /apela/i.test(tx) ? 'Recurso de apelación'
+    : bt0==='actora' && /apela|agravio/i.test(tx) ? 'Recurso de apelación'
+    : bt0==='actora' && /promuev|acci[oó]n de amparo/i.test(tx) && !e.movimientos.some(m=>m.parte==='actora' && /demanda/i.test(movTitulo(m))) ? 'Demanda'
+    : bt0==='cautelar' ? 'Medida cautelar' : bt0==='sentencia' ? 'Sentencia'
+    : /cedula|resolucion/.test(bt0) && /[aá]br\w*\s+a\s+prueba|apertura\s+a\s+prueba/i.test(tx) ? 'Apertura a prueba'
+    : /cedula|resolucion/.test(bt0) && /autos?\s+para\s+sentencia|llamamiento\s+de\s+autos/i.test(tx) ? 'Autos para sentencia'
+    : /cedula|resolucion/.test(bt0) && /conc[eé]d[eé]se\s+(el\s+)?recurso/i.test(tx) ? 'Concede apelación'
+    : /cedula|resolucion/.test(bt0) && /arch[ií]vese/i.test(tx) ? 'Archivo del expediente'
+    : /cedula|resolucion/.test(bt0) && /c[oó]rrase\s+traslado/i.test(tx) ? 'Traslado'
+    : tipo.l;
+  e.movimientos.push({fecha:u.fecha||iso(today()), tipo:{actora:'Escrito de la actora', juzgado:tipo.mov==='Interno'?'Resolución':tipo.mov, demandada:tipo.mov==='Interno'?'Interno':'Escrito propio'}[u.parte] || tipo.mov, parte:u.parte, titulo, fid, ...(tipo.propia?{cat:tipo.id}:{}), desc:u.desc || `Se incorpora ${tipo.l.toLowerCase()}.`, user:S.user});
   if(it.text){ const nf = flagsFromText(it.text); e.flags = e.flags || {}; for(const k in nf) if(nf[k]) e.flags[k] = true; }
   const hechos = [`documento guardado como ${tipo.l.toLowerCase()}`];
   if(ac.cautelar.on && !e.cautelar){ e.cautelar = true; hechos.push('medida cautelar registrada'); }
@@ -1191,12 +1233,58 @@ function load(){
   for(const k of OLD_KEYS){ const d = readKey(k); if(d && Array.isArray(d.exps)) return {data:d, from:k}; }
   return null;
 }
+// ---------- partes del proceso: actora · juzgado · nuestra parte (demandada) ----------
+const PARTE_DE_TIPO = {'Escrito de la actora':'actora','Escrito propio':'demandada','Notificación':'juzgado','Resolución':'juzgado','Interno':'demandada'};
+const PARTE_DE_BASE = {cedula:'juzgado', resolucion:'juzgado', cautelar:'juzgado', sentencia:'juzgado', propio:'demandada', cumplimiento:'demandada', actora:'actora', prueba:'actora', otro:'juzgado'};
+const parteNom = p => p==='actora' ? 'Actora' : p==='juzgado' ? 'Juzgado' : (cfg().parteNombre||'Medifé');
+const parteDeDoc = t => /demanda|prescrip|historia|certificado|presupuesto|prueba|CUD|actora/i.test(t||'') ? 'actora' : /propio|cumplimiento/i.test(t||'') ? 'demandada' : 'juzgado';
+function fixExp(x){
+  if(ESTADO_ALIAS[x.estado]) x.estado = ESTADO_ALIAS[x.estado];
+  if(!ESTADOS.includes(x.estado)) x.estado = 'Demanda';
+  (x.movimientos||[]).forEach(m=>{ if(!m.parte) m.parte = PARTE_DE_TIPO[m.tipo] || 'juzgado'; });
+  (x.docs||[]).forEach(d=>{ if(!d.parte) d.parte = parteDeDoc(d.tipo); });
+  return x;
+}
+function movTitulo(m){ return m.titulo || ({'Escrito de la actora':'Escrito de la actora','Escrito propio':'Escrito presentado','Notificación':'Notificación del juzgado','Resolución':'Resolución del juzgado','Interno':'Nota interna'}[m.tipo] || m.tipo); }
+function lineaItems(e){
+  const items = (e.movimientos||[]).map((m,i)=>({...m, i, parte:m.parte||PARTE_DE_TIPO[m.tipo]||'juzgado', ord:i+1}));
+  if(!items.some(x=>x.parte==='actora' && /demanda/i.test(movTitulo(x)))){
+    const di = (e.docs||[]).findIndex(d=>/demanda/i.test(d.tipo+' '+d.nombre));
+    const f0 = [e.inicio, ...items.map(x=>x.fecha)].filter(Boolean).sort()[0] || iso(today());
+    const P = e.prestacion && e.prestacion!=='Otra' ? ` por ${e.prestacion.toLowerCase()}` : '';
+    items.push({fecha:f0, parte:'actora', titulo:'Demanda', desc:`${e.afiliado||'La actora'} promueve amparo de salud${P}.`, synth:true, di:di>=0?di:null, ord:0});
+  }
+  return items.sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||'') || a.ord-b.ord);
+}
+function duoCard(e, x){
+  const di = x.di!=null ? x.di : (x.fid ? (e.docs||[]).findIndex(d=>d.fid===x.fid) : -1);
+  return `<div class="duo-card">
+    <div class="duo-meta"><span>${fmt(x.fecha)}</span><span class="duo-chip ${x.parte}">${esc(parteNom(x.parte))}</span></div>
+    <b>${esc(movTitulo(x))}</b>
+    ${x.desc?`<div class="small" style="margin-top:2px">${esc(x.desc)}</div>`:''}
+    <div class="duo-foot">${x.synth?'<span class="small muted">Inicio del proceso</span>':`<span class="small muted">${x.user?'Lo cargó '+esc(userName(x.user)):''}</span>`}
+      ${di!=null && di>=0 && e.docs[di]?`<button class="btn sm ghost" data-act="vdoc" data-e="${e.id}" data-di="${di}">${ic('search','sm')} Ver</button>`:''}
+      ${x.i!=null?`<select class="duo-sel" data-mvparte="${x.i}" title="¿De qué parte es?" aria-label="Parte"><option value="actora" ${x.parte==='actora'?'selected':''}>Actora</option><option value="juzgado" ${x.parte==='juzgado'?'selected':''}>Juzgado</option><option value="demandada" ${x.parte==='demandada'?'selected':''}>${esc(parteNom('demandada'))}</option></select>`:''}</div>
+  </div>`;
+}
+function vLinea(e){
+  const items = lineaItems(e);
+  const row = x => `<div class="duo-r ${x.parte}"><div class="duo-c izq">${x.parte==='actora'?duoCard(e,x):''}</div><div class="duo-m">${x.parte==='juzgado'?duoCard(e,x):'<span class="duo-dot"></span>'}</div><div class="duo-c der">${x.parte==='demandada'?duoCard(e,x):''}</div></div>`;
+  const prox = pending(e)[0];
+  const fin = e.estado==='Archivado';
+  return `<div class="duo">
+    <div class="duo-h"><div class="duo-hd actora">Actora<small>${esc(e.afiliado||'')}</small></div><div class="duo-hd juzgado">Juzgado<small>${esc((e.juzgado||'').split('·')[0]||'')}</small></div><div class="duo-hd demandada">${esc(parteNom('demandada'))}<small>Demandada</small></div></div>
+    ${items.map(row).join('')}
+    ${fin?`<div class="duo-r juzgado"><div class="duo-c"></div><div class="duo-m"><div class="duo-card duo-fin"><b>Fin del proceso</b><div class="small">Expediente archivado</div></div></div><div class="duo-c"></div></div>`
+      : prox?`<div class="duo-r demandada"><div class="duo-c izq"></div><div class="duo-m"><span class="duo-dot ghost"></span></div><div class="duo-c der"><div class="duo-card ghost"><div class="duo-meta"><span>Vence ${fmt(prox.vence)}</span><span class="duo-chip demandada">Nos toca</span></div><b>${esc(prox.desc)}</b><div class="small muted">Cuando lo presentes, subilo en Documentos y la línea avanza sola.</div></div></div></div>`:''}
+  </div>`;
+}
 function migExp(e, users){
-  const x = {dni:'—', docs:[], movimientos:[], plazos:[], flags:{}, riesgo:'medio', monto:0, cautelar:false, estado:'Intimación recibida', prestacion:'Otra', juzgado:'', ...e};
+  const x = {dni:'—', docs:[], movimientos:[], plazos:[], flags:{}, riesgo:'medio', monto:0, cautelar:false, estado:'Demanda', prestacion:'Otra', juzgado:'', ...e};
   delete x.nroAf;
   if(!x.caratula) x.caratula = `${x.afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`;
   if(!(users||[]).some(u=>u.id===x.abogado)) x.abogado = 'lbrunelli';
-  return x;
+  return fixExp(x);
 }
 // Busca amparos guardados por versiones anteriores u otras pestañas que no estén en los datos actuales y los suma.
 function rescatar(){
@@ -1495,7 +1583,7 @@ function vExpediente(id){
   const p = nextPlazo(e), n = p?daysTo(p.vence):null;
   const si = ESTADOS.indexOf(e.estado);
   const t = ui.tab;
-  const tabs = [['resumen','list','Resumen'],['sugerencias','spark','Qué hacer'],['novedades','clock',`Novedades (${e.movimientos.length})`],['documentos','file',`Documentos (${e.docs.length})`],['plazos','cal',`Plazos (${pending(e).length})`],['asistente','help','Asistente'],['historial','history','Historial']];
+  const tabs = [['resumen','list','Resumen'],['sugerencias','spark','Qué hacer'],['novedades','clock','Línea de tiempo'],['documentos','file',`Documentos (${e.docs.length})`],['plazos','cal',`Plazos (${pending(e).length})`],['asistente','help','Asistente'],['historial','history','Historial']];
   let body = '';
   if(t==='resumen') body = `
     <div class="row" style="justify-content:flex-end"><button class="btn sm" data-act="editdatos" data-e="${e.id}">${ic('pen','sm')} Editar datos del expediente</button></div>
@@ -1518,12 +1606,12 @@ function vExpediente(id){
   if(t==='novedades') body = `
     ${ui.addMov?`<form class="form card" id="movForm" style="box-shadow:none;background:var(--sunken)">
       <label>¿Cuándo pasó?<input type="date" id="mvF" value="${iso(today())}" required></label>
-      <label>¿Qué tipo de novedad es?<select id="mvT"><option>Notificación</option><option>Resolución</option><option>Escrito propio</option><option>Escrito de la actora</option><option>Interno</option></select></label>
+      <label>¿De qué parte es?<select id="mvP"><option value="actora">Actora</option><option value="juzgado" selected>Juzgado</option><option value="demandada">${esc(parteNom('demandada'))}</option></select></label>
+      <label>¿Qué es?<input type="text" id="mvTi" placeholder="Ej.: Contestación de demanda, Traslado, Pericia" list="mvTiList"><datalist id="mvTiList">${['Demanda','Contestación de demanda','Medida cautelar','Traslado','Apertura a prueba','Alegato','Sentencia','Recurso de apelación','Contestación de agravios','Nota interna'].map(s=>`<option value="${s}">`).join('')}</datalist></label>
       <label class="full">Contá brevemente qué pasó<input type="text" id="mvD" required placeholder="Ej.: El juzgado tuvo por presentado el informe"></label>
       <div class="full row"><button class="btn pri" type="submit">${ic('check','sm')} Guardar novedad</button><button class="btn ghost" type="button" data-act="cancelmov">Cancelar</button></div>
-    </form>`:`<div><button class="btn pri" data-act="addmov">${ic('plus','sm')} Agregar novedad</button></div>`}
-    <div class="timeline">${[...e.movimientos].sort((a,b)=>b.fecha.localeCompare(a.fecha)).map(m=>`
-      <div class="tl"><div><b>${fmt(m.fecha)}</b></div><div><span class="pill">${esc(m.tipo)}</span> ${esc(m.desc)}<div class="small muted">Lo cargó ${esc(userName(m.user))}</div></div></div>`).join('')}</div>`;
+    </form>`:`<div><button class="btn pri" data-act="addmov">${ic('plus','sm')} Agregar a la línea de tiempo</button> <span class="small muted">Lo que subas en Documentos se agrega solo, del lado de la parte que indiques.</span></div>`}
+    ${vLinea(e)}`;
   if(t==='documentos') body = `
     <label class="drop" id="drop" for="fileIn">${ic('upload','lg')}<b>Subí un documento nuevo del expediente</b><span class="small">Arrastralo acá o tocá para elegirlo. Después te preguntamos a qué corresponde (cédula, resolución, sentencia, escrito, prueba…) y actualizamos el expediente.</span></label>
     <input type="file" id="fileIn" multiple hidden>
@@ -1591,7 +1679,7 @@ function iaText(kind, e){
     if(p && n<0) s += `1. URGENTE: "${p.desc}" venció el ${fmt(p.vence)}. Confirmá si se cumplió. Si no, presentalo hoy y avisá al abogado a cargo por el riesgo de multas (astreintes).\n`;
     else if(p) s += `1. Preparar "${p.desc}" antes del ${fmt(p.vence)}.\n`;
     if(e.cautelar) s += `2. Pedirle a Auditoría Médica la constancia de que la prestación se entregó, y presentarla en el juzgado (escrito "Acreditar cumplimiento de cautelar").\n`;
-    if(e.estado==='Informe art. 8 pendiente') s += `2. Pedir al área técnica el legajo del afiliado y armar el "Informe del art. 8".\n`;
+    if(e.estado==='Contestación de demanda') s += `2. Pedir al área técnica el legajo del afiliado y armar el "Informe del art. 8".\n`;
     if(e.estado==='Sentencia') s += `2. Leer la sentencia y decidir con el abogado a cargo si se apela, dentro del plazo.\n`;
     s += `3. Cuando esté hecho, tocá "Ya lo hice" y cargá la novedad, así todo el equipo lo ve.`;
     return s;
@@ -1656,6 +1744,7 @@ function vModelos(){
   <section class="card"><h2>Datos para los escritos</h2><p class="muted small">Fojas usa estos datos en el encabezado de todos los escritos. Los que vienen cargados son de ejemplo: reemplazalos por los reales.</p>
     <form class="form" id="cfgForm">
       <label>Empresa (como figura en los escritos)<input type="text" id="cfEmp" value="${esc(c.empresa)}"></label>
+      <label>Nombre corto de nuestra parte <span class="hint">se ve en la línea de tiempo</span><input type="text" id="cfParte" value="${esc(c.parteNombre)}"></label>
       <label>CUIT de la empresa<input type="text" id="cfCuit" value="${esc(c.cuitEmpresa)}"></label>
       <label>Letrado/a que firma <span class="hint">vacío = quien tiene el amparo a cargo</span><input type="text" id="cfLet" value="${esc(c.letrado)}"></label>
       <label>Matrícula<input type="text" id="cfMat" value="${esc(c.matricula)}"></label>
@@ -1742,8 +1831,8 @@ function vModulos(){
 }
 
 const SAMPLE_CSV = `numero;afiliado;prestacion;juzgado;estado
-CCF 6120/2026;Acosta, Daniela;Medicación oncológica;Juzg. Nac. Civ. y Com. Fed. N° 9 · Sec. 17;Intimación recibida
-CCF 6188/2026;Vera, Gonzalo;Discapacidad (Ley 24.901);Juzg. Nac. Civ. y Com. Fed. N° 5 · Sec. 9;Informe art. 8 pendiente`;
+CCF 6120/2026;Acosta, Daniela;Medicación oncológica;Juzg. Nac. Civ. y Com. Fed. N° 9 · Sec. 17;Demanda
+CCF 6188/2026;Vera, Gonzalo;Discapacidad (Ley 24.901);Juzg. Nac. Civ. y Com. Fed. N° 5 · Sec. 9;Contestación de demanda`;
 function vRespaldo(){
   const bm = ui.backupMsg, cm = ui.csvMsg;
   return `
@@ -2268,7 +2357,7 @@ function extractFields(raw, docsInfo){
   const ordena = /(hacer|hace|h[aá]gase|h[aá]cese)\s+lugar|ord[eé]n(ase|a|ar)|decr[eé]tase|int[ií]m(ase|ar|a)/i.test(one);
   if(/medida cautelar|medida precautoria|prohibici[oó]n de innovar|medida innovativa/i.test(one) && ordena) f.cautelar = true;
   const informe = /art(?:[ií]culo|\.)?\s*8|informe circunstanciado|informe previsto/i.test(one);
-  if(f.cautelar) f.estado = 'Cautelar otorgada'; else if(informe) f.estado = 'Informe art. 8 pendiente'; else if(/int[ií]m|traslado/i.test(one)) f.estado = 'Intimación recibida';
+  if(f.cautelar) f.estado = 'Cautelar otorgada'; else if(informe) f.estado = 'Contestación de demanda'; else if(/int[ií]m|traslado/i.test(one)) f.estado = 'Demanda';
   // plazos que da el juzgado
   const pl = extractPlazos(t, f.cautelar);
   const orden = ['cautelar','informe','intimacion','traslado','prueba','otro'];
@@ -2329,7 +2418,7 @@ function caseFlags(e){
 function sugerencias(e){
   const f = caseFlags(e), out = {urgente:[], fondo:[], prueba:[], estrategia:[]};
   const pend = (e.plazos||[]).filter(p=>!p.hecho);
-  const informePend = e.estado==='Informe art. 8 pendiente' || pend.some(p=>/informe/i.test(p.desc));
+  const informePend = e.estado==='Contestación de demanda' || pend.some(p=>/informe/i.test(p.desc));
   const P = e.prestacion||'';
   const quien = e.afiliado ? e.afiliado.split(',').reverse().join(' ').trim() : 'el asociado';
   const pide = e.detalle ? `la cobertura de ${e.detalle}` : `cobertura de ${P.toLowerCase()||'la prestación'}`;
@@ -2485,7 +2574,7 @@ function sugText(e){ const s = sugerencias(e); return Object.values(s).flat().ma
 
 // ---------- carga de amparo nuevo ----------
 let W = null;
-function openNuevo(){ W = {step:1, files:[], text:'', found:{}, afiliado:'', dni:'', prestacion:'', otrasPrestaciones:[], detalle:'', autos:'', sumario:'', sumarioEditado:false, numero:'', juzgado:'', secretaria:'', estado:'Intimación recibida', cautelar:false, plazoDesc:'', plazoFecha:dPlus(2), plazoNota:'', processing:false, readErr:''}; drawWizard(); }
+function openNuevo(){ W = {step:1, files:[], text:'', found:{}, afiliado:'', dni:'', prestacion:'', otrasPrestaciones:[], detalle:'', autos:'', sumario:'', sumarioEditado:false, numero:'', juzgado:'', secretaria:'', estado:'Demanda', cautelar:false, plazoDesc:'', plazoFecha:dPlus(2), plazoNota:'', processing:false, readErr:''}; drawWizard(); }
 const fb = k => !W.files.length ? '' : W.found[k] ? `<span class="pill grn">${ic('check','sm')} Lo sacamos del documento</span>` : '<span class="pill yel">Completalo vos</span>';
 function secField(){ return `${isCCF(W.juzgado)?`<select id="wSec"><option value="">Elegí la secretaría…</option>${ccfSecretarias(W.juzgado).map(n=>`<option value="N° ${n}" ${W.secretaria===`N° ${n}`?'selected':''}>Secretaría N° ${n}</option>`).join('')}${W.secretaria && !ccfSecretarias(W.juzgado).some(n=>W.secretaria===`N° ${n}`)?`<option selected>${esc(W.secretaria)}</option>`:''}</select>`:`<input type="text" id="wSec" value="${esc(W.secretaria)}" placeholder="Ej.: N° 2, Civil, Única">`}
       ${W.found.secretariaDudosa?'<span class="hint" style="color:var(--warn)">La secretaría del documento no corresponde a ese juzgado. Revisala.</span>':''}`; }
@@ -2622,6 +2711,7 @@ function openPwd(forced){
 
 // ---------- render ----------
 function render(){
+  try{ (S.exps||[]).forEach(fixExp); }catch(err){}
   if(!logged()){ $('#root').innerHTML = vIngreso(); document.title='Fojas · Ingresar'; return; }
   document.title='Fojas';
   const r = route();
@@ -2649,6 +2739,7 @@ document.addEventListener('click', async ev => {
   if(pe && PE){ peRead(); PE[pe.dataset.pe] = pe.dataset.pe==='cant' ? +pe.dataset.v : pe.dataset.v; drawPlazoEditor(); return; }
   const vm = ev.target.closest('[data-vmode]'); if(vm && VIEW){ VIEW.modo = vm.dataset.vmode; drawViewer(); return; }
   const aa = ev.target.closest('[data-autoalt]'); if(aa && W){ wRead(); const x = W.autosAlt[+aa.dataset.autoalt]; const prev = {autos:W.autos, actor:W.afiliado}; W.autos = x.autos; W.afiliado = x.actor; W.autosAlt[+aa.dataset.autoalt] = prev; W.autosDudoso = false; W.sumarioEditado = false; drawWizard(); return; }
+  const upp = ev.target.closest('[data-upparte]'); if(upp && UP){ upRead(); UP.parte = upp.dataset.upparte; UP.parteEditada = true; drawUp(); return; }
   const ut = ev.target.closest('[data-uptipo]'); if(ut && UP){ upRead(); UP.tipo = ut.dataset.uptipo; if(!UP.descEditada) UP.desc = ''; upSugerir(); drawUp(); return; }
   const t = ev.target.closest('[data-enfoque],[data-mvar],[data-act],[data-tab],[data-go],[data-ia],[data-filtro],[data-riesgo],[data-estado],[data-tour],[data-tpl],[data-tplexp],[data-w],[data-wnav],[data-quick]');
   if(!t) return;
@@ -2743,8 +2834,9 @@ document.addEventListener('click', async ev => {
     x.caratula = W.autos || `${x.afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`;
     const tipoDoc = /c[ée]dula/i.test(W.text) ? 'Cédula de notificación' : /oficio/i.test(W.text) ? 'Oficio' : 'Documento recibido';
     for(const f of W.files){ const p = PREVIEW[f.pv]; f.fid = p ? await saveFileBlob(p.file, p.text) : null; }
-    W.files.forEach(f=>x.docs.push({nombre:f.name, fid:f.fid||null, paginas:f.paginas||null, tipo:f.tipo||tipoDoc, fecha:iso(today()), size: f.size>1e6?(f.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(f.size/1000))+' KB'}));
-    x.movimientos.push({fecha:iso(today()), tipo:'Notificación', desc: W.files.length ? `Se recibe ${tipoDoc.toLowerCase()}: ${W.files.map(f=>f.name).join(', ')}.` : 'Se cargó el amparo en Fojas.', user:S.user});
+    W.files.forEach(f=>x.docs.push({nombre:f.name, fid:f.fid||null, paginas:f.paginas||null, tipo:f.tipo||tipoDoc, parte:parteDeDoc(f.tipo||tipoDoc), fecha:iso(today()), size: f.size>1e6?(f.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(f.size/1000))+' KB'}));
+    { const dem = x.docs.findIndex(d=>/demanda/i.test(d.tipo)); if(dem>=0){ const pr = x.docs.filter(d=>d.parte==='actora' && !/demanda/i.test(d.tipo)); x.movimientos.push({fecha:iso(today()), tipo:'Escrito de la actora', parte:'actora', titulo:'Demanda', fid:x.docs[dem].fid, desc:`${x.afiliado} promueve amparo${x.prestacion&&x.prestacion!=='Otra'?' por '+x.prestacion.toLowerCase():''}.${pr.length?' Acompaña: '+pr.map(d=>d.tipo.toLowerCase()).join(', ')+'.':''}`, user:S.user}); } }
+    x.movimientos.push({fecha:iso(today()), tipo:'Notificación', parte:'juzgado', titulo: W.cautelar ? 'Medida cautelar y pedido de informe' : 'Traslado / pedido de informe', desc: W.files.length ? `Se recibe ${tipoDoc.toLowerCase()}: ${W.files.map(f=>f.name).join(', ')}.` : 'Se cargó el amparo en Fojas.', user:S.user});
     if(W.plazoDesc) x.plazos.push({desc:W.plazoDesc, vence:W.plazoFecha, hecho:false, ...(W.plazoRegla && calcPlazo(W.plazoRegla).vence===W.plazoFecha ? {regla:W.plazoRegla} : {})});
     x.detalle = W.detalle || '';
     (W.extra||[]).forEach(p=>{ const {nota, ...q} = p; x.plazos.push(q); });
@@ -2791,7 +2883,7 @@ document.addEventListener('click', async ev => {
     let ok=0, dup=0;
     lines.slice(1).forEach(l=>{ const c = l.split(';'); const g = k => (c[head.indexOf(k)]||'').trim();
       if(!g('numero')) return; if(S.exps.some(x=>x.numero===g('numero'))){ dup++; return; }
-      S.exps.push({id:S.nextId++, numero:g('numero'), caratula:`${g('afiliado')} c/ Salud Integral Demo S.A. s/ amparo de salud`, afiliado:g('afiliado'), dni:head.includes('dni')?g('dni'):'—', prestacion:g('prestacion')||'Otra', juzgado:g('juzgado'), estado:ESTADOS.includes(g('estado'))?g('estado'):'Intimación recibida', riesgo:'medio', abogado:S.user, inicio:iso(today()), monto:0, cautelar:false, plazos:[], movimientos:[{fecha:iso(today()), tipo:'Interno', desc:'Expediente traído desde otro sistema.', user:S.user}], docs:[]}); ok++; });
+      S.exps.push({id:S.nextId++, numero:g('numero'), caratula:`${g('afiliado')} c/ Salud Integral Demo S.A. s/ amparo de salud`, afiliado:g('afiliado'), dni:head.includes('dni')?g('dni'):'—', prestacion:g('prestacion')||'Otra', juzgado:g('juzgado'), estado:ESTADOS.includes(g('estado'))?g('estado'):'Demanda', riesgo:'medio', abogado:S.user, inicio:iso(today()), monto:0, cautelar:false, plazos:[], movimientos:[{fecha:iso(today()), tipo:'Interno', desc:'Expediente traído desde otro sistema.', user:S.user}], docs:[]}); ok++; });
     save(); if(ok) audit('Trajo expedientes','Migración',`${ok} expediente(s) desde planilla`);
     ui.csvMsg={ok:ok>0, t:`Listo: se trajeron ${ok} expediente(s).${dup?` ${dup} ya estaban cargados y no se repitieron.`:''}`}; await chain; render(); }
   if((a==='ureset'||a==='utoggle'||a==='uunlock') && isAdmin()){ const u = S.users.find(x=>x.id===d.u);
@@ -2818,6 +2910,7 @@ document.addEventListener('change', async ev => {
   const t = ev.target; const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
   if(t.id==='fileIn' && e) addFiles(e, t.files);
   if(t.id==='mfile') addModels(t.files);
+  if(t.dataset && t.dataset.mvparte!==undefined){ const r = route(); const ex = r.name==='expediente' ? expById(r.id) : null; const m = ex && ex.movimientos[+t.dataset.mvparte]; if(m){ const old = m.parte; m.parte = t.value; save(); audit('Cambió la parte de una novedad', ex.numero, `${movTitulo(m)}: ${parteNom(old)} → ${parteNom(m.parte)}`); render(); toast(`Movido a ${parteNom(m.parte)}`); } }
   if(UP && t.dataset){ if(t.dataset.upac){ upRead(); UP.ac[t.dataset.upac].on = t.checked; } if(t.dataset.upplazo!==undefined){ upRead(); UP.ac.plazos[+t.dataset.upplazo].on = t.checked; } if(t.dataset.upcumplir!==undefined){ upRead(); UP.ac.cumplir[+t.dataset.upcumplir].on = t.checked; } if(t.id==='upEtapa'){ UP.ac.etapa.val = t.value; UP.ac.etapa.on = t.value!==expById(UP.exp).estado; drawUp(); } }
   if(t.id==='xfile' && XL && t.files.length) xLoadFiles(t.files);
   if(t.id==='xsheet' && XL) xUseSheet(t.value);
@@ -2882,7 +2975,7 @@ document.addEventListener('submit', async ev => {
     audit('Cambió su contraseña','Usuarios',u.id); closeModal(); toast('Contraseña actualizada');
     if(wasForced) openTour(0);
   }
-  if(id==='movForm' && e){ const m = {fecha:$('#mvF').value, tipo:$('#mvT').value, desc:$('#mvD').value.trim(), user:S.user}; if(!m.desc) return; e.movimientos.push(m); save(); ui.addMov=false; audit('Cargó una novedad', e.numero, `${m.tipo}: ${m.desc}`); render(); toast('Novedad guardada'); }
+  if(id==='movForm' && e){ const pa = $('#mvP').value, ti = $('#mvTi').value.trim(); const m = {fecha:$('#mvF').value, tipo:{actora:'Escrito de la actora', juzgado:'Resolución', demandada:'Escrito propio'}[pa], parte:pa, ...(ti?{titulo:ti}:{}), desc:$('#mvD').value.trim(), user:S.user}; if(!m.desc) return; e.movimientos.push(m); save(); ui.addMov=false; audit('Cargó una novedad', e.numero, `${parteNom(m.parte)} · ${movTitulo(m)}: ${m.desc}`); render(); toast('Novedad guardada'); }
   if(id==='plForm' && e){ const p = {desc:$('#plD').value.trim(), vence:$('#plV').value, hecho:false}; if(!p.desc||!p.vence) return; e.plazos.push(p); save(); ui.addPlazo=false; audit('Agregó un plazo', e.numero, `${p.desc} (${fmt(p.vence)})`); render(); toast('Plazo guardado'); }
   if(ev.target.classList.contains('teamform') && isAdmin()){
     const f = ev.target, tm = S.teams.find(x=>x.id===f.dataset.team);
@@ -2892,7 +2985,7 @@ document.addEventListener('submit', async ev => {
     tm.nombre = f.nombre.value.trim() || tm.nombre; tm.jefe = jefe; tm.miembros = miembros; save();
     audit('Actualizó un equipo','Equipos',`${tm.nombre}: jefa/e ${userName(jefe)}, ${miembros.length} analista(s)`); await chain; render(); toast('Equipo guardado');
   }
-  if(id==='cfgForm'){ S.config = {empresa:$('#cfEmp').value.trim(), cuitEmpresa:$('#cfCuit').value.trim(), letrado:$('#cfLet').value.trim(), matricula:$('#cfMat').value.trim(), domicilio:$('#cfDom').value.trim(), electronico:$('#cfEle').value.trim(), poder:$('#cfPod').value.trim()}; save(); audit('Actualizó los datos para escritos','Modelos','Encabezado de escritos'); toast('Datos guardados: se usan en los próximos escritos'); render(); }
+  if(id==='cfgForm'){ S.config = {parteNombre:($('#cfParte').value.trim()||'Medifé'), empresa:$('#cfEmp').value.trim(), cuitEmpresa:$('#cfCuit').value.trim(), letrado:$('#cfLet').value.trim(), matricula:$('#cfMat').value.trim(), domicilio:$('#cfDom').value.trim(), electronico:$('#cfEle').value.trim(), poder:$('#cfPod').value.trim()}; save(); audit('Actualizó los datos para escritos','Modelos','Encabezado de escritos'); toast('Datos guardados: se usan en los próximos escritos'); render(); }
   if(id==='userForm' && isAdmin()){
     const uid = $('#nuId').value.trim().toLowerCase();
     if(S.users.some(x=>x.id===uid)){ ui.userMsg={ok:false,t:'Ya hay alguien con ese usuario. Probá con otro.'}; render(); return; }
