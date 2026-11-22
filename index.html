@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.6">
+<meta name="fojas-version" content="2026-11-22.7">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -186,6 +186,11 @@ textarea{resize:vertical}
 .tabs button{border:0;background:none;padding:9px 14px;border-radius:10px;cursor:pointer;color:var(--muted);font-weight:600;display:inline-flex;gap:8px;align-items:center}
 .tabs button:hover{background:var(--sunken);color:var(--ink)}
 .tabs button.on{background:var(--accent-soft);color:var(--accent)}
+.gcard{border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.gcard-h{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:0;background:none;padding:14px 16px;cursor:pointer;color:inherit;font:inherit}
+.gcard-h:hover{background:var(--sunken)} .gcard-h .chev{transition:transform .15s;display:inline-flex} .gcard.open .gcard-h .chev{transform:rotate(90deg)}
+.gcard-b{display:flex;flex-direction:column;gap:10px;padding:4px 16px 16px 44px;line-height:1.5} .gcard-b ol{margin:4px 0 0 18px;padding:0}
+.glbl{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:2px}
 .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .fact{background:var(--sunken);border-radius:12px;padding:12px 14px}
 .fact span{display:block;font-size:13px;color:var(--muted);font-weight:600}
@@ -532,7 +537,7 @@ function ejemplosDni(id){
 
 const MODULES = [
   {id:'amparos', nombre:'Amparos de salud', desc:'Expedientes judiciales, cautelares, plazos, control de cumplimiento y escritos tipo.', disponible:true, icon:'shield'},
-  {id:'administrativos', nombre:'Administrativos', desc:'Reclamos ante la Superintendencia de Servicios de Salud y Defensa del Consumidor.', disponible:false, icon:'folder'},
+  {id:'administrativos', nombre:'Administrativos', desc:'Reclamos ante organismos (SSS, Defensa del Consumidor, COPREC, AAIP), obligaciones de la empresa y guía de trámites.', disponible:true, icon:'book'},
   {id:'contratos', nombre:'Contratos', desc:'Contratos con prestadores y proveedores: versiones, firmantes y renovaciones.', disponible:false, icon:'file'},
   {id:'cartas', nombre:'Cartas documento', desc:'Redacción, envío y seguimiento de cartas documento e intimaciones.', disponible:false, icon:'pen'}
 ];
@@ -566,7 +571,7 @@ function datosEscrito(e){
   const pend = pending(e);
   const docs = (e.docs||[]).filter(d=>d.tipo!=='Escrito propio');
   const movs = [...(e.movimientos||[])].sort((a,b)=>a.fecha.localeCompare(b.fecha));
-  const pide = e.detalle ? `la cobertura de ${e.detalle}` : `la cobertura de ${PREST_FRASE[e.prestacion]||'la prestación reclamada'}`;
+  const pide = esAdm(e) ? (PIDE_ADM[e.prestacion]||'lo que surge del escrito de inicio') : e.detalle ? `la cobertura de ${e.detalle}` : `la cobertura de ${PREST_FRASE[e.prestacion]||'la prestación reclamada'}`;
   return {c, f, letrado, pend, docs, movs, pide, quien:nombreNatural(e.afiliado), autos:e.caratula || `${e.afiliado} c/ ${c.empresa} s/ amparo de salud`,
     juzgado: jzFormal(e), dni: e.dni && e.dni!=='—' ? e.dni : null};
 }
@@ -614,17 +619,17 @@ function buildEscrito(id, e, enfoque='rechazo'){
       (d.f.reclamoPrevio ? `La solicitud fue analizada por mi mandante con intervención de su Auditoría Médica, y la respuesta brindada al asociado se ajustó a la normativa aplicable, conforme surge de la documentación que se acompaña.` : `De los registros de mi mandante no surge que el asociado haya formulado un pedido previo de la prestación con anterioridad a la promoción de estas actuaciones, de modo que no existe una negativa que pueda calificarse de arbitraria o ilegítima.`) +
       (e.cautelar ? `\n\nV.S. dispuso una medida cautelar ordenando a mi mandante otorgar la cobertura reclamada, la cual ha sido o está siendo cumplida, sin que ello importe reconocimiento de derecho alguno ni consentimiento de sus fundamentos.` : '') +
       (cronologia ? `\n\nLas principales actuaciones registradas son las siguientes:\n${cronologia}` : ''));
-    parts.push(sec('INEXISTENCIA DE ARBITRARIEDAD O ILEGALIDAD MANIFIESTA') + `La acción de amparo es una vía excepcional que sólo procede frente a actos u omisiones que, en forma actual o inminente, lesionen derechos constitucionales con arbitrariedad o ilegalidad manifiesta (art. 43 de la Constitución Nacional y art. 1 de la Ley 16.986). Ese recaudo no se verifica en autos: mi mandante ha actuado dentro del marco normativo que regula su actividad y, como se expondrá, ha ofrecido alternativas razonables para atender la situación del asociado.\n\nAsimismo, la cuestión requiere un mayor debate y prueba (art. 2, inc. d, de la Ley 16.986), en particular sobre la necesidad médica de la prestación y su alcance, lo que excede el limitado marco cognoscitivo de esta vía.`);
-    parts.push(sec('FUNDAMENTOS SOBRE LA PRESTACIÓN RECLAMADA') + fundamentosPrestacion(e, d, enfoque).join('\n\n'));
-    parts.push(sec('PRUEBA') + `a) Documental: se acompaña y se tiene presente la siguiente:\n${docsLista}\n\nb) Informativa: se libre oficio a la Superintendencia de Servicios de Salud a fin de que informe la normativa vigente aplicable a la prestación reclamada y si se registran reclamos administrativos del asociado.\n\nc) Pericial médica: para el caso de que V.S. lo considere necesario, se designe perito médico de oficio a fin de que dictamine sobre la necesidad, modalidad y alcance de la prestación reclamada, y sobre la existencia de alternativas terapéuticas equivalentes disponibles en la cartilla de mi mandante.`);
+    parts.push(sec('INEXISTENCIA DE ARBITRARIEDAD O ILEGALIDAD MANIFIESTA') + `La acción de amparo es una vía excepcional que sólo procede frente a actos u omisiones que, en forma actual o inminente, lesionen derechos constitucionales con arbitrariedad o ilegalidad manifiesta (art. 43 de la Constitución Nacional y art. 1 de la Ley 16.986). Ese recaudo no se verifica en autos: mi mandante ha actuado dentro del marco normativo que regula su actividad y, como se expondrá, ha ofrecido alternativas razonables para atender la situación del asociado.\n\nAsimismo, la cuestión requiere un mayor debate y prueba (art. 2, inc. d, de la Ley 16.986), en particular sobre ${esAdm(e)?'la situación contractual y económica del asociado':'la necesidad médica de la prestación y su alcance'}, lo que excede el limitado marco cognoscitivo de esta vía.`);
+    parts.push(esAdm(e) ? sec('FUNDAMENTOS SOBRE EL RECLAMO') + fundamentosAdm(e, d).join('\n\n') : sec('FUNDAMENTOS SOBRE LA PRESTACIÓN RECLAMADA') + fundamentosPrestacion(e, d, enfoque).join('\n\n'));
+    parts.push(sec('PRUEBA') + `a) Documental: se acompaña y se tiene presente la siguiente:\n${docsLista}\n\n${esAdm(e) ? `b) Informativa: se libre oficio a la Superintendencia de Servicios de Salud a fin de que informe la normativa aplicable y si se registran reclamos administrativos del asociado.\n\nc) Pericial contable: para el caso de que V.S. lo considere necesario, se designe perito contador a fin de que dictamine sobre la evolución de la cuota, los pagos registrados y la liquidación practicada por mi mandante.` : `b) Informativa: se libre oficio a la Superintendencia de Servicios de Salud a fin de que informe la normativa vigente aplicable a la prestación reclamada y si se registran reclamos administrativos del asociado.\n\nc) Pericial médica: para el caso de que V.S. lo considere necesario, se designe perito médico de oficio a fin de que dictamine sobre la necesidad, modalidad y alcance de la prestación reclamada, y sobre la existencia de alternativas terapéuticas equivalentes disponibles en la cartilla de mi mandante.`}`);
     parts.push(sec('RESERVA DEL CASO FEDERAL') + `Para el hipotético supuesto de que V.S. no hiciera lugar a lo solicitado, hago expresa reserva de ocurrir ante la Corte Suprema de Justicia de la Nación por la vía del recurso extraordinario previsto en el art. 14 de la Ley 48, por encontrarse comprometidas garantías constitucionales (arts. 14, 17, 18 y 43 de la Constitución Nacional).`);
     parts.push(sec('PETITORIO') + `Por todo lo expuesto, a V.S. solicito:\n1. Se me tenga por presentado/a, por parte en el carácter invocado y por constituidos los domicilios indicados.\n2. Se tenga por producido en término el informe del art. 8 de la Ley 16.986.\n3. Se tenga presente la prueba ofrecida y se ordene su producción.\n${e.cautelar?'4. Se tenga presente el cumplimiento de la medida cautelar, sin que ello implique reconocimiento de derecho alguno.\n5':'4'}. ${enfoque==='cartilla'?'Se tenga presente el ofrecimiento de cobertura formulado y, en su caso, se declare abstracta la cuestión en ese aspecto, con costas por su orden.':'Oportunamente, se rechace la acción de amparo, con costas.'}\n${e.cautelar?'6':'5'}. Se tenga presente la reserva del caso federal.\n\nProveer de conformidad,\nSERÁ JUSTICIA.`);
   }
   if(id==='cumplimiento'){
     parts.push(encabezado(d, e, 'ACREDITA CUMPLIMIENTO DE MEDIDA CAUTELAR'));
     parts.push(sec('OBJETO') + `Que vengo a acreditar el cumplimiento de la medida cautelar dispuesta por V.S. en las presentes actuaciones, mediante la cual se ordenó a mi mandante otorgar a ${d.quien}${d.dni?` (DNI ${d.dni})`:''} ${d.pide}.`);
-    parts.push(sec('CUMPLIMIENTO') + `Mi mandante, con intervención de su Auditoría Médica, autorizó y puso a disposición del asociado la prestación ordenada, conforme surge de la constancia de autorización y entrega que se acompaña como Anexo I.\n\nEl cumplimiento se efectúa en estricto acatamiento de la manda judicial y no importa reconocimiento de los hechos ni del derecho invocados por la parte actora, ni consentimiento de los fundamentos de la resolución, todo lo cual se discutirá en la oportunidad procesal pertinente.`);
-    parts.push(sec('DOCUMENTAL') + `Anexo I: constancia de autorización y entrega de la prestación.`);
+    parts.push(sec('CUMPLIMIENTO') + `${esAdm(e) ? `Mi mandante ${CUMPLE_ADM[e.prestacion]||'dio cumplimiento a lo ordenado'}, conforme surge de la constancia que se acompaña como Anexo I.` : `Mi mandante, con intervención de su Auditoría Médica, autorizó y puso a disposición del asociado la prestación ordenada, conforme surge de la constancia de autorización y entrega que se acompaña como Anexo I.`}\n\nEl cumplimiento se efectúa en estricto acatamiento de la manda judicial y no importa reconocimiento de los hechos ni del derecho invocados por la parte actora, ni consentimiento de los fundamentos de la resolución, todo lo cual se discutirá en la oportunidad procesal pertinente.`);
+    parts.push(sec('DOCUMENTAL') + (esAdm(e) ? `Anexo I: constancia de cumplimiento (facturación, alta en el sistema o nota del área interviniente).` : `Anexo I: constancia de autorización y entrega de la prestación.`));
     parts.push(sec('PETITORIO') + `Por lo expuesto, a V.S. solicito:\n1. Se tenga presente lo manifestado y por acompañada la documental.\n2. Se tenga por cumplida la medida cautelar ordenada en autos.\n3. Se tenga presente que el cumplimiento no implica reconocimiento de derecho alguno.\n\nProveer de conformidad,\nSERÁ JUSTICIA.`);
   }
   if(id==='apelacion'){
@@ -753,6 +758,9 @@ function unir(base, otro){
   base.agBorrados = [...new Set([...(base.agBorrados||[]), ...(otro.agBorrados||[])])]; const agB = new Set(base.agBorrados);
   base.agSaber = (base.agSaber||[]).filter(x=>!agB.has(x.id)); (otro.agSaber||[]).forEach(x=>{ if(!agB.has(x.id) && !base.agSaber.some(y=>y.id===x.id)) base.agSaber.push(x); });
   (otro.agPend||[]).forEach(x=>{ base.agPend = base.agPend||[]; if(!base.agPend.some(y=>y.id===x.id) && !base.agSaber.some(y=>normTxt(y.q)===normTxt(x.q))) base.agPend.push(x); });
+  base.trBorrados = [...new Set([...(base.trBorrados||[]), ...(otro.trBorrados||[])])]; const trB = new Set(base.trBorrados);
+  base.tramites = (base.tramites||[]).filter(x=>!trB.has(x.id)); (otro.tramites||[]).forEach(x=>{ if(!trB.has(x.id) && !base.tramites.some(y=>y.id===x.id)) base.tramites.push(x); });
+  (otro.guiaPropia||[]).forEach(x=>{ base.guiaPropia = base.guiaPropia||[]; if(!base.guiaPropia.some(y=>y.id===x.id) && !trB.has(x.id)) base.guiaPropia.push(x); });
   base._sumados = (base._sumados||[]).concat(sum);
   return base;
 }
@@ -1483,13 +1491,15 @@ async function migrate(d){
   d.users = Array.isArray(d.users) && d.users.length ? d.users : base.users;
   base.users.forEach(u=>{ if(!d.users.some(x=>x.id===u.id)) d.users.push(u); });
   d.teams = Array.isArray(d.teams) ? d.teams : base.teams;
-  d.lock = d.lock || {}; d.toured = d.toured || {}; d.modelos = Array.isArray(d.modelos) ? d.modelos : []; d.agSaber = Array.isArray(d.agSaber) ? d.agSaber : []; d.agPend = Array.isArray(d.agPend) ? d.agPend : []; d.docCats = Array.isArray(d.docCats) ? d.docCats : []; d.catEdit = d.catEdit || {}; d.papelera = Array.isArray(d.papelera) ? d.papelera : []; d.borrados = Array.isArray(d.borrados) ? d.borrados : []; d.config = d.config || {}; d.audit = Array.isArray(d.audit) ? d.audit : [];
+  d.lock = d.lock || {}; d.toured = d.toured || {}; d.modelos = Array.isArray(d.modelos) ? d.modelos : []; d.tramites = Array.isArray(d.tramites) ? d.tramites : []; d.guiaPropia = Array.isArray(d.guiaPropia) ? d.guiaPropia : []; d.agSaber = Array.isArray(d.agSaber) ? d.agSaber : []; d.agPend = Array.isArray(d.agPend) ? d.agPend : []; d.docCats = Array.isArray(d.docCats) ? d.docCats : []; d.catEdit = d.catEdit || {}; d.papelera = Array.isArray(d.papelera) ? d.papelera : []; d.borrados = Array.isArray(d.borrados) ? d.borrados : []; d.config = d.config || {}; d.audit = Array.isArray(d.audit) ? d.audit : [];
   d.modules = {...base.modules, ...(d.modules||{})};
   d.exps = (d.exps||[]).map(e=>migExp(e, d.users));
   d.nextId = Math.max(d.nextId||0, ...d.exps.map(e=>+e.id||0)) + 1;
   if(!d.ejemploDni){ d.ejemploDni = true; const bor = new Set(d.borrados||[]); ejemplosDni(d.nextId).forEach(x=>{ const n = x.numero.toLowerCase(); if(!bor.has(n) && !d.exps.some(e=>String(e.numero).toLowerCase()===n)){ d.exps.push(migExp(x, d.users)); } }); d.nextId = Math.max(...d.exps.map(e=>+e.id||0)) + 1; }
   if(!d.pwInicial){ d.pwInicial = true; const propias = new Set((d.audit||[]).filter(a=>a.accion==='Cambió su contraseña').map(a=>a.detalle));
     for(const u of d.users){ if(propias.has(u.id)) continue; u.salt = randId(16); u.hash = await hashPass(u.id, u.salt); u.mustChange = true; } }
+  if(!d.modAdm){ d.modAdm = true; d.modules = d.modules || {}; d.modules.administrativos = true; }
+  if(!d.ejemploAdm){ d.ejemploAdm = true; try{ ejemplosAdm(d); }catch(err){ console.warn(err); } d.nextId = Math.max(d.nextId||1, ...d.exps.map(e=>+e.id||0)) + 1; }
   d.schema = SCHEMA; d.user = null;
   return d;
 }
@@ -1599,8 +1609,9 @@ async function decrypt(text, pass){
 // ---------- ruteo ----------
 function route(){
   const h = (location.hash||'').replace('#','') || 'inicio';
-  const m = h.match(/^expediente-(\d+)$/);
-  return m ? {name:'expediente', id:+m[1]} : {name:h};
+  const m = h.match(/^expediente-(\d+)$/); if(m) return {name:'expediente', id:+m[1]};
+  const t = h.match(/^tramite-([\w-]+)$/); if(t) return {name:'tramite', id:t[1]};
+  return {name:h};
 }
 window.addEventListener('hashchange', ()=>{ ui.editSum = false; const nt = ui.nextTab; ui.nextTab = null; if(ui.scrollTo){ const u = ui.scrollTo; ui.scrollTo=null; setTimeout(()=>{ const d = u==='panel' ? $('#miembroPanel') : document.querySelector(`[data-member="${u}"]`); if(d) d.scrollIntoView({behavior:'smooth', block:'start'}); }, 60); } ui.q=''; ui.rOpen=null; ui.dniOpen=false; ui.tab=nt||'resumen'; ui.ia=''; ui.addMov=false; ui.addPlazo=false; ui.results=false; render(); const v=$('#view'); if(v) v.scrollTop=0; });
 const ui = {orden:(()=>{ try{ return localStorage.getItem('fojasOrden')||'alfa'; }catch(e){ return 'alfa'; } })(), open:{}, scrollTo:null, tab:'resumen', ia:'', filtro:'todos', q:'', verify:null, tpl:null, tplExp:null, tplText:'', backupOut:'', backupMsg:null, csvMsg:null, results:false, addMov:false, addPlazo:false};
@@ -1608,10 +1619,10 @@ const ui = {orden:(()=>{ try{ return localStorage.getItem('fojasOrden')||'alfa';
 // ---------- estructura ----------
 function shell(content){
   const r = route().name;
-  const act = n => (r===n || (n==='amparos' && r==='expediente')) ? 'on' : '';
+  const act = n => (r===n || (n==='amparos' && r==='expediente') || (n==='administrativos' && r==='tramite')) ? 'on' : '';
   const urgentes = allPlazos().filter(p=>daysTo(p.vence)<=1).length;
   const link = (h, icon, label, badge='') => `<a href="#${h}" class="${act(h)}" title="${label}">${ic(icon)}<span class="lbl">${label}</span>${badge}</a>`;
-  const extra = MODULES.filter(m=>m.id!=='amparos' && S.modules[m.id]).map(m=>`<a href="#modulos" title="${esc(m.nombre)}">${ic(m.icon)}<span class="lbl">${esc(m.nombre)}</span><span class="badge">pronto</span></a>`).join('');
+  const extra = MODULES.filter(m=>m.id!=='amparos' && S.modules[m.id]).map(m=> m.id==='administrativos' ? link('administrativos','book','Administrativos', (()=>{ const n = trs().filter(t=>{ const p = trPend(t)[0]; return p && daysTo(p.vence)<=3; }).length; return n?`<span class="badge red">${n}</span>`:''; })()) : `<a href="#modulos" title="${esc(m.nombre)}">${ic(m.icon)}<span class="lbl">${esc(m.nombre)}</span><span class="badge">pronto</span></a>`).join('');
   const u = me();
   return `
   <div class="app">
@@ -1693,7 +1704,8 @@ function searchResults(){
   found.forEach(e=>{ if(vistos.has(e.id)) return; const g = mismoDni(e); g.forEach(x=>vistos.add(x.id)); grupos.push(g); });
   const fila = e => `<a href="#expediente-${e.id}"><b>${esc(e.afiliado)}</b><div class="small muted">${esc(e.numero)} · ${esc(e.prestacion)}${e.dni&&e.dni!=='—'?` · DNI ${esc(e.dni)}`:''}</div></a>`;
   const html = grupos.slice(0,8).map(g=>g.length>1 ? dniTree(g, {mini:true, ctx:'s', open: grupos.length===1}) : fila(g[0])).join('');
-  return `<div class="results">${html || '<div class="empty small">No encontramos nada con esa búsqueda.</div>'}</div>`;
+  const trh = S.modules.administrativos ? trBuscar(ui.q).map(t=>`<a href="#tramite-${t.id}"><b>${esc(trNombre(t))}</b><div class="small muted">Administrativos · ${esc(orgById(t.org).c)}${t.numero?' · '+esc(t.numero):''}${t.motivo?' · '+esc(t.motivo):''}</div></a>`).join('') : '';
+  return `<div class="results">${(html+trh) || '<div class="empty small">No encontramos nada con esa búsqueda.</div>'}</div>`;
 }
 
 function taskRow(p, showExp=true){
@@ -1751,6 +1763,8 @@ function vAmparos(){
     todos:{l:'En curso', f:e=>e.estado!=='Archivado'},
     urgentes:{l:'Urgentes', f:e=>{const p=nextPlazo(e); return p && daysTo(p.vence)<=3;}},
     cautelar:{l:'Con cautelar', f:e=>e.cautelar && e.estado!=='Archivado'},
+    salud:{l:'De salud', f:e=>!esAdm(e) && e.estado!=='Archivado'},
+    adm:{l:'Administrativos', f:e=>esAdm(e) && e.estado!=='Archivado'},
     mios:{l:'Míos', f:e=>e.abogado===S.user && e.estado!=='Archivado'},
     ...(isLeader()?{equipo:{l:'De mi equipo', f:e=>myPeople().includes(e.abogado) && e.estado!=='Archivado'}}:{}),
     archivados:{l:'Archivados', f:e=>e.estado==='Archivado'}
@@ -1789,7 +1803,8 @@ function vVencimientos(){
     <p class="small muted">Feriados nacionales según la Ley 27.399 y el Decreto 614/2025; días no laborables con fines turísticos de 2026 según la Resolución 164/2025. Los de 2027 todavía no fueron publicados. La feria judicial de enero se descuenta solo si la elegís al cargar el plazo.</p></details>
   ${groups.map(([t,c,f])=>{ const l = plazos.filter(f); if(!l.length) return ''; return `
     <section class="card"><div class="row"><h2>${t}</h2><span class="badge ${c==='late'?'red':''}">${l.length}</span></div>
-      <div class="cases">${l.map(p=>taskRow(p)).join('')}</div></section>`; }).join('') || `<div class="card empty"><div class="ico g">${ic('check','lg')}</div><b>No hay vencimientos pendientes</b></div>`}`;
+      <div class="cases">${l.map(p=>taskRow(p)).join('')}</div></section>`; }).join('') || (vencAdm() ? '' : `<div class="card empty"><div class="ico g">${ic('check','lg')}</div><b>No hay vencimientos pendientes</b></div>`)}
+  ${vencAdm()}`;
 }
 
 function vExpediente(id){
@@ -1861,7 +1876,7 @@ function vExpediente(id){
   }
   return `
   <div><a href="#amparos" class="btn ghost sm" style="padding-left:0">${ic('back','sm')} Volver a Amparos</a></div>
-  <div class="head"><div><div class="muted mono">${esc(e.numero)}</div><h1>${esc(e.afiliado)}</h1><p class="sub">${esc(e.prestacion)} · ${esc(e.juzgado)}</p></div>
+  <div class="head"><div><div class="muted mono">${esc(e.numero)}</div><h1>${esc(e.afiliado)}</h1><p class="sub">${esAdm(e)?'Amparo administrativo · ':''}${esc(e.prestacion)} · ${esc(e.juzgado)}</p>${esAdm(e)&&admResumen(e)?`<p class="small muted" style="margin-top:4px">${esc(admResumen(e))}</p>`:''}</div>
     <div class="row">${canDelete(e)?`<button class="btn sm ghost danger" data-act="delexp" data-e="${e.id}">${ic('trash','sm')} Eliminar expediente</button>`:''}${e.cautelar?'<span class="pill acc">Con cautelar</span>':''}<span class="pill ${e.riesgo==='alto'?'red':e.riesgo==='medio'?'yel':'grn'}">Riesgo ${e.riesgo}</span></div></div>
 
   ${p?`<section class="next ${n<0?'late':''}">
@@ -1890,7 +1905,7 @@ function vExpediente(id){
 function iaText(kind, e){
   const movs = [...e.movimientos].sort((a,b)=>a.fecha.localeCompare(b.fecha));
   const p = nextPlazo(e);
-  if(kind==='resumen') return `RESUMEN DEL CASO\n\n${e.afiliado} presentó un amparo para que se le cubra: ${e.prestacion.toLowerCase()}. Tramita en el ${e.juzgado} desde el ${fmt(e.inicio)}.\n\nHoy está en la etapa: ${e.estado}.${e.cautelar?' El juez ya ordenó una medida cautelar, así que hay que cumplir la cobertura mientras dura el juicio.':' No hay medida cautelar.'}\n\nLo que pasó hasta ahora:\n${movs.map(m=>`• ${fmt(m.fecha)}: ${m.desc}`).join('\n')}\n${p?`\nLo próximo: ${p.desc} (${whenText(daysTo(p.vence)).toLowerCase()}, ${fmt(p.vence)}).`:''}`;
+  if(kind==='resumen') return `RESUMEN DEL CASO\n\n${esAdm(e) ? `${e.afiliado} presentó un amparo administrativo por ${e.prestacion.toLowerCase()}: pide ${PIDE_ADM[e.prestacion]||'lo que surge de la demanda'}.${admResumen(e)?` (${admResumen(e)})`:''}` : `${e.afiliado} presentó un amparo para que se le cubra: ${e.prestacion.toLowerCase()}.`} Tramita en el ${e.juzgado} desde el ${fmt(e.inicio)}.\n\nHoy está en la etapa: ${e.estado}.${e.cautelar?' El juez ya ordenó una medida cautelar, así que hay que cumplir la cobertura mientras dura el juicio.':' No hay medida cautelar.'}\n\nLo que pasó hasta ahora:\n${movs.map(m=>`• ${fmt(m.fecha)}: ${m.desc}`).join('\n')}\n${p?`\nLo próximo: ${p.desc} (${whenText(daysTo(p.vence)).toLowerCase()}, ${fmt(p.vence)}).`:''}`;
   if(kind==='paso'){
     const n = p?daysTo(p.vence):null;
     let s = `PRÓXIMOS PASOS\n\n`;
@@ -2302,7 +2317,9 @@ function openEditDatos(e){
       <label>Asociado<input type="text" id="edAf" value="${esc(e.afiliado)}"></label>
       <label>DNI<input type="text" id="edDni" value="${esc(e.dni&&e.dni!=='—'?e.dni:'')}"></label>
       <label>Número de expediente<input type="text" id="edNum" value="${esc(e.numero)}"></label>
-      <label>Qué reclama<select id="edPr">${PRESTACIONES.map(p=>`<option ${p===e.prestacion?'selected':''}>${p}</option>`).join('')}</select></label>
+      <label>Tipo de amparo<select id="edTipo"><option value="prestacional" ${!esAdm(e)?'selected':''}>De salud (prestación)</option><option value="administrativo" ${esAdm(e)?'selected':''}>Administrativo</option></select></label>
+      <label>${esAdm(e)?'Motivo':'Qué reclama'}<select id="edPr">${(esAdm(e)?MOTIVOS_ADM:PRESTACIONES).map(p=>`<option ${p===e.prestacion?'selected':''}>${p}</option>`).join('')}</select></label>
+      ${esAdm(e)?`<label>Plan<input type="text" id="edAPlan" value="${esc((e.adm||{}).plan||'')}"></label><label>Edad<input type="text" id="edAEdad" value="${esc((e.adm||{}).edad||'')}"></label><label>Antigüedad (años)<input type="text" id="edAAnt" value="${esc((e.adm||{}).antig||'')}"></label><label>Cuota anterior ($)<input type="text" id="edACA" value="${esc((e.adm||{}).cuotaAnt||'')}"></label><label>Cuota actual o reclamada ($)<input type="text" id="edACN" value="${esc((e.adm||{}).cuotaNueva||'')}"></label><label>Deuda ($)<input type="text" id="edADeuda" value="${esc((e.adm||{}).deuda||'')}"></label><label class="full" style="display:flex;flex-direction:row;gap:10px;align-items:center;font-weight:500"><input type="checkbox" id="edACol" ${(e.adm||{}).colectivo?'checked':''} style="width:18px;height:18px;flex:none"> Es un amparo colectivo</label>`:''}
       <label class="full">Juzgado<input type="text" id="edJz" list="jzlist2" value="${esc(e.juzgado)}"><datalist id="jzlist2">${JUZGADOS_ALL.map(([n,g])=>`<option value="${esc(n)}">${esc(g)}</option>`).join('')}</datalist></label>
       <label>Secretaría<input type="text" id="edSec" value="${esc(e.secretaria||'')}"></label>
     </div>
@@ -2450,8 +2467,9 @@ function buildSumario(o){
   const partes = [];
   const jz = o.juzgado ? ` ante el ${o.juzgado}${o.secretaria?`, Secretaría ${o.secretaria}`:''}` : '';
   partes.push(`${o.afiliado||'[Afiliado]'}${o.dni?` (DNI ${o.dni})`:''} promovió acción de amparo contra Salud Integral Demo S.A.${jz}${o.numero?` (Expte. ${o.numero})`:''}.`);
-  partes.push(`Reclama ${o.detalle?`la cobertura de ${o.detalle}`:`cobertura de ${(o.prestacion||'[prestación]').toLowerCase()}`}${o.prestacion && o.detalle?` (${o.prestacion.toLowerCase()})`:''}.`);
-  if(o.cautelar) partes.push('El juzgado hizo lugar a la medida cautelar y ordenó otorgar la cobertura mientras tramita el proceso.');
+  if((o.tipo||o.tipoAmp)==='administrativo'){ partes.push(`Amparo administrativo por ${(o.prestacion||'reclamo').toLowerCase()}: pide ${PIDE_ADM[o.prestacion]||'lo que surge del escrito de inicio'}.`); const ad = admResumen({adm:o.adm||{}}); if(ad) partes.push(`Datos: ${ad}.`); if(o.cautelar) partes.push('El juzgado hizo lugar a la medida cautelar mientras tramita el proceso.'); }
+  else { partes.push(`Reclama ${o.detalle?`la cobertura de ${o.detalle}`:`cobertura de ${(o.prestacion||'[prestación]').toLowerCase()}`}${o.prestacion && o.detalle?` (${o.prestacion.toLowerCase()})`:''}.`);
+  if(o.cautelar) partes.push('El juzgado hizo lugar a la medida cautelar y ordenó otorgar la cobertura mientras tramita el proceso.'); }
   if(/Informe/.test(o.estado||'') || (o.extra||[]).some(x=>/informe/i.test(x.desc)) || /informe/i.test(o.plazoDesc||'')) partes.push('Se requirió a la empresa el informe circunstanciado del art. 8 de la Ley 16.986.');
   if(o.plazoDesc) partes.push(`Próximo vencimiento: ${o.plazoDesc.toLowerCase()} (${fmt(o.plazoFecha)}).`);
   const docs = (o.docs||[]).map(d=>d.tipo).filter(Boolean);
@@ -2665,6 +2683,10 @@ function extractFields(raw, docsInfo){
   // prestación: se puntúa cada tipo según cuántas veces aparecen sus palabras
   const scored = scorePrestaciones(one);
   if(scored.length){ f.prestacion = scored[0][0]; f.otrasPrestaciones = scored.slice(1).filter(x=>x[1] >= Math.max(2, scored[0][1]*0.4)).slice(0,2).map(x=>x[0]); }
+  { const adm = scoreAdm(one), topP = scored.length ? scored[0][1] : 0;
+    const sumA = adm.reduce((s,x)=>s+x[1],0);
+    if(adm.length && (sumA>=2 || topP===0) && sumA >= topP*0.8){ f.tipoAmp = 'administrativo'; f.prestacion = adm[0][0]; f.otrasPrestaciones = adm.slice(1).filter(x=>x[1]>=Math.max(2, adm[0][1]*0.4)).slice(0,2).map(x=>x[0]); f.adm = admDatos(one); }
+    else f.tipoAmp = 'prestacional'; }
   // qué pide exactamente
   m = one.match(/cobertura\s+(?:integral\s+|total\s+)?(?:del?\s+(?:cien\s+por\s+ciento\s+)?\(?100\s*%?\)?\s*)?(?:de(?:l)?\s+(?:la\s+|los\s+|las\s+)?)?([^.;]{6,180})/i);
   if(m) f.detalle = m[1].trim().replace(/\s*,?\s+(?:conforme|seg[uú]n|en los t[eé]rminos|dentro|en el plazo|bajo apercibimiento|a fin de|para que|hasta tanto)\b.*$/i,'').replace(/[,\s]+$/,'');
@@ -2731,6 +2753,7 @@ function caseFlags(e){
 
 // ---------- sugerencias: qué hacer y con qué normativa ----------
 function sugerencias(e){
+  if(esAdm(e)) return sugerenciasAdm(e);
   const f = caseFlags(e), out = {urgente:[], fondo:[], prueba:[], estrategia:[]};
   const pend = (e.plazos||[]).filter(p=>!p.hecho);
   const informePend = e.estado==='Contestación de demanda' || pend.some(p=>/informe/i.test(p.desc));
@@ -2918,12 +2941,21 @@ function drawWizard(){
       <datalist id="jzlist">${JUZGADOS_ALL.map(([n,g])=>`<option value="${esc(n)}">${esc(g)}</option>`).join('')}</datalist>
       <span class="hint">Están los ${JUZGADOS_ALL.length} juzgados federales y nacionales de todo el país. Si es un juzgado provincial, escribilo igual.</span></label>
     <label class="fld">Secretaría ${fb('secretaria')}<span id="wSecBox" style="display:flex;flex-direction:column;gap:6px">${secField()}</span></label>
+    <div class="fld">¿Qué tipo de amparo es? ${fb('tipoAmp')}<div class="opts"><button type="button" class="opt ${W.tipoAmp!=='administrativo'?'on':''}" data-w="tipoAmp" data-v="prestacional">De salud (una prestación)</button><button type="button" class="opt ${W.tipoAmp==='administrativo'?'on':''}" data-w="tipoAmp" data-v="administrativo">Administrativo (cuota, afiliación, baja, deuda…)</button></div></div>
     ${(()=>{ const ligadas = W.found.prestacion ? [W.prestacion, ...(W.otrasPrestaciones||[])].filter((x,i,a)=>x && a.indexOf(x)===i) : [];
-      const lista = (W.verTodas || !ligadas.length) ? PRESTACIONES : ligadas;
-      return `<div class="fld">¿Qué reclama? ${fb('prestacion')}
+      const lista = (W.verTodas || !ligadas.length) ? (W.tipoAmp==='administrativo' ? MOTIVOS_ADM : PRESTACIONES) : ligadas;
+      return `<div class="fld">${W.tipoAmp==='administrativo'?'¿Cuál es el motivo del reclamo?':'¿Qué reclama?'} ${fb('prestacion')}
         ${ligadas.length && !W.verTodas ? `<span class="hint">${ligadas.length>1?'Son las opciones que surgen de los documentos. Elegí la principal.':'Es lo que surge de los documentos.'}</span>` : ''}
         <div class="opts">${lista.map(p=>`<button type="button" class="opt ${W.prestacion===p?'on':''}" data-w="prestacion" data-v="${esc(p)}">${esc(p)}</button>`).join('')}</div>
         ${ligadas.length ? (W.verTodas ? `<button type="button" class="btn ghost sm" data-act="wpocas" style="align-self:flex-start">Mostrar solo lo que surge de los documentos</button>` : `<button type="button" class="btn ghost sm" data-act="wtodas" style="align-self:flex-start">No es esto: elegir otro tipo de reclamo</button>`) : ''}</div>`; })()}
+    ${W.tipoAmp==='administrativo'?`<div class="fld">Datos del reclamo <span class="hint">completá lo que sepas: Fojas los usa en las sugerencias y en el informe</span><div class="form">
+      <label>Plan<input type="text" id="wAdmPlan" value="${esc((W.adm||{}).plan||'')}"></label>
+      <label>Edad<input type="text" id="wAdmEdad" inputmode="numeric" value="${esc((W.adm||{}).edad||'')}"></label>
+      <label>Antigüedad (años)<input type="text" id="wAdmAnt" inputmode="numeric" value="${esc((W.adm||{}).antig||'')}"></label>
+      <label>Cuota anterior ($)<input type="text" id="wAdmCA" value="${esc((W.adm||{}).cuotaAnt||'')}"></label>
+      <label>Cuota actual o reclamada ($)<input type="text" id="wAdmCN" value="${esc((W.adm||{}).cuotaNueva||'')}"></label>
+      <label>Deuda reclamada ($)<input type="text" id="wAdmDeuda" value="${esc((W.adm||{}).deuda||'')}"></label>
+      <label class="full" style="display:flex;flex-direction:row;gap:10px;align-items:center;font-weight:500"><input type="checkbox" id="wAdmCol" ${(W.adm||{}).colectivo?'checked':''} style="width:18px;height:18px;flex:none"> Es un amparo colectivo</label></div></div>`:''}
     <div class="fld">¿En qué etapa está? ${fb('estado')}<div class="opts">${ESTADOS.slice(0,4).map(p=>`<button type="button" class="opt ${W.estado===p?'on':''}" data-w="estado" data-v="${esc(p)}">${esc(p)}</button>`).join('')}</div></div>
     <div class="fld">¿Hay medida cautelar ordenada? ${fb('cautelar')}<div class="opts"><button type="button" class="opt ${W.cautelar?'on':''}" data-w="cautelar" data-v="1">Sí</button><button type="button" class="opt ${!W.cautelar?'on':''}" data-w="cautelar" data-v="0">No</button></div></div>
     <label class="fld">¿Qué hay que hacer primero? ${fb('plazoDesc')}<input type="text" id="wPd" value="${esc(W.plazoDesc)}" placeholder="Ej.: Cumplir intimación"></label>
@@ -2982,6 +3014,8 @@ async function wProcess(fileList, append){
   W.autosAlt = f.autosAlternativos || []; W.autosDudoso = !!f.autosDudoso; W.autosArmados = !!f.autosArmados;
   for(const k of ['afiliado','dni','numero','juzgado','secretaria','prestacion','estado','plazoDesc','plazoFecha','autos','detalle']) if(f[k] && (!append || !W.found[k])){ W[k] = f[k]; W.found[k] = true; }
   if(f.otrasPrestaciones) W.otrasPrestaciones = f.otrasPrestaciones;
+  if(f.tipoAmp && (!append || !W.found.tipoAmp || f.tipoAmp==='administrativo')){ W.tipoAmp = f.tipoAmp; W.found.tipoAmp = true; }
+  if(f.adm) W.adm = {...(W.adm||{}), ...f.adm};
   if(f.juzgadoLibre) delete W.found.juzgado;
   delete W.found.detalle;
   if(f.cautelar){ W.cautelar = true; W.found.cautelar = true; }
@@ -2990,9 +3024,10 @@ async function wProcess(fileList, append){
   W.flags = flagsFromText(text);
   W.step = 2; drawWizard();
 }
-const wCase = () => ({detalle:W.detalle, prestacion:W.prestacion, cautelar:W.cautelar, estado:W.estado, afiliado:W.afiliado, plazos:[...(W.plazoDesc?[{desc:W.plazoDesc, hecho:false}]:[]), ...(W.extra||[])], flags:W.flags||{}, docs:W.files.map(f=>({nombre:f.name, tipo:f.tipo}))});
+const wCase = () => ({tipo:W.tipoAmp, adm:W.adm, detalle:W.detalle, prestacion:W.prestacion, cautelar:W.cautelar, estado:W.estado, afiliado:W.afiliado, plazos:[...(W.plazoDesc?[{desc:W.plazoDesc, hecho:false}]:[]), ...(W.extra||[])], flags:W.flags||{}, docs:W.files.map(f=>({nombre:f.name, tipo:f.tipo}))});
 function wRead(){
   const v = id => { const el = $('#'+id); return el ? el.value.trim() : null; };
+  if($('#wAdmPlan')) W.adm = {...(W.adm||{}), plan:v('wAdmPlan'), edad:v('wAdmEdad'), antig:v('wAdmAnt'), cuotaAnt:v('wAdmCA'), cuotaNueva:v('wAdmCN'), deuda:v('wAdmDeuda'), colectivo:$('#wAdmCol').checked};
   if(v('wAf')!==null) W.afiliado = v('wAf'); if(v('wDni')!==null) W.dni = v('wDni');
   if(v('wNum')!==null) W.numero = v('wNum'); if(v('wJz')!==null) W.juzgado = v('wJz'); if(v('wSec')!==null) W.secretaria = v('wSec'); if(v('wCar')!==null) W.autos = v('wCar');
   const sm = $('#wSum'); if(sm && sm.value.trim() !== W.sumario.trim()){ W.sumario = sm.value; W.sumarioEditado = true; }
@@ -3030,8 +3065,8 @@ function render(){
   if(!logged()){ $('#root').innerHTML = vIngreso(); document.title='Fojas · Ingresar'; try{ drawAgente(); }catch(err){} return; }
   document.title='Fojas';
   const r = route();
-  const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, modelos:vModelos, informes:vInformes, historial:vHistorial, papelera:vPapelera, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios, asistente:vAsistente};
-  const html = r.name==='expediente' ? vExpediente(r.id) : (views[r.name]||vInicio)();
+  const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, modelos:vModelos, informes:vInformes, historial:vHistorial, papelera:vPapelera, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios, asistente:vAsistente, administrativos:vAdministrativos};
+  const html = r.name==='expediente' ? vExpediente(r.id) : r.name==='tramite' ? vTramite(r.id) : (views[r.name]||vInicio)();
   const scroll = $('#view') ? $('#view').scrollTop : 0;
   $('#root').innerHTML = shell(html);
   $('#view').scrollTop = scroll;
@@ -3084,7 +3119,7 @@ document.addEventListener('click', async ev => {
   if(d.mvar){ const ta = $('#meTxt'); if(ta){ const s0 = ta.selectionStart, s1 = ta.selectionEnd, ins = `{${d.mvar}}`; ta.value = ta.value.slice(0,s0) + ins + ta.value.slice(s1); ta.focus(); ta.selectionStart = ta.selectionEnd = s0 + ins.length; } return; }
   if(d.tplexp){ ui.tplExp = +d.tplexp; ui.tplText=''; render(); return; }
   if(d.quick){ $('#plV').value = dPlus(+d.quick); document.querySelectorAll('[data-quick]').forEach(b=>b.classList.toggle('on', b===t)); return; }
-  if(d.w){ wRead(); const k = d.w; if(k==='cautelar') W.cautelar = d.v==='1'; else if(k==='prestacion' && W.verTodas){ W.prestacion = d.v; W.verTodas = false; if(W.found.prestacion && !(W.otrasPrestaciones||[]).includes(d.v) && d.v!==W.prestacion) {} W.otrasPrestaciones = [...new Set([...(W.otrasPrestaciones||[])])]; W.found.prestacion = true; W.prestElegida = d.v; } else if(k==='plazoQuick'){ const r = +d.v<=2 ? {modo:'horas', cant:+d.v*24, desde:iso(today())} : {modo:'habiles', cant:+d.v, desde:iso(today())}; const c = calcPlazo(r); W.plazoFecha = c.vence; W.plazoRegla = r; W.plazoNota = (r.modo==='habiles' ? `${r.cant} días hábiles desde mañana, salteando fines de semana y feriados nacionales.` : `${r.cant} horas corridas.`) + (c.aviso?' '+c.aviso:''); } else W[k] = d.v; drawWizard(); return; }
+  if(d.w){ wRead(); const k = d.w; if(k==='tipoAmp'){ W.tipoAmp = d.v; W.found.tipoAmp = true; const L = d.v==='administrativo' ? MOTIVOS_ADM : PRESTACIONES; if(!L.includes(W.prestacion)){ const sc = d.v==='administrativo' ? scoreAdm(W.text||'') : scorePrestaciones(W.text||''); W.prestacion = (sc[0]&&sc[0][0]) || L[0]; W.found.prestacion = !!sc.length; W.otrasPrestaciones = sc.slice(1,3).map(x=>x[0]); } W.verTodas = false; if(d.v==='administrativo' && !W.adm) W.adm = admDatos(W.text||''); if(!W.sumarioEditado) W.sumario = buildSumario({...W, tipo:W.tipoAmp}); drawWizard(); return; } else if(k==='cautelar') W.cautelar = d.v==='1'; else if(k==='prestacion' && W.verTodas){ W.prestacion = d.v; W.verTodas = false; if(W.found.prestacion && !(W.otrasPrestaciones||[]).includes(d.v) && d.v!==W.prestacion) {} W.otrasPrestaciones = [...new Set([...(W.otrasPrestaciones||[])])]; W.found.prestacion = true; W.prestElegida = d.v; } else if(k==='plazoQuick'){ const r = +d.v<=2 ? {modo:'horas', cant:+d.v*24, desde:iso(today())} : {modo:'habiles', cant:+d.v, desde:iso(today())}; const c = calcPlazo(r); W.plazoFecha = c.vence; W.plazoRegla = r; W.plazoNota = (r.modo==='habiles' ? `${r.cant} días hábiles desde mañana, salteando fines de semana y feriados nacionales.` : `${r.cant} horas corridas.`) + (c.aviso?' '+c.aviso:''); } else W[k] = d.v; drawWizard(); return; }
   if(d.wnav){ wRead(); if(+d.wnav>0){ const err = wCheck(); if(err){ $('#wErr').innerHTML = `<div class="notice bad">${esc(err)}</div>`; return; } } W.step += +d.wnav; drawWizard(); return; }
   const a = d.act;
   if(a==='close') closeModal();
@@ -3113,10 +3148,12 @@ document.addEventListener('click', async ev => {
   if(a==='xmodelo') xModelo();
   if(a==='editdatos'){ const x = expById(d.e); if(x) openEditDatos(x); }
   if(a==='savedatos'){ const x = expById(d.e); if(!x) return; const v = id => $('#'+id).value.trim();
-    const nuevo = {caratula:v('edAutos'), afiliado:v('edAf'), dni:v('edDni')||'—', numero:v('edNum'), prestacion:v('edPr'), juzgado:v('edJz'), secretaria:v('edSec')};
+    const nuevo = {caratula:v('edAutos'), afiliado:v('edAf'), dni:v('edDni')||'—', numero:v('edNum'), prestacion:v('edPr'), juzgado:v('edJz'), secretaria:v('edSec'), tipo:v('edTipo')};
+    if(nuevo.tipo!==(x.tipo||'prestacional')){ const L = nuevo.tipo==='administrativo' ? MOTIVOS_ADM : PRESTACIONES; if(!L.includes(nuevo.prestacion)){ const sc = nuevo.tipo==='administrativo' ? scoreAdm((x.movimientos||[]).map(m=>m.desc).join(' ')) : []; nuevo.prestacion = (sc[0]&&sc[0][0]) || L[0]; } }
+    if($('#edAPlan')) x.adm = {plan:v('edAPlan'), edad:v('edAEdad'), antig:v('edAAnt'), cuotaAnt:v('edACA'), cuotaNueva:v('edACN'), deuda:v('edADeuda'), colectivo:$('#edACol').checked};
     if(!nuevo.afiliado || !nuevo.numero){ $('#edErr').innerHTML = '<div class="notice bad">El asociado y el número de expediente no pueden quedar vacíos.</div>'; return; }
     if(S.exps.some(o=>o!==x && o.numero.toLowerCase()===nuevo.numero.toLowerCase())){ $('#edErr').innerHTML = '<div class="notice bad">Ya hay otro expediente con ese número.</div>'; return; }
-    const nombres = {caratula:'autos', afiliado:'asociado', dni:'DNI', numero:'número', prestacion:'qué reclama', juzgado:'juzgado', secretaria:'secretaría'};
+    const nombres = {caratula:'autos', afiliado:'asociado', dni:'DNI', numero:'número', prestacion:'qué reclama', juzgado:'juzgado', secretaria:'secretaría', tipo:'tipo de amparo'};
     const cambios = Object.keys(nuevo).filter(k=>String(x[k]||'')!==String(nuevo[k]||''));
     if(!cambios.length){ closeModal(); return; }
     const detalle = cambios.map(k=>`${nombres[k]}: "${x[k]||'—'}" → "${nuevo[k]||'—'}"`).join('; ');
@@ -3162,7 +3199,8 @@ document.addEventListener('click', async ev => {
   if(a==='wresum' && W){ wRead(); W.sumarioEditado = false; drawWizard(); }
   if(a==='wcreate'){
     const x = {id:S.nextId++, numero:W.numero, afiliado:W.afiliado, dni:W.dni||'—', prestacion:W.prestacion, juzgado:W.juzgado, secretaria:W.secretaria, sumario:W.sumario, estado:W.estado, riesgo:/oncol|Discapacidad|domiciliaria/.test(W.prestacion)||W.cautelar?'alto':'medio', abogado:S.user, inicio:iso(today()), monto:0, cautelar:W.cautelar, plazos:[], movimientos:[], docs:[]};
-    x.caratula = W.autos || `${x.afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`;
+    if(W.tipoAmp==='administrativo'){ x.tipo = 'administrativo'; x.adm = W.adm || {}; x.riesgo = (x.adm.colectivo || /Baja|edad/.test(x.prestacion) || W.cautelar) ? 'alto' : 'medio'; }
+    x.caratula = W.autos || `${x.afiliado} c/ Salud Integral Demo S.A. s/ amparo${W.tipoAmp==='administrativo'?'':' de salud'}`;
     const tipoDoc = /c[ée]dula/i.test(W.text) ? 'Cédula de notificación' : /oficio/i.test(W.text) ? 'Oficio' : 'Documento recibido';
     for(const f of W.files){ const p = PREVIEW[f.pv]; f.fid = p ? await saveFileBlob(p.file, p.text) : null; }
     W.files.forEach(f=>x.docs.push({nombre:f.name, fid:f.fid||null, paginas:f.paginas||null, tipo:f.tipo||tipoDoc, parte:parteDeDoc(f.tipo||tipoDoc), fecha:iso(today()), size: f.size>1e6?(f.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(f.size/1000))+' KB'}));
@@ -3341,6 +3379,7 @@ window.addEventListener('storage', async ev => {
 });
 window.addEventListener('beforeunload', ()=>{ try{ if(S) localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} });
 // ---------- Agente IA interno: ayuda de la app, consultas de expedientes e informes ----------
+IC.book = '<path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M5 17a3 3 0 0 1 3-3h10" fill="none" stroke="currentColor" stroke-width="2"/>';
 IC.send = '<path d="M4 12l16-8-6 16-2.5-6.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>';
 IC.x = '<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>';
 IC.bot = '<rect x="4" y="7" width="16" height="12" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7V4M9 13h.01M15 13h.01" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M2 12v3M22 12v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
@@ -3640,7 +3679,7 @@ const GLOSARIO = [
 ];
 function agSaber(){ return Array.isArray(S.agSaber) ? S.agSaber : (S.agSaber = []); }
 function agPend(){ return Array.isArray(S.agPend) ? S.agPend : (S.agPend = []); }
-function agCorpus(){ return [...AYUDA.map(a=>({tipo:'ayuda', t:a.t, k:a.k.join(' '), r:a.r, ir:a.ir})), ...GLOSARIO.map(g=>({tipo:'glosario', t:g.t, k:g.k, r:g.r})), ...agSaber().map(s=>({tipo:'saber', t:s.q, k:'', r:s.r, s}))]; }
+function agCorpus(){ return [...AYUDA.map(a=>({tipo:'ayuda', t:a.t, k:a.k.join(' '), r:a.r, ir:a.ir})), ...GLOSARIO.map(g=>({tipo:'glosario', t:g.t, k:g.k, r:g.r})), ...agSaber().map(s=>({tipo:'saber', t:s.q, k:'', r:s.r, s})), ...guiaTodas().map(g=>({tipo:'guia', t:g.t, k:[g.cat, orgById(g.org).c, orgById(g.org).l, 'tramite organismo obligacion'].join(' '), r:`${g.que} A quién alcanza: ${g.quien} Cuándo: ${g.cuando}${(g.como||[]).length?' Cómo: '+g.como.join(' '):''} Norma: ${g.norma||'—'}.${g.link?' Link oficial: '+g.link:''}`, ir:'administrativos'})), ...ORGS.filter(o=>o.id!=='otro').map(o=>({tipo:'org', t:o.l, k:o.c+' organismo', r:o.que+(o.plazoNota?' '+o.plazoNota:''), ir:'administrativos'}))]; }
 function agKB(q){
   const qt = [...new Set(agTok(q))]; if(!qt.length) return [];
   const docs = agCorpus().map(d=>({d, head:new Set(agTok(d.t+' '+d.k)), body:new Set(agTok(d.r))})); const N = docs.length, idf = {};
@@ -3729,6 +3768,428 @@ document.addEventListener('click', ev => {
   if(a==='delok' && s){ S.agSaber = agSaber().filter(x=>x.id!==id); S.agBorrados = [...new Set([...(S.agBorrados||[]), id])]; save(); audit('Borró algo que sabía el asistente','Asistente', s.q.slice(0,120)); ui.agDel = null; render(); toast('Eliminado'); }
 });
 
+// ---------- amparos administrativos (cuota, afiliación, baja, deuda…) ----------
+const MOTIVOS_ADM = ['Aumento de cuota','Aumento por edad','Rechazo de afiliación','Baja o rescisión','Deuda / cobro de cuotas','Derivación de aportes','Preexistencias / cuota diferencial','Reintegro','Otro administrativo'];
+const ADM_KW = [
+  ['Aumento por edad', [/aument\w*\s+(?:de\s+(?:la\s+)?cuota\s+)?(?:por|en\s+raz[oó]n\s+de)\s+(?:la\s+|su\s+)?edad/gi, /franja\s+etaria|rango\s+etario|cambio\s+de\s+(?:franja|rango)\s+etari/gi, /mayor(?:es)?\s+de\s+(?:sesenta\s+y\s+cinco|65)/gi]],
+  ['Aumento de cuota', [/aument\w*\s+(?:de\s+(?:la\s+|las\s+)?)?cuotas?/gi, /incremento\s+(?:de\s+(?:la\s+)?)?cuota|valor\s+de\s+la\s+cuota|ajuste\s+de\s+(?:la\s+)?cuota/gi, /aumentos?\s+(?:desmedid|abusiv|irrazonabl|excesiv)/gi, /retrotra\w+\s+(?:el\s+)?(?:valor|cuota)/gi]],
+  ['Rechazo de afiliación', [/rechaz\w*\s+(?:de\s+)?(?:la\s+|su\s+)?(?:solicitud\s+de\s+)?(?:afiliaci|ingreso|incorporaci|adhesi)/gi, /negativa\s+(?:a\s+)?(?:afiliar|admitir|incorporar)/gi]],
+  ['Baja o rescisión', [/rescisi[oó]n|desafiliaci[oó]n|dispuso\s+la\s+baja|dio\s+de\s+baja|dar\s+de\s+baja|baja\s+(?:del\s+)?(?:servicio|plan|contrato|afiliado)/gi, /reincorpor\w+|reafili\w+/gi]],
+  ['Deuda / cobro de cuotas', [/\bdeuda\b|\bmora\b|cuotas?\s+impagas?|falta\s+de\s+pago|intimaci[oó]n\s+de\s+pago|cobro\s+de\s+(?:cuotas|sumas)/gi]],
+  ['Derivación de aportes', [/deriva\w*\s+(?:de\s+)?(?:sus\s+|los\s+)?aportes|opci[oó]n\s+de\s+cambio|traspaso\s+de\s+aportes|aportes\s+y\s+contribuciones/gi]],
+  ['Preexistencias / cuota diferencial', [/preexistenc\w+|cuota\s+diferencial|declaraci[oó]n\s+jurada\s+de\s+salud/gi]],
+  ['Reintegro', [/reintegr\w+|reembols\w+/gi]]
+];
+function scoreAdm(t){ t = String(t||''); return ADM_KW.map(([n, res])=>[n, res.reduce((a,re)=>a+((t.match(new RegExp(re.source,'gi'))||[]).length),0)]).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]); }
+function admDatos(t){
+  t = String(t||''); const o = {}; let m;
+  if((m = t.match(/(\d{2})\s*a[nñ]os\s+de\s+edad|edad\s+de\s+(\d{2})\s*a[nñ]os|(?:cumplir|cumpli[oó]|tiene|tener|de)\s+(\d{2})\s*a[nñ]os(?!\s+de\s+antig)/i))) o.edad = m[1]||m[2]||m[3];
+  if((m = t.match(/(\d{1,2})\s*a[nñ]os\s+de\s+antig[uü]edad|antig[uü]edad\s+(?:de\s+|mayor\s+a\s+)?(\d{1,2})\s*a[nñ]os|afiliad\w*\s+(?:desde\s+hace|hace)\s+(?:m[aá]s\s+de\s+)?(\d{1,2})\s*a[nñ]os/i))) o.antig = m[1]||m[2]||m[3];
+  if((m = t.match(/plan\s+([A-Z0-9][A-Za-z0-9 ]{0,18}?)(?=[,.;\s]\s*(?:con|de|y|que|cuya|por|desde)?\b)/))) o.plan = m[1].trim();
+  const montos = [...t.matchAll(/\$\s?(\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d+(?:,\d{1,2})?)/g)].map(x=>x[1]);
+  if(montos.length>=2){ o.cuotaAnt = montos[0]; o.cuotaNueva = montos[1]; } else if(montos.length===1) o.cuotaNueva = montos[0];
+  if((m = t.match(/deuda\s+(?:de\s+|por\s+)?(?:la\s+suma\s+de\s+)?\$\s?([\d.,]+)/i))) o.deuda = m[1];
+  if(/amparo\s+colectivo|acci[oó]n\s+colectiva|\bclase\b|asociaci[oó]n\s+de\s+(?:consumidores|usuarios)/i.test(t)) o.colectivo = true;
+  return o;
+}
+const esAdm = e => e && (e.tipo==='administrativo' || e.tipoAmp==='administrativo');
+const PIDE_ADM = {
+  'Aumento de cuota':'que se deje sin efecto el aumento de cuota aplicado y se restituyan las diferencias abonadas',
+  'Aumento por edad':'que se deje sin efecto el aumento de cuota aplicado en razón de su edad',
+  'Rechazo de afiliación':'que se ordene su incorporación como asociado/a',
+  'Baja o rescisión':'que se deje sin efecto la baja dispuesta y se restablezca su cobertura',
+  'Deuda / cobro de cuotas':'que se deje sin efecto la deuda reclamada y se mantenga su cobertura',
+  'Derivación de aportes':'que se haga efectiva la derivación de sus aportes y contribuciones',
+  'Preexistencias / cuota diferencial':'que se deje sin efecto la cuota diferencial aplicada por enfermedades preexistentes',
+  'Reintegro':'el reintegro de los gastos que afirma haber abonado',
+  'Otro administrativo':'lo que surge del escrito de inicio'};
+const CUMPLE_ADM = {
+  'Aumento de cuota':'suspendió la aplicación del aumento cuestionado y emitió la facturación con el valor de cuota anterior',
+  'Aumento por edad':'suspendió el aumento aplicado en razón de la edad y refacturó la cuota con el valor anterior',
+  'Rechazo de afiliación':'dio de alta al/la amparista como asociado/a en el plan solicitado',
+  'Baja o rescisión':'dejó sin efecto la baja y restableció la cobertura del/la amparista',
+  'Deuda / cobro de cuotas':'suspendió las gestiones de cobro de la deuda cuestionada y mantiene vigente la cobertura',
+  'Derivación de aportes':'realizó las gestiones necesarias para hacer efectiva la derivación de aportes',
+  'Preexistencias / cuota diferencial':'suspendió la aplicación de la cuota diferencial cuestionada',
+  'Reintegro':'efectuó el reintegro ordenado',
+  'Otro administrativo':'dio cumplimiento a lo ordenado'};
+function admResumen(e){ const a = e.adm||{}; const x = []; if(a.plan) x.push(`plan ${a.plan}`); if(a.edad) x.push(`${a.edad} años`); if(a.antig) x.push(`${a.antig} años de antigüedad`); if(a.cuotaAnt||a.cuotaNueva) x.push(`cuota ${a.cuotaAnt?'$'+a.cuotaAnt+' → ':''}${a.cuotaNueva?'$'+a.cuotaNueva:''}`); if(a.deuda) x.push(`deuda $${a.deuda}`); if(a.colectivo) x.push('amparo colectivo'); return x.join(' · '); }
+function fundamentosAdm(e, d){
+  const M = e.prestacion||'', a = e.adm||{}, out = [];
+  if(/edad/i.test(M)){
+    out.push(`La Ley 26.682 dispone que la edad no puede ser tomada como criterio de rechazo de admisión y que a los usuarios mayores de sesenta y cinco (65) años con una antigüedad mayor a diez (10) años en la entidad no se les puede aplicar aumento en razón de su edad (art. 12).`);
+    if(a.edad && a.antig && +a.edad>=65 && +a.antig>=10) out.push(`[REVISAR ANTES DE PRESENTAR: según los datos cargados, el/la amparista tiene ${a.edad} años y ${a.antig} años de antigüedad, por lo que podría estar alcanzado/a por la prohibición del art. 12. Evaluá con quien lleva el caso allanarse y refacturar.]`);
+    else out.push(`En el caso, el/la amparista no reúne en forma conjunta ambos requisitos —edad y antigüedad continua— que la norma exige para vedar el ajuste por edad, por lo que la variación de la cuota aplicada por mi mandante se ajusta a la normativa vigente y al contrato suscripto.`);
+  } else if(/Aumento de cuota/i.test(M)){
+    out.push(`El valor de la cuota y sus actualizaciones se rigen por el contrato de adhesión suscripto por el/la amparista y por la Ley 26.682, con las modificaciones introducidas por el DNU 70/2023, que dejó sin efecto la autorización previa de los valores de cuota por parte de la autoridad de aplicación.`);
+    out.push(`Los aumentos aplicados fueron informados en forma previa a los asociados, rigen de manera uniforme para todos los integrantes del plan y responden a la variación de los costos prestacionales, por lo que no configuran un ejercicio abusivo ni discriminatorio que justifique la vía excepcional del amparo.`);
+    out.push(`La pretensión, además, exige un análisis económico y contable que excede el limitado marco cognoscitivo de esta acción (art. 2, inc. d, Ley 16.986).`);
+  } else if(/Rechazo de afiliación/i.test(M)){
+    out.push(`La Ley 26.682 establece que la edad y las enfermedades preexistentes no pueden ser criterio de rechazo de admisión (arts. 10 y 11), y que las preexistencias solo habilitan, en su caso, una cuota diferencial en los términos que fija la autoridad de aplicación.`);
+    out.push(`En autos, la solicitud de ingreso no fue rechazada por esos motivos, sino por [MOTIVO: completar con la causa concreta, documentada en el legajo de admisión].`);
+  } else if(/Baja/i.test(M)){
+    out.push(`El art. 9 de la Ley 26.682 autoriza a la entidad a rescindir el contrato cuando el usuario incurre, como mínimo, en la falta de pago de tres (3) cuotas consecutivas o cuando falsea la declaración jurada.`);
+    out.push(`En el caso, mi mandante intimó en forma fehaciente al/la amparista a regularizar su situación antes de disponer la baja, conforme surge de la documentación que se acompaña, de modo que la decisión se ajustó a la ley y al contrato. [Verificá que exista esa intimación y el detalle de las cuotas impagas.]`);
+  } else if(/Deuda/i.test(M)){
+    out.push(`La deuda reclamada surge de cuotas devengadas y no abonadas conforme el contrato de adhesión, cuyo detalle se acompaña, y su cobro constituye el ejercicio regular de un derecho (art. 10 CCyCN).`);
+    out.push(`Mi mandante no condicionó prestaciones de urgencia al pago de la deuda y ofreció al/la amparista alternativas de regularización, por lo que no existe arbitrariedad alguna.`);
+  } else if(/Derivación/i.test(M)){
+    out.push(`El régimen de opción y derivación de aportes (Decreto 504/98, DNU 70/2023 y su reglamentación) exige que la opción se formalice por los canales previstos y quede registrada ante la Superintendencia de Servicios de Salud.`);
+    out.push(`Mi mandante obró conforme a ese procedimiento y a la información registrada en el padrón de la Superintendencia, por lo que no puede imputársele una conducta arbitraria.`);
+  } else if(/Preexistencias/i.test(M)){
+    out.push(`El art. 10 de la Ley 26.682 dispone que las enfermedades preexistentes solo pueden establecerse a partir de la declaración jurada del usuario y no pueden ser criterio de rechazo, pudiendo aplicarse una cuota diferencial en los términos que autoriza la autoridad de aplicación.`);
+    out.push(`La cuota diferencial aplicada surge de la declaración jurada suscripta por el/la amparista y se ajusta a esos parámetros. [Verificá la autorización y el cálculo aplicado.]`);
+  } else if(/Reintegro/i.test(M)){
+    out.push(`El contrato de adhesión y la cartilla establecen los valores y las condiciones de reintegro. El/la amparista optó por un prestador ajeno a la cartilla, por lo que el reintegro procede hasta los valores previstos contractualmente, que mi mandante ofreció abonar.`);
+  } else out.push(`La conducta de mi mandante se ajustó al contrato de adhesión y a la normativa que rige su actividad (Ley 26.682 y normas complementarias), sin que se verifique arbitrariedad o ilegalidad manifiesta.`);
+  if(a.colectivo) out.push(`Por tratarse de una acción de alcance colectivo, corresponde verificar la debida conformación de la clase, la representación adecuada y la publicidad del proceso, conforme los recaudos fijados por la Corte Suprema (Fallos 332:111, "Halabi", y Acordada 12/2016).`);
+  return out;
+}
+function sugerenciasAdm(e){
+  const out = {urgente:[], fondo:[], prueba:[], estrategia:[]}, add = (g,o)=>out[g].push(o);
+  const M = e.prestacion||'', a = e.adm||{}, pend = (e.plazos||[]).filter(p=>!p.hecho);
+  const quien = e.afiliado ? e.afiliado.split(',').reverse().join(' ').trim() : 'el asociado';
+  const informePend = e.estado==='Contestación de demanda' || pend.some(p=>/informe/i.test(p.desc));
+  if(e.cautelar) add('urgente',{titulo:'Cumplir la medida cautelar', nivel:'alta',
+    porque:`El juzgado ordenó, mientras dura el juicio, ${PIDE_ADM[M]||'mantener la situación del asociado'}. La apelación de una cautelar no suspende su cumplimiento.`,
+    pasos:[/Aumento/.test(M)?'Pedile a Facturación que emita las próximas cuotas con el valor anterior y que no aplique el aumento cuestionado.':/Baja/.test(M)?'Pedile a Afiliaciones que reactive la cobertura y confirme la fecha.':/Deuda/.test(M)?'Pedile a Cobranzas que suspenda las gestiones de cobro y que no dé de baja la cobertura.':'Pedile al área que corresponda que cumpla lo ordenado y te confirme por escrito.',
+      'Juntá la constancia (factura refacturada, alta en el sistema, nota interna con fecha).','Presentá el escrito "Acreditar cumplimiento de cautelar" con esa constancia.','Cargá la novedad en Fojas.'],
+    riesgo:'Si no se cumple, el juzgado puede fijar astreintes.', normas:['CPCCN art. 198','CCyCN art. 804 y CPCCN art. 37 (astreintes)'],
+    plazo:{match:/cautelar/i, desc:'Cumplir medida cautelar', regla:{modo:'habiles', cant:5}}, escrito:'cumplimiento'});
+  if(informePend) add('urgente',{titulo:'Presentar el informe circunstanciado (art. 8)', nivel:'alta',
+    porque:`El juzgado pide que la empresa explique los antecedentes contractuales y económicos del reclamo de ${quien}.`,
+    pasos:['Pedí a Afiliaciones y Facturación el legajo: solicitud de ingreso y declaración jurada, contrato, historial de cuotas y pagos, y las notificaciones enviadas.','Revisá si el reclamo está alcanzado por una sentencia colectiva vigente.','Armá el informe desde Escritos › Informe del art. 8: Fojas usa los fundamentos de amparos administrativos.','Ofrecé prueba documental, informativa (a la Superintendencia) y, si hay cálculos en discusión, pericial contable.'],
+    normas:['Ley 16.986 art. 8','Ley 26.682'], plazo:{match:/informe/i, desc:'Presentar informe art. 8 Ley 16.986', regla:{modo:'habiles', cant:5}}, escrito:'informe'});
+  const F = {
+    'Aumento por edad':['Verificar edad y antigüedad del asociado', `La Ley 26.682 (art. 12) impide el aumento por edad a mayores de 65 años con más de 10 años de antigüedad.${a.edad&&a.antig?` Según lo cargado: ${a.edad} años y ${a.antig} años de antigüedad.`:''}`, ['Confirmá en el padrón la fecha de nacimiento y la fecha de alta, y si la antigüedad fue continua.','Si cumple ambos requisitos, evaluá refacturar y devolver diferencias: resistir suele terminar con costas.','Si no los cumple, documentalo con el padrón y el contrato.'], ['Ley 26.682 art. 12','Decreto 1993/2011']],
+    'Aumento de cuota':['Fundamentar el aumento aplicado', 'Desde el DNU 70/2023 la autoridad ya no autoriza los valores de cuota, pero los aumentos deben haberse informado en forma clara y previa y ser razonables.', ['Reuní las comunicaciones de aumento enviadas al asociado, con fecha.','Prepará un cuadro con la evolución de la cuota del plan y de los costos.','Verificá si el asociado está alcanzado por un amparo colectivo con sentencia o cautelar.'], ['Ley 26.682','DNU 70/2023','Ley 24.240 arts. 4 y 37']],
+    'Rechazo de afiliación':['Revisar el motivo del rechazo', 'La edad y las preexistencias no pueden ser motivo de rechazo (Ley 26.682, arts. 10 y 11).', ['Buscá en el legajo de admisión el motivo real y su constancia.','Si el rechazo se basó en edad o preexistencias, evaluá allanarse ofreciendo el alta.'], ['Ley 26.682 arts. 10 y 11']],
+    'Baja o rescisión':['Controlar que la baja cumpla el art. 9', 'La prepaga solo puede rescindir por falta de pago de 3 cuotas consecutivas o por falsedad en la declaración jurada.', ['Verificá la intimación previa fehaciente y su recepción.','Confirmá que las cuotas impagas sean consecutivas.','Si falta la intimación, evaluá reincorporar.'], ['Ley 26.682 art. 9']],
+    'Deuda / cobro de cuotas':['Respaldar la deuda reclamada', 'La deuda tiene que surgir de cuotas devengadas e impagas, con detalle claro.', ['Pedí la liquidación detallada (períodos, montos, intereses).','Revisá que no se haya condicionado una prestación urgente al pago.','Ofrecé un plan de pagos si hay voluntad de regularizar.'], ['CCyCN art. 10','Ley 24.240 art. 37']],
+    'Derivación de aportes':['Revisar el trámite de opción', 'La derivación debe estar formalizada y registrada ante la Superintendencia.', ['Consultá el padrón de la SSS y la fecha de la opción.','Verificá que la entidad esté inscripta en el RNAS.'], ['Decreto 504/98','DNU 70/2023','Res. SSS 232/2024']],
+    'Preexistencias / cuota diferencial':['Revisar la cuota diferencial', 'Solo puede surgir de la declaración jurada del asociado y en los términos que fija la autoridad de aplicación.', ['Buscá la declaración jurada firmada.','Verificá el cálculo y su respaldo normativo.'], ['Ley 26.682 art. 10']],
+    'Reintegro':['Revisar las condiciones de reintegro', 'El reintegro procede según el contrato y la cartilla.', ['Revisá el plan y los valores de reintegro vigentes.','Ofrecé pagar hasta el valor contractual.'], ['Contrato de adhesión','Ley 26.682']]
+  }[M];
+  if(F) add('fondo',{titulo:F[0], nivel:'media', porque:F[1], pasos:F[2], normas:F[3]});
+  if(a.colectivo) add('fondo',{titulo:'Es un amparo colectivo', nivel:'alta', porque:'Las acciones colectivas tienen reglas propias: conformación de la clase, representación adecuada, publicidad y registro.', pasos:['Verificá la inscripción en el Registro de Procesos Colectivos.','Analizá si la clase está bien definida y si el actor la representa adecuadamente.','Coordiná la estrategia con otros expedientes del mismo tema.'], normas:['CSJN "Halabi" (Fallos 332:111)','Acordada CSJN 12/2016']});
+  add('prueba',{titulo:'Reunir la documentación del asociado', nivel:'media', porque:'En los amparos administrativos la prueba principal es documental.', pasos:['Contrato y solicitud de ingreso, con la declaración jurada de salud.','Historial de cuotas, pagos y facturación.','Comunicaciones enviadas (aumentos, intimaciones, bajas) con su constancia de recepción.','Padrón y antigüedad del asociado.'], normas:['CPCCN arts. 333 y ss.']});
+  add('estrategia',{titulo:'Opciones para decidir con quien lleva el caso', nivel:'media', porque:'Según el motivo y la documentación, hay tres caminos.', pasos:['Allanarse y regularizar (refacturar, reincorporar, devolver diferencias) si hay un incumplimiento claro.','Proponer un acuerdo (plan de pagos, cuota intermedia, cambio de plan).','Resistir con fundamentos y prueba documental sólida.'], riesgo:'Si la empresa incumplió un requisito legal (art. 9 o art. 12 de la Ley 26.682), resistir suele terminar con costas.', normas:['CPCCN arts. 68 y 70']});
+  return out;
+}
+
+// ---------- Módulo Administrativos: reclamos ante organismos, obligaciones de la empresa y guía ----------
+const ORGS = [
+  {id:'sss', l:'Superintendencia de Servicios de Salud', c:'SSS', que:'Controla a obras sociales y prepagas: registros (RNEMP, RNAS, prestadores), reclamos y denuncias de afiliados, sumarios y sanciones.', link:'https://www.argentina.gob.ar/sssalud', plazo:{modo:'corridos', cant:5}, plazoDesc:'Responder el requerimiento de la SSS', plazoNota:'La Res. SSS 951/2025 fija un máximo de 5 días corridos para responder requerimientos formales. Verificá el plazo de la notificación.'},
+  {id:'ddc', l:'Defensa del Consumidor (Ventanilla Federal Única)', c:'Defensa del Consumidor', que:'Recibe reclamos de consumidores de todo el país, aplica la Ley 24.240 y sanciona a proveedores. Las provincias y la Ciudad tienen sus propias oficinas.', link:'https://www.argentina.gob.ar/node/249673', plazo:{modo:'habiles', cant:10}, plazoDesc:'Constituir domicilio electrónico y responder el reclamo', plazoNota:'Quien recibe un reclamo por la Ventanilla Federal Única debe constituir domicilio electrónico dentro de los 10 días hábiles. Verificá el plazo de respuesta que fije la autoridad.'},
+  {id:'coprec', l:'COPREC (conciliación previa en consumo)', c:'COPREC', que:'Servicio de conciliación previa para reclamos de consumo. Cita a audiencia al consumidor y a la empresa.', link:'https://www.argentina.gob.ar/normativa/nacional/norma-242168/texto', plazo:{modo:'fecha'}, plazoDesc:'Audiencia de conciliación', plazoNota:'Cargá la fecha de la audiencia. Si la empresa no asiste, tiene 5 días hábiles para justificar; si no, la multa es de 1 Salario Mínimo, Vital y Móvil.'},
+  {id:'aaip', l:'Agencia de Acceso a la Información Pública', c:'AAIP', que:'Autoridad de datos personales (Ley 25.326) y del Registro "No Llame": registro de bases, denuncias de titulares de datos, incidentes y sanciones.', link:'https://www.argentina.gob.ar/aaip', plazo:{modo:'habiles', cant:10}, plazoDesc:'Responder el requerimiento de la AAIP', plazoNota:'Verificá el plazo que fija la notificación de la AAIP.'},
+  {id:'defensoria', l:'Defensoría del Pueblo', c:'Defensoría', que:'Puede pedir informes a empresas sobre reclamos de usuarios y emitir recomendaciones.', link:'https://www.defensor.gov.ar', plazo:{modo:'habiles', cant:10}, plazoDesc:'Responder el pedido de informes', plazoNota:'Verificá el plazo del pedido.'},
+  {id:'igj', l:'Inspección General de Justicia', c:'IGJ', que:'Registro y control de sociedades con domicilio en la Ciudad de Buenos Aires: estados contables, autoridades, reformas de estatuto.', link:'https://www.argentina.gob.ar/justicia/igj', plazo:{modo:'habiles', cant:15}, plazoDesc:'Presentar ante la IGJ', plazoNota:'Por ejemplo, los estados contables se presentan dentro de los 15 días de la asamblea que los aprueba.'},
+  {id:'arca', l:'ARCA (ex AFIP)', c:'ARCA', que:'Impuestos y seguridad social: inscripciones, declaraciones juradas, Libro de Sueldos Digital y F.931, domicilio fiscal electrónico.', link:'https://www.arca.gob.ar', plazo:{modo:'fecha'}, plazoDesc:'Vencimiento ante ARCA', plazoNota:'Cargá la fecha según el calendario de vencimientos de ARCA.'},
+  {id:'srt', l:'Superintendencia de Riesgos del Trabajo', c:'SRT', que:'Controla las ART y las obligaciones de prevención de riesgos laborales.', link:'https://www.argentina.gob.ar/srt', plazo:{modo:'habiles', cant:10}, plazoDesc:'Responder a la SRT', plazoNota:'Verificá el plazo de la notificación.'},
+  {id:'inpi', l:'Instituto Nacional de la Propiedad Industrial', c:'INPI', que:'Registro de marcas, patentes y modelos. Declaraciones de uso y renovaciones.', link:'https://www.argentina.gob.ar/inpi', plazo:{modo:'fecha'}, plazoDesc:'Vencimiento ante el INPI', plazoNota:'Cargá la fecha de vencimiento de la marca o de la declaración jurada de uso.'},
+  {id:'dnda', l:'Dirección Nacional del Derecho de Autor', c:'DNDA', que:'Depósito y registro de obras: software, manuales, contenidos.', link:'https://www.argentina.gob.ar/justicia/derechodeautor', plazo:{modo:'fecha'}, plazoDesc:'Presentar ante la DNDA', plazoNota:''},
+  {id:'oa', l:'Oficina Anticorrupción', c:'OA', que:'Lineamientos de programas de integridad (Ley 27.401) y registro de integridad.', link:'https://www.argentina.gob.ar/anticorrupcion', plazo:{modo:'fecha'}, plazoDesc:'Vencimiento', plazoNota:''},
+  {id:'msal', l:'Ministerio de Salud', c:'Min. Salud', que:'Política sanitaria, PMO y normas de cobertura; autoridad de la que depende la SSS.', link:'https://www.argentina.gob.ar/salud', plazo:{modo:'habiles', cant:10}, plazoDesc:'Responder al Ministerio', plazoNota:''},
+  {id:'otro', l:'Otro organismo', c:'Otro', que:'Organismos provinciales o municipales (Defensa del Consumidor local, habilitaciones, rentas) u otros.', link:'', plazo:{modo:'habiles', cant:10}, plazoDesc:'Responder / presentar', plazoNota:'Verificá el plazo que corresponda.'}
+];
+const orgById = id => ORGS.find(o=>o.id===id) || ORGS[ORGS.length-1];
+const TR_ETAPAS = {reclamo:['Ingreso','Descargo','Audiencia','Resolución','Recurso','Cerrado'], obligacion:['Pendiente','En preparación','Presentado','Cumplido']};
+const GUIA = [
+  {id:'rnemp', cat:'Salud', org:'sss', t:'Inscripción en el Registro Nacional de Entidades de Medicina Prepaga (RNEMP)', quien:'Empresas de medicina prepaga (art. 1 de la Ley 26.682).',
+    que:'Es la inscripción obligatoria para obtener la autorización para funcionar como prepaga. Con los requisitos cumplidos, la SSS da el alta y otorga el certificado de inscripción.', cuando:'Antes de operar. Después, mantener actualizados los datos y la documentación del legajo.',
+    como:['Ingresar a Trámites a Distancia (TAD) con Clave Fiscal nivel 3.','Buscar el trámite de inscripción en el RNEMP y cargar la documentación societaria, económica y prestacional que pide la SSS.','Seguir el expediente hasta el alta y guardar el certificado.'], norma:'Ley 26.682; Decreto 1993/2011; Decreto 171/2024; Res. SSS 55/2012 y modificatorias.', link:'https://www.argentina.gob.ar/servicio/solicitar-inscripcion-al-registro-nacional-de-entidades-de-medicina-prepaga'},
+  {id:'rnas', cat:'Salud', org:'sss', t:'Inscripción en el Registro Nacional de Agentes del Seguro (RNAS)', quien:'Prepagas que quieren recibir aportes derivados por trabajadores.',
+    que:'Desde el DNU 70/2023 y su reglamentación, los trabajadores pueden derivar sus aportes a una obra social o a una prepaga. Para eso, la prepaga debe inscribirse en el RNAS, y antes tiene que estar inscripta en el RNEMP.', cuando:'Antes de recibir afiliados por derivación de aportes.',
+    como:['Tener vigente la inscripción en el RNEMP.','Pedir la inclusión en el RNAS ante la SSS con los requisitos de la Res. SSS 232/2024.'], norma:'DNU 70/2023; Decreto 171/2024; Res. SSS 232/2024.', link:'https://www.argentina.gob.ar/normativa/nacional/norma-397034/texto'},
+  {id:'sssrecl', cat:'Salud', org:'sss', t:'Responder reclamos y denuncias ante la SSS', quien:'Obras sociales y prepagas.',
+    que:'Cuando un afiliado denuncia a la entidad ante la Superintendencia, el organismo le pide a la entidad que informe o resuelva. Rige el Procedimiento General de Denuncias, Faltas Formales y Sanciones (Res. SSS 951/2025, modificada en 2026).', cuando:'Máximo 5 días corridos para responder los requerimientos formales de la SSS. Si la entidad no responde, el procedimiento prevé presunciones en su contra.',
+    como:['Cargar el reclamo en Fojas (Administrativos › Nuevo) con la fecha de notificación.','Pedir de inmediato a Auditoría Médica o al área que corresponda la respuesta y la documentación.','Responder por el canal que indique la SSS dentro del plazo.','Seguirlo hasta el cierre o la resolución.'], norma:'Res. SSS 951/2025 y su modificatoria de 2026.', link:'https://www.argentina.gob.ar/normativa/nacional/norma-413974/texto'},
+  {id:'cuotas', cat:'Salud', org:'sss', t:'Aumentos de cuota y comunicación a los afiliados', quien:'Prepagas.',
+    que:'Desde el DNU 70/2023 la autoridad ya no autoriza previamente los valores de cuota. Igual hay que informar los aumentos en forma clara y previa, y respetar los límites legales: por ejemplo, no se puede aplicar aumento por edad a mayores de 65 años con más de 10 años de antigüedad (Ley 26.682, art. 12).', cuando:'Antes de cada aumento.',
+    como:['Comunicar cada aumento por escrito y con anticipación.','Revisar el padrón para excluir del aumento por edad a quienes tengan 65 años o más y 10 años o más de antigüedad.','Guardar las constancias: son la prueba principal si hay un amparo.'], norma:'Ley 26.682; DNU 70/2023.', link:''},
+  {id:'rnp', cat:'Salud', org:'sss', t:'Registro Nacional de Prestadores', quien:'Profesionales y establecimientos que contratan con obras sociales o prepagas.',
+    que:'Los prestadores que quieren contratar con Agentes del Seguro de Salud o prepagas deben registrarse ante la SSS. Conviene verificarlo antes de sumarlos a la cartilla.', cuando:'Antes de firmar el contrato con el prestador y al renovarlo.',
+    como:['Pedirle al prestador la constancia de inscripción.','Verificarla antes de incorporarlo a la cartilla.'], norma:'Normativa de la SSS sobre el Registro Nacional de Prestadores.', link:'https://www.argentina.gob.ar/node/159064'},
+  {id:'vfu', cat:'Consumo', org:'ddc', t:'Reclamos por la Ventanilla Federal Única de Defensa del Consumidor', quien:'Todo proveedor de bienes o servicios.',
+    que:'Es el canal nacional que centraliza los reclamos de consumidores de todo el país.', cuando:'Quien recibe un reclamo por la Ventanilla debe constituir domicilio electrónico dentro de los 10 días hábiles.',
+    como:['Constituir el domicilio electrónico apenas llega el primer reclamo.','Cargar cada reclamo en Fojas con su número y plazo.','Responder en el plazo que fije la autoridad, con una solución o un rechazo fundado.'], norma:'Ley 24.240; Disposición SSDCyLC 890/2025.', link:'https://www.argentina.gob.ar/node/249673'},
+  {id:'coprec', cat:'Consumo', org:'coprec', t:'Audiencias del COPREC (conciliación previa en consumo)', quien:'Proveedores citados por un consumidor.',
+    que:'Instancia de conciliación previa para reclamos de consumo: un conciliador cita a audiencia al consumidor y a la empresa.', cuando:'La audiencia se celebra dentro de los 10 días de designado el conciliador y el procedimiento dura hasta 30 días, prorrogables por 15. Si la empresa no asiste, tiene 5 días hábiles para justificar; si no lo hace, la multa equivale a 1 Salario Mínimo, Vital y Móvil.',
+    como:['Agendar la audiencia en Fojas apenas llega la citación.','Definir antes con el área comercial hasta dónde se puede ofrecer.','Asistir con poder suficiente; si no se pudo ir, justificar dentro de los 5 días hábiles.','Si hay acuerdo, cumplirlo en término: el incumplimiento puede generar sanciones.'], norma:'Ley 26.993; Decreto 202/2015; Res. 480/2015.', link:'https://www.argentina.gob.ar/normativa/nacional/norma-242168/texto'},
+  {id:'botones', cat:'Consumo', org:'ddc', t:'Botón de arrepentimiento y botón de baja en el sitio web', quien:'Proveedores que venden o contratan servicios a distancia o por internet.',
+    que:'Hay que tener links visibles llamados "Botón de Arrepentimiento" y "Botón de Baja de Servicio" para que el consumidor revoque una compra o dé de baja un servicio sin registrarse ni hacer trámites extra. La Disposición 954/2025 unificó el régimen y derogó las Resoluciones 316/2018 y 424/2020.', cuando:'Es una obligación permanente. El proveedor tiene que confirmar la gestión y dar un código de trámite dentro de las 24 horas.',
+    como:['Revisar que el sitio y la app muestren ambos botones desde el primer acceso.','Probar que no pidan registración ni formularios extra.','Asegurar que se envíe el código de trámite dentro de las 24 horas.'], norma:'Ley 24.240; Disposición SSDCyLC 954/2025.', link:'https://www.boletinoficial.gob.ar/detalleAviso/primera/330827/20250904'},
+  {id:'multasddc', cat:'Consumo', org:'ddc', t:'Multas de Defensa del Consumidor: pago voluntario con descuento', quien:'Proveedores sancionados.',
+    que:'El Decreto 377/2026 permite pagar la multa con un 50 % de descuento si se acepta la sanción y se paga dentro de los 10 días hábiles de notificada. Si se recurre, se pierde el descuento.', cuando:'10 días hábiles desde la notificación de la multa.',
+    como:['Cargar la multa en Fojas apenas se notifica.','Evaluar con Legales si conviene recurrir o pagar con descuento.','Si se paga, guardar el comprobante en el trámite.'], norma:'Ley 24.240 art. 45; Decreto 377/2026.', link:''},
+  {id:'aaipbases', cat:'Datos personales', org:'aaip', t:'Inscripción de bases de datos personales', quien:'Responsables de bases de datos personales: afiliados, clientes, empleados, prestadores.',
+    que:'Las bases que permiten obtener información sobre personas deben inscribirse en el Registro Nacional de Bases de Datos Personales. Primero se inscribe el responsable y después cada base.', cuando:'Antes de tratar los datos. La inscripción no vence, pero hay que actualizarla si cambian los datos declarados.',
+    como:['Ingresar a TAD con clave fiscal nivel 2 o superior.','Inscribir al responsable, con el estatuto o contrato social.','Inscribir cada base (afiliados, empleados, prestadores, etc.).'], norma:'Ley 25.326 art. 21.', link:'https://www.argentina.gob.ar/aaip/datospersonales/tramites'},
+  {id:'nollame', cat:'Datos personales', org:'aaip', t:'Registro Nacional "No Llame"', quien:'Empresas que hacen publicidad o venta telefónica, propia o tercerizada.',
+    que:'Antes de llamar para ofrecer productos o servicios hay que consultar la lista de inscriptos y no llamarlos. La empresa también responde por los call centers que contrata.', cuando:'Consultar el registro por lo menos cada 30 días. La habilitación para consultarlo es anual.',
+    como:['Habilitarse ante la AAIP como obligado a consultar.','Descargar la lista cada 30 días y cruzarla con las bases de llamadas.','Exigir lo mismo a los call centers contratados.'], norma:'Ley 26.951; Decreto 2501/2014; Res. AAIP 126/2024.', link:'https://www.argentina.gob.ar/normativa/nacional/norma-233066/texto'},
+  {id:'incidentes', cat:'Datos personales', org:'aaip', t:'Seguridad de los datos y aviso de incidentes', quien:'Todo responsable de datos personales, en especial de datos de salud.',
+    que:'La ley obliga a adoptar medidas técnicas y organizativas de seguridad. La Res. AAIP 47/2018 trae las medidas recomendadas, incluida la notificación de incidentes de seguridad a la AAIP.', cuando:'Siempre. Ante un incidente, notificarlo cuanto antes.',
+    como:['Tener un documento de seguridad con las medidas adoptadas.','Ante un incidente: contenerlo y documentar qué pasó, qué datos se afectaron y qué se hizo.','Notificar a la AAIP (incidente.seguridad@aaip.gob.ar).'], norma:'Ley 25.326 art. 9; Res. AAIP 47/2018.', link:'https://www.argentina.gob.ar/normativa/nacional/resolución-47-2018-312662/texto'},
+  {id:'transfer', cat:'Datos personales', org:'aaip', t:'Transferencia internacional de datos (nube o proveedores en el exterior)', quien:'Empresas que usan servicios en la nube, software o proveedores fuera de la Argentina.',
+    que:'Para enviar datos a países que la AAIP no considera con protección adecuada (por ejemplo, Estados Unidos) se usan cláusulas contractuales modelo.', cuando:'Antes de contratar el servicio.',
+    como:['Identificar en qué país quedan los datos.','Firmar con el proveedor las cláusulas modelo de la Disposición 60/2016 o de la Res. AAIP 198/2023.'], norma:'Ley 25.326 art. 12; Disposición DNPDP 60/2016; Res. AAIP 198/2023.', link:'https://www.argentina.gob.ar/aaip/datospersonales/transferencias-internacionales'},
+  {id:'igjeecc', cat:'Societario', org:'igj', t:'Presentación de estados contables ante la IGJ', quien:'Sociedades con domicilio en la Ciudad de Buenos Aires (SA, SRL alcanzadas, asociaciones civiles y fundaciones).',
+    que:'Presentación anual de los estados contables aprobados. Desde 2026 el trámite es 100 % digital.', cuando:'Dentro de los 15 días posteriores a la asamblea que los aprueba. Hay una moratoria para regularizar presentaciones adeudadas hasta el 31/12/2026.',
+    como:['Aprobar los estados contables en asamblea.','Presentarlos por el sistema digital de la IGJ dentro de los 15 días.','Si hay ejercicios adeudados, evaluar la moratoria (un único formulario).'], norma:'Ley 19.550; RG IGJ 15/2024, 6/2026 y 9/2026.', link:'https://www.argentina.gob.ar/node/506446'},
+  {id:'igjaut', cat:'Societario', org:'igj', t:'Inscripción de autoridades y reformas', quien:'Sociedades con domicilio en la Ciudad de Buenos Aires.',
+    que:'Los cambios de directorio o gerencia, de sede o de estatuto se inscriben en la IGJ para que sean oponibles a terceros.', cuando:'Después de cada asamblea o reunión que los decida, en los plazos de la normativa de la IGJ.',
+    como:['Celebrar la asamblea o reunión y labrar el acta.','Presentar el trámite de inscripción ante la IGJ con la documentación requerida.'], norma:'Ley 19.550; RG IGJ 15/2024.', link:'https://www.argentina.gob.ar/justicia/igj'},
+  {id:'lsd', cat:'Laboral y fiscal', org:'arca', t:'Libro de Sueldos Digital y declaración jurada F.931', quien:'Empleadores.',
+    que:'El Libro de Sueldos Digital genera en un solo paso el libro de sueldos y jornales (art. 52 de la LCT) y la declaración jurada mensual de cargas sociales (F.931).', cuando:'Todos los meses, según el calendario de vencimientos de ARCA.',
+    como:['Parametrizar una vez los conceptos de liquidación.','Cada mes, cargar la liquidación y generar el libro y el F.931.','Pagar las cargas sociales al vencimiento.'], norma:'LCT art. 52; RG AFIP 3781/2015 y 4535/2019.', link:'https://www.arca.gob.ar/LibrodeSueldosDigital/'},
+  {id:'art', cat:'Laboral y fiscal', org:'srt', t:'Seguro de riesgos del trabajo (ART)', quien:'Todo empleador.',
+    que:'Es obligatorio tener contratada una ART que cubra a todo el personal.', cuando:'Desde el alta del primer empleado y mientras haya personal.',
+    como:['Contratar una ART autorizada por la SRT.','Mantener la nómina actualizada y pagar la alícuota junto con el F.931.','Cumplir los programas de prevención que indique la ART.'], norma:'Ley 24.557.', link:'https://www.argentina.gob.ar/srt'},
+  {id:'marcas', cat:'Propiedad intelectual', org:'inpi', t:'Registro y renovación de marcas', quien:'Empresas con nombres, logos o planes con marca.',
+    que:'La marca registrada dura 10 años y se renueva por períodos iguales. Entre el quinto y el sexto año hay que presentar la declaración jurada de uso de medio término.', cuando:'Declaración de medio término: entre el quinto y el sexto año. Renovación: dentro de los 6 meses anteriores o posteriores al vencimiento.',
+    como:['Agendar en Fojas la declaración de medio término y la renovación de cada marca.','Presentarlas por el portal de trámites del INPI, con la declaración de uso.'], norma:'Ley 22.362; Decreto 242/2019; Res. INPI 123/2019.', link:'https://www.argentina.gob.ar/renovar-una-marca'},
+  {id:'software', cat:'Propiedad intelectual', org:'dnda', t:'Registro de software y otras obras', quien:'Empresas que desarrollan software, manuales o contenidos propios.',
+    que:'El depósito en la DNDA no es obligatorio, pero sirve como prueba de autoría y de fecha.', cuando:'Cuando haya una versión estable.',
+    como:['Preparar el depósito (código o documentación).','Presentarlo ante la DNDA.'], norma:'Ley 11.723.', link:'https://www.argentina.gob.ar/justicia/derechodeautor'},
+  {id:'integridad', cat:'Integridad', org:'oa', t:'Programa de integridad (compliance anticorrupción)', quien:'Personas jurídicas. Es obligatorio para ciertas contrataciones con el Estado Nacional.',
+    que:'Conjunto de acciones para prevenir, detectar y corregir hechos de corrupción. Es condición para contratar con el Estado en ciertos casos (art. 24) y puede atenuar la responsabilidad de la empresa.', cuando:'Antes de licitar o contratar con el Estado. Conviene revisarlo todos los años.',
+    como:['Código de ética y políticas.','Capacitaciones, canal de denuncias y un responsable interno.','Declaración jurada del programa en las contrataciones que lo exijan.'], norma:'Ley 27.401 (arts. 22 a 24); Decreto 277/2018.', link:'https://www.argentina.gob.ar/normativa/nacional/308488/texto'},
+  {id:'defensoria', cat:'Consumo', org:'defensoria', t:'Pedidos de informes de la Defensoría del Pueblo', quien:'Empresas requeridas.',
+    que:'La Defensoría puede pedir informes sobre reclamos de usuarios y emitir recomendaciones. Conviene responder en término y con documentación.', cuando:'En el plazo que fije el pedido.',
+    como:['Cargar el pedido en Fojas.','Responder con la posición de la empresa y la documentación.'], norma:'Ley 24.284.', link:'https://www.defensor.gov.ar'}
+];
+const guiaTodas = () => [...GUIA, ...((S.guiaPropia)||[]).map(g=>({...g, propia:true}))];
+function trs(){ return Array.isArray(S.tramites) ? S.tramites : (S.tramites = []); }
+const trById = id => trs().find(t=>t.id===id);
+const trPend = t => (t.plazos||[]).filter(p=>!p.hecho).sort((a,b)=>a.vence.localeCompare(b.vence));
+const trNombre = t => t.clase==='obligacion' ? t.tipo : (t.reclamante||'Sin reclamante');
+const trSort = (a,b) => String(trNombre(a)).localeCompare(String(trNombre(b)), 'es', {sensitivity:'base'});
+function trRow(t){ const p = trPend(t)[0], n = p?daysTo(p.vence):null, u = p?urg(n):''; const o = orgById(t.org);
+  return `<div class="case" data-go="tramite-${t.id}" tabindex="0" role="link"><div class="bar ${u}"></div>
+    <div><div class="name">${esc(trNombre(t))}</div><div class="meta"><span>${esc(o.c)}</span>${t.clase==='reclamo'?`<span>${esc(t.motivo||t.tipo||'')}</span>`:''}${t.numero?`<span class="mono">${esc(t.numero)}</span>`:''}</div>
+      <div class="row" style="margin-top:8px"><span class="pill">${esc(t.estado)}</span><span class="pill ${t.clase==='obligacion'?'acc':''}">${t.clase==='obligacion'?'Obligación de la empresa':'Reclamo'}</span>${t.multa&&t.multa.monto?`<span class="pill red">Multa $${esc(t.multa.monto)}</span>`:''}</div></div>
+    <div class="right">${p?`<div class="when ${u}">${whenText(n)}</div><div class="small muted" style="max-width:240px">${esc(p.desc)}</div>`:'<span class="pill grn">Sin pendientes</span>'}</div></div>`; }
+function vAdministrativos(){
+  const tab = ui.admTab || 'tramites';
+  const tabs = [['tramites','folder','Reclamos y trámites'],['guia','book','Guía de trámites'],['orgs','users','Organismos']];
+  let body = '';
+  if(tab==='tramites'){
+    const all = trs();
+    const F = {curso:{l:'En curso', f:t=>!/Cerrado|Cumplido/.test(t.estado)}, urg:{l:'Urgentes', f:t=>{ const p = trPend(t)[0]; return p && daysTo(p.vence)<=3; }}, recl:{l:'Reclamos', f:t=>t.clase==='reclamo' && !/Cerrado/.test(t.estado)}, oblig:{l:'Obligaciones', f:t=>t.clase==='obligacion' && !/Cumplido/.test(t.estado)}, cerr:{l:'Cerrados', f:t=>/Cerrado|Cumplido/.test(t.estado)}, todos:{l:'Todos', f:()=>true}};
+    if(!F[ui.admF]) ui.admF = 'curso';
+    const list = all.filter(F[ui.admF].f).sort(trSort);
+    body = `<div class="row" style="justify-content:space-between;gap:12px;flex-wrap:wrap"><div class="chips">${Object.entries(F).map(([k,v])=>`<button class="chipbtn ${ui.admF===k?'on':''}" data-admf="${k}">${v.l} <span class="badge">${all.filter(v.f).length}</span></button>`).join('')}</div>
+      <div class="row" style="gap:8px"><button class="btn pri" data-act="trnuevo" data-clase="reclamo">${ic('plus','sm')} Nuevo reclamo</button><button class="btn" data-act="trnuevo" data-clase="obligacion">${ic('cal','sm')} Agendar una obligación</button></div></div>
+      <div class="cases">${list.map(trRow).join('') || `<div class="card empty"><div class="ico g">${ic('folder','lg')}</div><b>No hay trámites en esta lista</b><span class="muted small">Cargá un reclamo (SSS, Defensa del Consumidor, COPREC…) o agendá una obligación de la empresa desde la Guía.</span></div>`}</div>`;
+  }
+  if(tab==='guia'){
+    const q = normTxt(ui.guiaQ||''), cat = ui.guiaCat||'Todas';
+    const cats = ['Todas', ...new Set(guiaTodas().map(g=>g.cat))];
+    const list = guiaTodas().filter(g=>(cat==='Todas'||g.cat===cat) && (!q || normTxt([g.t,g.quien,g.que,g.cuando,g.norma,orgById(g.org).l,orgById(g.org).c].join(' ')).includes(q)));
+    body = `<p class="small muted">Trámites y obligaciones que suele tener una empresa —en especial una prepaga— ante organismos públicos: qué son, a quién alcanzan, cuándo y cómo se hacen, y la norma. Información revisada en noviembre de 2026: confirmá siempre la versión vigente en el link oficial antes de actuar.</p>
+      <div class="row" style="gap:10px;flex-wrap:wrap"><input type="search" id="guiaQ" placeholder="Buscar: marca, No Llame, estados contables, COPREC…" value="${esc(ui.guiaQ||'')}" style="flex:1;min-width:240px"><button class="btn" data-act="guianueva">${ic('plus','sm')} Agregar a la guía</button></div>
+      <div class="chips">${cats.map(c=>`<button class="chipbtn ${cat===c?'on':''}" data-guiacat="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+      <div class="list" id="guiaList">${list.map(g=>{ const o = orgById(g.org), ab = ui.guiaOpen===g.id; return `<div class="gcard ${ab?'open':''}">
+        <button type="button" class="gcard-h" data-guiaopen="${g.id}"><span class="chev">${ic('next','sm')}</span><div style="flex:1;min-width:0"><b>${esc(g.t)}</b><div class="small muted">${esc(o.c)} · ${esc(g.cat)}${g.propia?' · agregada por el equipo':''}</div></div></button>
+        ${ab?`<div class="gcard-b">
+          <div><span class="glbl">Qué es</span>${esc(g.que)}</div><div><span class="glbl">A quién alcanza</span>${esc(g.quien)}</div><div><span class="glbl">Cuándo</span>${esc(g.cuando)}</div>
+          ${(g.como||[]).length?`<div><span class="glbl">Cómo se hace</span><ol>${g.como.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>`:''}
+          <div><span class="glbl">Norma</span>${esc(g.norma||'—')}</div>
+          <div class="row" style="gap:8px;flex-wrap:wrap">${g.link?`<a class="btn sm" href="${esc(g.link)}" target="_blank" rel="noopener">${ic('next','sm')} Ver en el sitio oficial</a>`:''}<button class="btn sm pri" data-act="trnuevo" data-clase="obligacion" data-guia="${g.id}">${ic('cal','sm')} Agendar en Fojas</button>${g.propia?`<button class="btn sm ghost danger" data-act="guiadel" data-g="${g.id}">${ic('trash','sm')} Quitar</button>`:''}<button class="btn sm ghost" data-agq="${esc('Explicame: '+g.t)}" data-ag-open="1">${ic('bot','sm')} Preguntarle al asistente</button></div>
+        </div>`:''}</div>`; }).join('') || '<div class="empty small">No encontramos trámites con esa búsqueda. Podés agregarlo a la guía.</div>'}</div>`;
+  }
+  if(tab==='orgs') body = `<p class="small muted">Organismos con los que suele tratar una empresa de salud. Tocá uno para ver sus trámites de la guía y los reclamos cargados.</p>
+    <div class="grid g2">${ORGS.filter(o=>o.id!=='otro').map(o=>{ const n = trs().filter(t=>t.org===o.id && !/Cerrado|Cumplido/.test(t.estado)).length, g = guiaTodas().filter(x=>x.org===o.id); return `<section class="card" style="gap:8px">
+      <div class="row" style="justify-content:space-between;gap:8px"><h3>${esc(o.l)}</h3>${n?`<span class="badge">${n} en curso</span>`:''}</div><p class="small">${esc(o.que)}</p>
+      ${g.length?`<div class="small"><b>En la guía:</b> ${g.map(x=>`<a href="#administrativos" data-guiair="${x.id}">${esc(x.t)}</a>`).join(' · ')}</div>`:''}
+      <div class="row" style="gap:8px">${o.link?`<a class="btn sm" href="${esc(o.link)}" target="_blank" rel="noopener">Sitio oficial</a>`:''}<button class="btn sm ghost" data-act="trnuevo" data-clase="reclamo" data-org="${o.id}">${ic('plus','sm')} Cargar reclamo</button></div></section>`; }).join('')}</div>`;
+  return `<div><h1>Administrativos</h1><p class="sub">Reclamos ante organismos (SSS, Defensa del Consumidor, COPREC, AAIP…), obligaciones de la empresa y una guía de trámites.</p></div>
+    <div class="tabs">${tabs.map(([k,i,l])=>`<button class="tab ${tab===k?'on':''}" data-admtab="${k}">${ic(i,'sm')} ${l}</button>`).join('')}</div>
+    <section class="card">${body}</section>`;
+}
+// alta y edición
+let TRF = null;
+function openTramite(clase, pre={}){
+  const g = pre.guia ? guiaTodas().find(x=>x.id===pre.guia) : null;
+  const org = pre.org || (g&&g.org) || (clase==='reclamo'?'sss':'otro'); const o = orgById(org);
+  TRF = {clase, org, tipo: g ? g.t : '', guia: g ? g.id : null};
+  const r = o.plazo || {modo:'habiles', cant:10}; const venceDef = r.modo==='fecha' ? '' : calcPlazo({...r, desde:iso(today())}).vence;
+  showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:22px">${clase==='reclamo'?'Nuevo reclamo ante un organismo':'Agendar una obligación de la empresa'}</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div>
+    ${g?`<div class="notice small" style="display:block"><b>${esc(g.t)}.</b> ${esc(g.cuando)}</div>`:''}
+    <div class="form">
+      <label>Organismo<select id="trOrg">${ORGS.map(x=>`<option value="${x.id}" ${x.id===org?'selected':''}>${esc(x.l)}</option>`).join('')}</select></label>
+      <label>Número de reclamo o expediente<input type="text" id="trNum" placeholder="Si todavía no tiene, dejalo vacío"></label>
+      ${clase==='reclamo'?`<label>Reclamante<input type="text" id="trRec" placeholder="Apellido, Nombre"></label>
+      <label>DNI<input type="text" id="trDni" inputmode="numeric"></label>
+      <label class="full">Motivo<input type="text" id="trMot" list="trMotList" placeholder="Ej.: Aumento de cuota, cobertura de medicación, baja…"><datalist id="trMotList">${[...MOTIVOS_ADM, ...PRESTACIONES].map(m=>`<option value="${esc(m)}">`).join('')}</datalist></label>`
+      :`<label class="full">Qué hay que hacer<input type="text" id="trTipo" value="${esc(TRF.tipo)}" placeholder="Ej.: Presentar estados contables, renovar marca…"></label>`}
+      <label>${esc(o.plazoDesc || 'Próximo vencimiento')}<input type="date" id="trVence" value="${venceDef}"></label>
+      <label>Fecha de notificación o inicio<input type="date" id="trIni" value="${iso(today())}"></label>
+      <label class="full">Detalle<textarea id="trDet" rows="3" placeholder="Qué se reclama o qué hay que presentar"></textarea></label>
+      <label>A cargo de<select id="trAb">${S.users.filter(u=>u.activo!==false).map(u=>`<option value="${u.id}" ${u.id===S.user?'selected':''}>${esc(u.nombre)}</option>`).join('')}</select></label>
+    </div>
+    <p class="small muted" id="trNota">${esc(o.plazoNota||'')}</p>
+    <div id="trErr"></div>
+    <div class="row"><button class="btn pri big" data-act="trcrear">${ic('check')} Guardar</button></div>`);
+}
+function crearTramite(){
+  const v = id => ($('#'+id)||{}).value ? $('#'+id).value.trim() : '';
+  const t = {id:'t'+randId(6), clase:TRF.clase, org:v('trOrg'), numero:v('trNum'), reclamante:v('trRec'), dni:v('trDni'), motivo:v('trMot'), tipo:TRF.clase==='obligacion'?v('trTipo'):(v('trMot')||'Reclamo'), detalle:v('trDet'), abogado:v('trAb')||S.user, inicio:v('trIni')||iso(today()), guia:TRF.guia, plazos:[], movimientos:[], docs:[]};
+  if(t.clase==='reclamo' && !t.reclamante){ $('#trErr').innerHTML = '<div class="notice bad">Completá el reclamante.</div>'; return; }
+  if(t.clase==='obligacion' && !t.tipo){ $('#trErr').innerHTML = '<div class="notice bad">Escribí qué hay que hacer.</div>'; return; }
+  t.estado = TR_ETAPAS[t.clase][0];
+  const o = orgById(t.org), ve = v('trVence');
+  if(ve) t.plazos.push({desc: t.clase==='obligacion' ? t.tipo : o.plazoDesc, vence:ve, hecho:false});
+  t.movimientos.push({fecha:t.inicio, parte: t.clase==='reclamo'?'reclamante':'nosotros', titulo: t.clase==='reclamo'?`Reclamo ante ${o.c}`:'Obligación agendada', desc:t.detalle || (t.clase==='reclamo'?t.motivo:t.tipo), user:S.user});
+  trs().push(t); save(); audit(t.clase==='reclamo'?'Cargó un reclamo administrativo':'Agendó una obligación', o.c, `${trNombre(t)}${t.numero?' · '+t.numero:''}`);
+  TRF = null; closeModal(); location.hash = 'tramite-'+t.id;
+  toast(t.clase==='reclamo'?'Reclamo cargado':'Obligación agendada');
+}
+// escritos tipo
+const TR_ESCRITOS = [
+  {id:'descargoSSS', org:['sss'], l:'Descargo ante la SSS'},
+  {id:'respDDC', org:['ddc','otro'], l:'Respuesta a Defensa del Consumidor'},
+  {id:'acuerdo', org:['coprec','ddc'], l:'Propuesta de acuerdo para la audiencia'},
+  {id:'justif', org:['coprec'], l:'Justificación de incomparecencia'},
+  {id:'recurso', org:['sss','ddc','aaip','otro','srt','igj'], l:'Recurso administrativo'},
+  {id:'informe', org:['defensoria','aaip','msal','otro'], l:'Respuesta a pedido de informes'}
+];
+function trEscrito(id, t){
+  const c = cfg(), o = orgById(t.org), quien = t.reclamante || '[RECLAMANTE]', num = t.numero || '[N° DE RECLAMO]';
+  const pie = `\n\nSin otro particular, saludo atentamente.\n\n${c.letrado || userName(t.abogado)}\nApoderado/a de ${c.empresa}`;
+  const cab = (dest) => `${dest}\nRef.: ${num} — ${quien}${t.dni?` (DNI ${t.dni})`:''}${t.motivo?` — ${t.motivo}`:''}\n\nDe mi consideración:\n\n${c.letrado || userName(t.abogado)}, en mi carácter de apoderado/a de ${c.empresa} (CUIT ${c.cuitEmpresa}), con domicilio en ${c.domicilio}, me presento en las actuaciones de la referencia y digo:`;
+  if(id==='descargoSSS') return `${cab('Señores\nSuperintendencia de Servicios de Salud')}\n\nI. OBJETO\nQue, en tiempo y forma, vengo a responder el requerimiento formulado con motivo del reclamo de ${quien}${t.motivo?` referido a ${t.motivo.toLowerCase()}`:''}.\n\nII. ANTECEDENTES\n${t.detalle || '[Detallar los antecedentes del caso: fecha de la solicitud del afiliado, intervención de las áreas, respuesta brindada.]'}\n\nIII. POSICIÓN DE LA ENTIDAD\nLa entidad actuó conforme al contrato de adhesión y a la normativa vigente (Ley 26.682 y normas complementarias). [Explicar si se otorgó la cobertura, se ofreció una alternativa o los motivos de la negativa, con respaldo técnico.]\n\nIV. DOCUMENTACIÓN\nSe acompaña: [listado de documentación respaldatoria].\n\nV. PETITORIO\nSe tenga por contestado en término el requerimiento y, oportunamente, se archiven las actuaciones.${pie}`;
+  if(id==='respDDC') return `${cab(`Señores\n${o.l}`)}\n\nI. OBJETO\nQue vengo a responder el reclamo formulado por ${quien}, constituyendo domicilio electrónico a todos los efectos.\n\nII. RESPUESTA\n${t.detalle || '[Explicar los hechos desde la posición de la empresa.]'}\n\nLa empresa actuó de buena fe y conforme a la Ley 24.240 y al contrato. [Indicar: solución propuesta o rechazo fundado, con su respaldo.]\n\nIII. PROPUESTA\n[Si corresponde, ofrecer una solución concreta: refacturación, devolución, reactivación, plan de pagos.]\n\nIV. PETITORIO\nSe tenga por respondido el reclamo y, en caso de aceptarse la propuesta, se dé por concluido.${pie}`;
+  if(id==='acuerdo') return `PROPUESTA DE ACUERDO — Audiencia ${num}\nReclamante: ${quien}${t.motivo?`\nMotivo: ${t.motivo}`:''}\n\nSin reconocer hechos ni derecho, y al solo efecto conciliatorio, ${c.empresa} ofrece:\n1. [Prestación o medida concreta: refacturar, devolver diferencias, reactivar la cobertura, otorgar la prestación, plan de pagos.]\n2. Plazo de cumplimiento: [X] días hábiles desde la firma del acuerdo.\n3. Forma de acreditación: [constancia que se enviará].\n\nCon el cumplimiento, el/la reclamante nada más tendrá que reclamar por los hechos que motivaron estas actuaciones.\n\nLímite autorizado por la empresa: [completar antes de la audiencia; no se lee en voz alta].`;
+  if(id==='justif') return `${cab(`Señor/a Conciliador/a\n${o.l}`)}\n\nI. OBJETO\nQue, dentro del plazo de 5 días hábiles, vengo a justificar la incomparecencia de mi mandante a la audiencia celebrada el [FECHA].\n\nII. CAUSA\n[Explicar el motivo concreto y acompañar la prueba: certificado, constancia de notificación defectuosa, superposición de audiencias, etc.]\n\nIII. PETITORIO\nSe tenga por justificada la incomparecencia, se deje sin efecto la multa prevista en el art. 16 de la Ley 26.993 y, en su caso, se fije una nueva audiencia.${pie}`;
+  if(id==='recurso') return `${cab(`Señores\n${o.l}`)}\n\nI. OBJETO\nQue vengo a interponer recurso contra la resolución/disposición [N°] notificada el [FECHA], solicitando su revocación.\n\nII. FUNDAMENTOS\n1. [Vicios del acto: falta de motivación, error en los hechos, violación del derecho de defensa, desproporción de la sanción.]\n2. [Prueba que no fue valorada.]\n\nIII. PETITORIO\nSe tenga por interpuesto en término el recurso, se revoque el acto y, subsidiariamente, se reduzca la sanción. Hago reserva de recurrir judicialmente.${pie}`;
+  return `${cab(`Señores\n${o.l}`)}\n\nI. OBJETO\nQue vengo a responder el pedido de informes de la referencia.\n\nII. INFORME\n${t.detalle || '[Informar los hechos, la posición de la empresa y las medidas adoptadas.]'}\n\nIII. DOCUMENTACIÓN\n[Listado.]\n\nIV. PETITORIO\nSe tenga por respondido el pedido.${pie}`;
+}
+// detalle
+function vTramite(id){
+  const t = trById(id); if(!t) return `<div class="card empty"><b>No encontramos ese trámite.</b><a class="btn" href="#administrativos">Volver</a></div>`;
+  const o = orgById(t.org), et = TR_ETAPAS[t.clase] || TR_ETAPAS.reclamo, idx = et.indexOf(t.estado);
+  const partes = {reclamante:t.clase==='reclamo'?'Reclamante':'Empresa', organismo:o.c, nosotros:cfg().parteNombre||'Nosotros'};
+  const movs = [...(t.movimientos||[])].sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
+  const amps = t.dni && dniKey(t.dni).length>=6 ? S.exps.filter(e=>dniKey(e.dni)===dniKey(t.dni)) : [];
+  const otros = t.dni && dniKey(t.dni).length>=6 ? trs().filter(x=>x.id!==t.id && dniKey(x.dni)===dniKey(t.dni)) : [];
+  const escritos = TR_ESCRITOS.filter(x=>x.org.includes(t.org) || t.org==='otro');
+  const guia = t.guia ? guiaTodas().find(g=>g.id===t.guia) : guiaTodas().find(g=>g.org===t.org && t.clase==='reclamo' && /reclam|audienc|informe/i.test(g.t));
+  return `<div><a href="#administrativos" class="btn ghost sm" style="padding-left:0">${ic('back','sm')} Volver a Administrativos</a></div>
+  <div class="head"><div><h1>${esc(trNombre(t))}</h1><p class="sub">${esc(o.l)}${t.numero?` · <span class="mono">${esc(t.numero)}</span>`:''}${t.dni?` · DNI ${esc(t.dni)}`:''}${t.clase==='reclamo'&&t.motivo?` · ${esc(t.motivo)}`:''}</p></div>
+    <div class="row"><button class="btn ghost danger" data-act="trdel">${ic('trash','sm')} Eliminar</button></div></div>
+  ${amps.length || otros.length ? `<section class="card" style="gap:8px;border-color:var(--violet)"><b>Este DNI también tiene:</b><div class="list">${amps.map(e=>`<a class="li" href="#expediente-${e.id}"><span><b>Amparo</b> · ${esc(e.prestacion)} · <span class="mono">${esc(e.numero)}</span></span><span class="pill">${esc(e.estado)}</span></a>`).join('')}${otros.map(x=>`<a class="li" href="#tramite-${x.id}"><span><b>${esc(orgById(x.org).c)}</b> · ${esc(x.motivo||x.tipo)}</span><span class="pill">${esc(x.estado)}</span></a>`).join('')}</div></section>`:''}
+  <section class="card"><div class="row" style="justify-content:space-between"><h3>¿En qué etapa está?</h3><span class="small muted">Tocá una etapa para cambiarla</span></div>
+    <div class="steps">${et.map((s,i)=>`<button class="step ${i<idx?'done':''} ${i===idx?'cur':''}" data-tretapa="${i}"><span class="dot">${i<idx?ic('check','sm'):i+1}</span><span>${esc(s)}</span></button>`).join('')}</div></section>
+  <div class="grid2">
+    <section class="card"><h3>Plazos</h3>
+      <div class="list">${(t.plazos||[]).map((p,i)=>{ const n = daysTo(p.vence); return `<div class="li"><span style="${p.hecho?'text-decoration:line-through;opacity:.6':''}"><b>${esc(p.desc)}</b><div class="small muted">${fmt(p.vence)}${p.hecho?'':' · '+esc(whenText(n))}</div></span>${p.hecho?'<span class="pill grn">Hecho</span>':`<button class="btn sm" data-act="trhecho" data-i="${i}">${ic('check','sm')} Hecho</button>`}</div>`; }).join('') || '<div class="empty small">Sin plazos.</div>'}</div>
+      <div class="row" style="gap:8px;flex-wrap:wrap"><input type="text" id="trPDesc" placeholder="Nuevo plazo (ej.: Audiencia, Responder intimación)" style="flex:1;min-width:180px"><input type="date" id="trPVence" style="max-width:170px"><button class="btn sm pri" data-act="trplazo">${ic('plus','sm')} Agregar</button></div>
+      ${t.clase==='reclamo'?`<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center"><span class="small muted">Multa:</span><input type="text" id="trMulta" placeholder="Monto, si hubo" value="${esc((t.multa||{}).monto||'')}" style="max-width:160px"><button class="btn sm ghost" data-act="trmulta">Guardar</button></div>`:''}</section>
+    <section class="card"><h3>Escritos y modelos</h3>
+      <div class="list">${escritos.map(x=>`<button class="li" style="text-align:left;cursor:pointer;background:none;border:0;border-bottom:1px solid var(--line);width:100%" data-act="tresc" data-esc="${x.id}"><span>${ic('pen','sm')} ${esc(x.l)}</span>${ic('next','sm')}</button>`).join('')}</div>
+      ${guia?`<div class="notice small" style="display:block"><b>De la guía:</b> ${esc(guia.t)}. ${esc(guia.cuando)} ${guia.link?`<a href="${esc(guia.link)}" target="_blank" rel="noopener">Ver norma</a>`:''}</div>`:''}
+      ${t.detalle?`<div class="small"><b>Detalle:</b> ${esc(t.detalle)}</div>`:''}
+      <div class="small muted">A cargo de ${esc(userName(t.abogado))} · desde ${fmt(t.inicio)}</div></section>
+  </div>
+  <section class="card"><h3>Línea de tiempo</h3>
+    <div class="duo"><div class="duo-h"><div class="duo-hd actora">${esc(partes.reclamante)}</div><div class="duo-hd juzgado">${esc(partes.organismo)}</div><div class="duo-hd demandada">${esc(partes.nosotros)}</div></div>
+    ${movs.map(m=>{ const cls = m.parte==='reclamante'?'actora':m.parte==='organismo'?'juzgado':'demandada'; const card = `<div class="duo-card"><div class="duo-meta"><span>${fmt(m.fecha)}</span><span class="duo-chip ${cls}">${esc(partes[m.parte]||'')}</span></div><b>${esc(m.titulo||'Novedad')}</b>${m.desc?`<div class="small">${esc(m.desc)}</div>`:''}${m.fid?`<div class="duo-foot"><button class="btn sm ghost" data-act="trver" data-fid="${m.fid}" data-n="${esc(m.archivo||'')}">${ic('search','sm')} Ver</button></div>`:''}</div>`;
+      return `<div class="duo-r ${cls}"><div class="duo-c izq">${cls==='actora'?card:''}</div><div class="duo-m">${cls==='juzgado'?card:'<span class="duo-dot"></span>'}</div><div class="duo-c der">${cls==='demandada'?card:''}</div></div>`; }).join('')}</div>
+    <div class="form" style="margin-top:10px">
+      <label>Fecha<input type="date" id="trMF" value="${iso(today())}"></label>
+      <label>¿De quién es?<select id="trMP"><option value="reclamante">${esc(partes.reclamante)}</option><option value="organismo" selected>${esc(partes.organismo)}</option><option value="nosotros">${esc(partes.nosotros)}</option></select></label>
+      <label>¿Qué es?<input type="text" id="trMT" placeholder="Ej.: Notificación, Descargo presentado, Audiencia, Resolución"></label>
+      <label>Archivo (opcional)<input type="file" id="trMA"></label>
+      <label class="full">Detalle<input type="text" id="trMD"></label>
+    </div>
+    <div class="row"><button class="btn pri" data-act="trmov">${ic('plus','sm')} Agregar a la línea de tiempo</button></div></section>`;
+}
+// búsqueda y asistente
+function trBuscar(q){ const t = normTxt(q), dig = q.replace(/\D/g,''); if(!t.trim()) return [];
+  return trs().filter(x=>normTxt([x.reclamante,x.numero,x.motivo,x.tipo,orgById(x.org).c].join(' ')).includes(t) || (dig.length>=6 && dniKey(x.dni).includes(dig))).slice(0,5); }
+
+function ejemplosAdm(d){
+  const nid = () => d.nextId++;
+  const amp = [
+    {id:nid(), numero:'CCF 7105/2026', afiliado:'Gómez, Rosa Elvira', dni:'11.482.903', tipo:'administrativo', prestacion:'Aumento por edad', juzgado:'Juzg. Nac. Civ. y Com. Fed. N° 4 · Sec. 7', estado:'Contestación de demanda', riesgo:'alto', abogado:'fzaurdo', inicio:dPlus(-4), monto:0, cautelar:true,
+      adm:{plan:'Plata 210', edad:'68', antig:'14', cuotaAnt:'385.000', cuotaNueva:'512.000'}, caratula:'Gómez, Rosa Elvira c/ Salud Integral Demo S.A. s/ amparo',
+      plazos:[{desc:'Presentar informe art. 8 Ley 16.986', vence:hab(4), hecho:false},{desc:'Cumplir medida cautelar', vence:hab(2), hecho:false}],
+      movimientos:[{fecha:dPlus(-4), tipo:'Escrito de la actora', parte:'actora', titulo:'Demanda', desc:'Reclama que se deje sin efecto el aumento de cuota aplicado al cumplir 68 años: tiene 14 años de antigüedad.', user:'fzaurdo'},
+        {fecha:dPlus(-3), tipo:'Resolución', parte:'juzgado', titulo:'Medida cautelar y pedido de informe', desc:'Se ordena no aplicar el aumento por edad mientras tramita el proceso y se pide el informe del art. 8.', user:'fzaurdo'}], docs:[]},
+    {id:nid(), numero:'CCF 7240/2026', afiliado:'Quiroga, Martín Ezequiel', dni:'30.118.765', tipo:'administrativo', prestacion:'Baja o rescisión', juzgado:'Juzg. Nac. Civ. y Com. Fed. N° 8 · Sec. 15', estado:'Demanda', riesgo:'medio', abogado:'lbrunelli', inicio:dPlus(-1), monto:0, cautelar:false,
+      adm:{plan:'Bronce 110', deuda:'1.230.000'}, caratula:'Quiroga, Martín Ezequiel c/ Salud Integral Demo S.A. s/ amparo',
+      plazos:[{desc:'Presentar informe art. 8 Ley 16.986', vence:hab(5), hecho:false}],
+      movimientos:[{fecha:dPlus(-1), tipo:'Escrito de la actora', parte:'actora', titulo:'Demanda', desc:'Pide que se deje sin efecto la baja por falta de pago y se restablezca la cobertura. Dice que nunca recibió la intimación.', user:'lbrunelli'}], docs:[]}
+  ];
+  amp.forEach(x=>{ if(!d.exps.some(e=>String(e.numero).toLowerCase()===x.numero.toLowerCase()) && !(d.borrados||[]).includes(x.numero.toLowerCase())) d.exps.push(x); });
+  d.tramites = d.tramites || [];
+  const t = [
+    {id:'tej1', clase:'reclamo', org:'sss', numero:'SSS 41-2026-118553', reclamante:'Romero, Ana Lía', dni:'27.845.112', motivo:'Estudios y diagnóstico', tipo:'Estudios y diagnóstico', detalle:'Denuncia demora en la autorización del PET-TC.', estado:'Descargo', abogado:'lbrunelli', inicio:dPlus(-2),
+      plazos:[{desc:'Responder el requerimiento de la SSS', vence:calcPlazo({modo:'corridos', cant:5, desde:dPlus(-2)}).vence, hecho:false}],
+      movimientos:[{fecha:dPlus(-6), parte:'reclamante', titulo:'Denuncia ante la SSS', desc:'Reclama la autorización del PET-TC.', user:'lbrunelli'},{fecha:dPlus(-2), parte:'organismo', titulo:'Requerimiento de la SSS', desc:'Pide informar en 5 días corridos.', user:'lbrunelli'}], docs:[]},
+    {id:'tej2', clase:'reclamo', org:'coprec', numero:'COPREC 2026-77812', reclamante:'Ledesma, Carolina', dni:'33.904.221', motivo:'Aumento de cuota', tipo:'Aumento de cuota', detalle:'Reclama la devolución de diferencias por aumentos que considera excesivos.', estado:'Audiencia', abogado:'fzaurdo', inicio:dPlus(-5),
+      plazos:[{desc:'Audiencia de conciliación', vence:hab(6), hecho:false}],
+      movimientos:[{fecha:dPlus(-5), parte:'organismo', titulo:'Citación a audiencia', desc:'El conciliador fija audiencia.', user:'fzaurdo'}], docs:[]},
+    {id:'tej3', clase:'reclamo', org:'ddc', numero:'VFU-2026-0045122', reclamante:'Quiroga, Martín Ezequiel', dni:'30.118.765', motivo:'Baja o rescisión', tipo:'Baja o rescisión', detalle:'Reclamo por la baja del plan; también inició un amparo.', estado:'Ingreso', abogado:'lbrunelli', inicio:dPlus(-3),
+      plazos:[{desc:'Constituir domicilio electrónico y responder el reclamo', vence:hab(7), hecho:false}],
+      movimientos:[{fecha:dPlus(-3), parte:'reclamante', titulo:'Reclamo por la Ventanilla Federal Única', desc:'Pide la reactivación del plan.', user:'lbrunelli'}], docs:[]},
+    {id:'tej4', clase:'obligacion', org:'inpi', numero:'Acta 3.512.990', tipo:'Declaración jurada de uso de medio término de la marca', detalle:'Marca "Salud Integral" concedida en 2021.', estado:'Pendiente', abogado:'dfraerman', inicio:dPlus(-1), guia:'marcas',
+      plazos:[{desc:'Presentar DJ de uso de medio término', vence:dPlus(40), hecho:false}], movimientos:[{fecha:dPlus(-1), parte:'nosotros', titulo:'Obligación agendada', desc:'Declaración jurada de uso de medio término.', user:'dfraerman'}], docs:[]}
+  ];
+  t.forEach(x=>{ if(!d.tramites.some(y=>y.id===x.id)) d.tramites.push(x); });
+}
+
+// eventos del módulo Administrativos
+function trTaskRow(t, p, i){ const n = daysTo(p.vence), u = urg(n); return `<div class="task ${u}"><div class="txt"><a href="#tramite-${t.id}">${esc(p.desc)}</a><div class="small muted">${esc(orgById(t.org).c)} · ${esc(trNombre(t))}${t.numero?' · '+esc(t.numero):''}</div></div>
+  <div style="text-align:right"><div class="when ${u}">${whenText(n)}</div><div class="small muted">${fmt(p.vence)}</div></div><button class="btn sm" data-act="trhecho" data-t="${t.id}" data-i="${i}">${ic('check','sm')} Hecho</button></div>`; }
+function vencAdm(){ if(!S.modules.administrativos) return ''; const l = trs().flatMap(t=>(t.plazos||[]).map((p,i)=>({t,p,i})).filter(x=>!x.p.hecho)).sort((a,b)=>a.p.vence.localeCompare(b.p.vence));
+  if(!l.length) return ''; return `<section class="card"><div class="row"><h2>Administrativos</h2><span class="badge">${l.length}</span></div><div class="cases">${l.map(x=>trTaskRow(x.t,x.p,x.i)).join('')}</div></section>`; }
+document.addEventListener('click', async ev => {
+  if(!S || !S.user) return;
+  const el = ev.target.closest('[data-admtab],[data-admf],[data-guiacat],[data-guiaopen],[data-guiair],[data-tretapa],[data-act],[data-ag-open]'); if(!el) return;
+  const d = el.dataset;
+  if(d.agOpen){ AG.open = true; drawAgente(); return; }
+  if(d.admtab){ ui.admTab = d.admtab; render(); return; }
+  if(d.admf){ ui.admF = d.admf; render(); return; }
+  if(d.guiacat){ ui.guiaCat = d.guiacat; render(); return; }
+  if(d.guiaopen){ ui.guiaOpen = ui.guiaOpen===d.guiaopen ? null : d.guiaopen; render(); return; }
+  if(d.guiair){ ev.preventDefault(); ui.admTab = 'guia'; ui.guiaCat = 'Todas'; ui.guiaQ = ''; ui.guiaOpen = d.guiair; render(); setTimeout(()=>{ const c = document.querySelector('.gcard.open'); if(c) c.scrollIntoView({block:'center'}); }, 50); return; }
+  const r = route(), t = r.name==='tramite' ? trById(r.id) : null;
+  if(d.tretapa!==undefined && t){ const et = TR_ETAPAS[t.clase], old = t.estado, nu = et[+d.tretapa]; if(nu===old) return; t.estado = nu; save(); audit('Cambió la etapa de un trámite', orgById(t.org).c, `${trNombre(t)}: ${old} → ${nu}`); render(); toast('Etapa actualizada', ()=>{ t.estado = old; save(); render(); }); return; }
+  const a = d.act; if(!a) return;
+  if(a==='trnuevo'){ openTramite(d.clase||'reclamo', {guia:d.guia, org:d.org}); return; }
+  if(a==='trcrear'){ crearTramite(); return; }
+  if(a==='trhecho'){ const x = d.t ? trById(d.t) : t; if(!x) return; const p = x.plazos[+d.i]; if(!p) return; p.hecho = true; save(); audit('Cumplió un plazo administrativo', orgById(x.org).c, `${trNombre(x)}: ${p.desc}`); render(); toast('Marcado como hecho', ()=>{ p.hecho = false; save(); render(); }); return; }
+  if(!t && !/^guia/.test(a)) return;
+  if(a==='trplazo'){ const desc = $('#trPDesc').value.trim(), v = $('#trPVence').value; if(!desc || !v){ toast('Completá qué hay que hacer y la fecha'); return; } t.plazos.push({desc, vence:v, hecho:false}); save(); audit('Agregó un plazo administrativo', orgById(t.org).c, `${trNombre(t)}: ${desc} (${fmt(v)})`); render(); toast('Plazo agregado'); return; }
+  if(a==='trmulta'){ const m = $('#trMulta').value.trim(); t.multa = m ? {monto:m} : null; save(); audit('Registró una multa', orgById(t.org).c, `${trNombre(t)}: ${m||'sin multa'}`); render(); toast('Guardado'); return; }
+  if(a==='trdel'){ const i = trs().indexOf(t); if(i<0) return; trs().splice(i,1); S.trBorrados = [...new Set([...(S.trBorrados||[]), t.id])]; save(); audit('Eliminó un trámite', orgById(t.org).c, trNombre(t)); location.hash = 'administrativos'; toast('Trámite eliminado', ()=>{ trs().splice(i,0,t); S.trBorrados = S.trBorrados.filter(x=>x!==t.id); save(); location.hash = 'tramite-'+t.id; }); return; }
+  if(a==='tresc'){ const x = TR_ESCRITOS.find(z=>z.id===d.esc); const txt = trEscrito(d.esc, t);
+    showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:22px">${esc(x.l)}</h2><button class="btn ghost sm" data-act="close">Cerrar</button></div><p class="small muted">Es un modelo: completá lo que está entre [CORCHETES] y revisalo antes de presentarlo.</p><textarea id="trEscTxt" rows="18" style="width:100%;font-family:inherit">${esc(txt)}</textarea>
+      <div class="row" style="gap:8px"><button class="btn pri" data-act="trescopy">${ic('copy','sm')} Copiar</button><button class="btn" data-act="trescsave" data-l="${esc(x.l)}">${ic('check','sm')} Guardar en la línea de tiempo</button></div>`); return; }
+  if(a==='trescopy'){ try{ await navigator.clipboard.writeText($('#trEscTxt').value); toast('Copiado'); }catch(err){ $('#trEscTxt').select(); document.execCommand('copy'); toast('Copiado'); } return; }
+  if(a==='trescsave'){ const txt = $('#trEscTxt').value; const blob = new File([txt], `${d.l} - ${trNombre(t)}.txt`, {type:'text/plain'}); let fid = null; try{ fid = await saveFileBlob(blob, txt); }catch(err){}
+    t.movimientos.push({fecha:iso(today()), parte:'nosotros', titulo:d.l, desc:'Borrador preparado en Fojas.', fid, archivo:blob.name, user:S.user}); save(); audit('Preparó un escrito administrativo', orgById(t.org).c, `${trNombre(t)}: ${d.l}`); closeModal(); render(); toast('Guardado en la línea de tiempo'); return; }
+  if(a==='trmov'){ const tit = $('#trMT').value.trim(); if(!tit){ toast('Escribí qué es (ej.: Notificación)'); return; } const f = $('#trMA').files[0]; let fid = null, txt = '';
+    if(f){ try{ txt = await readFile(f, ()=>{}); if(typeof txt!=="string") txt = (txt&&txt.text)||""; }catch(err){} try{ fid = await saveFileBlob(f, txt); }catch(err){} }
+    t.movimientos.push({fecha:$('#trMF').value||iso(today()), parte:$('#trMP').value, titulo:tit, desc:$('#trMD').value.trim(), fid, archivo:f?f.name:'', user:S.user});
+    save(); audit('Agregó una novedad a un trámite', orgById(t.org).c, `${trNombre(t)}: ${tit}`); render(); toast('Agregado a la línea de tiempo'); return; }
+  if(a==='trver'){ openViewer({fid:d.fid, meta:{nombre:d.n||'Archivo'}}); return; }
+  if(a==='guianueva'){ showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:22px">Agregar un trámite a la guía</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div><p class="small muted">Queda guardado para todo el equipo y el asistente lo usa para responder.</p>
+      <div class="form"><label class="full">Nombre del trámite<input type="text" id="gnT"></label><label>Organismo<select id="gnO">${ORGS.map(o=>`<option value="${o.id}">${esc(o.l)}</option>`).join('')}</select></label><label>Categoría<input type="text" id="gnC" list="gnCL" value="Otros"><datalist id="gnCL">${[...new Set(guiaTodas().map(g=>g.cat))].map(c=>`<option value="${esc(c)}">`).join('')}</datalist></label>
+      <label class="full">Qué es<textarea id="gnQ" rows="2"></textarea></label><label class="full">A quién alcanza<input type="text" id="gnA"></label><label class="full">Cuándo<input type="text" id="gnW"></label><label class="full">Cómo se hace (un paso por renglón)<textarea id="gnH" rows="3"></textarea></label><label>Norma<input type="text" id="gnN"></label><label>Link oficial<input type="url" id="gnL"></label></div>
+      <div class="row"><button class="btn pri big" data-act="guiaguardar">${ic('check')} Guardar</button></div>`); return; }
+  if(a==='guiaguardar'){ const v = id => $('#'+id).value.trim(); if(!v('gnT')){ toast('Escribí el nombre del trámite'); return; }
+    const g = {id:'gp'+randId(6), cat:v('gnC')||'Otros', org:v('gnO'), t:v('gnT'), que:v('gnQ'), quien:v('gnA'), cuando:v('gnW'), como:v('gnH').split('\n').map(x=>x.trim()).filter(Boolean), norma:v('gnN'), link:v('gnL'), autor:S.user};
+    S.guiaPropia = S.guiaPropia || []; S.guiaPropia.push(g); save(); audit('Agregó un trámite a la guía', g.t, orgById(g.org).c); closeModal(); ui.admTab = 'guia'; ui.guiaOpen = g.id; render(); toast('Agregado a la guía'); return; }
+  if(a==='guiadel'){ const i = (S.guiaPropia||[]).findIndex(x=>x.id===d.g); if(i<0) return; const g = S.guiaPropia.splice(i,1)[0]; S.trBorrados = [...new Set([...(S.trBorrados||[]), g.id])]; save(); audit('Quitó un trámite de la guía', g.t, ''); render(); toast('Quitado de la guía', ()=>{ S.guiaPropia.splice(i,0,g); S.trBorrados = S.trBorrados.filter(x=>x!==g.id); save(); render(); }); return; }
+});
+document.addEventListener('input', ev => { if(ev.target.id==='guiaQ'){ ui.guiaQ = ev.target.value; const pos = ev.target.selectionStart; render(); const n = $('#guiaQ'); if(n){ n.focus(); try{ n.setSelectionRange(pos,pos); }catch(e){} } } });
+document.addEventListener('change', ev => { if(ev.target.id==='trOrg' && TRF){ const o = orgById(ev.target.value), r = o.plazo||{}; const n = $('#trNota'); if(n) n.textContent = o.plazoNota||''; const lab = $('#trVence') && $('#trVence').closest('label'); if(lab) lab.firstChild.textContent = o.plazoDesc||'Próximo vencimiento'; if(r.modo && r.modo!=='fecha'){ const ini = ($('#trIni')||{}).value || iso(today()); $('#trVence').value = calcPlazo({...r, desde:ini}).vence; } } });
+
 // ---------- actualización automática: si hay una versión nueva publicada, se carga sola ----------
 const APP_VERSION = (document.querySelector('meta[name=fojas-version]')||{}).content || '';
 async function buscarVersionNueva(){
@@ -3755,7 +4216,7 @@ document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) buscarV
   try{ if(navigator.storage && navigator.storage.persist){ PERSIST.persistent = await navigator.storage.persisted() || await navigator.storage.persist(); } }catch(e){}
   if(got){ S = await migrate(got.data); if(S._sumados && S._sumados.length){ const sm = S._sumados.slice(); setTimeout(()=>toast(`Recuperamos: ${sm.join(', ')}.`), 1200); } delete S._sumados; save(); if(got.from){ setTimeout(()=>toast('Recuperamos los datos que tenías cargados en la versión anterior.'), 400); } }
   if(S && S.exps){ const r = rescatar(); if(r.length) setTimeout(()=>toast(`Recuperamos ${r.length===1?'un amparo':r.length+' amparos'} que había quedado guardado por una versión anterior: ${r.map(x=>x.afiliado).join(', ')}.`), 900); }
-  else if(!S){ S = await fresh(); save(); await seedAudit(); }
+  else if(!S){ S = await migrate(await fresh()); save(); await seedAudit(); }
   S.lock = S.lock || {}; S.toured = S.toured || {}; S.teams = S.teams || [];
   render();
   const u = getSession() && me(); if(u && u.mustChange) openPwd(true);
