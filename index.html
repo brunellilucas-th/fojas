@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.20">
+<meta name="fojas-version" content="2026-11-22.21">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -85,6 +85,15 @@ svg.i.lg{width:30px;height:30px}
 .onode.top{background:var(--ink);color:#fff;border-color:var(--ink)} .onode.top .small{color:rgba(255,255,255,.75)!important}
 .onode.jefe{border-color:var(--accent);background:var(--accent-soft)} .onode.vacio{color:var(--muted);font-style:italic;justify-content:center}
 .oteam{display:flex;flex-direction:column;align-items:center;gap:6px} .oteam-n{display:inline-flex;gap:6px;align-items:center;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent);background:var(--surface);border:1.5px solid var(--accent);border-radius:999px;padding:3px 10px}
+.ctdonde{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;background:var(--sunken);border-radius:12px;padding:12px 14px} .ctdonde b{display:block;font-size:15px}
+.ctsteps .step span:last-child{font-size:12px}
+.ttabla{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.tt-h,.tt-r{display:grid;grid-template-columns:150px 170px minmax(160px,1fr) minmax(200px,1.6fr) 70px;gap:10px;padding:10px 12px;align-items:center;font-size:14px}
+.tt-h{background:var(--sunken);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)} .tt-r{border-top:1px solid var(--line)} .tt-r.actual{background:var(--accent-soft)}
+@media (max-width:900px){ .tt-h{display:none} .tt-r{grid-template-columns:1fr 1fr} .tt-r > span:nth-child(4){grid-column:1/-1} }
+.firmas{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-top:6px}
+.firma{display:flex;gap:12px;align-items:center;border:1.5px dashed var(--line);border-radius:14px;padding:12px 14px;background:var(--surface)} .firma.ok{border-style:solid;border-color:var(--accent);background:var(--accent-soft)}
+.firma-i{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--sunken);flex:none} .firma.ok .firma-i{background:var(--accent);color:#fff}
 .umenu-wrap{position:relative}
 .cttipos{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
 .cttipo{display:flex;flex-direction:column;gap:4px;text-align:left;border:1.5px solid var(--line);border-radius:14px;padding:14px;background:var(--surface);cursor:pointer;font:inherit;color:var(--ink)}
@@ -1594,6 +1603,8 @@ async function migrate(d){
     (d.users||[]).forEach(u=>{ if(u.rol==='Administrador') return; if(['dfraerman','lbrunelli','fzaurdo','rperez'].includes(u.id) && !u.area) u.area = 'Legales'; if(!Array.isArray(u.modulos) && !u.ctPerfil) u.modulos = ['amparos','administrativos']; }); }
   if(!d.rolesJefa){ d.rolesJefa = true; (d.users||[]).forEach(u=>{ if(/^Jefa\b/.test(u.rol||'') && u.rol!=='Jefa') u.rol = 'Jefa'; else if(/^Jefe\b/.test(u.rol||'') && u.rol!=='Jefe') u.rol = 'Jefe'; else if(u.rol==='Jefa/e de Contratos') u.rol = 'Jefa'; }); }
   if(!d.lucasMulti){ d.lucasMulti = true; const t2 = (d.teams||[]).find(t=>t.nombre==='Contratos'); if(t2 && t2.jefe!=='lbrunelli' && !t2.miembros.includes('lbrunelli') && (d.users||[]).some(u=>u.id==='lbrunelli')) t2.miembros.push('lbrunelli'); }
+  if(!d.ctFlujo2){ d.ctFlujo2 = true; (d.solicitudes||[]).forEach(s=>{ if(s.estado==='Enviada al solicitante' && (s.versiones||[]).some(v=>v.enviada)) s.estado = 'Revisión del proveedor'; if(s.estado==='Esperando información') s.estado = 'Enviada al solicitante'; if(s.estado==='En revisión') s.estado = 'En elaboración'; });
+    if(Array.isArray(d.solicitudes) && !d.solicitudes.some(s=>s.id==='cej4')) try{ d.solicitudes.push(solicitudEjemploFirmas()); }catch(err){ console.warn(err); } }
   if(!d.ejemploTareas){ d.ejemploTareas = true; try{ ejemplosTareas(d); }catch(err){ console.warn(err); } }
   if(!d.ejemploAdm){ d.ejemploAdm = true; try{ ejemplosAdm(d); }catch(err){ console.warn(err); } d.nextId = Math.max(d.nextId||1, ...d.exps.map(e=>+e.id||0)) + 1; }
   d.schema = SCHEMA; d.user = null;
@@ -3646,7 +3657,7 @@ IC.send = '<path d="M4 12l16-8-6 16-2.5-6.5z" fill="none" stroke="currentColor" 
 IC.x = '<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>';
 IC.bot = '<rect x="4" y="7" width="16" height="12" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7V4M9 13h.01M15 13h.01" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M2 12v3M22 12v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
 const AYUDA = [
-  {t:'Pedir un contrato a Legales', k:['contrato','contratos','solicitud','pedir','pedido','nda','confidencialidad','proveedor','compras','marketing','adjuntar','asignar','jefe','analista','version','borrador'], r:'En **Contratos** tocá **Nueva solicitud**: elegí qué necesitás (locación de servicios, convenio con prestador, NDA, software, alquiler, marketing, adenda…), completá la contraparte y el detalle, y adjuntá los archivos (cualquier formato; te mostramos qué documentación suele hacer falta). Al enviarla, la **jefatura de Contratos** recibe una notificación y la **asigna** a alguien del equipo. Seguís todo en la **conversación** del pedido: ahí Contratos te pide información, te manda las **versiones** del documento y vos confirmás o pedís cambios.', ir:'contratos'},
+  {t:'Pedir un contrato a Legales', k:['contrato','contratos','solicitud','pedir','pedido','nda','confidencialidad','proveedor','compras','marketing','adjuntar','asignar','jefe','analista','version','borrador'], r:'En **Contratos** tocá **Nueva solicitud**: elegí qué necesitás (locación de servicios, convenio con prestador, NDA, software, alquiler, marketing, adenda…), completá la contraparte y el detalle, y adjuntá los archivos (cualquier formato; te mostramos qué documentación suele hacer falta). Al enviarla, la **jefatura de Contratos** recibe una notificación y la **asigna** a alguien del equipo. El circuito es: **En elaboración** (Legales) → **Enviada al solicitante** cuando falta información (se pide por mail y Fojas registra la fecha) → **Revisión del proveedor** cuando el documento está finalizado para Legales → **Firmas** (firma del proveedor y de la unidad) → **Cerrada**, que exige adjuntar el documento firmado por ambas partes. En **Trazabilidad** ves cada envío con su fecha, en qué sector está y cuántos días estuvo en cada etapa.', ir:'contratos'},
   {t:'Tareas diarias', k:['tarea','tareas','diaria','diarias','validar','superior','jefe','asignar','indicar','completa','rojo','notificacion','notificaciones','campana'], r:'En **Tareas diarias** (panel izquierdo) cada persona carga las tareas que hace todos los días y su **superior del organigrama** las valida. El superior también puede **indicar tareas** (para un día o diarias): a la persona le llega una **notificación** (la campana, arriba a la derecha). Cada tarea se responde con **Completa**, **No se puede realizar** (con el motivo) o **No se hizo**. Si no se responde en el día, queda **en rojo** sola y se le avisa al superior. Lo que **no se pudo hacer** o quedó **en rojo** pasa al **día hábil siguiente** con la marca "Pendiente desde…", hasta que se complete o el superior la dé por cerrada.', ir:'tareas'},
   {t:'Menú de tu usuario', k:['menu','iniciales','circulo','salir','cerrar sesion','contrasena','clave','papelera','ayuda','vencimientos','asistente'], r:'Tocá el **círculo con tus iniciales**, arriba a la derecha. Ahí están **Vencimientos** (tus próximos vencimientos), **Asistente IA**, **Papelera**, **Cambiar contraseña**, **Ayuda** y **Salir**.', ir:null},
   {t:'Asignar módulos a cada usuario', k:['modulo','modulos','asignar','habilitar','permisos','acceso','usuario','ver'], r:'El administrador entra a **Usuarios**, toca **Editar** en la persona y tilda los **Módulos que puede usar**: uno, varios o todos. También se eligen al agregar a alguien. Cada persona ve en el menú solo sus módulos; el administrador ve todos. Para prender o apagar un módulo para toda la organización, andá a **Módulos**.', ir:'usuarios'},
@@ -4657,26 +4668,28 @@ function ctEvento(s, texto, user){ s.hilo = s.hilo||[]; s.hilo.push({id:'h'+rand
 function ctNuevo(s){ const u = S.user; if(!s.hilo || !s.hilo.length) return false; const v = (s.visto||{})[u]||''; return s.hilo.some(h=>h.user!==u && h.fecha>v && (!h.interno || esEquipoCt())); }
 function ctSemaforo(s){ if(!s.necesitaPara || !ctAbierta(s)) return {c:'', t:''}; const n = daysTo(s.necesitaPara); return {c:urg(n), t:whenText(n)}; }
 function ctBadge(){ if(!S || !S.user || !tieneMod('contratos')) return 0; const p = ctPerfil();
-  if(p==='jefe') return sols().filter(s=>s.estado==='Recibida' || (s.estado==='En revisión')).length + sols().filter(s=>s.asignadoA===S.user && ctAbierta(s) && ctNuevo(s)).length;
+  if(p==='jefe') return sols().filter(s=>s.estado==='Recibida').length + sols().filter(s=>s.asignadoA===S.user && ctAbierta(s) && ctNuevo(s)).length;
   if(p==='analista') return sols().filter(s=>s.asignadoA===S.user && ctAbierta(s) && (ctNuevo(s) || s.estado==='Asignada')).length;
-  return sols().filter(s=>s.solicitante===S.user && ctAbierta(s) && (s.estado==='Esperando información' || s.estado==='Enviada al solicitante' || ctNuevo(s))).length; }
-const ctPill = est => `<span class="pill ${est==='Recibida'?'red':est==='Esperando información'?'yel':est==='Enviada al solicitante'?'acc':est==='Cerrada'?'grn':''}">${esc(est)}</span>`;
+  return sols().filter(s=>s.solicitante===S.user && ctAbierta(s) && (s.estado==='Enviada al solicitante' || ctNuevo(s))).length; }
+const ctPill = est => `<span class="pill ${est==='Recibida'?'red':est==='Enviada al solicitante'?'yel':est==='Revisión del proveedor'?'acc':est==='Firmas'?'acc':est==='Cerrada'?'grn':''}">${esc(est)}</span>`;
 function ctRow(s){ const t = ctTipo(s.tipo), sem = ctSemaforo(s), nuevo = ctNuevo(s);
   return `<div class="case" data-go="contrato-${s.id}" tabindex="0" role="link"><div class="bar ${sem.c}"></div>
     <div><div class="name">${nuevo?'<span class="ndotin"></span>':''}${esc(s.contraparte&&s.contraparte.nombre||'Sin contraparte')}</div>
       <div class="meta"><span class="mono">${esc(s.numero)}</span><span>${esc(t.l)}</span>${esEquipoCt()?`<span>${esc(userName(s.solicitante))} · ${esc(s.area||'')}</span>`:''}${s.unidad?`<span>${esc(s.unidad)}</span>`:''}</div>
-      <div class="row" style="margin-top:8px;gap:6px;flex-wrap:wrap">${ctPill(s.estado)}${s.urgente?'<span class="pill red">Urgente</span>':''}${s.asignadoA?`<span class="pill">${ic('user','sm')} ${esc(userName(s.asignadoA))}</span>`:(ctAbierta(s)?'<span class="pill yel">Sin asignar</span>':'')}${(s.adjuntos||[]).length?`<span class="pill">${ic('file','sm')} ${s.adjuntos.length}</span>`:''}</div></div>
+      <div class="small muted" style="margin-top:4px">${ic('next','sm')} ${esc(ctSector(s))}</div><div class="row" style="margin-top:8px;gap:6px;flex-wrap:wrap">${ctPill(s.estado)}${s.urgente?'<span class="pill red">Urgente</span>':''}${s.asignadoA?`<span class="pill">${ic('user','sm')} ${esc(userName(s.asignadoA))}</span>`:(ctAbierta(s)?'<span class="pill yel">Sin asignar</span>':'')}${(s.adjuntos||[]).length?`<span class="pill">${ic('file','sm')} ${s.adjuntos.length}</span>`:''}</div></div>
     <div class="right">${s.necesitaPara && ctAbierta(s)?`<div class="when ${sem.c}">${sem.t}</div><div class="small muted">Lo necesitan el ${fmt(s.necesitaPara)}</div>`:`<div class="small muted">Pedido el ${fmt(s.creada.slice(0,10))}</div>`}</div></div>`; }
 function vContratos(){
   const p = ctPerfil(), eq = esEquipoCt(); const all = ctVisibles();
   const q = normTxt(ui.ctQ||'');
   const match = s => !q || normTxt([s.numero, s.contraparte&&s.contraparte.nombre, s.contraparte&&s.contraparte.cuit, ctTipo(s.tipo).l, userName(s.solicitante), s.area, s.objeto, userName(s.asignadoA)].join(' ')).includes(q);
   const F = eq ? {
-      ...(p==='jefe'?{sin:{l:'Sin asignar', f:s=>s.estado==='Recibida'}, rev:{l:'Para revisar', f:s=>s.estado==='En revisión'}}:{}),
+      ...(p==='jefe'?{sin:{l:'Sin asignar', f:s=>s.estado==='Recibida'}}:{}),
       mias:{l:'Asignadas a mí', f:s=>s.asignadoA===S.user && ctAbierta(s)},
-      espera:{l:'Esperando información', f:s=>s.estado==='Esperando información'},
+      espera:{l:'En el solicitante', f:s=>s.estado==='Enviada al solicitante'},
+      prov:{l:'Revisión del proveedor', f:s=>s.estado==='Revisión del proveedor'},
+      firmas:{l:'Firmas', f:s=>s.estado==='Firmas'},
       abiertas:{l:'Todas abiertas', f:ctAbierta}, cerradas:{l:'Cerradas', f:s=>!ctAbierta(s)}}
-    : {abiertas:{l:'En curso', f:ctAbierta}, accion:{l:'Te necesitan', f:s=>['Esperando información','Enviada al solicitante'].includes(s.estado)}, cerradas:{l:'Cerradas', f:s=>!ctAbierta(s)}};
+    : {abiertas:{l:'En curso', f:ctAbierta}, accion:{l:'Te piden información', f:s=>s.estado==='Enviada al solicitante'}, cerradas:{l:'Cerradas', f:s=>!ctAbierta(s)}};
   if(!F[ui.ctF]) ui.ctF = Object.keys(F)[0];
   const list = all.filter(F[ui.ctF].f).filter(match).sort((a,b)=>(b.urgente?1:0)-(a.urgente?1:0) || String(a.necesitaPara||'9999').localeCompare(String(b.necesitaPara||'9999')) || b.creada.localeCompare(a.creada));
   const carga = p==='jefe' ? ctEquipo().map(u=>({u, n:sols().filter(s=>s.asignadoA===u.id && ctAbierta(s)).length, e:sols().filter(s=>s.asignadoA===u.id && s.estado==='Esperando información').length})) : [];
@@ -4749,35 +4762,64 @@ function cnEnviar(){
   CTN = null; location.hash = 'contrato-'+s.id; toast(`Enviada. Tu número es ${s.numero}`);
 }
 // ----- detalle -----
+// ----- Contratos v2: ida y vuelta con el solicitante, revisión del proveedor, firmas y trazabilidad -----
+const CT_FLUJO = ['Recibida','Asignada','En elaboración','Enviada al solicitante','Revisión del proveedor','Firmas','Cerrada'];
+function ctSector(s){ const u = s.unidad || cfg().parteNombre || 'la empresa';
+  switch(s.estado){
+    case 'Recibida': return 'Legales · Jefatura de Contratos (sin asignar)';
+    case 'Asignada': case 'En elaboración': return `Legales · ${s.asignadoA?userName(s.asignadoA):'Contratos'}`;
+    case 'Enviada al solicitante': return `Solicitante · ${s.area||userName(s.solicitante)}`;
+    case 'Revisión del proveedor': return `Proveedor · ${s.contraparte.nombre}`;
+    case 'Firmas': { const f = s.firmas||{}; const falta = [!f.proveedor&&'proveedor', !f.unidad&&u].filter(Boolean); return falta.length ? `Firmas · falta ${falta.join(' y ')}` : 'Firmas · listo para cerrar'; }
+    case 'Cerrada': return 'Cerrada · documento firmado archivado';
+    case 'Cancelada': return 'Cancelada';
+    default: return 'Legales';
+  } }
+function ctMover(s, estado, o={}){ const ant = s.estado; s.estado = estado; s.traza = s.traza||[];
+  s.traza.push({fecha:o.fecha ? new Date(o.fecha+'T12:00:00').toISOString() : new Date().toISOString(), estado, sector:ctSector(s), user:S.user, nota:o.nota||'', via:o.via||'', dest:o.dest||''});
+  if(o.evento!==false) ctEvento(s, o.evento || `pasó el pedido a "${estado}".`);
+  return ant; }
+function ctAsegurarTraza(s){ if(Array.isArray(s.traza) && s.traza.length) return; s.traza = [{fecha:s.creada, estado:'Recibida', sector:'Legales · Jefatura de Contratos (sin asignar)', user:s.solicitante, nota:'Solicitud enviada desde Fojas.', via:'Fojas'}];
+  if(s.asignadoA) s.traza.push({fecha:s.asignadoEn||s.creada, estado:'Asignada', sector:`Legales · ${userName(s.asignadoA)}`, user:s.asignadoPor||s.asignadoA, nota:''});
+  if(!['Recibida','Asignada'].includes(s.estado)) s.traza.push({fecha:new Date().toISOString(), estado:s.estado, sector:ctSector(s), user:s.asignadoA||s.solicitante, nota:''}); }
+const ctDias = (a, b) => Math.max(0, Math.round((new Date(b||Date.now()) - new Date(a))/86400000));
+function ctMailto(to, asunto, cuerpo){ return `mailto:${encodeURIComponent(to||'')}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`; }
 function vContrato(id){
   const s = solById(id); if(!s || (!esEquipoCt() && s.solicitante!==S.user)) return `<div class="card empty"><b>No encontramos esa solicitud o no tenés acceso.</b><a class="btn" href="#contratos">Volver</a></div>`;
+  ctAsegurarTraza(s); s.firmas = s.firmas||{};
   s.visto = s.visto||{}; const ahora = new Date().toISOString(); if((s.visto[S.user]||'') < ahora){ s.visto[S.user] = ahora; setTimeout(save, 0); }
-  const t = ctTipo(s.tipo), eq = esEquipoCt(), jefe = esJefeCt(), mio = s.asignadoA===S.user, sol = s.solicitante===S.user;
-  const paso = CT_PASOS.indexOf(['Esperando información','En revisión'].includes(s.estado)?'En elaboración':s.estado);
+  const t = ctTipo(s.tipo), eq = esEquipoCt(), jefe = esJefeCt(), mio = s.asignadoA===S.user, sol = s.solicitante===S.user, puede = eq && (mio||jefe), uni = s.unidad || cfg().parteNombre;
+  const visitados = new Set((s.traza||[]).map(x=>x.estado)); visitados.add(s.estado);
+  const ult = (s.traza||[]).slice(-1)[0];
   const acciones = [];
   if(eq && ctAbierta(s)){
     if(jefe) acciones.push(`<button class="btn ${s.estado==='Recibida'?'pri':''}" data-act="ctasignar">${ic('user','sm')} ${s.asignadoA?'Reasignar':'Asignar'}</button>`);
-    if((mio||jefe) && s.estado==='Asignada') acciones.push(`<button class="btn pri" data-act="ctest" data-v="En elaboración">${ic('pen','sm')} Empezar a trabajar</button>`);
-    if((mio||jefe) && s.asignadoA){ acciones.push(`<button class="btn" data-act="ctmodo" data-v="pedido">${ic('help','sm')} Pedir información</button>`); acciones.push(`<button class="btn" data-act="ctversion">${ic('upload','sm')} Subir versión</button>`);
-      if(s.estado!=='En revisión' && !jefe) acciones.push(`<button class="btn" data-act="ctest" data-v="En revisión">${ic('search','sm')} Pedir revisión a ${esc(userName(ctJefes()[0]&&ctJefes()[0].id).split(' ')[0]||'la jefatura')}</button>`);
-      if((s.versiones||[]).length) acciones.push(`<button class="btn ok" data-act="ctenviar">${ic('send','sm')} Enviar al solicitante</button>`); }
-    if(jefe && s.estado==='En revisión') acciones.push(`<button class="btn ok" data-act="ctaprobar">${ic('check','sm')} Aprobar revisión</button>`);
-    if(mio||jefe) acciones.push(`<button class="btn ghost" data-act="ctcerrar">${ic('check','sm')} Cerrar (firmado o terminado)</button>`);
+    if(puede && s.estado==='Asignada') acciones.push(`<button class="btn pri" data-act="cxmover" data-v="En elaboración">${ic('pen','sm')} Empezar a trabajar</button>`);
+    if(puede && ['En elaboración','Asignada'].includes(s.estado)){ acciones.push(`<button class="btn" data-act="cxsol">${ic('send','sm')} Enviar al solicitante (pedir información)</button>`); acciones.push(`<button class="btn" data-act="ctversion">${ic('upload','sm')} Subir versión</button>`); acciones.push(`<button class="btn ok" data-act="cxprov">${ic('check','sm')} Documento final: a revisión del proveedor</button>`); }
+    if(puede && s.estado==='Enviada al solicitante'){ acciones.push(`<button class="btn pri" data-act="cxvuelta" data-de="solicitante">${ic('check','sm')} Registrar respuesta del solicitante</button>`); acciones.push(`<button class="btn" data-act="cxsol" data-re="1">${ic('send','sm')} Reenviar / recordar</button>`); }
+    if(puede && s.estado==='Revisión del proveedor'){ acciones.push(`<button class="btn ok" data-act="cxprovok">${ic('check','sm')} El proveedor lo aprobó: pasar a firmas</button>`); acciones.push(`<button class="btn" data-act="cxvuelta" data-de="proveedor">${ic('pen','sm')} El proveedor pidió cambios</button>`); acciones.push(`<button class="btn" data-act="cxprov" data-re="1">${ic('send','sm')} Reenviar al proveedor</button>`); }
+    if(puede && s.estado==='Firmas'){ const ok = s.firmas.proveedor && s.firmas.unidad; acciones.push(`<button class="btn ${ok?'ok':''}" data-act="cxcerrar" ${ok?'':'disabled title="Faltan firmas"'}>${ic('check','sm')} Cerrar con el documento firmado</button>`); }
   }
-  if(sol && !eq && ctAbierta(s)){
-    if(s.estado==='Enviada al solicitante'){ acciones.push(`<button class="btn ok" data-act="ctconforme">${ic('check','sm')} Está bien, lo cierro</button>`); acciones.push(`<button class="btn" data-act="ctmodo" data-v="cambios">${ic('pen','sm')} Pedir cambios</button>`); }
-    acciones.push(`<button class="btn ghost danger" data-act="ctcancelar">Cancelar la solicitud</button>`);
-  }
-  if(sol && eq && ctAbierta(s) && s.estado==='Enviada al solicitante') acciones.push(`<button class="btn ok" data-act="ctconforme">${ic('check','sm')} Está bien, lo cierro</button>`);
+  if(sol && !eq && ctAbierta(s)) acciones.push(`<button class="btn ghost danger" data-act="ctcancelar">Cancelar la solicitud</button>`);
   const hilo = (s.hilo||[]).filter(h=>!h.interno || eq);
   const campo = (l, v) => v ? `<div><span class="glbl">${l}</span>${esc(v)}</div>` : '';
   const archivo = (a, extra='') => `<div class="li"><span style="min-width:0">${ic('file','sm')} <b style="overflow-wrap:anywhere">${esc(a.nombre)}</b> <span class="small muted">${fmtSize(a.size)}${a.user?` · ${esc(userName(a.user).split(' ')[0])}`:''} · ${fmt((a.fecha||'').slice(0,10))}</span>${extra}</span><button class="btn sm ghost" data-act="ctverarch" data-fid="${a.fid}" data-n="${esc(a.nombre)}">${ic('search','sm')} Ver</button></div>`;
+  const firma = (k, l) => { const f = s.firmas[k]; return `<div class="firma ${f?'ok':''}"><div class="firma-i">${f?ic('check'):ic('pen')}</div><div style="flex:1;min-width:0"><b>${esc(l)}</b><div class="small muted">${f?`Firmó ${f.firmante?esc(f.firmante)+' · ':''}${fmt(f.fecha)}${f.user?' · registró '+esc(userName(f.user).split(' ')[0]):''}`:'Pendiente'}</div>${f&&f.adj?`<button class="linkbtn" data-act="ctverarch" data-fid="${f.adj.fid}" data-n="${esc(f.adj.nombre)}">${esc(f.adj.nombre)}</button>`:''}</div>
+    ${puede && s.estado==='Firmas' ? (f ? `<button class="btn sm ghost" data-act="cxfirmaoff" data-k="${k}">Deshacer</button>` : `<button class="btn sm pri" data-act="cxfirma" data-k="${k}">Registrar firma</button>`) : ''}</div>`; };
   return `<div><a href="#contratos" class="btn ghost sm" style="padding-left:0">${ic('back','sm')} Volver a Contratos</a></div>
-  <div class="head"><div><h1>${esc(s.contraparte.nombre)}</h1><p class="sub"><span class="mono">${esc(s.numero)}</span> · ${esc(t.l)}${s.unidad?` · ${esc(s.unidad)}`:''}</p>
+  <div class="head"><div><h1>${esc(s.contraparte.nombre)}</h1><p class="sub"><span class="mono">${esc(s.numero)}</span> · ${esc(t.l)}${uni?` · ${esc(uni)}`:''}</p>
     <div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap">${ctPill(s.estado)}${s.urgente?'<span class="pill red">Urgente</span>':''}${s.necesitaPara&&ctAbierta(s)?`<span class="pill ${ctSemaforo(s).c==='red'?'red':ctSemaforo(s).c==='yel'?'yel':''}">Lo necesitan el ${fmt(s.necesitaPara)} · ${ctSemaforo(s).t}</span>`:''}</div></div></div>
-  <section class="card"><div class="steps">${CT_PASOS.map((x,i)=>`<div class="step ${i<paso?'done':''} ${i===paso?'cur':''}"><span class="dot">${i<paso?ic('check','sm'):i+1}</span><span>${esc(x)}</span></div>`).join('')}</div>
-    ${['Esperando información','En revisión','Cancelada'].includes(s.estado)?`<div class="notice small" style="display:block">${s.estado==='Esperando información'?(sol&&!eq?'<b>Contratos te pidió información.</b> Respondé abajo en la conversación (podés adjuntar archivos).':'<b>Esperando información del solicitante.</b>'):s.estado==='En revisión'?'<b>En revisión de la jefatura de Contratos.</b>':'<b>Solicitud cancelada.</b>'}</div>`:''}
-    <div class="row" style="gap:8px;flex-wrap:wrap">${acciones.join('')}</div></section>
+  <section class="card">
+    <div class="ctdonde"><div><span class="glbl">Dónde está hoy</span><b>${esc(ctSector(s))}</b></div><div><span class="glbl">Estado</span><b>${esc(s.estado)}</b></div><div><span class="glbl">Desde</span><b>${ult?`${fmtTs(ult.fecha)} · ${ctDias(ult.fecha)===0?'hoy':ctDias(ult.fecha)+' día'+(ctDias(ult.fecha)===1?'':'s')}`:'—'}</b></div><div><span class="glbl">Pedido hace</span><b>${ctDias(s.creada)} día${ctDias(s.creada)===1?'':'s'}</b></div></div>
+    <div class="steps ctsteps">${CT_FLUJO.map((x,i)=>`<div class="step ${visitados.has(x)&&x!==s.estado?'done':''} ${x===s.estado?'cur':''}"><span class="dot">${visitados.has(x)&&x!==s.estado?ic('check','sm'):i+1}</span><span>${esc(x)}</span></div>`).join('')}</div>
+    ${s.estado==='Enviada al solicitante'?`<div class="notice small" style="display:block">${sol&&!eq?'<b>Contratos necesita información.</b> Te la pidieron por mail; también podés responder acá abajo en la conversación y adjuntar archivos.':`<b>Se pidió información al solicitante${ult&&ult.via==='mail'?' por mail':''}.</b> ${ult&&ult.nota?esc(ult.nota):''}`}</div>`:''}
+    ${s.estado==='Revisión del proveedor'?`<div class="notice small" style="display:block"><b>El documento está finalizado para Legales</b> y lo está revisando ${esc(s.contraparte.nombre)}.</div>`:''}
+    ${['Firmas','Cerrada'].includes(s.estado)?`<div><span class="glbl">Checkpoint de firmas</span><div class="firmas">${firma('proveedor', `Firma del proveedor (${s.contraparte.nombre})`)}${firma('unidad', `Firma de ${uni}`)}</div>${s.estado==='Firmas'&&!(s.firmas.proveedor&&s.firmas.unidad)?'<div class="small muted" style="margin-top:6px">Para cerrar el pedido tienen que estar las dos firmas y adjuntarse el documento firmado por ambas partes.</div>':''}</div>`:''}
+    ${s.estado==='Cerrada'&&s.firmado?`<div class="notice good small" style="display:block"><b>Documento firmado por ambas partes:</b> <button class="linkbtn" data-act="ctverarch" data-fid="${s.firmado.fid}" data-n="${esc(s.firmado.nombre)}">${esc(s.firmado.nombre)}</button> · cerrado el ${fmt((s.cerrada||'').slice(0,10))}</div>`:''}
+    ${acciones.length?`<div class="row" style="gap:8px;flex-wrap:wrap">${acciones.join('')}</div>`:''}</section>
+  <section class="card"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px"><h3>Trazabilidad</h3><span class="small muted">Cada envío y cambio de estado, con fecha y en qué sector quedó</span></div>
+    <div class="ttabla"><div class="tt-h"><span>Fecha</span><span>Estado</span><span>Sector</span><span>Detalle</span><span>Días</span></div>
+    ${(s.traza||[]).map((x,i,arr)=>{ const sig = arr[i+1]; const d = ctDias(x.fecha, sig?sig.fecha:null); return `<div class="tt-r ${!sig?'actual':''}"><span>${fmtTs(x.fecha)}</span><span>${ctPill(x.estado)}</span><span>${esc(x.sector)}</span><span>${x.via==='mail'?`${ic('send','sm')} Por mail${x.dest?' a '+esc(x.dest):''}. `:''}${esc(x.nota||'')}<span class="small muted"> ${esc(userName(x.user)||'')}</span></span><span>${d}${!sig&&ctAbierta(s)?' <span class="small muted">(sigue)</span>':''}</span></div>`; }).join('')}</div></section>
   <div class="grid2">
     <section class="card"><h3>Datos de la solicitud</h3>
       <div class="ctdatos">${campo('Pidió', `${userName(s.solicitante)}${s.area?' · '+s.area:''} · ${fmt(s.creada.slice(0,10))}`)}${campo('A cargo', s.asignadoA?`${userName(s.asignadoA)}${s.fechaObjetivo?' · objetivo '+fmt(s.fechaObjetivo):''}`:'Sin asignar todavía')}
@@ -4785,23 +4827,100 @@ function vContrato(id){
         ${campo('Qué se acuerda', s.objeto)}${campo('Monto', s.monto)}${campo('Forma de pago', s.pago)}${campo('Vigencia', s.vigencia)}${campo('Inicio', s.inicio&&fmt(s.inicio))}${campo('Por qué es urgente', s.motivoUrg)}${campo('Modelo', s.modeloCp?'La contraparte mandó su propio modelo':'')}${campo('Comentarios', s.obs)}</div>
       ${(s.checklist||[]).length?`<div><span class="glbl">Documentación</span><div class="list">${s.checklist.map((c,i)=>`<div class="li"><span>${esc(c.doc)}</span>${eq?`<select data-ctchk="${i}" style="max-width:170px">${[['','Sin indicar'],['si','Adjuntado'],['luego','Lo manda después'],['na','No aplica'],['ok','Revisado ✓']].map(([k,l])=>`<option value="${k}" ${c.estado===k?'selected':''}>${l}</option>`).join('')}</select>`:`<span class="pill ${c.estado==='ok'||c.estado==='si'?'grn':c.estado==='luego'?'yel':''}">${({si:'Adjuntado',luego:'Lo mandás después',na:'No aplica',ok:'Revisado ✓'})[c.estado]||'Sin indicar'}</span>`}</div>`).join('')}</div></div>`:''}</section>
     <section class="card"><h3>Documentos</h3>
-      ${(s.versiones||[]).length?`<div><span class="glbl">Versiones de Contratos</span><div class="list">${s.versiones.slice().reverse().map(v=>archivo(v, ` <span class="pill ${v.final?'grn':''}" style="margin-left:4px">v${v.n}${v.final?' · final':''}${v.enviada?' · enviada':''}</span>${v.nota?`<div class="small muted">${esc(v.nota)}</div>`:''}`)).join('')}</div></div>`:''}
+      ${s.firmado?`<div><span class="glbl">Documento firmado</span><div class="list">${archivo(s.firmado, ' <span class="pill grn" style="margin-left:4px">firmado por ambas partes</span>')}</div></div>`:''}
+      ${(s.versiones||[]).length?`<div><span class="glbl">Versiones de Contratos</span><div class="list">${s.versiones.slice().reverse().map(v=>archivo(v, ` <span class="pill ${v.final?'grn':''}" style="margin-left:4px">v${v.n}${v.final?' · final':''}${v.alProveedor?' · enviada al proveedor':''}</span>${v.nota?`<div class="small muted">${esc(v.nota)}</div>`:''}`)).join('')}</div></div>`:''}
       <div><span class="glbl">Archivos del pedido y de la conversación</span><div class="list">${[...(s.adjuntos||[]), ...hilo.flatMap(h=>h.adjuntos||[])].map(a=>archivo(a)).join('') || '<div class="empty small">Sin archivos.</div>'}</div></div>
-      <label class="ctdrop sm" id="ctdrop2">${ic('upload')}<b>Sumar archivos</b><span class="small muted">Arrastralos o tocá acá</span><input type="file" id="ctMasArch" multiple hidden></label></section>
+      ${ctAbierta(s)?`<label class="ctdrop sm" id="ctdrop2">${ic('upload')}<b>Sumar archivos</b><span class="small muted">Arrastralos o tocá acá</span><input type="file" id="ctMasArch" multiple hidden></label>`:''}</section>
   </div>
   <section class="card"><h3>Conversación</h3>
     <div class="cthilo">${hilo.map(h=>{ const u = S.users.find(x=>x.id===h.user), yo = h.user===S.user, deEq = u && ['analista','jefe'].includes(ctPerfil(u)) && h.user!==s.solicitante;
       if(h.tipo==='evento') return `<div class="ctev">${ic('check','sm')} <b>${esc(userName(h.user))}</b> ${esc(h.texto)} <span class="muted">· ${fmtTs(h.fecha)}</span></div>`;
-      return `<div class="ctmsg ${yo?'yo':''} ${h.interno?'interno':''} ${h.tipo}"><div class="ctmsg-h"><b>${esc(userName(h.user))}</b><span class="small muted">${deEq?'Contratos':esc(s.area||'Solicitante')} · ${fmtTs(h.fecha)}</span>${h.interno?'<span class="pill yel">Nota interna</span>':''}${h.tipo==='pedido'?'<span class="pill yel">Pedido de información</span>':''}${h.tipo==='cambios'?'<span class="pill yel">Pedido de cambios</span>':''}</div>
+      return `<div class="ctmsg ${yo?'yo':''} ${h.interno?'interno':''} ${h.tipo}"><div class="ctmsg-h"><b>${esc(userName(h.user))}</b><span class="small muted">${deEq?'Contratos':esc(s.area||'Solicitante')} · ${fmtTs(h.fecha)}</span>${h.interno?'<span class="pill yel">Nota interna</span>':''}${h.tipo==='pedido'?'<span class="pill yel">Pedido de información</span>':''}${h.via==='mail'?'<span class="pill">Por mail</span>':''}</div>
         <div style="white-space:pre-wrap">${esc(h.texto)}</div>${(h.adjuntos||[]).length?`<div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px">${h.adjuntos.map(a=>`<button class="pill" data-act="ctverarch" data-fid="${a.fid}" data-n="${esc(a.nombre)}" style="cursor:pointer;border:0">${ic('file','sm')} ${esc(a.nombre)}</button>`).join('')}</div>`:''}</div>`; }).join('') || '<div class="empty small">Todavía no hay mensajes.</div>'}</div>
     ${ctAbierta(s)?`<div class="ctcomp">
-      ${ui.ctModo==='pedido'?'<div class="notice small" style="display:block"><b>Pedido de información:</b> el pedido queda "Esperando información" y le avisamos al solicitante.</div>':ui.ctModo==='cambios'?'<div class="notice small" style="display:block"><b>Pedido de cambios:</b> vuelve a Contratos para que lo ajusten.</div>':''}
-      <textarea id="ctMsg" rows="3" placeholder="${ui.ctModo==='pedido'?'¿Qué información o documentación falta?':ui.ctModo==='cambios'?'¿Qué hay que cambiar?':'Escribí un mensaje…'}"></textarea>
+      <textarea id="ctMsg" rows="3" placeholder="${sol&&!eq&&s.estado==='Enviada al solicitante'?'Respondé lo que te pidieron y adjuntá lo que haga falta…':'Escribí un mensaje…'}"></textarea>
       <div class="row" style="gap:8px;flex-wrap:wrap;justify-content:space-between"><div class="row" style="gap:8px;flex-wrap:wrap"><label class="btn sm ghost" style="cursor:pointer">${ic('upload','sm')} Adjuntar<input type="file" id="ctMsgArch" multiple hidden></label><span class="small muted" id="ctMsgArchN">${(ui.ctMsgArch||[]).length?`${ui.ctMsgArch.length} archivo(s) listos`:''}</span>
-        ${eq && !ui.ctModo?`<label class="small" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="ctInterno"> Nota interna (no la ve el solicitante)</label>`:''}</div>
-        <div class="row" style="gap:8px">${ui.ctModo?'<button class="btn ghost" data-act="ctmodo" data-v="">Cancelar</button>':''}<button class="btn pri" data-act="ctmsg">${ic('send','sm')} ${ui.ctModo==='pedido'?'Pedir información':ui.ctModo==='cambios'?'Pedir cambios':'Enviar'}</button></div></div></div>`:''}
+        ${eq?`<label class="small" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="ctInterno"> Nota interna (no la ve el solicitante)</label>`:''}</div>
+        <button class="btn pri" data-act="ctmsg">${ic('send','sm')} Enviar</button></div></div>`:''}
   </section>`;
 }
+function cxEnvioModal(s, tipo, re){ const sol = tipo==='solicitante'; const uSol = S.users.find(u=>u.id===s.solicitante);
+  const dest = sol ? (uSol&&uSol.email || '') : (s.contraparte.email||'');
+  const ultV = (s.versiones||[]).slice(-1)[0];
+  showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:22px">${sol?(re?'Reenviar el pedido de información':'Enviar al solicitante: pedir información'):(re?'Reenviar al proveedor':'Documento final: enviar a revisión del proveedor')}</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div>
+    <p class="small muted">${sol?`El pedido queda <b>"Enviada al solicitante"</b> (sector: ${esc(s.area||'solicitante')}) hasta que responda. El pedido se hace por mail: Fojas registra la fecha del envío.`:`El documento queda <b>finalizado para Legales</b> y el pedido pasa a <b>"Revisión del proveedor"</b> hasta que responda.`}</p>
+    <div class="form">
+      ${sol?`<label class="full">¿Qué información o documentación falta?<textarea id="cxTxt" rows="4" placeholder="Ej.: Necesitamos el poder del firmante y la constancia de ARCA actualizada."></textarea></label>`
+        :`<label class="full">Documento final<select id="cxVer">${(s.versiones||[]).slice().reverse().map(v=>`<option value="${v.n}">v${v.n} · ${esc(v.nombre)}${v.final?' (final)':''}</option>`).join('')}<option value="">Subir otro archivo…</option></select></label>
+          <label class="full" id="cxVerFWrap" style="${(s.versiones||[]).length?'display:none':''}">Archivo<input type="file" id="cxVerF"></label>
+          <label class="full">Mensaje para el proveedor (opcional)<textarea id="cxTxt" rows="3" placeholder="Ej.: Adjuntamos la versión final para su revisión y conformidad."></textarea></label>`}
+      <label>Se envió por mail a<input type="email" id="cxDest" value="${esc(dest)}" placeholder="mail@ejemplo.com"></label>
+      <label>Fecha del envío<input type="date" id="cxFecha" value="${iso(today())}" max="${iso(today())}"></label>
+      <label class="full">Mail enviado (opcional, como constancia)<input type="file" id="cxMail" accept=".eml,.msg,.pdf,.png,.jpg"></label>
+    </div>
+    <div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" data-act="cxmailto" data-tipo="${tipo}">${ic('send','sm')} Abrir el mail ya redactado</button><button class="btn pri big" data-act="cxenvok" data-tipo="${tipo}">${ic('check')} Registrar el envío</button></div>`); }
+function cxVueltaModal(s, de){ showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:22px">${de==='solicitante'?'Registrar la respuesta del solicitante':'El proveedor pidió cambios'}</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div>
+    <p class="small muted">El pedido vuelve a <b>Legales · En elaboración</b> y queda registrada la fecha en que llegó la respuesta.</p>
+    <div class="form"><label>Fecha en que llegó<input type="date" id="cxFecha" value="${iso(today())}" max="${iso(today())}"></label><label>Llegó por<select id="cxVia"><option value="mail">Mail</option><option value="Fojas">Fojas</option><option value="otro">Otro medio</option></select></label>
+      <label class="full">${de==='solicitante'?'¿Qué respondió?':'¿Qué cambios pide?'}<textarea id="cxTxt" rows="4"></textarea></label><label class="full">Archivos (opcional: el mail, documentación, el documento con cambios)<input type="file" id="cxArch" multiple></label></div>
+    <div class="row"><button class="btn pri big" data-act="cxvueltaok" data-de="${de}">${ic('check')} Registrar y volver a elaboración</button></div>`); }
+function cxFirmaModal(s, k){ const l = k==='proveedor' ? `Firma del proveedor (${s.contraparte.nombre})` : `Firma de ${s.unidad||cfg().parteNombre}`;
+  showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:22px">${esc(l)}</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div>
+    <div class="form"><label>Quién firmó<input type="text" id="cxFirmante" placeholder="Nombre y cargo"></label><label>Fecha de la firma<input type="date" id="cxFecha" value="${iso(today())}" max="${iso(today())}"></label>
+      <label class="full">Constancia (opcional)<input type="file" id="cxArch"></label></div>
+    <div class="row"><button class="btn pri big" data-act="cxfirmaok" data-k="${k}">${ic('check')} Registrar firma</button></div>`); }
+function cxCerrarModal(s){ showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:22px">Cerrar con el documento firmado</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div>
+    <p class="small muted">Para cerrar el pedido hay que adjuntar el documento <b>firmado por ambas partes</b>.</p>
+    <div class="form"><label class="full">Documento firmado por ambas partes<input type="file" id="cxFirmado"></label><label>Fecha de cierre<input type="date" id="cxFecha" value="${iso(today())}" max="${iso(today())}"></label></div>
+    <div id="cxErr"></div><div class="row"><button class="btn ok big" data-act="cxcerrarok">${ic('check')} Cerrar el pedido</button></div>`); }
+document.addEventListener('change', ev => { if(ev.target.id==='cxVer'){ const w = $('#cxVerFWrap'); if(w) w.style.display = ev.target.value ? 'none' : ''; } });
+document.addEventListener('click', async ev => {
+  if(!S || !S.user) return; const el = ev.target.closest('[data-act]'); if(!el) return; const a = el.dataset.act, d = el.dataset; if(!/^cx/.test(a)) return;
+  const r = route(), s = r.name==='contrato' ? solById(r.id) : null; if(!s) return; ctAsegurarTraza(s); s.firmas = s.firmas||{};
+  const uni = s.unidad || cfg().parteNombre;
+  if(a==='cxmover'){ ctMover(s, d.v); if(d.v==='En elaboración') notificar(s.solicitante, `${userName(S.user)} empezó a trabajar en tu pedido ${s.numero}.`, 'contrato-'+s.id); save(); audit('Cambió el estado de una solicitud de Contratos', s.numero, d.v); render(); toast('Listo'); return; }
+  if(a==='cxsol'){ cxEnvioModal(s, 'solicitante', d.re); return; }
+  if(a==='cxprov'){ if(!(s.versiones||[]).length && !d.re){ /* se puede subir en el mismo paso */ } cxEnvioModal(s, 'proveedor', d.re); return; }
+  if(a==='cxmailto'){ const sol = d.tipo==='solicitante'; const txt = ($('#cxTxt')||{}).value || ''; const to = $('#cxDest').value.trim();
+    const asunto = sol ? `${s.numero} · ${s.contraparte.nombre}: necesitamos información` : `${s.contraparte.nombre} · ${ctTipo(s.tipo).l} para su revisión (${s.numero})`;
+    const cuerpo = sol ? `Hola${userName(s.solicitante)?' '+userName(s.solicitante).split(' ')[0]:''}:\n\nPara avanzar con el pedido ${s.numero} (${ctTipo(s.tipo).l.toLowerCase()} con ${s.contraparte.nombre}) necesitamos:\n\n${txt||'[detallar]'}\n\nPodés responder este mail o cargarlo directamente en Fojas.\n\nSaludos,\n${userName(S.user)}\nContratos · Legales`
+      : `Estimados:\n\n${txt||`Adjuntamos la versión final del ${ctTipo(s.tipo).l.toLowerCase()} para su revisión y conformidad.`}\n\nQuedamos a disposición.\n\nSaludos,\n${userName(S.user)}\nContratos · Legales · ${uni}`;
+    window.open(ctMailto(to, asunto, cuerpo), '_blank'); return; }
+  if(a==='cxenvok'){ const sol = d.tipo==='solicitante'; const txt = ($('#cxTxt')||{}).value.trim(), dest = $('#cxDest').value.trim(), fecha = $('#cxFecha').value || iso(today());
+    if(sol && !txt){ toast('Escribí qué información falta'); $('#cxTxt').focus(); return; }
+    const adj = []; const mf = $('#cxMail').files[0]; if(mf) adj.push(...await ctGuardarArchivos([mf]));
+    if(sol){ s.hilo.push({id:'h'+randId(6), fecha:new Date(fecha+'T12:00:00').toISOString(), user:S.user, tipo:'pedido', via:'mail', texto:txt, adjuntos:adj});
+      ctMover(s, 'Enviada al solicitante', {fecha, via:'mail', dest, nota:txt, evento:`envió el pedido de información al solicitante por mail${dest?' ('+dest+')':''}.`});
+      notificar(s.solicitante, `Contratos te pidió información por mail para ${s.numero} (${s.contraparte.nombre}): ${txt.slice(0,140)}`, 'contrato-'+s.id, 'alerta'); }
+    else { let v = null; const sel = ($('#cxVer')||{}).value;
+      if(sel){ v = s.versiones.find(x=>String(x.n)===sel); } else { const f = $('#cxVerF').files[0]; if(!f){ toast('Elegí el documento final'); return; } const [x] = await ctGuardarArchivos([f]); s.versiones = s.versiones||[]; v = {...x, n:s.versiones.length+1, nota:'Versión final', final:true}; s.versiones.push(v); }
+      v.final = true; v.alProveedor = true; if(v.fid) adj.push({fid:v.fid, nombre:v.nombre, size:v.size, tipo:v.tipo, fecha:v.fecha, user:v.user});
+      s.hilo.push({id:'h'+randId(6), fecha:new Date(fecha+'T12:00:00').toISOString(), user:S.user, tipo:'mensaje', via:'mail', interno:true, texto:`Enviado al proveedor${dest?' ('+dest+')':''}: v${v.n} ${v.nombre}.${txt?' '+txt:''}`, adjuntos:adj});
+      ctMover(s, 'Revisión del proveedor', {fecha, via:'mail', dest, nota:`Documento final v${v.n} (${v.nombre}).${txt?' '+txt:''}`, evento:`dio por finalizado el documento (v${v.n}) y lo envió a revisión del proveedor${dest?' ('+dest+')':''}.`});
+      notificar(s.solicitante, `Tu pedido ${s.numero} está finalizado para Legales y se envió a revisión de ${s.contraparte.nombre}.`, 'contrato-'+s.id, 'ok'); }
+    save(); audit(sol?'Pidió información al solicitante':'Envió un contrato a revisión del proveedor', s.numero, dest||''); closeModal(); render(); toast(sol?'Envío registrado: el pedido está en el sector del solicitante':'Envío registrado: el pedido está en revisión del proveedor'); return; }
+  if(a==='cxvuelta'){ cxVueltaModal(s, d.de); return; }
+  if(a==='cxvueltaok'){ const de = d.de, fecha = $('#cxFecha').value || iso(today()), via = $('#cxVia').value, txt = $('#cxTxt').value.trim(); const fs = $('#cxArch').files; const adj = fs.length ? await ctGuardarArchivos([...fs]) : [];
+    s.hilo.push({id:'h'+randId(6), fecha:new Date(fecha+'T12:00:00').toISOString(), user:S.user, tipo:'mensaje', via:via==='mail'?'mail':'', interno:de==='proveedor', texto:`${de==='solicitante'?'Respuesta del solicitante':'Cambios pedidos por el proveedor'}${via==='mail'?' (llegó por mail)':''}${txt?': '+txt:'.'}`, adjuntos:adj});
+    ctMover(s, 'En elaboración', {fecha, via, nota:`${de==='solicitante'?'Respondió el solicitante':'El proveedor pidió cambios'}${txt?': '+txt:''}`, evento:de==='solicitante'?'registró la respuesta del solicitante.':'registró que el proveedor pidió cambios.'});
+    if(de==='proveedor') notificar(s.solicitante, `${s.contraparte.nombre} pidió cambios en ${s.numero}. Legales los está trabajando.`, 'contrato-'+s.id);
+    save(); audit(de==='solicitante'?'Registró la respuesta del solicitante':'Registró cambios del proveedor', s.numero, txt.slice(0,80)); closeModal(); render(); toast('Registrado: volvió a Legales'); return; }
+  if(a==='cxprovok'){ ctMover(s, 'Firmas', {nota:'El proveedor aprobó el documento.', evento:'registró que el proveedor aprobó el documento y lo pasó a firmas.'}); notificar(s.solicitante, `${s.contraparte.nombre} aprobó el documento de ${s.numero}. Pasó a firmas.`, 'contrato-'+s.id, 'ok'); save(); audit('Pasó un contrato a firmas', s.numero, ''); render(); toast('Pasó a firmas'); return; }
+  if(a==='cxfirma'){ cxFirmaModal(s, d.k); return; }
+  if(a==='cxfirmaok'){ const k = d.k, f = $('#cxArch').files[0]; const adj = f ? (await ctGuardarArchivos([f]))[0] : null; const fecha = $('#cxFecha').value || iso(today());
+    s.firmas[k] = {fecha, firmante:$('#cxFirmante').value.trim(), user:S.user, adj}; const l = k==='proveedor' ? 'del proveedor' : 'de '+uni;
+    s.traza.push({fecha:new Date(fecha+'T12:00:00').toISOString(), estado:'Firmas', sector:ctSector(s), user:S.user, nota:`Firma ${l}${s.firmas[k].firmante?': '+s.firmas[k].firmante:''}.`});
+    ctEvento(s, `registró la firma ${l}.`); if(s.firmas.proveedor && s.firmas.unidad) notificar(s.asignadoA&&s.asignadoA!==S.user?s.asignadoA:s.solicitante, `${s.numero}: ya están las dos firmas.`, 'contrato-'+s.id, 'ok');
+    save(); audit('Registró una firma', s.numero, l); closeModal(); render(); toast('Firma registrada'); return; }
+  if(a==='cxfirmaoff'){ const ant = s.firmas[d.k]; delete s.firmas[d.k]; ctEvento(s, `deshizo el registro de la firma ${d.k==='proveedor'?'del proveedor':'de '+uni}.`); save(); render(); toast('Firma quitada', ()=>{ s.firmas[d.k] = ant; save(); render(); }); return; }
+  if(a==='cxcerrar'){ if(!(s.firmas.proveedor && s.firmas.unidad)){ toast('Faltan firmas'); return; } cxCerrarModal(s); return; }
+  if(a==='cxcerrarok'){ const f = $('#cxFirmado').files[0]; if(!f){ $('#cxErr').innerHTML = '<div class="notice bad">Adjuntá el documento firmado por ambas partes.</div>'; return; }
+    const [x] = await ctGuardarArchivos([f]); s.firmado = x; const fecha = $('#cxFecha').value || iso(today()); s.cerrada = new Date(fecha+'T12:00:00').toISOString();
+    ctMover(s, 'Cerrada', {fecha, nota:`Documento firmado por ambas partes: ${x.nombre}.`, evento:`cerró el pedido con el documento firmado por ambas partes (${x.nombre}).`});
+    ctNotificarOtros(s, `${s.numero} (${s.contraparte.nombre}) quedó cerrado: el documento firmado por ambas partes está en Fojas.`, 'ok');
+    save(); audit('Cerró una solicitud de Contratos con el documento firmado', s.numero, x.nombre); closeModal(); render(); toast('Pedido cerrado'); return; }
+});
+
 function ctNotificarOtros(s, texto, tipo){ const dest = new Set(); if(s.solicitante!==S.user) dest.add(s.solicitante); if(s.asignadoA && s.asignadoA!==S.user) dest.add(s.asignadoA); if(!s.asignadoA) ctJefes().forEach(j=>{ if(j.id!==S.user) dest.add(j.id); }); dest.forEach(u=>notificar(u, texto, 'contrato-'+s.id, tipo)); }
 function ctAsignarModal(s){ const eqp = ctEquipo(); const carga = id => sols().filter(x=>x.asignadoA===id && ctAbierta(x)).length;
   showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:22px">${s.asignadoA?'Reasignar':'Asignar'} ${esc(s.numero)}</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div>
@@ -4815,7 +4934,7 @@ function ctVersionModal(){ showModal(`<div class="row" style="justify-content:sp
   <div class="row"><button class="btn pri big" data-act="ctversionok">${ic('upload')} Subir</button></div>`); }
 function ctBuscar(q){ const t = normTxt(q); if(!t.trim() || !tieneMod('contratos')) return []; return ctVisibles().filter(s=>normTxt([s.numero, s.contraparte&&s.contraparte.nombre, s.contraparte&&s.contraparte.cuit, ctTipo(s.tipo).l, userName(s.solicitante)].join(' ')).includes(t)).slice(0,5); }
 function ctInicioBlock(){ if(!tieneMod('contratos')) return ''; const eq = esEquipoCt(); const v = ctVisibles().filter(ctAbierta);
-  const top = eq ? (esJefeCt() ? v.filter(s=>s.estado==='Recibida' || s.estado==='En revisión' || s.asignadoA===S.user) : v.filter(s=>s.asignadoA===S.user)) : v;
+  const top = eq ? (esJefeCt() ? v.filter(s=>s.estado==='Recibida' || s.asignadoA===S.user) : v.filter(s=>s.asignadoA===S.user)) : v;
   return `<section class="card"><div class="head"><h2>Contratos</h2><div class="row" style="gap:8px"><a class="btn pri" href="#contrato-nuevo">${ic('plus','sm')} Nueva solicitud</a><a href="#contratos" class="small">Ver todo</a></div></div>
     <div class="cases">${top.slice(0,6).map(ctRow).join('') || `<div class="empty small">${eq?'No tenés pedidos pendientes.':'No tenés solicitudes en curso.'}</div>`}</div></section>`; }
 document.addEventListener('click', async ev => {
@@ -4837,7 +4956,7 @@ document.addEventListener('click', async ev => {
   if(a==='ctasignar'){ ui.ctAsig = s.asignadoA || null; ctAsignarModal(s); return; }
   if(a==='ctasigsel'){ ui.ctAsig = d.u; const f = $('#ctaF').value, n = $('#ctaNota').value; ctAsignarModal(s); $('#ctaF').value = f; $('#ctaNota').value = n; return; }
   if(a==='ctasigok'){ if(!ui.ctAsig){ toast('Elegí quién lo arma'); return; } const ant = s.asignadoA; s.asignadoA = ui.ctAsig; s.asignadoPor = S.user; s.asignadoEn = new Date().toISOString(); s.fechaObjetivo = $('#ctaF').value || ''; const nota = $('#ctaNota').value.trim();
-    if(s.estado==='Recibida') s.estado = 'Asignada';
+    ctAsegurarTraza(s); if(s.estado==='Recibida') ctMover(s, 'Asignada', {evento:false, nota:`Asignado a ${userName(s.asignadoA)}${s.fechaObjetivo?' · objetivo '+fmt(s.fechaObjetivo):''}.`}); else s.traza.push({fecha:new Date().toISOString(), estado:s.estado, sector:ctSector(s), user:S.user, nota:`${ant?'Reasignado':'Asignado'} a ${userName(s.asignadoA)}.`});
     ctEvento(s, ant ? `reasignó el pedido de ${userName(ant)} a ${userName(s.asignadoA)}.` : `le asignó el pedido a ${userName(s.asignadoA)}.`);
     if(nota){ s.hilo.push({id:'h'+randId(6), fecha:new Date().toISOString(), user:S.user, tipo:'mensaje', texto:nota, interno:true}); }
     if(s.asignadoA!==S.user) notificar(s.asignadoA, `${userName(S.user)} te asignó ${s.numero}: ${ctTipo(s.tipo).l.toLowerCase()} con ${s.contraparte.nombre}${s.fechaObjetivo?` (objetivo: ${fmt(s.fechaObjetivo)})`:''}.${nota?' Indicaciones: '+nota:''}`, 'contrato-'+s.id, 'tarea');
@@ -4855,12 +4974,12 @@ document.addEventListener('click', async ev => {
   if(a==='ctenviar'){ const v = s.versiones[s.versiones.length-1]; v.enviada = true; s.estado = 'Enviada al solicitante'; s.hilo.push({id:'h'+randId(6), fecha:new Date().toISOString(), user:S.user, tipo:'mensaje', texto:`Te envío la versión ${v.n}${v.final?' (final)':''} del documento.${v.nota?' '+v.nota:''} Revisala y avisame si está bien o qué hay que cambiar.`, adjuntos:[{fid:v.fid, nombre:v.nombre, size:v.size, tipo:v.tipo, fecha:v.fecha, user:v.user}]});
     notificar(s.solicitante, `${userName(S.user)} te envió el documento de ${s.numero} (${s.contraparte.nombre}). Revisalo y confirmá.`, 'contrato-'+s.id, 'ok'); save(); audit('Envió un contrato al solicitante', s.numero, `v${v.n}`); render(); toast('Enviado al solicitante'); return; }
   if(a==='ctcerrar' || a==='ctconforme'){ s.estado = 'Cerrada'; s.cerrada = new Date().toISOString(); ctEvento(s, a==='ctconforme' ? 'confirmó que está todo bien y cerró el pedido.' : 'cerró el pedido.'); ctNotificarOtros(s, `${userName(S.user)} cerró ${s.numero} (${s.contraparte.nombre}).`, 'ok'); save(); audit('Cerró una solicitud de Contratos', s.numero, ''); render(); toast('Pedido cerrado'); return; }
-  if(a==='ctcancelar'){ const antC = s.estado; s.estado = 'Cancelada'; ctEvento(s, 'canceló la solicitud.'); ctNotificarOtros(s, `${userName(S.user)} canceló ${s.numero} (${s.contraparte.nombre}).`, 'alerta'); save(); audit('Canceló una solicitud de Contratos', s.numero, ''); render(); toast('Solicitud cancelada', ()=>{ s.estado = antC; ctEvento(s, 'deshizo la cancelación.'); save(); render(); }); return; }
+  if(a==='ctcancelar'){ const antC = s.estado; ctAsegurarTraza(s); s.estado = 'Cancelada'; s.traza.push({fecha:new Date().toISOString(), estado:'Cancelada', sector:'Cancelada', user:S.user, nota:'Canceló el solicitante.'}); ctEvento(s, 'canceló la solicitud.'); ctNotificarOtros(s, `${userName(S.user)} canceló ${s.numero} (${s.contraparte.nombre}).`, 'alerta'); save(); audit('Canceló una solicitud de Contratos', s.numero, ''); render(); toast('Solicitud cancelada', ()=>{ s.estado = antC; ctEvento(s, 'deshizo la cancelación.'); save(); render(); }); return; }
   if(a==='ctmsg'){ const txt = $('#ctMsg').value.trim(); const adj = ui.ctMsgArch||[]; if(!txt && !adj.length){ toast('Escribí un mensaje'); return; } const modo = ui.ctModo, interno = !!($('#ctInterno')&&$('#ctInterno').checked);
     s.hilo.push({id:'h'+randId(6), fecha:new Date().toISOString(), user:S.user, tipo:modo==='pedido'?'pedido':modo==='cambios'?'cambios':'mensaje', texto:txt, adjuntos:adj, interno});
     if(modo==='pedido'){ s.estado = 'Esperando información'; notificar(s.solicitante, `Contratos necesita información para ${s.numero} (${s.contraparte.nombre}): ${txt.slice(0,140)}`, 'contrato-'+s.id, 'alerta'); }
     else if(modo==='cambios'){ s.estado = 'En elaboración'; if(s.asignadoA) notificar(s.asignadoA, `${userName(S.user)} pidió cambios en ${s.numero}: ${txt.slice(0,140)}`, 'contrato-'+s.id, 'alerta'); }
-    else if(!interno){ if(s.estado==='Esperando información' && S.user===s.solicitante){ s.estado = 'En elaboración'; ctEvento(s, 'respondió el pedido de información.'); } ctNotificarOtros(s, `${userName(S.user)} escribió en ${s.numero}: ${(txt||'adjuntó archivos').slice(0,140)}`, 'info'); }
+    else if(!interno){ if(s.estado==='Enviada al solicitante' && S.user===s.solicitante){ ctAsegurarTraza(s); ctMover(s, 'En elaboración', {via:'Fojas', nota:'Respondió el solicitante por Fojas'+(txt?': '+txt.slice(0,160):'')+'.', evento:'respondió el pedido de información.'}); } ctNotificarOtros(s, `${userName(S.user)} escribió en ${s.numero}: ${(txt||'adjuntó archivos').slice(0,140)}`, 'info'); }
     else if(s.asignadoA && s.asignadoA!==S.user) notificar(s.asignadoA, `${userName(S.user)} dejó una nota interna en ${s.numero}.`, 'contrato-'+s.id);
     ui.ctModo = null; ui.ctMsgArch = []; save(); audit(modo==='pedido'?'Pidió información en Contratos':modo==='cambios'?'Pidió cambios en Contratos':'Escribió en una solicitud de Contratos', s.numero, txt.slice(0,80)); render(); toast('Enviado'); return; }
 });
@@ -4883,13 +5002,26 @@ function ejemplosContratos(d){
     {id:'mgimenez', nombre:'Marcos Giménez', rol:'Compras', area:'Compras', ctPerfil:'solicitante', modulos:['contratos']},
     {id:'sruiz', nombre:'Sofía Ruiz', rol:'Marketing', area:'Marketing', ctPerfil:'solicitante', modulos:['contratos']}];
   return nu; }
+function solicitudEjemploFirmas(){ const ts = n => { const x = new Date(); x.setDate(x.getDate()+n); return x.toISOString(); };
+  return {id:'cej4', numero:'CT-2026-0004', solicitante:'mgimenez', area:'Compras', unidad:'Medifé', tipo:'suministro', contraparte:{nombre:'Insumos Médicos Norte S.A.', cuit:'30-71222333-5', domicilio:'Av. Belgrano 900, Tucumán', contacto:'Laura Medina', email:'lmedina@insumosnorte.com.ar'}, objeto:'Provisión mensual de descartables para las sucursales del NOA.', monto:'$ 3.100.000 mensuales', pago:'A 45 días', vigencia:'12 meses', inicio:dPlus(15), necesitaPara:dPlus(9), urgente:false, modeloCp:false, obs:'',
+    checklist:ctTipo('suministro').docs.map(doc=>({doc, estado:'ok'})), adjuntos:[], versiones:[], estado:'Firmas', asignadoA:'lbrunelli', asignadoPor:'jpaz', asignadoEn:ts(-12), fechaObjetivo:dPlus(2), creada:ts(-14),
+    firmas:{proveedor:{fecha:dPlus(-1), firmante:'Laura Medina, apoderada', user:'lbrunelli'}},
+    traza:[{fecha:ts(-14), estado:'Recibida', sector:'Legales · Jefatura de Contratos (sin asignar)', user:'mgimenez', nota:'Solicitud enviada desde Fojas.', via:'Fojas'},
+      {fecha:ts(-12), estado:'Asignada', sector:'Legales · Lucas Emmanuel Brunelli', user:'jpaz', nota:'Asignado a Lucas Emmanuel Brunelli.'},
+      {fecha:ts(-11), estado:'En elaboración', sector:'Legales · Lucas Emmanuel Brunelli', user:'lbrunelli', nota:''},
+      {fecha:ts(-9), estado:'Enviada al solicitante', sector:'Solicitante · Compras', user:'lbrunelli', nota:'Falta el poder del firmante del proveedor.', via:'mail', dest:'mgimenez@empresa.com'},
+      {fecha:ts(-6), estado:'En elaboración', sector:'Legales · Lucas Emmanuel Brunelli', user:'lbrunelli', nota:'Respondió el solicitante: mandó el poder.', via:'mail'},
+      {fecha:ts(-4), estado:'Revisión del proveedor', sector:'Proveedor · Insumos Médicos Norte S.A.', user:'lbrunelli', nota:'Documento final v2.', via:'mail', dest:'lmedina@insumosnorte.com.ar'},
+      {fecha:ts(-2), estado:'Firmas', sector:'Firmas · falta proveedor y Medifé', user:'lbrunelli', nota:'El proveedor aprobó el documento.'},
+      {fecha:ts(-1), estado:'Firmas', sector:'Firmas · falta Medifé', user:'lbrunelli', nota:'Firma del proveedor: Laura Medina, apoderada.'}],
+    hilo:[{id:'h9', fecha:ts(-14), user:'mgimenez', tipo:'evento', texto:'Envió la solicitud.'}], visto:{}}; }
 function solicitudesEjemplo(){ const ts = n => { const x = new Date(); x.setDate(x.getDate()+n); return x.toISOString(); };
   return [
     {id:'cej1', numero:'CT-2026-0001', solicitante:'mgimenez', area:'Compras', unidad:'Medifé', tipo:'servicios', contraparte:{nombre:'Limpiezas del Sur S.R.L.', cuit:'30-71555444-2', domicilio:'San Martín 1450, Mendoza', contacto:'Raúl Ibarra', email:'ribarra@limpiezasdelsur.com.ar'}, objeto:'Limpieza de la sucursal Mendoza, de lunes a viernes de 7 a 10 hs, insumos a cargo del proveedor.', monto:'$ 850.000 mensuales', pago:'A 30 días de factura', vigencia:'12 meses, renovable', inicio:dPlus(10), necesitaPara:dPlus(4), urgente:false, modeloCp:false, obs:'Ya negociamos el precio; firma el gerente regional.',
       checklist:ctTipo('servicios').docs.map((doc,i)=>({doc, estado:['si','si','luego','luego','na'][i]||''})), adjuntos:[], versiones:[], estado:'Recibida', creada:ts(-1), hilo:[{id:'h1', fecha:ts(-1), user:'mgimenez', tipo:'evento', texto:'Envió la solicitud.'}], visto:{}},
     {id:'cej2', numero:'CT-2026-0002', solicitante:'sruiz', area:'Marketing', unidad:'Medifé', tipo:'marketing', contraparte:{nombre:'Juana Benítez (creadora de contenido)', cuit:'27-35111222-4', domicilio:'', contacto:'Agencia Brillo', email:'contacto@brillo.com.ar'}, objeto:'3 publicaciones y 6 historias en Instagram sobre el plan joven, durante diciembre.', monto:'$ 1.200.000', pago:'50% al firmar y 50% al terminar', vigencia:'Diciembre 2026', inicio:dPlus(8), necesitaPara:dPlus(2), urgente:true, motivoUrg:'La campaña sale el 1 de diciembre.', modeloCp:false, obs:'',
-      checklist:ctTipo('marketing').docs.map((doc,i)=>({doc, estado:['si','luego','na','si'][i]||''})), adjuntos:[], versiones:[], estado:'Esperando información', asignadoA:'cortiz', asignadoPor:'jpaz', asignadoEn:ts(-2), fechaObjetivo:dPlus(1), creada:ts(-3),
-      hilo:[{id:'h2', fecha:ts(-3), user:'sruiz', tipo:'evento', texto:'Envió la solicitud.'},{id:'h3', fecha:ts(-2), user:'jpaz', tipo:'evento', texto:'le asignó el pedido a Camila Ortiz.'},{id:'h4', fecha:ts(-1), user:'cortiz', tipo:'pedido', texto:'¿Nos pasás la cesión de derechos de imagen firmada por la creadora? Y confirmame si las piezas las aprueba Marketing antes de publicar.'}], visto:{cortiz:ts(-1)}},
+      checklist:ctTipo('marketing').docs.map((doc,i)=>({doc, estado:['si','luego','na','si'][i]||''})), adjuntos:[], versiones:[], estado:'Enviada al solicitante', asignadoA:'cortiz', asignadoPor:'jpaz', asignadoEn:ts(-2), fechaObjetivo:dPlus(1), creada:ts(-3),
+      hilo:[{id:'h2', fecha:ts(-3), user:'sruiz', tipo:'evento', texto:'Envió la solicitud.'},{id:'h3', fecha:ts(-2), user:'jpaz', tipo:'evento', texto:'le asignó el pedido a Camila Ortiz.'},{id:'h4', fecha:ts(-1), user:'cortiz', tipo:'pedido', via:'mail', texto:'¿Nos pasás la cesión de derechos de imagen firmada por la creadora? Y confirmame si las piezas las aprueba Marketing antes de publicar.'}], visto:{cortiz:ts(-1)}},
     {id:'cej3', numero:'CT-2026-0003', solicitante:'mgimenez', area:'Compras', unidad:'Sanatorio Finochietto', tipo:'nda', contraparte:{nombre:'Datasalud Analytics S.A.', cuit:'30-71888999-1', domicilio:'Av. del Libertador 5000, CABA', contacto:'Ana Torres', email:'atorres@datasalud.com'}, objeto:'Compartir información de prestaciones para que coticen un tablero de indicadores.', monto:'', pago:'', vigencia:'2 años', inicio:'', necesitaPara:dPlus(6), urgente:false, modeloCp:false, obs:'',
       checklist:ctTipo('nda').docs.map(doc=>({doc, estado:'si'})), adjuntos:[], versiones:[], estado:'En elaboración', asignadoA:'lbrunelli', asignadoPor:'jpaz', asignadoEn:ts(-1), fechaObjetivo:dPlus(3), creada:ts(-2),
       hilo:[{id:'h5', fecha:ts(-2), user:'mgimenez', tipo:'evento', texto:'Envió la solicitud.'},{id:'h6', fecha:ts(-1), user:'jpaz', tipo:'evento', texto:'le asignó el pedido a Lucas Emmanuel Brunelli.'},{id:'h7', fecha:ts(-1), user:'jpaz', tipo:'mensaje', interno:true, texto:'Usá nuestro modelo de NDA bilateral y agregá la cláusula de datos de salud.'}], visto:{}}
