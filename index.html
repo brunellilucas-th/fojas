@@ -1448,9 +1448,12 @@ const teamOf = (uid=S.user) => (S.teams||[]).find(t=>t.jefe===uid || t.miembros.
 const isLeader = () => teamsLed().length>0;
 const myPeople = () => { const s = new Set(); teamsLed().forEach(t=>{ s.add(t.jefe); t.miembros.forEach(m=>s.add(m)); }); return [...s]; };
 const canManage = e => isAdmin() || myPeople().includes(e.abogado);
-const statsOf = uid => { const cs = S.exps.filter(e=>e.abogado===uid && e.estado!=='Archivado'); const ps = cs.flatMap(e=>pending(e).map(p=>({...p, exp:e, idx:e.plazos.indexOf(p)}))).sort((a,b)=>a.vence.localeCompare(b.vence));
+const statsOf = uid => { const cs = S.exps.filter(e=>e.abogado===uid && e.estado!=='Archivado').sort(alfa); const ps = cs.flatMap(e=>pending(e).map(p=>({...p, exp:e, idx:e.plazos.indexOf(p)}))).sort((a,b)=>a.vence.localeCompare(b.vence));
   return {cases:cs, plazos:ps, vencidos:ps.filter(p=>daysTo(p.vence)<0).length, semana:ps.filter(p=>{const n=daysTo(p.vence); return n>=0&&n<=7;}).length, cautelar:cs.filter(e=>e.cautelar).length,
     actividad:S.audit.filter(a=>a.user===uid && !/sesión|ingreso/i.test(a.accion)).slice(-6).reverse()}; };
+const alfa = (a,b) => String(a.afiliado||'').localeCompare(String(b.afiliado||''), 'es', {sensitivity:'base'}) || String(a.prestacion||'').localeCompare(String(b.prestacion||''), 'es') || String(a.numero||'').localeCompare(String(b.numero||''));
+const porUrgencia = (a,b) => { const pa=nextPlazo(a), pb=nextPlazo(b); return (pa?pa.vence:'9999').localeCompare(pb?pb.vence:'9999') || alfa(a,b); };
+const ordenar = (arr, modo) => [...arr].sort(modo==='urg' ? porUrgencia : alfa);
 const active = () => S.exps.filter(e=>e.estado!=='Archivado');
 const pending = e => e.plazos.filter(p=>!p.hecho).sort((a,b)=>a.vence.localeCompare(b.vence));
 const nextPlazo = e => pending(e)[0];
@@ -1544,7 +1547,7 @@ function route(){
   return m ? {name:'expediente', id:+m[1]} : {name:h};
 }
 window.addEventListener('hashchange', ()=>{ ui.editSum = false; const nt = ui.nextTab; ui.nextTab = null; if(ui.scrollTo){ const u = ui.scrollTo; ui.scrollTo=null; setTimeout(()=>{ const d = u==='panel' ? $('#miembroPanel') : document.querySelector(`[data-member="${u}"]`); if(d) d.scrollIntoView({behavior:'smooth', block:'start'}); }, 60); } ui.q=''; ui.rOpen=null; ui.dniOpen=false; ui.tab=nt||'resumen'; ui.ia=''; ui.addMov=false; ui.addPlazo=false; ui.results=false; render(); const v=$('#view'); if(v) v.scrollTop=0; });
-const ui = {open:{}, scrollTo:null, tab:'resumen', ia:'', filtro:'todos', q:'', verify:null, tpl:null, tplExp:null, tplText:'', backupOut:'', backupMsg:null, csvMsg:null, results:false, addMov:false, addPlazo:false};
+const ui = {orden:(()=>{ try{ return localStorage.getItem('fojasOrden')||'alfa'; }catch(e){ return 'alfa'; } })(), open:{}, scrollTo:null, tab:'resumen', ia:'', filtro:'todos', q:'', verify:null, tpl:null, tplExp:null, tplText:'', backupOut:'', backupMsg:null, csvMsg:null, results:false, addMov:false, addPlazo:false};
 
 // ---------- estructura ----------
 function shell(content){
@@ -1605,7 +1608,7 @@ const mismoDni = e => { const k = dniKey(e.dni); return k.length>=6 ? S.exps.fil
 function dniTree(g, o={}){
   const p = g[0], key = 'd'+dniKey(p.dni) + (o.ctx||'');
   const open = o.open || (ui.dtOpen||{})[key];
-  const ord = [...g].sort((a,b)=>(a.estado==='Archivado')-(b.estado==='Archivado') || String(b.inicio||'').localeCompare(String(a.inicio||'')));
+  const ord = [...g].sort((a,b)=>(a.estado==='Archivado')-(b.estado==='Archivado') || alfa(a,b));
   const enCurso = g.filter(e=>e.estado!=='Archivado').length;
   const prox = g.map(e=>nextPlazo(e)).filter(Boolean).sort((a,b)=>a.vence.localeCompare(b.vence))[0];
   const n = prox ? daysTo(prox.vence) : null;
@@ -1628,7 +1631,7 @@ function dniTree(g, o={}){
 }
 function searchResults(){
   if(!ui.q.trim()) return '';
-  const found = matches(ui.q);
+  const found = matches(ui.q).sort(alfa);
   const grupos = [], vistos = new Set();
   found.forEach(e=>{ if(vistos.has(e.id)) return; const g = mismoDni(e); g.forEach(x=>vistos.add(x.id)); grupos.push(g); });
   const fila = e => `<a href="#expediente-${e.id}"><b>${esc(e.afiliado)}</b><div class="small muted">${esc(e.numero)} · ${esc(e.prestacion)}${e.dni&&e.dni!=='—'?` · DNI ${esc(e.dni)}`:''}</div></a>`;
@@ -1696,11 +1699,12 @@ function vAmparos(){
     archivados:{l:'Archivados', f:e=>e.estado==='Archivado'}
   };
   if(!F[ui.filtro]) ui.filtro='todos';
-  const list = all.filter(F[ui.filtro].f).sort((a,b)=>{ const pa=nextPlazo(a), pb=nextPlazo(b); return (pa?pa.vence:'9999').localeCompare(pb?pb.vence:'9999'); });
+  const list = ordenar(all.filter(F[ui.filtro].f), ui.orden);
   return `
-  <div class="head"><div><h1>Amparos</h1><p class="sub">Tocá cualquier amparo para ver todo lo que tiene. Los más urgentes aparecen primero.</p></div>
+  <div class="head"><div><h1>Amparos</h1><p class="sub">Tocá cualquier amparo para ver todo lo que tiene. ${ui.orden==='urg'?'Los más urgentes aparecen primero.':'Están en orden alfabético por afiliado.'}</p></div>
     <div class="row"><button class="btn big" data-act="ximportar">${ic('upload')} Importar / migrar</button><button class="btn pri big" data-act="nuevo">${ic('plus')} Nuevo expediente</button></div></div>
-  <div class="chips">${Object.entries(F).map(([k,v])=>`<button class="chipbtn ${ui.filtro===k?'on':''}" data-filtro="${k}">${v.l} <span class="badge">${all.filter(v.f).length}</span></button>`).join('')}</div>
+  <div class="row" style="justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div class="chips">${Object.entries(F).map(([k,v])=>`<button class="chipbtn ${ui.filtro===k?'on':''}" data-filtro="${k}">${v.l} <span class="badge">${all.filter(v.f).length}</span></button>`).join('')}</div>
+    <div class="row small" style="gap:6px;align-items:center"><span class="muted">Ordenar:</span><button class="chipbtn ${ui.orden!=='urg'?'on':''}" data-act="orden" data-v="alfa">A → Z</button><button class="chipbtn ${ui.orden==='urg'?'on':''}" data-act="orden" data-v="urg">Más urgente</button></div></div>
   <div class="cases">${(()=>{ const vistos = new Set(); return list.map(e=>{ if(vistos.has(e.id)) return ''; const k = dniKey(e.dni); const g = k.length>=6 ? list.filter(x=>dniKey(x.dni)===k) : [e]; g.forEach(x=>vistos.add(x.id)); if(g.length>1) return dniTree(g, {ctx:'a', total:mismoDni(e).length});
     const p=nextPlazo(e); const n=p?daysTo(p.vence):null; const u=p?urg(n):''; return `
     <div class="case" data-go="expediente-${e.id}" tabindex="0" role="link">
@@ -2038,7 +2042,7 @@ function miembroExps(uid, t){
   const mine = S.exps.filter(e=>e.abogado===uid);
   const F = {curso:{l:'En curso', f:e=>e.estado!=='Archivado'}, urg:{l:'Urgentes', f:e=>{ const p=nextPlazo(e); return p && daysTo(p.vence)<=3; }}, caut:{l:'Con cautelar', f:e=>e.cautelar && e.estado!=='Archivado'}, arch:{l:'Archivados', f:e=>e.estado==='Archivado'}, todos:{l:'Todos', f:()=>true}};
   if(!F[ui.mFiltro]) ui.mFiltro = 'curso';
-  const list = mine.filter(F[ui.mFiltro].f).sort((a,b)=>{ const pa=nextPlazo(a), pb=nextPlazo(b); return (pa?pa.vence:'9999').localeCompare(pb?pb.vence:'9999'); });
+  const list = ordenar(mine.filter(F[ui.mFiltro].f), 'alfa');
   const puedePasar = (isAdmin()||t.jefe===S.user); const others = [t.jefe, ...t.miembros].filter(x=>x!==uid);
   return `<div class="mpanel" id="miembroPanel">
     <div class="head"><div class="row" style="gap:12px"><div class="avatar">${initials(u.nombre)}</div><div><h2 style="font-size:20px">Expedientes de ${esc(u.nombre)}</h2><div class="small muted">${esc(u.rol)} · ${mine.filter(F.curso.f).length} en curso${mine.filter(F.arch.f).length?` · ${mine.filter(F.arch.f).length} archivados`:''}</div></div></div>
@@ -2957,6 +2961,7 @@ document.addEventListener('click', async ev => {
   if(a==='close') closeModal();
   if(a==='upcancel'){ UP = null; closeModal(); }
   if(a==='mcerrar'){ ui.miembro = null; render(); }
+  if(a==='orden'){ ui.orden = d.v; try{ localStorage.setItem('fojasOrden', d.v); }catch(err){} render(); }
   if(a==='upnewcat' && UP){ upRead(); const n = ($('#upNewCat')||{}).value||''; if(!n.trim()){ toast('Escribí el nombre de la categoría'); const f=$('#upNewCat'); if(f) f.focus(); return; } const id = nuevaCategoria(n, ($('#upNewBase')||{}).value); UP.tipo = id; if(!UP.descEditada) UP.desc = ''; upSugerir(); drawUp(); toast(`Categoría «${upTipo(id).l}» creada`); }
   if(a==='upcats'){ if(UP) upRead(); catsOpen(); }
   if(a==='catclose'){ CATS = null; if(UP) drawUp(); else closeModal(); }
