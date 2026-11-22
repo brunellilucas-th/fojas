@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.7">
+<meta name="fojas-version" content="2026-11-22.8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -186,6 +186,7 @@ textarea{resize:vertical}
 .tabs button{border:0;background:none;padding:9px 14px;border-radius:10px;cursor:pointer;color:var(--muted);font-weight:600;display:inline-flex;gap:8px;align-items:center}
 .tabs button:hover{background:var(--sunken);color:var(--ink)}
 .tabs button.on{background:var(--accent-soft);color:var(--accent)}
+.modchecks{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px} .modchk{display:inline-flex !important;flex-direction:row !important;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;font-weight:600;cursor:pointer;background:var(--surface)} .modchk input{width:18px;height:18px;flex:none;margin:0}
 .gcard{border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
 .gcard-h{display:flex;gap:12px;align-items:center;width:100%;text-align:left;border:0;background:none;padding:14px 16px;cursor:pointer;color:inherit;font:inherit}
 .gcard-h:hover{background:var(--sunken)} .gcard-h .chev{transition:transform .15s;display:inline-flex} .gcard.open .gcard-h .chev{transform:rotate(90deg)}
@@ -541,6 +542,14 @@ const MODULES = [
   {id:'contratos', nombre:'Contratos', desc:'Contratos con prestadores y proveedores: versiones, firmantes y renovaciones.', disponible:false, icon:'file'},
   {id:'cartas', nombre:'Cartas documento', desc:'Redacción, envío y seguimiento de cartas documento e intimaciones.', disponible:false, icon:'pen'}
 ];
+
+// módulos por usuario: el administrador elige qué módulos ve cada persona (el administrador ve todos)
+const modsOrg = () => MODULES.filter(m=>m.disponible && S && S.modules && S.modules[m.id]).map(m=>m.id);
+function modsDe(u){ if(!u) return modsOrg(); if(u.rol==='Administrador') return modsOrg(); return Array.isArray(u.modulos) ? modsOrg().filter(id=>u.modulos.includes(id)) : modsOrg(); }
+function tieneMod(id){ const u = (S && S.user) ? S.users.find(x=>x.id===S.user) : null; if(!u) return true; return modsDe(u).includes(id); }
+const RUTA_MOD = {amparos:'amparos', expediente:'amparos', escritos:'amparos', modelos:'amparos', informes:'amparos', equipo:'amparos', administrativos:'administrativos', tramite:'administrativos'};
+const modChecks = (pref, sel, todos) => `<div class="modchecks">${MODULES.filter(m=>m.disponible && S.modules[m.id]).map(m=>`<label class="modchk"><input type="checkbox" id="${pref}${m.id}" ${todos || !Array.isArray(sel) || sel.includes(m.id) ? 'checked':''} ${todos?'disabled':''}> ${ic(m.icon,'sm')} ${esc(m.nombre)}</label>`).join('')}</div>`;
+const modLeer = pref => MODULES.filter(m=>m.disponible && S.modules[m.id] && ($('#'+pref+m.id)||{}).checked).map(m=>m.id);
 
 // ---------- redacción completa de escritos ----------
 const CONFIG_DEF = {parteNombre:'Medifé', empresa:'SALUD INTEGRAL DEMO S.A.', cuitEmpresa:'30-71234567-8', letrado:'', matricula:'T° 120 F° 345 del CPACF', domicilio:'Av. Corrientes 1234, piso 5°, Ciudad Autónoma de Buenos Aires', electronico:'20-28123456-7', poder:'poder general judicial que acompaño en copia y declaro vigente'};
@@ -1522,7 +1531,7 @@ const ordenar = (arr, modo) => [...arr].sort(modo==='urg' ? porUrgencia : alfa);
 const active = () => S.exps.filter(e=>e.estado!=='Archivado');
 const pending = e => e.plazos.filter(p=>!p.hecho).sort((a,b)=>a.vence.localeCompare(b.vence));
 const nextPlazo = e => pending(e)[0];
-const allPlazos = () => S.exps.flatMap(e => pending(e).map(p=>({...p, exp:e, idx:e.plazos.indexOf(p)}))).sort((a,b)=>a.vence.localeCompare(b.vence));
+const allPlazos = () => !tieneMod('amparos') ? [] : S.exps.flatMap(e => pending(e).map(p=>({...p, exp:e, idx:e.plazos.indexOf(p)}))).sort((a,b)=>a.vence.localeCompare(b.vence));
 
 // ---------- auditoría encadenada (SHA-256) ----------
 async function sha(text){
@@ -1622,7 +1631,8 @@ function shell(content){
   const act = n => (r===n || (n==='amparos' && r==='expediente') || (n==='administrativos' && r==='tramite')) ? 'on' : '';
   const urgentes = allPlazos().filter(p=>daysTo(p.vence)<=1).length;
   const link = (h, icon, label, badge='') => `<a href="#${h}" class="${act(h)}" title="${label}">${ic(icon)}<span class="lbl">${label}</span>${badge}</a>`;
-  const extra = MODULES.filter(m=>m.id!=='amparos' && S.modules[m.id]).map(m=> m.id==='administrativos' ? link('administrativos','book','Administrativos', (()=>{ const n = trs().filter(t=>{ const p = trPend(t)[0]; return p && daysTo(p.vence)<=3; }).length; return n?`<span class="badge red">${n}</span>`:''; })()) : `<a href="#modulos" title="${esc(m.nombre)}">${ic(m.icon)}<span class="lbl">${esc(m.nombre)}</span><span class="badge">pronto</span></a>`).join('');
+  const amp = tieneMod('amparos');
+  const extra = MODULES.filter(m=>m.id!=='amparos' && S.modules[m.id] && (!m.disponible || tieneMod(m.id))).map(m=> m.id==='administrativos' ? link('administrativos','book','Administrativos', (()=>{ const n = trs().filter(t=>{ const p = trPend(t)[0]; return p && daysTo(p.vence)<=3; }).length; return n?`<span class="badge red">${n}</span>`:''; })()) : `<a href="#modulos" title="${esc(m.nombre)}">${ic(m.icon)}<span class="lbl">${esc(m.nombre)}</span><span class="badge">pronto</span></a>`).join('');
   const u = me();
   return `
   <div class="app">
@@ -1630,12 +1640,12 @@ function shell(content){
       <div class="brand"><div class="mark">${fojasMark('lgS')}</div><b>Fojas</b></div>
       <nav class="nav" aria-label="Principal">
         ${link('inicio','home','Inicio')}
-        ${link('amparos','folder','Amparos', `<span class="badge">${active().length}</span>`)}
+        ${amp?link('amparos','folder','Amparos', `<span class="badge">${active().length}</span>`):''}
         ${link('vencimientos','cal','Vencimientos', urgentes?`<span class="badge red">${urgentes}</span>`:'')}
-        ${link('escritos','pen','Escritos')}
-        ${link('modelos','file','Modelos', (S.modelos||[]).length?`<span class="badge">${S.modelos.length}</span>`:'')}
-        ${link('informes','chart','Informes')}
-        ${(teamOf()||isAdmin())?link('equipo','users',isLeader()?'Mi equipo':'Equipo', isLeader()&&myPeople().some(u=>statsOf(u).vencidos)?`<span class="badge red">${myPeople().reduce((a,u)=>a+statsOf(u).vencidos,0)}</span>`:''):''}
+        ${amp?link('escritos','pen','Escritos'):''}
+        ${amp?link('modelos','file','Modelos', (S.modelos||[]).length?`<span class="badge">${S.modelos.length}</span>`:''):''}
+        ${amp?link('informes','chart','Informes'):''}
+        ${amp && (teamOf()||isAdmin())?link('equipo','users',isLeader()?'Mi equipo':'Equipo', isLeader()&&myPeople().some(u=>statsOf(u).vencidos)?`<span class="badge red">${myPeople().reduce((a,u)=>a+statsOf(u).vencidos,0)}</span>`:''):''}
         ${extra}
       </nav>
       <div class="navlabel">Más opciones</div>
@@ -1699,12 +1709,12 @@ function dniTree(g, o={}){
 }
 function searchResults(){
   if(!ui.q.trim()) return '';
-  const found = matches(ui.q).sort(alfa);
+  const found = tieneMod('amparos') ? matches(ui.q).sort(alfa) : [];
   const grupos = [], vistos = new Set();
   found.forEach(e=>{ if(vistos.has(e.id)) return; const g = mismoDni(e); g.forEach(x=>vistos.add(x.id)); grupos.push(g); });
   const fila = e => `<a href="#expediente-${e.id}"><b>${esc(e.afiliado)}</b><div class="small muted">${esc(e.numero)} · ${esc(e.prestacion)}${e.dni&&e.dni!=='—'?` · DNI ${esc(e.dni)}`:''}</div></a>`;
   const html = grupos.slice(0,8).map(g=>g.length>1 ? dniTree(g, {mini:true, ctx:'s', open: grupos.length===1}) : fila(g[0])).join('');
-  const trh = S.modules.administrativos ? trBuscar(ui.q).map(t=>`<a href="#tramite-${t.id}"><b>${esc(trNombre(t))}</b><div class="small muted">Administrativos · ${esc(orgById(t.org).c)}${t.numero?' · '+esc(t.numero):''}${t.motivo?' · '+esc(t.motivo):''}</div></a>`).join('') : '';
+  const trh = tieneMod('administrativos') ? trBuscar(ui.q).map(t=>`<a href="#tramite-${t.id}"><b>${esc(trNombre(t))}</b><div class="small muted">Administrativos · ${esc(orgById(t.org).c)}${t.numero?' · '+esc(t.numero):''}${t.motivo?' · '+esc(t.motivo):''}</div></a>`).join('') : '';
   return `<div class="results">${(html+trh) || '<div class="empty small">No encontramos nada con esa búsqueda.</div>'}</div>`;
 }
 
@@ -1720,6 +1730,7 @@ function taskRow(p, showExp=true){
 
 // ---------- vistas ----------
 function vInicio(){
+  if(!tieneMod('amparos')) return vInicioSinAmparos();
   const plazos = allPlazos();
   const urgent = plazos.filter(p=>daysTo(p.vence)<=3);
   const vencidos = plazos.filter(p=>daysTo(p.vence)<0).length;
@@ -1788,6 +1799,21 @@ function vAmparos(){
   </div>`;
 }
 
+function vInicioSinAmparos(){
+  const u = me(), hr = new Date().getHours(), saludo = hr<12?'Buen día':hr<20?'Buenas tardes':'Buenas noches';
+  const adm = tieneMod('administrativos');
+  const l = adm ? trs().flatMap(t=>(t.plazos||[]).map((p,i)=>({t,p,i})).filter(x=>!x.p.hecho)).sort((a,b)=>a.p.vence.localeCompare(b.p.vence)) : [];
+  const urg = l.filter(x=>daysTo(x.p.vence)<=3);
+  return `<div><h1>${saludo}, ${esc(u.nombre.split(' ')[0])}</h1><p class="sub">${new Date().toLocaleDateString('es-AR',{weekday:'long', day:'numeric', month:'long'})}${adm?` · ${urg.length?`Tenés ${urg.length} ${urg.length===1?'cosa urgente':'cosas urgentes'} para los próximos días.`:'Está todo al día.'}`:''}</p></div>
+  ${adm?`<section><h2 style="margin-bottom:12px">¿Qué querés hacer?</h2><div class="grid g4">
+    <button class="action" data-act="trnuevo" data-clase="reclamo"><div class="ico a">${ic('plus','lg')}</div><b>Nuevo reclamo</b><span>SSS, Defensa del Consumidor, COPREC…</span></button>
+    <button class="action" data-act="trnuevo" data-clase="obligacion"><div class="ico v">${ic('cal','lg')}</div><b>Agendar una obligación</b><span>Presentaciones de la empresa.</span></button>
+    <a class="action" href="#administrativos" data-admtab="guia"><div class="ico g">${ic('book','lg')}</div><b>Guía de trámites</b><span>Qué, cuándo y cómo.</span></a>
+    <a class="action" href="#vencimientos"><div class="ico r">${ic('cal','lg')}</div><b>Ver qué vence</b><span>Ordenado por fecha.</span></a></div></section>
+  <section class="card"><div class="head"><h2>Lo más urgente</h2><a href="#vencimientos" class="small">Ver todo</a></div>
+    ${urg.length?`<div class="cases">${urg.slice(0,6).map(x=>trTaskRow(x.t,x.p,x.i)).join('')}</div>`:`<div class="empty"><div class="ico g">${ic('check','lg')}</div><b>No hay nada urgente</b><span>Nada vence en los próximos 3 días.</span></div>`}</section>`
+  : `<section class="card empty"><b>Todavía no tenés módulos asignados.</b><span class="muted">Pedile al administrador que te habilite el que necesitás.</span></section>`}`;
+}
 function vVencimientos(){
   const plazos = allPlazos();
   const groups = [
@@ -2053,12 +2079,12 @@ function vHistorial(){
 
 function vModulos(){
   return `
-  <div><h1>Módulos</h1><p class="sub">Cada organización usa solo las áreas que necesita. Prendé o apagá un módulo y aparece en el menú.</p></div>
+  <div><h1>Módulos</h1><p class="sub">Cada organización usa solo las áreas que necesita. ${isAdmin()?'Prendé o apagá un módulo para toda la organización. Qué módulos ve cada persona se elige en <a href="#usuarios">Usuarios</a>.':'El administrador elige qué módulos ve cada persona.'}</p></div>
   <div class="grid g2">${MODULES.map(m=>`
     <section class="card mod ${S.modules[m.id]?'active':''}">
       <div class="row"><div class="ico ${S.modules[m.id]?'a':'y'}">${ic(m.icon)}</div><h2 style="flex:1">${esc(m.nombre)}</h2>${m.disponible?'<span class="pill grn">Disponible</span>':'<span class="pill">Próximamente</span>'}</div>
       <p class="muted">${esc(m.desc)}</p>
-      <label class="switch"><input type="checkbox" data-mod="${m.id}" ${S.modules[m.id]?'checked':''} ${m.id==='amparos'?'disabled':''}> ${S.modules[m.id]?'Activado':'Apagado'}</label>
+      <label class="switch"><input type="checkbox" data-mod="${m.id}" ${S.modules[m.id]?'checked':''} ${m.id==='amparos'||!isAdmin()?'disabled':''}> ${S.modules[m.id]?'Activado':'Apagado'}</label>
       ${m.id==='amparos'?'<span class="small muted">Es el módulo principal de esta versión.</span>':''}
     </section>`).join('')}</div>`;
 }
@@ -2189,7 +2215,7 @@ function teamEditor(){
 
 const ROLES = ['Abogada/o a cargo','Analista legal','Procurador','Administrador'];
 let UE = null;
-function openUserEdit(uid){ const u = S.users.find(x=>x.id===uid); if(!u) return; UE = {id:uid, nombre:u.nombre, nuevoId:u.id, rol:u.rol, pw:'no', p1:'', p2:'', cambiar:true, err:''}; drawUserEdit(); }
+function openUserEdit(uid){ const u = S.users.find(x=>x.id===uid); if(!u) return; UE = {id:uid, nombre:u.nombre, nuevoId:u.id, rol:u.rol, modulos: modsDe(u), pw:'no', p1:'', p2:'', cambiar:true, err:''}; drawUserEdit(); }
 function drawUserEdit(){
   const u = S.users.find(x=>x.id===UE.id), yo = u.id===S.user;
   const roles = ROLES.includes(UE.rol) ? ROLES : [UE.rol, ...ROLES];
@@ -2201,6 +2227,7 @@ function drawUserEdit(){
       <label>Usuario para entrar <span class="hint">${yo?'no podés cambiar tu propio usuario mientras estás adentro':'minúsculas, sin espacios'}</span><input type="text" id="ueId" value="${esc(UE.nuevoId)}" ${yo?'disabled':''} autocomplete="off"></label>
       <label>Rol<select id="ueRol">${roles.map(r=>`<option ${r===UE.rol?'selected':''}>${esc(r)}</option>`).join('')}</select></label>
     </div>
+    <div class="fld">Módulos que puede usar <span class="hint">${UE.rol==='Administrador'?'el administrador ve todos los módulos':'tildá uno, varios o todos'}</span>${modChecks('ueMod', UE.modulos, UE.rol==='Administrador')}</div>
     <div class="fld">Contraseña
       <div class="opts" style="grid-template-columns:repeat(3,1fr)">
         <button type="button" class="opt ${UE.pw==='no'?'on':''}" data-uepw="no">No cambiarla</button>
@@ -2215,7 +2242,7 @@ function drawUserEdit(){
     ${UE.pw==='ini'?`<div class="notice">La contraseña vuelve a ser igual a su usuario (<span class="mono">${esc((UE.nuevoId||u.id).trim().toLowerCase())}</span>) y la tiene que cambiar al entrar.</div>`:''}
     <div class="row" style="justify-content:flex-end"><button class="btn" data-act="close">Cancelar</button><button class="btn ok big" data-act="uesave">${ic('check')} Guardar cambios</button></div>`);
 }
-function ueRead(){ if(!UE) return; const g = id => $(id); if(g('#ueNom')) UE.nombre = g('#ueNom').value; if(g('#ueId') && !g('#ueId').disabled) UE.nuevoId = g('#ueId').value; if(g('#ueRol')) UE.rol = g('#ueRol').value; if(g('#ueP1')) UE.p1 = g('#ueP1').value; if(g('#ueP2')) UE.p2 = g('#ueP2').value; if(g('#ueCambiar')) UE.cambiar = g('#ueCambiar').checked; }
+function ueRead(){ if(!UE) return; const g = id => $(id); if(g('#ueNom')) UE.nombre = g('#ueNom').value; if(g('#ueId') && !g('#ueId').disabled) UE.nuevoId = g('#ueId').value; if(g('#ueRol')) UE.rol = g('#ueRol').value; if(g('.modchecks') && UE.rol!=='Administrador') UE.modulos = modLeer('ueMod'); if(g('#ueP1')) UE.p1 = g('#ueP1').value; if(g('#ueP2')) UE.p2 = g('#ueP2').value; if(g('#ueCambiar')) UE.cambiar = g('#ueCambiar').checked; }
 async function ueSave(){
   ueRead(); const u = S.users.find(x=>x.id===UE.id); const yo = u.id===S.user; const err = t => { UE.err = t; drawUserEdit(); };
   const nombre = UE.nombre.trim().replace(/\s+/g,' '), nid = UE.nuevoId.trim().toLowerCase();
@@ -2230,10 +2257,11 @@ async function ueSave(){
   const cambios = [];
   if(nombre !== u.nombre){ cambios.push(`nombre: ${u.nombre} → ${nombre}`); u.nombre = nombre; }
   if(UE.rol !== u.rol){ cambios.push(`rol: ${u.rol} → ${UE.rol}`); u.rol = UE.rol; }
+  if(UE.rol!=='Administrador'){ const antes = modsDe(u).join(','), nuevos = (UE.modulos||[]); if(antes !== modsOrg().filter(id=>nuevos.includes(id)).join(',') || !Array.isArray(u.modulos)){ if(antes !== modsOrg().filter(id=>nuevos.includes(id)).join(',')) cambios.push(`módulos: ${antes||'ninguno'} → ${nuevos.join(',')||'ninguno'}`); u.modulos = [...nuevos]; } }
   if(nid !== u.id){ const old = u.id; cambios.push(`usuario: ${old} → ${nid}`); u.id = nid;
     S.exps.forEach(e=>{ if(e.abogado===old) e.abogado = nid; (e.movimientos||[]).forEach(m=>{ if(m.user===old) m.user = nid; }); });
     (S.teams||[]).forEach(t=>{ if(t.jefe===old) t.jefe = nid; t.miembros = t.miembros.map(m=>m===old?nid:m); });
-    (S.modelos||[]).forEach(m=>{ if(m.autor===old) m.autor = nid; }); (S.docCats||[]).forEach(c=>{ if(c.autor===old) c.autor = nid; });
+    (S.modelos||[]).forEach(m=>{ if(m.autor===old) m.autor = nid; }); trs().forEach(t=>{ if(t.abogado===old) t.abogado = nid; (t.movimientos||[]).forEach(m=>{ if(m.user===old) m.user = nid; }); }); (S.docCats||[]).forEach(c=>{ if(c.autor===old) c.autor = nid; });
     if(S.lock && S.lock[old]){ S.lock[nid] = S.lock[old]; delete S.lock[old]; } if(S.toured && S.toured[old]){ S.toured[nid] = S.toured[old]; delete S.toured[old]; } }
   if(nuevaPass){ u.salt = randId(16); u.hash = await hashPass(nuevaPass, u.salt); u.mustChange = !yo; if(S.lock) delete S.lock[u.id]; cambios.push(UE.pw==='ini'?'contraseña restablecida (igual al usuario)':'contraseña nueva'); }
   if(!cambios.length){ UE = null; closeModal(); toast('No hubo cambios'); return; }
@@ -2270,6 +2298,7 @@ function vUsuarios(){
   ${m?`<div class="notice ${m.ok?'good':'bad'}">${m.html||esc(m.t)}</div>`:''}
   <div class="grid g3">${S.users.map(u=>{ const l = (S.lock||{})[u.id]; const locked = l && l.until > Date.now(); return `
     <section class="card"><div class="row"><div class="avatar">${initials(u.nombre)}</div><div style="flex:1"><b>${esc(u.nombre)}</b><div class="small muted">${esc(u.rol)} · <span class="mono">${esc(u.id)}</span></div></div></div>
+      <div class="small"><span class="muted">Módulos:</span> ${u.rol==='Administrador'?'todos (es administrador)':(modsDe(u).map(id=>esc((MODULES.find(m=>m.id===id)||{}).nombre||id)).join(' · ')||'<b style="color:var(--danger)">ninguno</b>')}</div>
       <div class="row">${u.activo?(locked?'<span class="pill yel">Bloqueado</span>':'<span class="pill grn">Puede entrar</span>'):'<span class="pill">Desactivado</span>'}${u.mustChange?'<span class="pill">Debe cambiar su contraseña</span>':''}</div>
       <div class="row"><button class="btn sm pri" data-act="uedit" data-u="${u.id}">${ic('pen','sm')} Editar</button></div>
       ${u.id===S.user?'<span class="small muted">Sos vos</span>':`<div class="row"><button class="btn sm" data-act="ureset" data-u="${u.id}">${ic('key','sm')} Restablecer contraseña</button><button class="btn sm" data-act="utoggle" data-u="${u.id}">${u.activo?'Desactivar':'Activar'}</button>${locked?`<button class="btn sm" data-act="uunlock" data-u="${u.id}">Desbloquear</button>`:''}<button class="btn sm ghost danger" data-act="udel" data-u="${u.id}">${ic('trash','sm')} Eliminar</button></div>`}
@@ -2279,6 +2308,7 @@ function vUsuarios(){
       <label>Nombre y apellido<input type="text" id="nuNom" required></label>
       <label>Usuario para entrar <span class="hint">minúsculas, sin espacios</span><input type="text" id="nuId" required pattern="[a-z0-9._-]{3,30}" placeholder="ej.: mlopez"></label>
       <label>Rol<select id="nuRol"><option>Abogada/o a cargo</option><option>Analista legal</option><option>Procurador</option><option>Administrador</option></select></label>
+      <div class="full"><span class="small" style="font-weight:600">Módulos que puede usar</span>${modChecks('nuMod', null, false)}</div>
       <div class="full"><button class="btn pri" type="submit">${ic('plus','sm')} Agregar</button> <span class="small muted">La primera vez entra con su usuario como contraseña y Fojas le pide cambiarla.</span></div>
     </form></section>`;
 }
@@ -3064,7 +3094,8 @@ function render(){
   try{ (S.exps||[]).forEach(fixExp); }catch(err){}
   if(!logged()){ $('#root').innerHTML = vIngreso(); document.title='Fojas · Ingresar'; try{ drawAgente(); }catch(err){} return; }
   document.title='Fojas';
-  const r = route();
+  let r = route();
+  if(RUTA_MOD[r.name] && !tieneMod(RUTA_MOD[r.name])){ const alt = modsDe(me())[0]; const destino = alt==='administrativos' ? 'administrativos' : 'inicio'; if(location.hash.slice(1)!==destino){ history.replaceState(null,'','#'+destino); } r = {name:destino}; }
   const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, modelos:vModelos, informes:vInformes, historial:vHistorial, papelera:vPapelera, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios, asistente:vAsistente, administrativos:vAdministrativos};
   const html = r.name==='expediente' ? vExpediente(r.id) : r.name==='tramite' ? vTramite(r.id) : (views[r.name]||vInicio)();
   const scroll = $('#view') ? $('#view').scrollTop : 0;
@@ -3293,7 +3324,7 @@ document.addEventListener('change', async ev => {
   if(t.dataset && t.dataset.reassign && t.value){ const x = expById(t.dataset.reassign); if(!x || !canManage(x) || t.value===x.abogado) return; const old = x.abogado; x.abogado = t.value; save();
     audit('Reasignó un amparo', x.numero, `De ${userName(old)} a ${userName(t.value)}`); render();
     toast(`${x.afiliado} ahora está a cargo de ${userName(t.value)}.`, ()=>{ x.abogado = old; save(); audit('Deshizo reasignación', x.numero, `Vuelve a ${userName(old)}`); render(); }); }
-  if(t.dataset && t.dataset.mod){ S.modules[t.dataset.mod] = t.checked; save(); const m = MODULES.find(x=>x.id===t.dataset.mod); audit(t.checked?'Activó un módulo':'Apagó un módulo', m.nombre, 'Configuración'); render(); toast(t.checked?`${m.nombre} activado: ya aparece en el menú`:`${m.nombre} apagado`); }
+  if(t.dataset && t.dataset.mod && isAdmin()){ S.modules[t.dataset.mod] = t.checked; save(); const m = MODULES.find(x=>x.id===t.dataset.mod); audit(t.checked?'Activó un módulo':'Apagó un módulo', m.nombre, 'Configuración'); render(); toast(t.checked?`${m.nombre} activado: ya aparece en el menú`:`${m.nombre} apagado`); }
 });
 document.addEventListener('toggle', ev => { const d = ev.target; if(d.matches && d.matches('details[data-sugkey]')){ if(d.open) ui.openSug = d.dataset.sugkey; else if(ui.openSug===d.dataset.sugkey) ui.openSug = null; } if(d.matches && d.matches('details[data-member]')) ui.open[d.dataset.member] = d.open; if(d.matches && d.matches('details[data-rdni]')) ui.rOpen = d.open ? d.dataset.rdni : null; if(d.matches && d.matches('details.dnibox')) ui.dniOpen = d.open; }, true);
 const DRAGFILES = ev => ev.dataTransfer && [...(ev.dataTransfer.types||[])].includes('Files');
@@ -3366,8 +3397,8 @@ document.addEventListener('submit', async ev => {
   if(id==='userForm' && isAdmin()){
     const uid = $('#nuId').value.trim().toLowerCase();
     if(S.users.some(x=>x.id===uid)){ ui.userMsg={ok:false,t:'Ya hay alguien con ese usuario. Probá con otro.'}; render(); return; }
-    S.users.push(await makeUser({id:uid, nombre:$('#nuNom').value.trim(), rol:$('#nuRol').value}, uid, true)); save();
-    audit('Agregó un usuario','Usuarios', `${uid} (${$('#nuRol').value})`);
+    const nu = await makeUser({id:uid, nombre:$('#nuNom').value.trim(), rol:$('#nuRol').value}, uid, true); nu.modulos = modLeer('nuMod'); S.users.push(nu); save();
+    audit('Agregó un usuario','Usuarios', `${uid} (${$('#nuRol').value}) · módulos: ${nu.modulos.join(', ')||'ninguno'}`);
     ui.userMsg={ok:true, html:`Listo. <b>${esc(uid)}</b> ya puede entrar: la primera vez su contraseña es <span class="mono">${esc(uid)}</span> (igual al usuario) y al ingresar la tiene que cambiar sí o sí.`}; await chain; render();
   }
 });
@@ -3378,12 +3409,14 @@ window.addEventListener('storage', async ev => {
   try{ const d = JSON.parse(ev.newValue); const user = S && S.user; S = d; S.user = user; render(); }catch(e){}
 });
 window.addEventListener('beforeunload', ()=>{ try{ if(S) localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} });
+const expsVis = () => tieneMod('amparos') ? S.exps : [];
 // ---------- Agente IA interno: ayuda de la app, consultas de expedientes e informes ----------
 IC.book = '<path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M5 17a3 3 0 0 1 3-3h10" fill="none" stroke="currentColor" stroke-width="2"/>';
 IC.send = '<path d="M4 12l16-8-6 16-2.5-6.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>';
 IC.x = '<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>';
 IC.bot = '<rect x="4" y="7" width="16" height="12" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7V4M9 13h.01M15 13h.01" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M2 12v3M22 12v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
 const AYUDA = [
+  {t:'Asignar módulos a cada usuario', k:['modulo','modulos','asignar','habilitar','permisos','acceso','usuario','ver'], r:'El administrador entra a **Usuarios**, toca **Editar** en la persona y tilda los **Módulos que puede usar**: uno, varios o todos. También se eligen al agregar a alguien. Cada persona ve en el menú solo sus módulos; el administrador ve todos. Para prender o apagar un módulo para toda la organización, andá a **Módulos**.', ir:'usuarios'},
   {k:['cargar','nuevo expediente','crear expediente','alta','amparo nuevo','ingresar un amparo'], t:'Cargar un expediente nuevo', ir:'amparos',
    r:'En **Amparos** tocá **Nuevo expediente**. Arrastrá la demanda, el oficio y la prueba (PDF, Word, fotos o mails): Fojas los lee completos y completa solo los autos, el DNI, el juzgado, qué reclama, la cautelar y los plazos. Revisás lo que propone y guardás.'},
   {k:['subir documento','subir un documento','arrastrar','cedula','mail','correo','outlook','adjunto','avance','actualizar el expediente','eml','msg'], t:'Subir un documento a un expediente', ir:null,
@@ -3430,9 +3463,9 @@ function agPersona(t){
 }
 function agExps(q){
   const t = normTxt(q), dig = q.replace(/\D/g,''), out = new Set();
-  const m = q.match(/(\d{2,6})\s*\/\s*(\d{2,4})/); if(m) S.exps.forEach(e=>{ if(String(e.numero).includes(m[1]+'/')) out.add(e); });
-  if(dig.length>=7 && dig.length<=8) S.exps.forEach(e=>{ if(dniKey(e.dni)===dig) out.add(e); });
-  if(!out.size) S.exps.forEach(e=>{ const ap = normTxt(String(e.afiliado).split(',')[0]).trim(); if(ap.length>=3 && new RegExp('\\b'+ap.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b').test(t)) out.add(e); });
+  const m = q.match(/(\d{2,6})\s*\/\s*(\d{2,4})/); if(m) expsVis().forEach(e=>{ if(String(e.numero).includes(m[1]+'/')) out.add(e); });
+  if(dig.length>=7 && dig.length<=8) expsVis().forEach(e=>{ if(dniKey(e.dni)===dig) out.add(e); });
+  if(!out.size) expsVis().forEach(e=>{ const ap = normTxt(String(e.afiliado).split(',')[0]).trim(); if(ap.length>=3 && new RegExp('\\b'+ap.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b').test(t)) out.add(e); });
   if(!out.size){ const r = route(); if(r.name==='expediente' && /\b(este|esta|el expediente|del expediente|este caso|el caso|aca|resum|que hago|que hacer|riesgo|plazo|vence|documento|cautelar|linea|quien|juzgado|informe)\b/.test(t)){ const e = expById(r.id); if(e) out.add(e); } }
   return [...out];
 }
@@ -3479,13 +3512,13 @@ function agResponder(q){
   if(pideInforme){
     if(exps.length===1) return R(null, {inf:informeExp(exps[0])});
     if(exps.length>1 && !per) return R('Ese DNI o apellido tiene varios expedientes. ¿De cuál querés el informe?', {elegir:exps.map(e=>({l:`${e.prestacion} · ${e.numero}`, q:`informe ${e.numero}`}))});
-    if(per) return R(null, {inf:informeLista(`Informe de ${userName(per)}`, 'Expedientes a su cargo', S.exps.filter(e=>e.abogado===per))});
-    if(/equipo/.test(t)){ const tm = teamOf(); const ids = tm ? [tm.jefe, ...tm.miembros] : S.users.map(u=>u.id); return R(null, {inf:informeLista(tm?`Informe del equipo ${tm.nombre}`:'Informe de equipos', 'Todos los expedientes del equipo', S.exps.filter(e=>ids.includes(e.abogado)))}); }
-    if(/cautelar/.test(t)) return R(null, {inf:informeLista('Informe de expedientes con cautelar', 'Medidas cautelares vigentes', S.exps.filter(e=>e.cautelar))});
+    if(per) return R(null, {inf:informeLista(`Informe de ${userName(per)}`, 'Expedientes a su cargo', expsVis().filter(e=>e.abogado===per))});
+    if(/equipo/.test(t)){ const tm = teamOf(); const ids = tm ? [tm.jefe, ...tm.miembros] : S.users.map(u=>u.id); return R(null, {inf:informeLista(tm?`Informe del equipo ${tm.nombre}`:'Informe de equipos', 'Todos los expedientes del equipo', expsVis().filter(e=>ids.includes(e.abogado)))}); }
+    if(/cautelar/.test(t)) return R(null, {inf:informeLista('Informe de expedientes con cautelar', 'Medidas cautelares vigentes', expsVis().filter(e=>e.cautelar))});
     const rz = t.split(' ').filter(w=>w.length>=5 && !/informe|armame|generame|reporte/.test(w)).map(w=>w.slice(0,6));
     const prI = PRESTACIONES.filter(p=>p!=='Otra' && normTxt(p).split(/[ (/.]+/).some(w=>w.length>=5 && rz.some(r=>w.startsWith(r))));
-    if(prI.length) return R(null, {inf:informeLista(`Informe de reclamos: ${prI.join(' / ')}`, 'Por tipo de reclamo', S.exps.filter(e=>prI.includes(e.prestacion)))});
-    return R(null, {inf:informeLista('Informe general de amparos', 'Todos los expedientes', S.exps)});
+    if(prI.length) return R(null, {inf:informeLista(`Informe de reclamos: ${prI.join(' / ')}`, 'Por tipo de reclamo', expsVis().filter(e=>prI.includes(e.prestacion)))});
+    return R(null, {inf:informeLista('Informe general de amparos', 'Todos los expedientes', expsVis())});
   }
   // consultas sobre un expediente
   if(exps.length>1 && !/\b(cuantos|cuantas|todos|lista)\b/.test(t)){
@@ -3508,16 +3541,16 @@ function agResponder(q){
     return R(iaText('resumen', e), {...ir, chips:[`¿Qué tengo que hacer en ${e.numero}?`, `Riesgo de ${e.numero}`, `Informe de ${e.numero}`]});
   }
   // consultas generales sobre los datos
-  const base = per ? S.exps.filter(e=>e.abogado===per) : S.exps; const quien = per ? (per===S.user?'tus expedientes':`los expedientes de ${userName(per).split(' ')[0]}`) : 'todos los expedientes';
+  const base = per ? expsVis().filter(e=>e.abogado===per) : expsVis(); const quien = per ? (per===S.user?'tus expedientes y trámites':`los de ${userName(per).split(' ')[0]}`) : (tieneMod('amparos') ? 'todos los expedientes' : 'todos los trámites');
   if(/\b(vence|vencen|vencimiento|vencimientos|vencido|vencidos|urgente|urgentes|hoy|manana|semana|plazos)\b/.test(t)){
-    let pl = base.flatMap(e=>pending(e).map(p=>({...p, e}))).sort((a,b)=>a.vence.localeCompare(b.vence));
+    let pl = [...base.flatMap(e=>pending(e).map(p=>({...p, e}))), ...(tieneMod('administrativos') ? trs().filter(x=>!per || x.abogado===per).flatMap(x=>(x.plazos||[]).filter(p=>!p.hecho).map(p=>({...p, tr:x}))) : [])].sort((a,b)=>a.vence.localeCompare(b.vence));
     let tit = 'Lo que vence';
     if(/vencido/.test(t)){ pl = pl.filter(p=>daysTo(p.vence)<0); tit = 'Plazos vencidos'; }
     else if(/\bhoy\b/.test(t)){ pl = pl.filter(p=>daysTo(p.vence)===0); tit = 'Vence hoy'; }
     else if(/manana/.test(t)){ pl = pl.filter(p=>daysTo(p.vence)===1); tit = 'Vence mañana'; }
     else if(/semana|7 dias/.test(t)){ pl = pl.filter(p=>daysTo(p.vence)<=7); tit = 'Vence en los próximos 7 días (incluye vencidos)'; }
     else pl = pl.slice(0,10);
-    return R(pl.length?`**${tit}** (${quien}):\n${pl.map(p=>`• ${agVence(p)} · ${p.desc} · ${p.e.afiliado} (${p.e.numero})`).join('\n')}`:`No hay nada en "${tit.toLowerCase()}" para ${quien}.`, {ir:'vencimientos', irL:'Ver vencimientos'});
+    return R(pl.length?`**${tit}** (${quien}):\n${pl.map(p=>p.tr ? `• ${agVence(p)} · ${p.desc} · ${trNombre(p.tr)} (${orgById(p.tr.org).c}${p.tr.numero?' '+p.tr.numero:''})` : `• ${agVence(p)} · ${p.desc} · ${p.e.afiliado} (${p.e.numero})`).join('\n')}`:`No hay nada en "${tit.toLowerCase()}" para ${quien}.`, {ir:'vencimientos', irL:'Ver vencimientos'});
   }
   const raices = t.split(' ').filter(w=>w.length>=5).map(w=>w.slice(0,6));
   const prs = PRESTACIONES.filter(p=>p!=='Otra' && normTxt(p).split(/[ (/.]+/).some(w=>w.length>=5 && raices.some(r=>w.startsWith(r))));
@@ -3553,7 +3586,7 @@ ${AYUDA.map(a=>`- ${a.t}: ${a.r.replace(/\*\*/g,'')}`).join('\n')}
 LO QUE EL EQUIPO LE ENSEÑÓ AL ASISTENTE (usalo con prioridad):
 ${agSaber().slice(-80).map(s=>`- P: ${s.q}\n  R: ${s.r}`).join('\n') || '(nada todavía)'}
 DATOS (JSON):
-${JSON.stringify({usuarios:S.users.map(u=>({usuario:u.id, nombre:u.nombre, rol:u.rol})), equipos:S.teams, expedientes:S.exps.map(exp)})}`;
+${JSON.stringify({usuarios:S.users.map(u=>({usuario:u.id, nombre:u.nombre, rol:u.rol})), equipos:S.teams, expedientes:expsVis().map(exp)})}`;
 }
 async function agClaude(q){
   const k = agKey(); if(!k || !k.key) return null;
@@ -3700,7 +3733,7 @@ function agBuscarGlosario(q){
 }
 function agBuscarDatos(q){
   const qt = agTok(q).filter(w=>!/^(exped|ampar|afili|cuale|tiene|tengo|lista|mostr)$/.test(w)); if(!qt.length) return [];
-  return S.exps.map(e=>{ const blob = [e.afiliado, e.dni, e.prestacion, e.juzgado, e.estado, e.caratula, e.sumario, e.riesgo, userName(e.abogado), ...(e.plazos||[]).map(p=>p.desc), ...(e.movimientos||[]).map(m=>(m.titulo||'')+' '+(m.desc||'')), ...(e.docs||[]).map(d=>d.nombre+' '+(d.tipo||''))].join(' ');
+  return expsVis().map(e=>{ const blob = [e.afiliado, e.dni, e.prestacion, e.juzgado, e.estado, e.caratula, e.sumario, e.riesgo, userName(e.abogado), ...(e.plazos||[]).map(p=>p.desc), ...(e.movimientos||[]).map(m=>(m.titulo||'')+' '+(m.desc||'')), ...(e.docs||[]).map(d=>d.nombre+' '+(d.tipo||''))].join(' ');
     const dt = new Set(agTok(blob)); const hits = qt.filter(w=>dt.has(w)).length; return {e, sc: hits/qt.length, hits}; })
     .filter(x=>x.hits>=1 && x.sc>=0.75).sort((a,b)=>b.sc-a.sc || alfa(a.e,b.e)).slice(0,6);
 }
@@ -4073,7 +4106,7 @@ function vTramite(id){
   const o = orgById(t.org), et = TR_ETAPAS[t.clase] || TR_ETAPAS.reclamo, idx = et.indexOf(t.estado);
   const partes = {reclamante:t.clase==='reclamo'?'Reclamante':'Empresa', organismo:o.c, nosotros:cfg().parteNombre||'Nosotros'};
   const movs = [...(t.movimientos||[])].sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
-  const amps = t.dni && dniKey(t.dni).length>=6 ? S.exps.filter(e=>dniKey(e.dni)===dniKey(t.dni)) : [];
+  const amps = t.dni && dniKey(t.dni).length>=6 ? expsVis().filter(e=>dniKey(e.dni)===dniKey(t.dni)) : [];
   const otros = t.dni && dniKey(t.dni).length>=6 ? trs().filter(x=>x.id!==t.id && dniKey(x.dni)===dniKey(t.dni)) : [];
   const escritos = TR_ESCRITOS.filter(x=>x.org.includes(t.org) || t.org==='otro');
   const guia = t.guia ? guiaTodas().find(g=>g.id===t.guia) : guiaTodas().find(g=>g.org===t.org && t.clase==='reclamo' && /reclam|audienc|informe/i.test(g.t));
@@ -4145,7 +4178,7 @@ function ejemplosAdm(d){
 // eventos del módulo Administrativos
 function trTaskRow(t, p, i){ const n = daysTo(p.vence), u = urg(n); return `<div class="task ${u}"><div class="txt"><a href="#tramite-${t.id}">${esc(p.desc)}</a><div class="small muted">${esc(orgById(t.org).c)} · ${esc(trNombre(t))}${t.numero?' · '+esc(t.numero):''}</div></div>
   <div style="text-align:right"><div class="when ${u}">${whenText(n)}</div><div class="small muted">${fmt(p.vence)}</div></div><button class="btn sm" data-act="trhecho" data-t="${t.id}" data-i="${i}">${ic('check','sm')} Hecho</button></div>`; }
-function vencAdm(){ if(!S.modules.administrativos) return ''; const l = trs().flatMap(t=>(t.plazos||[]).map((p,i)=>({t,p,i})).filter(x=>!x.p.hecho)).sort((a,b)=>a.p.vence.localeCompare(b.p.vence));
+function vencAdm(){ if(!tieneMod('administrativos')) return ''; const l = trs().flatMap(t=>(t.plazos||[]).map((p,i)=>({t,p,i})).filter(x=>!x.p.hecho)).sort((a,b)=>a.p.vence.localeCompare(b.p.vence));
   if(!l.length) return ''; return `<section class="card"><div class="row"><h2>Administrativos</h2><span class="badge">${l.length}</span></div><div class="cases">${l.map(x=>trTaskRow(x.t,x.p,x.i)).join('')}</div></section>`; }
 document.addEventListener('click', async ev => {
   if(!S || !S.user) return;
@@ -4188,7 +4221,7 @@ document.addEventListener('click', async ev => {
   if(a==='guiadel'){ const i = (S.guiaPropia||[]).findIndex(x=>x.id===d.g); if(i<0) return; const g = S.guiaPropia.splice(i,1)[0]; S.trBorrados = [...new Set([...(S.trBorrados||[]), g.id])]; save(); audit('Quitó un trámite de la guía', g.t, ''); render(); toast('Quitado de la guía', ()=>{ S.guiaPropia.splice(i,0,g); S.trBorrados = S.trBorrados.filter(x=>x!==g.id); save(); render(); }); return; }
 });
 document.addEventListener('input', ev => { if(ev.target.id==='guiaQ'){ ui.guiaQ = ev.target.value; const pos = ev.target.selectionStart; render(); const n = $('#guiaQ'); if(n){ n.focus(); try{ n.setSelectionRange(pos,pos); }catch(e){} } } });
-document.addEventListener('change', ev => { if(ev.target.id==='trOrg' && TRF){ const o = orgById(ev.target.value), r = o.plazo||{}; const n = $('#trNota'); if(n) n.textContent = o.plazoNota||''; const lab = $('#trVence') && $('#trVence').closest('label'); if(lab) lab.firstChild.textContent = o.plazoDesc||'Próximo vencimiento'; if(r.modo && r.modo!=='fecha'){ const ini = ($('#trIni')||{}).value || iso(today()); $('#trVence').value = calcPlazo({...r, desde:ini}).vence; } } });
+document.addEventListener('change', ev => { if(ev.target.id==='ueRol' && UE){ ueRead(); drawUserEdit(); return; } if(ev.target.id==='trOrg' && TRF){ const o = orgById(ev.target.value), r = o.plazo||{}; const n = $('#trNota'); if(n) n.textContent = o.plazoNota||''; const lab = $('#trVence') && $('#trVence').closest('label'); if(lab) lab.firstChild.textContent = o.plazoDesc||'Próximo vencimiento'; if(r.modo && r.modo!=='fecha'){ const ini = ($('#trIni')||{}).value || iso(today()); $('#trVence').value = calcPlazo({...r, desde:ini}).vence; } } });
 
 // ---------- actualización automática: si hay una versión nueva publicada, se carga sola ----------
 const APP_VERSION = (document.querySelector('meta[name=fojas-version]')||{}).content || '';
