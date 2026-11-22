@@ -282,6 +282,8 @@ details.sug ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap
 .org{display:flex;flex-direction:column;align-items:center;padding:8px 0}
 .orgcard{display:flex;gap:12px;align-items:center;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;cursor:pointer;min-width:250px;box-shadow:var(--shadow);font:inherit;color:inherit}
 .orgcard:hover{border-color:var(--accent)}
+.orgcard.sel{border-color:var(--accent);border-width:2.5px;box-shadow:0 0 0 4px var(--accent-soft),var(--shadow)}
+.mpanel{border-top:1px solid var(--line);padding-top:18px;display:flex;flex-direction:column;gap:12px}
 .orgcard.boss{border-color:var(--accent);background:var(--accent-soft)}
 .kids{display:flex;gap:28px;justify-content:center;flex-wrap:wrap;position:relative;padding-top:44px;margin-top:0}
 .kids::before{content:"";position:absolute;top:0;left:50%;width:2px;height:22px;background:var(--violet)}
@@ -1499,7 +1501,7 @@ function route(){
   const m = h.match(/^expediente-(\d+)$/);
   return m ? {name:'expediente', id:+m[1]} : {name:h};
 }
-window.addEventListener('hashchange', ()=>{ ui.editSum = false; const nt = ui.nextTab; ui.nextTab = null; if(ui.scrollTo){ const u = ui.scrollTo; ui.scrollTo=null; setTimeout(()=>{ const d=document.querySelector(`[data-member="${u}"]`); if(d) d.scrollIntoView({behavior:'smooth', block:'start'}); }, 60); } ui.q=''; ui.tab=nt||'resumen'; ui.ia=''; ui.addMov=false; ui.addPlazo=false; ui.results=false; render(); const v=$('#view'); if(v) v.scrollTop=0; });
+window.addEventListener('hashchange', ()=>{ ui.editSum = false; const nt = ui.nextTab; ui.nextTab = null; if(ui.scrollTo){ const u = ui.scrollTo; ui.scrollTo=null; setTimeout(()=>{ const d = u==='panel' ? $('#miembroPanel') : document.querySelector(`[data-member="${u}"]`); if(d) d.scrollIntoView({behavior:'smooth', block:'start'}); }, 60); } ui.q=''; ui.tab=nt||'resumen'; ui.ia=''; ui.addMov=false; ui.addPlazo=false; ui.results=false; render(); const v=$('#view'); if(v) v.scrollTop=0; });
 const ui = {open:{}, scrollTo:null, tab:'resumen', ia:'', filtro:'todos', q:'', verify:null, tpl:null, tplExp:null, tplText:'', backupOut:'', backupMsg:null, csvMsg:null, results:false, addMov:false, addPlazo:false};
 
 // ---------- estructura ----------
@@ -1951,11 +1953,33 @@ function assignable(e){ const t = teamOf(e.abogado) || teamsLed()[0]; const ids 
 function memberCard(uid, boss){
   const u = S.users.find(x=>x.id===uid); if(!u) return '';
   const st = statsOf(uid);
-  return `<button class="orgcard ${boss?'boss':''}" data-openmember="${uid}">
+  return `<button class="orgcard ${boss?'boss':''} ${ui.miembro===uid?'sel':''}" data-openmember="${uid}" aria-pressed="${ui.miembro===uid}" title="Ver los expedientes de ${esc(u.nombre)}">
     <div class="avatar" style="${boss?'background:var(--accent);color:#fff':''}">${initials(u.nombre)}</div>
     <div style="text-align:left"><b>${esc(u.nombre)}</b><div class="small muted">${esc(u.rol)}</div>
     <div class="row" style="gap:6px;margin-top:6px"><span class="pill">${st.cases.length} casos</span>${st.vencidos?`<span class="pill red">${st.vencidos} vencido${st.vencidos>1?'s':''}</span>`:''}${st.semana?`<span class="pill yel">${st.semana} esta semana</span>`:''}${!st.vencidos&&!st.semana?'<span class="pill grn">Al día</span>':''}</div></div>
   </button>`;
+}
+function miembroExps(uid, t){
+  const u = S.users.find(x=>x.id===uid); if(!u) return '';
+  const mine = S.exps.filter(e=>e.abogado===uid);
+  const F = {curso:{l:'En curso', f:e=>e.estado!=='Archivado'}, urg:{l:'Urgentes', f:e=>{ const p=nextPlazo(e); return p && daysTo(p.vence)<=3; }}, caut:{l:'Con cautelar', f:e=>e.cautelar && e.estado!=='Archivado'}, arch:{l:'Archivados', f:e=>e.estado==='Archivado'}, todos:{l:'Todos', f:()=>true}};
+  if(!F[ui.mFiltro]) ui.mFiltro = 'curso';
+  const list = mine.filter(F[ui.mFiltro].f).sort((a,b)=>{ const pa=nextPlazo(a), pb=nextPlazo(b); return (pa?pa.vence:'9999').localeCompare(pb?pb.vence:'9999'); });
+  const puedePasar = (isAdmin()||t.jefe===S.user); const others = [t.jefe, ...t.miembros].filter(x=>x!==uid);
+  return `<div class="mpanel" id="miembroPanel">
+    <div class="head"><div class="row" style="gap:12px"><div class="avatar">${initials(u.nombre)}</div><div><h2 style="font-size:20px">Expedientes de ${esc(u.nombre)}</h2><div class="small muted">${esc(u.rol)} · ${mine.filter(F.curso.f).length} en curso${mine.filter(F.arch.f).length?` · ${mine.filter(F.arch.f).length} archivados`:''}</div></div></div>
+      <button class="btn ghost sm" data-act="mcerrar">Cerrar</button></div>
+    <div class="chips">${Object.entries(F).map(([k,v])=>`<button class="chipbtn ${ui.mFiltro===k?'on':''}" data-mfiltro="${k}">${v.l} <span class="badge">${mine.filter(v.f).length}</span></button>`).join('')}</div>
+    <div class="cases">${list.map(e=>{ const p=nextPlazo(e); const n=p?daysTo(p.vence):null; const ug=p?urg(n):''; return `
+      <div class="case" data-go="expediente-${e.id}" tabindex="0" role="link">
+        <div class="bar ${ug}"></div>
+        <div><div class="name">${esc(e.afiliado)}</div>
+          <div class="meta"><span>${esc(e.prestacion)}</span><span class="mono">${esc(e.numero)}</span></div>
+          <div class="row" style="margin-top:8px"><span class="pill">${esc(e.estado)}</span>${e.cautelar?'<span class="pill acc">Con cautelar</span>':''}${e.riesgo==='alto'?'<span class="pill red">Riesgo alto</span>':''}
+          ${puedePasar&&others.length?`<select data-reassign="${e.id}" aria-label="Pasar a otra persona" class="small" style="padding:4px 8px;width:auto"><option value="">Pasar a…</option>${others.map(o=>`<option value="${o}">${esc(userName(o))}</option>`).join('')}</select>`:''}</div></div>
+        <div class="right">${p?`<div class="when ${ug}">${whenText(n)}</div><div class="small muted" style="max-width:240px">${esc(p.desc)}</div>`:'<span class="pill grn">Sin pendientes</span>'}</div>
+      </div>`; }).join('') || `<div class="empty small">${mine.length?'No hay expedientes en esta lista. Probá con otro filtro.':`${esc(u.nombre.split(' ')[0])} no tiene expedientes asignados.`}</div>`}</div>
+  </div>`;
 }
 function memberDetail(uid, t){
   const u = S.users.find(x=>x.id===uid); if(!u) return '';
@@ -1986,7 +2010,7 @@ function vEquipo(){
   const visible = isAdmin() ? S.teams : S.teams.filter(t=>t.jefe===S.user || t.miembros.includes(S.user));
   if(!visible.length && !isAdmin()) return `<div class="card empty"><div class="ico a">${ic('users','lg')}</div><b>Todavía no formás parte de un equipo</b><span>Pedile al administrador que te sume a uno.</span></div>`;
   return `
-  <div><h1>${isLeader()?'Mi equipo':'Equipo'}</h1><p class="sub">${isLeader()?'Tocá a cualquier persona del esquema para desplegar sus casos, vencimientos y últimos movimientos. Desde ahí también podés pasarle un caso a otra persona.':'Así está armado tu equipo. Abajo ves el detalle de tus casos.'}</p></div>
+  <div><h1>${isLeader()?'Mi equipo':'Equipo'}</h1><p class="sub">${isLeader()?'Tocá a cualquier persona del esquema para ver sus expedientes. Desde ahí también podés pasarle un caso a otra persona. Más abajo están sus vencimientos y últimos movimientos.':'Así está armado tu equipo. Tocá a una persona para ver sus expedientes.'}</p></div>
   ${visible.map(t=>{ const all=[t.jefe,...t.miembros]; const tot = all.map(statsOf); return `
   <section class="card">
     <div class="head"><div><h2>Equipo ${esc(t.nombre)}</h2><div class="small muted">${t.miembros.length} analista${t.miembros.length===1?'':'s'} · ${tot.reduce((a,s)=>a+s.cases.length,0)} casos en curso</div></div>
@@ -1995,6 +2019,7 @@ function vEquipo(){
       ${memberCard(t.jefe, true)}
       <div class="kids">${t.miembros.map(m=>`<div class="kid">${memberCard(m,false)}</div>`).join('') || '<div class="muted small" style="padding-top:20px">Todavía no tiene analistas.</div>'}</div>
     </div>
+    ${ui.miembro && all.includes(ui.miembro) ? miembroExps(ui.miembro, t) : `<div class="small muted" style="text-align:center">Tocá a una persona para ver sus expedientes.</div>`}
   </section>
   <div class="members">${all.map(uid=>memberDetail(uid,t)).join('')}</div>`; }).join('')}
   ${isAdmin()?teamEditor():''}`;
@@ -2819,13 +2844,15 @@ function markDone(e, i){
 document.addEventListener('click', async ev => {
   if(!ev.target.closest('.search')) { if(ui.results){ ui.results=false; const r=$('.results'); if(r) r.remove(); } }
   const om = ev.target.closest('[data-openmember]');
-  if(om){ ui.open[om.dataset.openmember] = true; if(route().name!=='equipo'){ ui.scrollTo = om.dataset.openmember; return; } render(); const d = document.querySelector(`[data-member="${om.dataset.openmember}"]`); if(d) d.scrollIntoView({behavior:'smooth', block:'start'}); return; }
+  if(om){ const uid = om.dataset.openmember; if(route().name!=='equipo'){ ui.miembro = uid; ui.mFiltro = 'curso'; ui.scrollTo = 'panel'; return; } ui.miembro = ui.miembro===uid ? null : uid; ui.mFiltro = 'curso'; render(); const d = $('#miembroPanel'); if(d) d.scrollIntoView({behavior:'smooth', block:'nearest'}); return; }
+  const mf = ev.target.closest('[data-mfiltro]'); if(mf){ ui.mFiltro = mf.dataset.mfiltro; render(); return; }
   const pe = ev.target.closest('[data-pe]');
   if(pe && PE){ peRead(); PE[pe.dataset.pe] = pe.dataset.pe==='cant' ? +pe.dataset.v : pe.dataset.v; drawPlazoEditor(); return; }
   const vm = ev.target.closest('[data-vmode]'); if(vm && VIEW){ VIEW.modo = vm.dataset.vmode; drawViewer(); return; }
   const aa = ev.target.closest('[data-autoalt]'); if(aa && W){ wRead(); const x = W.autosAlt[+aa.dataset.autoalt]; const prev = {autos:W.autos, actor:W.afiliado}; W.autos = x.autos; W.afiliado = x.actor; W.autosAlt[+aa.dataset.autoalt] = prev; W.autosDudoso = false; W.sumarioEditado = false; drawWizard(); return; }
   const upp = ev.target.closest('[data-upparte]'); if(upp && UP){ upRead(); UP.parte = upp.dataset.upparte; UP.parteEditada = true; drawUp(); return; }
   const ut = ev.target.closest('[data-uptipo]'); if(ut && UP){ upRead(); UP.tipo = ut.dataset.uptipo; if(!UP.descEditada) UP.desc = ''; upSugerir(); drawUp(); return; }
+  if(ev.target.closest('select,option') && ev.target.closest('[data-go]')) return;
   const t = ev.target.closest('[data-enfoque],[data-mvar],[data-act],[data-tab],[data-go],[data-ia],[data-filtro],[data-riesgo],[data-estado],[data-tour],[data-tpl],[data-tplexp],[data-w],[data-wnav],[data-quick]');
   if(!t) return;
   const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
@@ -2854,6 +2881,7 @@ document.addEventListener('click', async ev => {
   const a = d.act;
   if(a==='close') closeModal();
   if(a==='upcancel'){ UP = null; closeModal(); }
+  if(a==='mcerrar'){ ui.miembro = null; render(); }
   if(a==='upnewcat' && UP){ upRead(); const n = ($('#upNewCat')||{}).value||''; if(!n.trim()){ toast('Escribí el nombre de la categoría'); const f=$('#upNewCat'); if(f) f.focus(); return; } const id = nuevaCategoria(n, ($('#upNewBase')||{}).value); UP.tipo = id; if(!UP.descEditada) UP.desc = ''; upSugerir(); drawUp(); toast(`Categoría «${upTipo(id).l}» creada`); }
   if(a==='upcats'){ if(UP) upRead(); catsOpen(); }
   if(a==='catclose'){ CATS = null; if(UP) drawUp(); else closeModal(); }
