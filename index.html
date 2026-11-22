@@ -62,15 +62,31 @@ svg.i.lg{width:30px;height:30px}
 .results a{display:block;padding:10px 14px;text-decoration:none;color:var(--ink);border-bottom:1px solid var(--line)}
 .results a:last-child{border-bottom:0}
 .results{max-height:70vh;overflow:auto}
-.dnibox{padding:0;overflow:hidden;border-color:var(--violet)} .dnibox .rleaf{display:block;padding:10px 14px;text-decoration:none;color:var(--ink)} .dnibox .rleaf:hover{background:var(--violet-soft)} .dnibox summary{padding:14px 18px}
-.rtree{border-bottom:1px solid var(--line)} .rtree:last-child{border-bottom:0}
-.rtree summary{list-style:none;display:flex;gap:10px;align-items:center;padding:10px 14px;cursor:pointer}
-.rtree summary::-webkit-details-marker{display:none}
-.rtree summary:hover{background:var(--sunken)}
-.rtree .chev{display:inline-flex;transition:transform .15s;color:var(--muted)} .rtree[open] .chev{transform:rotate(90deg)}
-.rtree .rleaf{position:relative;margin-left:30px;padding-left:22px!important;border-bottom:0!important;border-left:2px solid var(--violet)}
-.rtree .rleaf::before{content:'';position:absolute;left:0;top:50%;width:14px;height:2px;background:var(--violet)}
-.rtree .rleaf:last-child{border-left-color:transparent} .rtree .rleaf:last-child::after{content:'';position:absolute;left:-2px;top:0;height:50%;width:2px;background:var(--violet)}
+.dtree{border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:var(--shadow)}
+.dtree-root{display:flex;width:100%;gap:12px;align-items:center;padding:14px 18px;background:transparent;border:0;border-radius:14px;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.dtree-root:hover{background:var(--sunken)}
+.dtree .chev{display:inline-flex;color:var(--muted);transition:transform .15s} .dtree.open .chev{transform:rotate(90deg)}
+.dtree-name{font-weight:700;font-size:17px}
+.dtree-m{color:var(--muted);font-size:14px;display:flex;gap:4px 14px;flex-wrap:wrap;margin-top:2px}
+.dtree-r{display:flex;flex-direction:column;align-items:flex-end;text-align:right;gap:2px;max-width:260px}
+.dtree-hint{font-size:13px;font-weight:700;color:var(--violet);background:var(--violet-soft);padding:4px 10px;border-radius:99px;white-space:nowrap}
+.dtree-kids{display:none;padding:0 18px 16px 52px}
+.dtree.open .dtree-kids{display:block}
+.dtree-kid{position:relative;display:flex;gap:14px;justify-content:space-between;align-items:center;margin-top:10px;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);text-decoration:none}
+.dtree-kid::before{content:'';position:absolute;left:-22px;top:-12px;height:calc(50% + 12px);width:18px;border-left:2px solid var(--violet);border-bottom:2px solid var(--violet);border-bottom-left-radius:10px}
+.dtree-kid:not(:last-child)::after{content:'';position:absolute;left:-22px;top:50%;bottom:-12px;border-left:2px solid var(--violet)}
+.dtree-kid:hover{border-color:var(--accent);background:var(--accent-soft)}
+.dtree-kid.aqui{border:2px solid var(--accent);background:var(--accent-soft)}
+.dtree-kid.arch{opacity:.75}
+.dtree-t{font-weight:700}
+.dtree.mini{border:0;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none}
+.dtree.mini .dtree-root{border-radius:0;padding:10px 14px}
+.dtree.mini .dtree-name{font-size:15px} .dtree.mini .dtree-m{font-size:13px}
+.dtree.mini .dtree-kids{padding:0 14px 12px 44px}
+.results .dtree-kid{display:flex;padding:8px 12px;border:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:8px}
+.results .dtree-kid .dtree-r{display:none}
+.results .dtree-kid, .results .dtree-kid *{text-decoration:none!important}
+@media (max-width:700px){ .dtree-root .dtree-r{display:none} .dtree-kid{flex-direction:column;align-items:flex-start} .dtree-r{align-items:flex-start;text-align:left} .dtree-kids{padding-left:40px} }
 .results a:hover,.results a.sel{background:var(--accent-soft)}
 .view{flex:1;overflow:auto;padding:28px;display:flex;flex-direction:column;gap:24px}
 .demo{font-size:13px;background:var(--violet-soft);color:var(--violet);padding:6px 28px}
@@ -1586,17 +1602,37 @@ function matches(q){
 }
 const dniKey = d => String(d||'').replace(/\D/g,'');
 const mismoDni = e => { const k = dniKey(e.dni); return k.length>=6 ? S.exps.filter(x=>dniKey(x.dni)===k) : [e]; };
+function dniTree(g, o={}){
+  const p = g[0], key = 'd'+dniKey(p.dni) + (o.ctx||'');
+  const open = o.open || (ui.dtOpen||{})[key];
+  const ord = [...g].sort((a,b)=>(a.estado==='Archivado')-(b.estado==='Archivado') || String(b.inicio||'').localeCompare(String(a.inicio||'')));
+  const enCurso = g.filter(e=>e.estado!=='Archivado').length;
+  const prox = g.map(e=>nextPlazo(e)).filter(Boolean).sort((a,b)=>a.vence.localeCompare(b.vence))[0];
+  const n = prox ? daysTo(prox.vence) : null;
+  const kid = e => { const q = nextPlazo(e), m = q?daysTo(q.vence):null; const aqui = o.cur && e.id===o.cur;
+    return `<a href="#expediente-${e.id}" class="dtree-kid ${aqui?'aqui':''} ${e.estado==='Archivado'?'arch':''}">
+      <div style="min-width:0"><div class="dtree-t">${esc(e.prestacion)}${aqui?' <span class="pill acc">Estás viendo este</span>':''}</div>
+        <div class="dtree-m"><span class="mono">${esc(e.numero)}</span><span>${esc(e.estado)}</span>${e.cautelar?'<span>Con cautelar</span>':''}<span>A cargo de ${esc(userName(e.abogado).split(' ')[0])}</span></div></div>
+      <div class="dtree-r">${q?`<span class="when ${urg(m)}">${whenText(m)}</span><span class="small muted">${esc(q.desc)}</span>`:(e.estado==='Archivado'?'<span class="pill">Archivado</span>':'<span class="pill grn">Sin pendientes</span>')}</div></a>`; };
+  return `<div class="dtree ${o.mini?'mini':''} ${open?'open':''}" data-dtkey="${key}">
+    <button type="button" class="dtree-root" data-dtree="${key}" aria-expanded="${!!open}">
+      <span class="chev">${ic('next','sm')}</span>
+      <div class="avatar" style="background:var(--violet-soft);color:var(--violet)">${initials(p.afiliado.replace(/\(.*\)/,''))}</div>
+      <div style="flex:1;min-width:0"><div class="dtree-name">${esc(p.afiliado)}</div>
+        <div class="dtree-m"><span>DNI ${esc(p.dni)}</span><span><b>${g.length} reclamos</b>${enCurso!==g.length?` · ${enCurso} en curso`:''}${o.total>g.length?` · ${o.total-g.length} más en otro filtro`:''}</span></div></div>
+      ${!o.mini && prox?`<div class="dtree-r"><span class="when ${urg(n)}">${whenText(n)}</span><span class="small muted">${esc(prox.desc)}</span></div>`:''}
+      <span class="dtree-hint">${open?'Ocultar':'Ver los '+g.length}</span>
+    </button>
+    <div class="dtree-kids">${ord.map(kid).join('')}</div>
+  </div>`;
+}
 function searchResults(){
   if(!ui.q.trim()) return '';
   const found = matches(ui.q);
   const grupos = [], vistos = new Set();
   found.forEach(e=>{ if(vistos.has(e.id)) return; const g = mismoDni(e); g.forEach(x=>vistos.add(x.id)); grupos.push(g); });
   const fila = e => `<a href="#expediente-${e.id}"><b>${esc(e.afiliado)}</b><div class="small muted">${esc(e.numero)} · ${esc(e.prestacion)}${e.dni&&e.dni!=='—'?` · DNI ${esc(e.dni)}`:''}</div></a>`;
-  const ord = g => [...g].sort((a,b)=>(a.estado==='Archivado')-(b.estado==='Archivado') || String(b.inicio||'').localeCompare(String(a.inicio||'')));
-  const rama = g => { const p = g[0]; const abiertos = g.filter(e=>e.estado!=='Archivado').length;
-    return `<details class="rtree" ${ui.rOpen===dniKey(p.dni)?'open':''} data-rdni="${dniKey(p.dni)}"><summary><span class="chev">${ic('next','sm')}</span><div style="flex:1;min-width:0"><b>${esc(p.afiliado)}</b><div class="small muted">DNI ${esc(p.dni)} · ${g.length} reclamos${abiertos!==g.length?` (${abiertos} en curso)`:''}</div></div><span class="badge">${g.length}</span></summary>
-      ${ord(g).map(e=>`<a href="#expediente-${e.id}" class="rleaf"><b>${esc(e.prestacion)}</b><div class="small muted"><span class="mono">${esc(e.numero)}</span> · ${esc(e.estado)}${e.cautelar?' · con cautelar':''} · ${esc(userName(e.abogado).split(' ')[0])}</div></a>`).join('')}</details>`; };
-  const html = grupos.slice(0,8).map(g=>g.length>1 ? rama(g) : fila(g[0])).join('');
+  const html = grupos.slice(0,8).map(g=>g.length>1 ? dniTree(g, {mini:true, ctx:'s', open: grupos.length===1}) : fila(g[0])).join('');
   return `<div class="results">${html || '<div class="empty small">No encontramos nada con esa búsqueda.</div>'}</div>`;
 }
 
@@ -1665,14 +1701,15 @@ function vAmparos(){
   <div class="head"><div><h1>Amparos</h1><p class="sub">Tocá cualquier amparo para ver todo lo que tiene. Los más urgentes aparecen primero.</p></div>
     <div class="row"><button class="btn big" data-act="ximportar">${ic('upload')} Importar / migrar</button><button class="btn pri big" data-act="nuevo">${ic('plus')} Nuevo expediente</button></div></div>
   <div class="chips">${Object.entries(F).map(([k,v])=>`<button class="chipbtn ${ui.filtro===k?'on':''}" data-filtro="${k}">${v.l} <span class="badge">${all.filter(v.f).length}</span></button>`).join('')}</div>
-  <div class="cases">${list.map(e=>{ const p=nextPlazo(e); const n=p?daysTo(p.vence):null; const u=p?urg(n):''; return `
+  <div class="cases">${(()=>{ const vistos = new Set(); return list.map(e=>{ if(vistos.has(e.id)) return ''; const k = dniKey(e.dni); const g = k.length>=6 ? list.filter(x=>dniKey(x.dni)===k) : [e]; g.forEach(x=>vistos.add(x.id)); if(g.length>1) return dniTree(g, {ctx:'a', total:mismoDni(e).length});
+    const p=nextPlazo(e); const n=p?daysTo(p.vence):null; const u=p?urg(n):''; return `
     <div class="case" data-go="expediente-${e.id}" tabindex="0" role="link">
       <div class="bar ${u}"></div>
       <div><div class="name">${esc(e.afiliado)}</div>
         <div class="meta"><span>${esc(e.prestacion)}</span><span class="mono">${esc(e.numero)}</span><span>A cargo de ${esc(userName(e.abogado).split(' ')[0])}</span></div>
         <div class="row" style="margin-top:8px"><span class="pill">${esc(e.estado)}</span>${e.cautelar?'<span class="pill acc">Con cautelar</span>':''}${e.riesgo==='alto'?'<span class="pill red">Riesgo alto</span>':''}</div></div>
       <div class="right">${p?`<div class="when ${u}">${whenText(n)}</div><div class="small muted" style="max-width:240px">${esc(p.desc)}</div>`:'<span class="pill grn">Sin pendientes</span>'}</div>
-    </div>`;}).join('') || `<div class="card empty"><div class="ico g">${ic('folder','lg')}</div><b>No hay amparos en esta lista</b><span>Probá con otro filtro de arriba.</span></div>`}
+    </div>`;}).join(''); })() || `<div class="card empty"><div class="ico g">${ic('folder','lg')}</div><b>No hay amparos en esta lista</b><span>Probá con otro filtro de arriba.</span></div>`}
   </div>`;
 }
 
@@ -1775,8 +1812,7 @@ function vExpediente(id){
       <button class="btn ghost" data-act="plazoedit" data-e="${e.id}" data-i="${e.plazos.indexOf(p)}">${ic('cal','sm')} Modificar plazo</button></div>
   </section>`:`<section class="next"><div class="ico g">${ic('check','lg')}</div><div class="txt"><div class="lbl">Lo próximo</div><h2>No hay nada pendiente</h2><div class="muted">Cuando llegue una novedad, cargala para no perder el hilo.</div></div><button class="btn big" data-act="addplazo" data-tabgo="plazos">${ic('plus')} Agregar plazo</button></section>`}
 
-  ${(()=>{ const o = mismoDni(e).filter(x=>x.id!==e.id); return o.length ? `<details class="card rtree dnibox" ${ui.dniOpen?'open':''}><summary><span class="chev">${ic('next','sm')}</span><div style="flex:1"><b>DNI ${esc(e.dni)}: ${o.length+1} reclamos de ${esc(e.afiliado)}</b><div class="small muted">Este es el de ${esc(e.prestacion.toLowerCase())}. Tocá para ver los otros ${o.length}.</div></div><span class="badge">${o.length+1}</span></summary>
-    ${o.sort((a,b)=>(a.estado==='Archivado')-(b.estado==='Archivado')).map(x=>`<a href="#expediente-${x.id}" class="rleaf"><b>${esc(x.prestacion)}</b><div class="small muted"><span class="mono">${esc(x.numero)}</span> · ${esc(x.estado)}${x.cautelar?' · con cautelar':''} · a cargo de ${esc(userName(x.abogado))}</div></a>`).join('')}</details>` : ''; })()}
+  ${mismoDni(e).length>1 ? dniTree(mismoDni(e), {cur:e.id, ctx:'x'}) : ''}
   <label class="dropband" for="fileTop">${ic('upload')}<span><b>¿Llegó algo nuevo?</b> Arrastralo en cualquier parte de esta pantalla o tocá acá: un PDF, el mail con el PDF adentro (Outlook o .eml), un Word, una foto. Fojas lo lee y te propone cómo avanza el expediente.</span></label>
   <input type="file" id="fileTop" multiple hidden>
   <section class="card"><div class="row" style="justify-content:space-between"><h3>¿En qué etapa está?</h3><span class="small muted">Tocá una etapa para cambiarla · tocá la cautelar para marcar si tiene o no</span></div>
@@ -2881,6 +2917,7 @@ function markDone(e, i){
 // ---------- eventos ----------
 document.addEventListener('click', async ev => {
   if(!ev.target.closest('.search')) { if(ui.results){ ui.results=false; const r=$('.results'); if(r) r.remove(); } }
+  const dt = ev.target.closest('[data-dtree]'); if(dt){ ev.preventDefault(); const box = dt.closest('.dtree'); const on = !box.classList.contains('open'); box.classList.toggle('open', on); dt.setAttribute('aria-expanded', on); const hn = dt.querySelector('.dtree-hint'); if(hn) hn.textContent = on ? 'Ocultar' : 'Ver los '+box.querySelectorAll('.dtree-kid').length; ui.dtOpen = ui.dtOpen||{}; ui.dtOpen[dt.dataset.dtree] = on; return; }
   const om = ev.target.closest('[data-openmember]');
   if(om){ const uid = om.dataset.openmember; if(route().name!=='equipo'){ ui.miembro = uid; ui.mFiltro = 'curso'; ui.scrollTo = 'panel'; return; } ui.miembro = ui.miembro===uid ? null : uid; ui.mFiltro = 'curso'; render(); const d = $('#miembroPanel'); if(d) d.scrollIntoView({behavior:'smooth', block:'nearest'}); return; }
   const mf = ev.target.closest('[data-mfiltro]'); if(mf){ ui.mFiltro = mf.dataset.mfiltro; render(); return; }
