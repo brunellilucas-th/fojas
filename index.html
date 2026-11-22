@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.17">
+<meta name="fojas-version" content="2026-11-22.18">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -497,11 +497,11 @@ async function copy(text){ try{ await navigator.clipboard.writeText(text); toast
 
 // ---------- datos de ejemplo ----------
 const DEFAULT_USERS = [
-  {id:'dfraerman', nombre:'Deborah Fraerman', rol:'Jefa de Amparos'},
+  {id:'dfraerman', nombre:'Deborah Fraerman', rol:'Jefa'},
   {id:'lbrunelli', nombre:'Lucas Emmanuel Brunelli', rol:'Analista legal'},
   {id:'fzaurdo', nombre:'Florencia Zaurdo', rol:'Analista legal'},
   {id:'rperez', nombre:'Ramiro Pérez', rol:'Procurador'},
-  {id:'jpaz', nombre:'Julieta Paz', rol:'Jefa de Contratos', area:'Legales', ctPerfil:'jefe', modulos:['contratos']},
+  {id:'jpaz', nombre:'Julieta Paz', rol:'Jefa', area:'Legales', ctPerfil:'jefe', modulos:['contratos']},
   {id:'cortiz', nombre:'Camila Ortiz', rol:'Analista de Contratos', area:'Legales', ctPerfil:'analista', modulos:['contratos']},
   {id:'mgimenez', nombre:'Marcos Giménez', rol:'Solicitante', area:'Compras', ctPerfil:'solicitante', modulos:['contratos']},
   {id:'sruiz', nombre:'Sofía Ruiz', rol:'Solicitante', area:'Marketing', ctPerfil:'solicitante', modulos:['contratos']},
@@ -1565,6 +1565,7 @@ async function migrate(d){
   if(!d.modContratos2){ d.modContratos2 = true;
     // quienes ya estaban no reciben Contratos de golpe como solicitantes: el administrador decide
     (d.users||[]).forEach(u=>{ if(u.rol==='Administrador') return; if(['dfraerman','lbrunelli','fzaurdo','rperez'].includes(u.id) && !u.area) u.area = 'Legales'; if(!Array.isArray(u.modulos) && !u.ctPerfil) u.modulos = ['amparos','administrativos']; }); }
+  if(!d.rolesJefa){ d.rolesJefa = true; (d.users||[]).forEach(u=>{ if(/^Jefa\b/.test(u.rol||'') && u.rol!=='Jefa') u.rol = 'Jefa'; else if(/^Jefe\b/.test(u.rol||'') && u.rol!=='Jefe') u.rol = 'Jefe'; else if(u.rol==='Jefa/e de Contratos') u.rol = 'Jefa'; }); }
   if(!d.ejemploTareas){ d.ejemploTareas = true; try{ ejemplosTareas(d); }catch(err){ console.warn(err); } }
   if(!d.ejemploAdm){ d.ejemploAdm = true; try{ ejemplosAdm(d); }catch(err){ console.warn(err); } d.nextId = Math.max(d.nextId||1, ...d.exps.map(e=>+e.id||0)) + 1; }
   d.schema = SCHEMA; d.user = null;
@@ -2323,8 +2324,8 @@ function ctPerfilBloque(pref, perfil){ const leg = perfil==='analista' || perfil
       <button type="button" class="opt ${leg?'on':''}" data-act="ctp" data-ctp="${pref}" data-v="${leg?perfil:'analista'}"><b>Área de Contratos de Legales</b><br><span class="small">Recibe los pedidos de todas las áreas y arma los documentos.</span></button></div>
     ${leg?`<div class="opts" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:8px">
       <button type="button" class="opt ${perfil==='analista'?'on':''}" data-act="ctp" data-ctp="${pref}" data-v="analista">Analista: arma lo que le asignan</button>
-      <button type="button" class="opt ${perfil==='jefe'?'on':''}" data-act="ctp" data-ctp="${pref}" data-v="jefe">Jefa/e: recibe los pedidos y los asigna</button></div>`:''}</div>`; }
-const ROLES = ['Abogada/o a cargo','Analista legal','Procurador','Jefa/e de Contratos','Analista de Contratos','Solicitante','Administrador'];
+      <button type="button" class="opt ${perfil==='jefe'?'on':''}" data-act="ctp" data-ctp="${pref}" data-v="jefe">Jefa/e: asigna los pedidos y también puede tener pedidos asignados para armar</button></div>`:''}</div>`; }
+const ROLES = ['Jefa','Jefe','Abogada/o a cargo','Analista legal','Analista de Contratos','Procurador','Solicitante','Administrador'];
 let UE = null;
 function openUserEdit(uid){ const u = S.users.find(x=>x.id===uid); if(!u) return; UE = {id:uid, nombre:u.nombre, nuevoId:u.id, rol:u.rol, modulos: modsDe(u), area:u.area||'', ctPerfil:ctPerfil(u), pw:'no', p1:'', p2:'', cambiar:true, err:''}; drawUserEdit(); }
 function drawUserEdit(){
@@ -2431,7 +2432,7 @@ function vUsuarios(){
     <section class="card ucard"><div class="row"><div class="avatar">${initials(u.nombre)}</div><div style="flex:1;min-width:0"><b>${esc(u.nombre)}</b><div class="small muted">${esc(u.rol)} · <span class="mono">${esc(u.id)}</span></div></div></div>
       <div class="ukv"><span>Área</span><b>${esc(u.area||'—')}</b><span>Equipo</span><b>${eqs.length?eqs.join(', '):'Sin equipo'}</b><span>Superior</span><b>${sup?esc(userName(sup)):'—'}</b>
         <span>Módulos</span><b>${u.rol==='Administrador'?'Todos (es administrador)':(modsDe(u).map(id=>esc((MODULES.find(m=>m.id===id)||{}).nombre||id)).join(' · ')||'<span style="color:var(--danger)">Ninguno</span>')}</b>
-        ${modsDe(u).includes('contratos')?`<span>Contratos</span><b>${({solicitante:'Solicitante'+(u.area?' de '+esc(u.area):''), analista:'Legales · Analista', jefe:'Legales · Jefa/e (asigna)'})[ctPerfil(u)]}</b>`:''}
+        ${modsDe(u).includes('contratos')?`<span>Contratos</span><b>${({solicitante:'Solicitante'+(u.area?' de '+esc(u.area):''), analista:'Legales · Analista', jefe:'Legales · Jefa/e (asigna y arma)'})[ctPerfil(u)]}</b>`:''}
         <span>Tareas hoy</span><b>${tHoy.length?`${tHoy.length-tPend} de ${tHoy.length} respondidas`:'Sin tareas'}${tRojo?` · <span style="color:var(--danger)">${tRojo} en rojo</span>`:''}</b></div>
       <div class="row">${u.activo?(locked?'<span class="pill yel">Bloqueado</span>':'<span class="pill grn">Puede entrar</span>'):'<span class="pill">Desactivado</span>'}${u.mustChange?'<span class="pill">Debe cambiar su contraseña</span>':''}</div>
       <div class="row" style="gap:6px;flex-wrap:wrap"><button class="btn sm pri" data-act="uedit" data-u="${u.id}">${ic('pen','sm')} Editar</button>${u.id===S.user?'':`<button class="btn sm" data-act="utarea" data-u="${u.id}">${ic('check','sm')} Indicar tarea</button>`}</div>
@@ -4611,7 +4612,7 @@ function vContratos(){
   if(!F[ui.ctF]) ui.ctF = Object.keys(F)[0];
   const list = all.filter(F[ui.ctF].f).filter(match).sort((a,b)=>(b.urgente?1:0)-(a.urgente?1:0) || String(a.necesitaPara||'9999').localeCompare(String(b.necesitaPara||'9999')) || b.creada.localeCompare(a.creada));
   const carga = p==='jefe' ? ctEquipo().map(u=>({u, n:sols().filter(s=>s.asignadoA===u.id && ctAbierta(s)).length, e:sols().filter(s=>s.asignadoA===u.id && s.estado==='Esperando información').length})) : [];
-  return `<div class="head"><div><h1>Contratos</h1><p class="sub">${eq ? (p==='jefe'?'Recibís los pedidos de todas las áreas y decidís quién de tu equipo arma cada uno.':'Los pedidos que te asignaron y los de todo el equipo.') : 'Pedile al área de Contratos de Legales el documento que necesitás, con toda la información y los archivos.'}</p></div>
+  return `<div class="head"><div><h1>Contratos</h1><p class="sub">${eq ? (p==='jefe'?'Recibís los pedidos de todas las áreas, decidís quién de tu equipo arma cada uno y también podés tomar pedidos vos.':'Los pedidos que te asignaron y los de todo el equipo.') : 'Pedile al área de Contratos de Legales el documento que necesitás, con toda la información y los archivos.'}</p></div>
       <div class="row" style="gap:8px">${eq && p==='jefe'?`<button class="btn ghost" data-act="ctconfig">${ic('grid','sm')} Configurar</button>`:''}<a class="btn pri big" href="#contrato-nuevo">${ic('plus')} Nueva solicitud</a></div></div>
     ${carga.length?`<section class="card"><div class="row" style="justify-content:space-between"><h2>Carga del equipo</h2><span class="small muted">Pedidos abiertos de cada persona</span></div><div class="ctcarga">${carga.map(c=>`<button class="ctper" data-act="ctver" data-u="${c.u.id}"><div class="avatar" style="width:38px;height:38px;font-size:14px">${initials(c.u.nombre)}</div><div style="flex:1;text-align:left"><b>${esc(c.u.nombre)}</b><div class="small muted">${c.n} abiertos${c.e?` · ${c.e} esperando info`:''}</div></div><div class="ctbar"><span style="width:${Math.min(100, c.n*14)}%"></span></div></button>`).join('')}</div></section>`:''}
     <section class="card"><div class="row" style="justify-content:space-between;gap:12px;flex-wrap:wrap"><div class="chips">${Object.entries(F).map(([k,v])=>`<button class="chipbtn ${ui.ctF===k?'on':''}" data-act="ctf" data-v="${k}">${v.l} <span class="badge ${k==='sin'&&all.filter(v.f).length?'red':''}">${all.filter(v.f).length}</span></button>`).join('')}</div>
@@ -4809,7 +4810,7 @@ document.addEventListener('dragleave', ev => { const z = ev.target.closest && ev
 document.addEventListener('drop', async ev => { const z = ev.target.closest && ev.target.closest('#ctdrop,#ctdrop2'); if(!z) return; ev.preventDefault(); z.classList.remove('over'); const fs = ev.dataTransfer.files; if(!fs.length) return;
   if(z.id==='ctdrop'){ await cnAgregar(fs); return; } const r = route(), s = r.name==='contrato' ? solById(r.id) : null; if(!s) return; const n = await ctGuardarArchivos([...fs]); s.adjuntos.push(...n); ctEvento(s, `sumó ${n.length===1?'un archivo':n.length+' archivos'}: ${n.map(x=>x.nombre).join(', ')}.`); ctNotificarOtros(s, `${userName(S.user)} sumó archivos a ${s.numero}.`); save(); render(); toast('Archivos agregados'); });
 function ejemplosContratos(d){
-  const nu = [{id:'jpaz', nombre:'Julieta Paz', rol:'Jefa de Contratos', area:'Legales', ctPerfil:'jefe', modulos:['contratos']},
+  const nu = [{id:'jpaz', nombre:'Julieta Paz', rol:'Jefa', area:'Legales', ctPerfil:'jefe', modulos:['contratos']},
     {id:'cortiz', nombre:'Camila Ortiz', rol:'Analista de Contratos', area:'Legales', ctPerfil:'analista', modulos:['contratos']},
     {id:'mgimenez', nombre:'Marcos Giménez', rol:'Compras', area:'Compras', ctPerfil:'solicitante', modulos:['contratos']},
     {id:'sruiz', nombre:'Sofía Ruiz', rol:'Marketing', area:'Marketing', ctPerfil:'solicitante', modulos:['contratos']}];
