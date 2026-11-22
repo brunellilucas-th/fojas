@@ -449,13 +449,41 @@ SERÁ JUSTICIA.`}
 ];
 
 // ---------- estado ----------
-const KEY = 'fojas-demo-v9';
+// Los datos se guardan siempre con el mismo nombre. Si cambia la estructura, se migran: nunca se borran.
+const KEY = 'fojas-datos';
+const SCHEMA = 10;
+const OLD_KEYS = ['fojas-demo-v9','fojas-demo-v8','fojas-demo-v7','fojas-demo-v6','fojas-demo-v5','fojas-demo-v4','fojas-demo-v3','fojas-demo-v2','fojas-demo-v1'];
 let S;
 async function makeUser(u, pass, mustChange){ const salt = randId(16); return {id:u.id, nombre:u.nombre, rol:u.rol, activo:true, salt, hash: await hashPass(pass, salt), mustChange:!!mustChange}; }
 async function fresh(){ const users = []; for(const u of DEFAULT_USERS) users.push(await makeUser(u, u.pass, false));
   return {user:null, users, lock:{}, toured:{}, teams:JSON.parse(JSON.stringify(DEFAULT_TEAMS)), modules:{amparos:true, administrativos:false, contratos:false, cartas:false}, exps:seed(), audit:[], nextId:8}; }
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
-function load(){ try{ const r = localStorage.getItem(KEY); if(r) return JSON.parse(r); }catch(e){} return null; }
+let saveError = false;
+function save(){ try{ S.schema = SCHEMA; localStorage.setItem(KEY, JSON.stringify(S)); if(saveError){ saveError = false; } }catch(e){ if(!saveError){ saveError = true; setTimeout(()=>toast('No se pudo guardar en este navegador: revisá que no esté en modo incógnito y que haya espacio libre.'), 50); } } }
+function readKey(k){ try{ const r = localStorage.getItem(k); if(r) return JSON.parse(r); }catch(e){} return null; }
+function load(){
+  const cur = readKey(KEY); if(cur && cur.exps) return {data:cur, from:null};
+  // versiones anteriores de Fojas: se toma la más nueva que tenga datos
+  for(const k of OLD_KEYS){ const d = readKey(k); if(d && Array.isArray(d.exps)) return {data:d, from:k}; }
+  return null;
+}
+async function migrate(d){
+  const base = await fresh();
+  d.users = Array.isArray(d.users) && d.users.length ? d.users : base.users;
+  base.users.forEach(u=>{ if(!d.users.some(x=>x.id===u.id)) d.users.push(u); });
+  d.teams = Array.isArray(d.teams) ? d.teams : base.teams;
+  d.lock = d.lock || {}; d.toured = d.toured || {}; d.audit = Array.isArray(d.audit) ? d.audit : [];
+  d.modules = {...base.modules, ...(d.modules||{})};
+  d.exps = (d.exps||[]).map(e=>{
+    const x = {dni:'—', docs:[], movimientos:[], plazos:[], flags:{}, riesgo:'medio', monto:0, cautelar:false, estado:'Intimación recibida', prestacion:'Otra', juzgado:'', ...e};
+    if(!e.dni && e.nroAf) x.dni = '—'; delete x.nroAf;
+    if(!x.caratula) x.caratula = `${x.afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`;
+    if(!d.users.some(u=>u.id===x.abogado)) x.abogado = S && S.user || 'lbrunelli';
+    return x;
+  });
+  d.nextId = Math.max(d.nextId||0, ...d.exps.map(e=>+e.id||0)) + 1;
+  d.schema = SCHEMA; d.user = null;
+  return d;
+}
 const userName = id => ((S.users||[]).find(u=>u.id===id)||{nombre:id}).nombre;
 const staff = () => S.users.filter(u=>u.activo && u.rol!=='Administrador');
 const me = () => S.users.find(u=>u.id===S.user);
@@ -1571,6 +1599,8 @@ function sugText(e){ const s = sugerencias(e); return Object.values(s).flat().ma
 let W = null;
 function openNuevo(){ W = {step:1, files:[], text:'', found:{}, afiliado:'', dni:'', prestacion:'', otrasPrestaciones:[], detalle:'', autos:'', sumario:'', sumarioEditado:false, numero:'', juzgado:'', secretaria:'', estado:'Intimación recibida', cautelar:false, plazoDesc:'', plazoFecha:dPlus(2), plazoNota:'', processing:false, readErr:''}; drawWizard(); }
 const fb = k => !W.files.length ? '' : W.found[k] ? `<span class="pill grn">${ic('check','sm')} Lo sacamos del documento</span>` : '<span class="pill yel">Completalo vos</span>';
+function secField(){ return `${isCCF(W.juzgado)?`<select id="wSec"><option value="">Elegí la secretaría…</option>${ccfSecretarias(W.juzgado).map(n=>`<option value="N° ${n}" ${W.secretaria===`N° ${n}`?'selected':''}>Secretaría N° ${n}</option>`).join('')}${W.secretaria && !ccfSecretarias(W.juzgado).some(n=>W.secretaria===`N° ${n}`)?`<option selected>${esc(W.secretaria)}</option>`:''}</select>`:`<input type="text" id="wSec" value="${esc(W.secretaria)}" placeholder="Ej.: N° 2, Civil, Única">`}
+      ${W.found.secretariaDudosa?'<span class="hint" style="color:var(--warn)">La secretaría del documento no corresponde a ese juzgado. Revisala.</span>':''}`; }
 function drawWizard(){
   const s = W.step;
   const titles = ['Subí lo que te llegó','Revisá los datos','Confirmá y listo'];
@@ -1595,9 +1625,7 @@ function drawWizard(){
     <label class="fld">Juzgado ${fb('juzgado')}<input type="text" id="wJz" list="jzlist" value="${esc(W.juzgado)}" placeholder="Escribí para buscar: «civil y comercial federal 7», «Córdoba», «Mar del Plata»…" autocomplete="off">
       <datalist id="jzlist">${JUZGADOS_ALL.map(([n,g])=>`<option value="${esc(n)}">${esc(g)}</option>`).join('')}</datalist>
       <span class="hint">Están los ${JUZGADOS_ALL.length} juzgados federales y nacionales de todo el país. Si es un juzgado provincial, escribilo igual.</span></label>
-    <label class="fld">Secretaría ${fb('secretaria')}
-      ${isCCF(W.juzgado)?`<select id="wSec"><option value="">Elegí la secretaría…</option>${ccfSecretarias(W.juzgado).map(n=>`<option value="N° ${n}" ${W.secretaria===`N° ${n}`?'selected':''}>Secretaría N° ${n}</option>`).join('')}${W.secretaria && !ccfSecretarias(W.juzgado).some(n=>W.secretaria===`N° ${n}`)?`<option selected>${esc(W.secretaria)}</option>`:''}</select>`:`<input type="text" id="wSec" value="${esc(W.secretaria)}" placeholder="Ej.: N° 2, Civil, Única">`}
-      ${W.found.secretariaDudosa?'<span class="hint" style="color:var(--warn)">La secretaría del documento no corresponde a ese juzgado. Revisala.</span>':''}</label>
+    <label class="fld">Secretaría ${fb('secretaria')}<span id="wSecBox" style="display:flex;flex-direction:column;gap:6px">${secField()}</span></label>
     ${(()=>{ const ligadas = W.found.prestacion ? [W.prestacion, ...(W.otrasPrestaciones||[])].filter((x,i,a)=>x && a.indexOf(x)===i) : [];
       const lista = (W.verTodas || !ligadas.length) ? PRESTACIONES : ligadas;
       return `<div class="fld">¿Qué reclama? ${fb('prestacion')}
@@ -1846,7 +1874,7 @@ document.addEventListener('change', async ev => {
   if(t.id==='wfile' && W) wProcess(t.files);
   if(t.id==='wmore' && W){ wRead(); await wProcess(t.files, true); }
   if(t.dataset && t.dataset.wdoc!==undefined && W){ wRead(); W.files[+t.dataset.wdoc].tipo = t.value; drawWizard(); }
-  if(t.id==='wJz' && W){ wRead(); if(!isCCF(W.juzgado) || !ccfSecretarias(W.juzgado).some(n=>W.secretaria===`N° ${n}`)) {} drawWizard(); }
+  if(t.id==='wJz' && W){ wRead(); const box = $('#wSecBox'); if(box) box.innerHTML = secField(); }
   if(t.dataset && t.dataset.reassign && t.value){ const x = expById(t.dataset.reassign); if(!x || !canManage(x) || t.value===x.abogado) return; const old = x.abogado; x.abogado = t.value; save();
     audit('Reasignó un amparo', x.numero, `De ${userName(old)} a ${userName(t.value)}`); render();
     toast(`${x.afiliado} ahora está a cargo de ${userName(t.value)}.`, ()=>{ x.abogado = old; save(); audit('Deshizo reasignación', x.numero, `Vuelve a ${userName(old)}`); render(); }); }
@@ -1950,8 +1978,9 @@ document.addEventListener('submit', async ev => {
 
 // ---------- arranque ----------
 (async function init(){
-  S = load();
-  if(!S || !S.exps || !S.users){ S = await fresh(); save(); await seedAudit(); }
+  const got = load();
+  if(got){ S = await migrate(got.data); save(); if(got.from){ setTimeout(()=>toast('Recuperamos los datos que tenías cargados en la versión anterior.'), 400); } }
+  else { S = await fresh(); save(); await seedAudit(); }
   S.lock = S.lock || {}; S.toured = S.toured || {}; S.teams = S.teams || [];
   render();
   const u = getSession() && me(); if(u && u.mustChange) openPwd(true);
