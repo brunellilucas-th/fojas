@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.22">
+<meta name="fojas-version" content="2026-11-22.23">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -83,7 +83,8 @@ svg.i.lg{width:30px;height:30px}
 .onode{display:flex;gap:10px;align-items:center;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;min-width:190px;max-width:240px;text-align:left;box-shadow:var(--shadow)}
 .onode > span:last-child{display:flex;flex-direction:column;min-width:0} .onode b{font-size:14px;line-height:1.25}
 .onode.top{background:var(--ink);color:#fff;border-color:var(--ink)} .onode.top .small{color:rgba(255,255,255,.75)!important}
-.onode.jefe{border-color:var(--accent);background:var(--accent-soft)} .onode.vacio{color:var(--muted);font-style:italic;justify-content:center}
+.onode.jefe{border-color:var(--accent);background:var(--accent-soft)} .onode.coord{border-color:#b7791f;background:#fff8e6}
+.leg{display:inline-block;width:12px;height:12px;border-radius:3px;border:1.5px solid var(--line);background:var(--surface);vertical-align:-1px;margin-right:4px} .leg.lg-g{background:var(--ink);border-color:var(--ink)} .leg.lg-j{background:var(--accent-soft);border-color:var(--accent)} .leg.lg-c{background:#fff8e6;border-color:#b7791f} .onode.vacio{color:var(--muted);font-style:italic;justify-content:center}
 .oteam{display:flex;flex-direction:column;align-items:center;gap:6px} .oteam-n{display:inline-flex;gap:6px;align-items:center;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--accent);background:var(--surface);border:1.5px solid var(--accent);border-radius:999px;padding:3px 10px}
 .ctdonde{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;background:var(--sunken);border-radius:12px;padding:12px 14px} .ctdonde b{display:block;font-size:15px}
 .ctsteps .step span:last-child{font-size:12px}
@@ -540,6 +541,7 @@ const DEFAULT_USERS = [
   {id:'cortiz', nombre:'Camila Ortiz', rol:'Analista', area:'Legales', ctPerfil:'analista', modulos:['contratos']},
   {id:'mgimenez', nombre:'Marcos Giménez', rol:'Solicitante', area:'Compras', ctPerfil:'solicitante', modulos:['contratos']},
   {id:'sruiz', nombre:'Sofía Ruiz', rol:'Solicitante', area:'Marketing', ctPerfil:'solicitante', modulos:['contratos']},
+  {id:'mrivas', nombre:'Martín Rivas', rol:'Gerente', area:'Legales', ctPerfil:'jefe', modulos:['amparos','administrativos','contratos']},
   {id:'admin', nombre:'Administración', rol:'Administrador'}
 ];
 const DEFAULT_TEAMS = [{id:'t1', nombre:'Amparos', jefe:'dfraerman', miembros:['lbrunelli','fzaurdo']}];
@@ -1746,7 +1748,7 @@ function shell(content){
         ${amp?link('escritos','pen','Escritos'):''}
         ${amp?link('modelos','file','Modelos', (S.modelos||[]).length?`<span class="badge">${S.modelos.length}</span>`:''):''}
         ${amp?link('informes','chart','Informes'):''}
-        ${(isAdmin() || (amp && teamOf()))?link('equipo','users',isLeader()?'Mi equipo':'Equipo', isLeader()&&myPeople().some(u=>statsOf(u).vencidos)?`<span class="badge red">${myPeople().reduce((a,u)=>a+statsOf(u).vencidos,0)}</span>`:''):''}
+        ${(isAdmin() || esGerente(me()) || (amp && teamOf()))?link('equipo','users',isLeader()?'Mi equipo':'Equipo', isLeader()&&myPeople().some(u=>statsOf(u).vencidos)?`<span class="badge red">${myPeople().reduce((a,u)=>a+statsOf(u).vencidos,0)}</span>`:''):''}
         ${extra}
       </nav>
       ${puedeMas()?`<div class="navlabel">Más opciones</div>
@@ -2296,22 +2298,25 @@ function memberDetail(uid, t){
 }
 function orgGeneral(){
   const teams = S.teams||[]; const hijosDe = {}; const raiz = [];
-  // un equipo cuelga de otro cuando su jefa/e es analista de ese otro equipo
   teams.forEach(t=>{ const padre = teams.find(o=>o.id!==t.id && t.jefe && o.miembros.includes(t.jefe)); if(padre){ (hijosDe[padre.id] = hijosDe[padre.id]||[]).push(t); } else raiz.push(t); });
   const persona = (uid, cls='') => { const u = S.users.find(x=>x.id===uid); if(!u) return `<div class="onode vacio">Sin asignar</div>`; return `<div class="onode ${cls}"><span class="avatar" style="width:32px;height:32px;font-size:12px;flex:none">${initials(u.nombre)}</span><span><b>${esc(u.nombre)}</b><span class="small muted">${esc(u.rol)}${u.area?' · '+esc(u.area):''}</span></span></div>`; };
+  const hoja = (m, t, subs, vistos) => { const sub = subs.find(s=>s.jefe===m); return sub ? rama(sub, vistos) : `<li>${persona(m)}</li>`; };
   const rama = (t, vistos) => { if(vistos.has(t.id)) return ''; vistos.add(t.id); const subs = hijosDe[t.id]||[];
-    return `<li><div class="oteam"><div class="oteam-n">${ic('users','sm')} ${esc(t.nombre)}</div>${persona(t.jefe,'jefe')}</div>
-      ${t.miembros.length?`<ul>${t.miembros.map(m=>{ const sub = subs.find(s=>s.jefe===m); return sub ? rama(sub, vistos) : `<li>${persona(m)}</li>`; }).join('')}</ul>`:''}</li>`; };
-  const vistos = new Set(); const admins = S.users.filter(u=>u.rol==='Administrador');
-  const enEquipo = new Set(teams.flatMap(t=>[t.jefe,...t.miembros]));
-  const sueltos = S.users.filter(u=>u.rol!=='Administrador' && !enEquipo.has(u.id));
-  return `<section class="card"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px"><h2>Organigrama</h2><span class="small muted">${teams.length} equipo${teams.length===1?'':'s'} · ${enEquipo.size} persona${enEquipo.size===1?'':'s'} en equipos</span></div>
-    <div class="otree"><ul><li><div class="onode top">${ic('key','sm')}<span><b>${admins.length?esc(admins.map(a=>a.nombre).join(', ')):'Administración'}</b><span class="small muted">Administrador</span></span></div>
-      ${raiz.length?`<ul>${raiz.map(t=>rama(t, vistos)).join('')}</ul>`:''}</li></ul></div>
+    const coords = t.miembros.filter(m=>esCoord(S.users.find(x=>x.id===m)));
+    const directos = t.miembros.filter(m=>!coords.includes(m) && reportaA(t, m)===t.jefe);
+    const hijos = [...coords.map(c=>{ const suyos = t.miembros.filter(m=>m!==c && !coords.includes(m) && reportaA(t, m)===c); return `<li>${persona(c,'coord')}${suyos.length?`<ul>${suyos.map(m=>hoja(m,t,subs,vistos)).join('')}</ul>`:''}</li>`; }), ...directos.map(m=>hoja(m,t,subs,vistos))];
+    return `<li><div class="oteam"><div class="oteam-n">${ic('users','sm')} ${esc(t.nombre)}</div>${persona(t.jefe,'jefe')}</div>${hijos.length?`<ul>${hijos.join('')}</ul>`:''}</li>`; };
+  const vistos = new Set(); const gerentes = S.users.filter(u=>esGerente(u) && u.activo!==false);
+  const porGerente = gerentes.length ? gerentes.map(g=>({g, ts:raiz.filter(t=>gerenteDe(t)===g.id)})) : [{g:null, ts:raiz}];
+  const enOrg = new Set([...gerentes.map(g=>g.id), ...teams.flatMap(t=>[t.jefe,...t.miembros])]);
+  const sueltos = S.users.filter(u=>u.rol!=='Administrador' && !enOrg.has(u.id));
+  return `<section class="card"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px"><h2>Organigrama</h2><span class="small muted">Gerente → Jefa/e → Coordinador/a → Analista · ${teams.length} equipo${teams.length===1?'':'s'}</span></div>
+    <div class="otree"><ul>${porGerente.map(({g, ts})=>`<li>${g?persona(g.id,'top'):`<div class="onode top vacio" style="color:#fff">Gerencia sin asignar</div>`}${ts.length?`<ul>${ts.map(t=>rama(t, vistos)).join('')}</ul>`:''}</li>`).join('')}</ul></div>
+    <div class="row" style="gap:14px;flex-wrap:wrap" class="small"><span class="small"><span class="leg lg-g"></span> Gerente</span><span class="small"><span class="leg lg-j"></span> Jefa/e</span><span class="small"><span class="leg lg-c"></span> Coordinador/a</span><span class="small"><span class="leg"></span> Analista</span></div>
     ${sueltos.length?`<div class="small"><b>Sin equipo:</b> ${sueltos.map(u=>esc(u.nombre)).join(', ')}</div>`:''}</section>`;
 }
 function vEquipo(){
-  if(isAdmin()) return `<div><h1>Equipo</h1><p class="sub">Así está armada la organización: cada equipo con su jefa/e y sus analistas. Si la jefa/e de un equipo es analista de otro, el organigrama los muestra conectados. Más abajo creás equipos y distribuís a las personas.</p></div>${orgGeneral()}${teamEditor()}`;
+  if(isAdmin() || esGerente(me())) return `<div><h1>Equipo</h1><p class="sub">Así está armada la organización, de arriba hacia abajo: Gerente, Jefa/e de cada equipo, Coordinador/a y Analistas.${isAdmin()?' Más abajo creás equipos y distribuís a las personas.':''}</p></div>${orgGeneral()}${isAdmin()?teamEditor():''}`;
   const visible = isAdmin() ? S.teams : S.teams.filter(t=>t.jefe===S.user || t.miembros.includes(S.user));
   if(!visible.length && !isAdmin()) return `<div class="card empty"><div class="ico a">${ic('users','lg')}</div><b>Todavía no formás parte de un equipo</b><span>Pedile al administrador que te sume a uno.</span></div>`;
   return `
@@ -2336,8 +2341,10 @@ function guardarEquipo(f, silencioso){
   const taken = miembros.filter(m=>!multiEquipo(m) && S.teams.some(o=>o.id!==tm.id && o.miembros.includes(m)));
   if(taken.length){ if(!silencioso){ toast(`${taken.map(userName).join(', ')} ya es analista de otro equipo. Solo Lucas Emmanuel Brunelli puede estar en más de uno: sacalo de ahí primero.`); render(); } return false; }
   const nombre = f.nombre.value.trim() || tm.nombre;
-  if(nombre===tm.nombre && jefe===tm.jefe && JSON.stringify(miembros)===JSON.stringify(tm.miembros)) return true;
-  tm.nombre = nombre; tm.jefe = jefe; tm.miembros = miembros; save();
+  const reporta = {}; f.querySelectorAll('select[name^="rep_"]').forEach(s=>{ const m = s.name.slice(4); if(miembros.includes(m)) reporta[m] = s.value; });
+  const gerente = f.gerente ? f.gerente.value : (tm.gerente||'');
+  if(nombre===tm.nombre && jefe===tm.jefe && JSON.stringify(miembros)===JSON.stringify(tm.miembros) && JSON.stringify(reporta)===JSON.stringify(tm.reporta||{}) && gerente===(tm.gerente||'')) return true;
+  tm.nombre = nombre; tm.jefe = jefe; tm.miembros = miembros; tm.reporta = reporta; if(gerente) tm.gerente = gerente; save();
   audit('Actualizó un equipo','Equipos',`${tm.nombre}: jefa/e ${jefe?userName(jefe):'sin asignar'}, ${miembros.length} analista(s)`);
   if(!silencioso){ render(); toast('Equipo guardado'); } return true;
 }
@@ -2346,8 +2353,10 @@ function teamEditor(){
   return `<section class="card"><h2>Armar equipos</h2><p class="muted small">Creá los equipos y distribuí a las personas: elegí quién lo dirige y quiénes son sus analistas. Cada persona puede ser analista de un solo equipo; la única excepción es Lucas Emmanuel Brunelli, que puede estar en más de uno. Para crear, editar o eliminar personas, andá a <a href="#usuarios">Usuarios</a>.</p>
     ${S.teams.map(t=>`<form class="form teamform" data-team="${t.id}" style="padding:16px;border:1px solid var(--line);border-radius:12px">
       <label>Nombre del equipo<input type="text" name="nombre" value="${esc(t.nombre)}" required></label>
-      <label>Jefa/e<select name="jefe"><option value="" ${!t.jefe?'selected':''}>Elegí quién lo dirige</option>${people.map(u=>`<option value="${u.id}" ${u.id===t.jefe?'selected':''}>${esc(u.nombre)}</option>`).join('')}</select></label>
-      <div class="fld full">Analistas<div class="chips">${people.map(u=>{ const otro = !multiEquipo(u.id) && !t.miembros.includes(u.id) ? S.teams.find(o=>o.id!==t.id && o.miembros.includes(u.id)) : null; return `<label class="chipbtn" style="font-weight:600;${otro?'opacity:.55;cursor:not-allowed':''}" ${otro?`title="Ya es analista de ${esc(otro.nombre)}"`:''}><input type="checkbox" name="m" value="${u.id}" ${t.miembros.includes(u.id)?'checked':''} ${otro?'disabled':''} style="accent-color:var(--accent)"> ${esc(u.nombre)}${otro?` <span class="small muted">(en ${esc(otro.nombre)})</span>`:''}${multiEquipo(u.id)?' <span class="small muted">(puede estar en varios)</span>':''}</label>`; }).join('')}</div></div>
+      <label>Jefa/e<select name="jefe"><option value="" ${!t.jefe?'selected':''}>Elegí quién lo dirige</option>${people.filter(u=>!esGerente(u)).map(u=>`<option value="${u.id}" ${u.id===t.jefe?'selected':''}>${esc(u.nombre)}</option>`).join('')}</select></label>
+      ${S.users.filter(esGerente).length>1?`<label>Depende de la gerencia de<select name="gerente">${S.users.filter(esGerente).map(g=>`<option value="${g.id}" ${gerenteDe(t)===g.id?'selected':''}>${esc(g.nombre)}</option>`).join('')}</select></label>`:''}
+      <div class="fld full">Coordinadores y analistas<div class="chips">${people.filter(u=>!esGerente(u)).map(u=>{ const otro = !multiEquipo(u.id) && !t.miembros.includes(u.id) ? S.teams.find(o=>o.id!==t.id && o.miembros.includes(u.id)) : null; return `<label class="chipbtn" style="font-weight:600;${otro?'opacity:.55;cursor:not-allowed':''}" ${otro?`title="Ya es analista de ${esc(otro.nombre)}"`:''}><input type="checkbox" name="m" value="${u.id}" ${t.miembros.includes(u.id)?'checked':''} ${otro?'disabled':''} style="accent-color:var(--accent)"> ${esc(u.nombre)}${otro?` <span class="small muted">(en ${esc(otro.nombre)})</span>`:''}${multiEquipo(u.id)?' <span class="small muted">(puede estar en varios)</span>':''}</label>`; }).join('')}</div></div>
+      ${(()=>{ const coords = t.miembros.filter(m=>esCoord(S.users.find(x=>x.id===m))); const anal = t.miembros.filter(m=>!coords.includes(m)); if(!coords.length || !anal.length) return ''; return `<div class="fld full">¿A quién reporta cada analista?<div class="list">${anal.map(m=>`<div class="li"><span>${esc(userName(m))}</span><select name="rep_${m}" style="max-width:260px"><option value="${esc(t.jefe||'')}" ${reportaA(t,m)===t.jefe?'selected':''}>Directo a la jefa/e${t.jefe?' ('+esc(userName(t.jefe).split(' ')[0])+')':''}</option>${coords.map(c=>`<option value="${c}" ${reportaA(t,m)===c?'selected':''}>${esc(userName(c))} (coordina)</option>`).join('')}</select></div>`).join('')}</div></div>`; })()}
       <div class="full row" style="flex-wrap:wrap"><span class="small muted">${ic('check','sm')} Los cambios se guardan solos</span><button class="btn ghost danger" type="button" data-act="delteam" data-team="${t.id}">Eliminar equipo</button></div>
     </form>`).join('')}
     <div><button class="btn" data-act="newteam">${ic('plus','sm')} Crear otro equipo</button></div>
@@ -2394,7 +2403,7 @@ function ctPerfilBloque(pref, perfil){ const leg = perfil==='analista' || perfil
     ${leg?`<div class="opts" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:8px">
       <button type="button" class="opt ${perfil==='analista'?'on':''}" data-act="ctp" data-ctp="${pref}" data-v="analista">Analista: arma lo que le asignan</button>
       <button type="button" class="opt ${perfil==='jefe'?'on':''}" data-act="ctp" data-ctp="${pref}" data-v="jefe">Jefa/e: asigna los pedidos y también puede tener pedidos asignados para armar</button></div>`:''}</div>`; }
-const ROLES = ['Jefa','Jefe','Coordinadora','Coordinador','Analista','Abogada/o a cargo','Procurador','Solicitante','Administrador'];
+const ROLES = ['Gerente','Jefa','Jefe','Coordinadora','Coordinador','Analista','Abogada/o a cargo','Procurador','Solicitante','Administrador'];
 let UE = null;
 function openUserEdit(uid){ const u = S.users.find(x=>x.id===uid); if(!u) return; UE = {id:uid, nombre:u.nombre, nuevoId:u.id, rol:u.rol, modulos: modsDe(u), area:u.area||'', ctPerfil:ctPerfil(u), pw:'no', p1:'', p2:'', cambiar:true, err:''}; drawUserEdit(); }
 function drawUserEdit(){
@@ -4474,11 +4483,20 @@ const T_EST = {cerrada:{l:'Cerrada por el superior', c:''}, pendiente:{l:'Sin re
 function tPlan(){ return Array.isArray(S.tareasPlan) ? S.tareasPlan : (S.tareasPlan = []); }
 function tDia(){ return Array.isArray(S.tareasDia) ? S.tareasDia : (S.tareasDia = []); }
 function notifs(){ return Array.isArray(S.notifs) ? S.notifs : (S.notifs = []); }
+// escala: Gerente > Jefa/e > Coordinador/a > Analista
+const esGerente = u => !!u && u.rol==='Gerente';
+const esCoord = u => !!u && /^Coordinador/.test(u.rol||'');
+const activoId = id => !!id && S.users.some(x=>x.id===id && x.activo!==false);
+function gerenteDe(t){ if(t && activoId(t.gerente)) return t.gerente; const g = S.users.find(x=>esGerente(x) && x.activo!==false); return g ? g.id : null; }
+function reportaA(t, uid){ const r = (t.reporta||{})[uid]; if(r && r!==uid && t.miembros.includes(r) && activoId(r) && esCoord(S.users.find(x=>x.id===r))) return r;
+  const u = S.users.find(x=>x.id===uid); if(esCoord(u)) return t.jefe; if(r===t.jefe) return t.jefe;
+  const coords = t.miembros.filter(m=>m!==uid && activoId(m) && esCoord(S.users.find(x=>x.id===m))); return coords.length===1 && !(t.reporta&&t.reporta[uid]) ? coords[0] : t.jefe; }
 function superiorDe(uid){
   const u = S.users.find(x=>x.id===uid); if(!u) return null;
+  if(esGerente(u) || u.rol==='Administrador') return null;
   const t = (S.teams||[]).find(t=>t.miembros.includes(uid) && t.jefe!==uid);
-  if(t && S.users.some(x=>x.id===t.jefe && x.activo!==false)) return t.jefe;
-  if(u.rol==='Administrador') return null;
+  if(t){ const r = reportaA(t, uid); if(activoId(r) && r!==uid) return r; const g = gerenteDe(t); if(g && g!==uid) return g; }
+  const tj = (S.teams||[]).find(t=>t.jefe===uid); if(tj){ const g = gerenteDe(tj); if(g && g!==uid) return g; }
   const ad = S.users.find(x=>x.rol==='Administrador' && x.activo!==false && x.id!==uid); return ad ? ad.id : null;
 }
 const subordinados = (uid=S.user) => S.users.filter(u=>u.id!==uid && u.activo!==false && superiorDe(u.id)===uid);
