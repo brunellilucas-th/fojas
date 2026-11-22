@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.10">
+<meta name="fojas-version" content="2026-11-22.11">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -3464,7 +3464,7 @@ IC.send = '<path d="M4 12l16-8-6 16-2.5-6.5z" fill="none" stroke="currentColor" 
 IC.x = '<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>';
 IC.bot = '<rect x="4" y="7" width="16" height="12" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7V4M9 13h.01M15 13h.01" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M2 12v3M22 12v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
 const AYUDA = [
-  {t:'Tareas diarias', k:['tarea','tareas','diaria','diarias','validar','superior','jefe','asignar','indicar','completa','rojo','notificacion','notificaciones','campana'], r:'En **Tareas diarias** (panel izquierdo) cada persona carga las tareas que hace todos los días y su **superior del organigrama** las valida. El superior también puede **indicar tareas** (para un día o diarias): a la persona le llega una **notificación** (la campana, arriba a la derecha). Cada tarea se responde con **Completa**, **No se puede realizar** (con el motivo) o **No se hizo**. Si no se responde en el día, queda **en rojo** sola y se le avisa al superior.', ir:'tareas'},
+  {t:'Tareas diarias', k:['tarea','tareas','diaria','diarias','validar','superior','jefe','asignar','indicar','completa','rojo','notificacion','notificaciones','campana'], r:'En **Tareas diarias** (panel izquierdo) cada persona carga las tareas que hace todos los días y su **superior del organigrama** las valida. El superior también puede **indicar tareas** (para un día o diarias): a la persona le llega una **notificación** (la campana, arriba a la derecha). Cada tarea se responde con **Completa**, **No se puede realizar** (con el motivo) o **No se hizo**. Si no se responde en el día, queda **en rojo** sola y se le avisa al superior. Lo que **no se pudo hacer** o quedó **en rojo** pasa al **día hábil siguiente** con la marca "Pendiente desde…", hasta que se complete o el superior la dé por cerrada.', ir:'tareas'},
   {t:'Menú de tu usuario', k:['menu','iniciales','circulo','salir','cerrar sesion','contrasena','clave','papelera','ayuda','vencimientos','asistente'], r:'Tocá el **círculo con tus iniciales**, arriba a la derecha. Ahí están **Vencimientos** (tus próximos vencimientos), **Asistente IA**, **Papelera**, **Cambiar contraseña**, **Ayuda** y **Salir**.', ir:null},
   {t:'Asignar módulos a cada usuario', k:['modulo','modulos','asignar','habilitar','permisos','acceso','usuario','ver'], r:'El administrador entra a **Usuarios**, toca **Editar** en la persona y tilda los **Módulos que puede usar**: uno, varios o todos. También se eligen al agregar a alguien. Cada persona ve en el menú solo sus módulos; el administrador ve todos. Para prender o apagar un módulo para toda la organización, andá a **Módulos**.', ir:'usuarios'},
   {k:['cargar','nuevo expediente','crear expediente','alta','amparo nuevo','ingresar un amparo'], t:'Cargar un expediente nuevo', ir:'amparos',
@@ -4275,7 +4275,7 @@ document.addEventListener('change', ev => { if(ev.target.id==='ueRol' && UE){ ue
 
 // ---------- Tareas diarias: las propone cada persona, las valida su superior; el superior también asigna ----------
 const DIAS_SEM = [['1','Lun'],['2','Mar'],['3','Mié'],['4','Jue'],['5','Vie']];
-const T_EST = {pendiente:{l:'Sin responder', c:''}, hecha:{l:'Completa', c:'grn'}, nose:{l:'No se puede realizar', c:'yel'}, nohecha:{l:'No se hizo', c:'red'}};
+const T_EST = {cerrada:{l:'Cerrada por el superior', c:''}, pendiente:{l:'Sin responder', c:''}, hecha:{l:'Completa', c:'grn'}, nose:{l:'No se puede realizar', c:'yel'}, nohecha:{l:'No se hizo', c:'red'}};
 function tPlan(){ return Array.isArray(S.tareasPlan) ? S.tareasPlan : (S.tareasPlan = []); }
 function tDia(){ return Array.isArray(S.tareasDia) ? S.tareasDia : (S.tareasDia = []); }
 function notifs(){ return Array.isArray(S.notifs) ? S.notifs : (S.notifs = []); }
@@ -4298,13 +4298,20 @@ function tareasMantener(){
     let f = (p.aprobadaEn||hoy).slice(0,10); if(f < desde) f = desde;
     for(let i=0; i<20 && f<=hoy; i++){
       const w = String(new Date(f+'T12:00:00').getDay());
-      if(esHabilDia(f) && (p.dias||['1','2','3','4','5']).includes(w) && !tDia().some(r=>r.ref===p.id && r.fecha===f)){
+      if(esHabilDia(f) && (p.dias||['1','2','3','4','5']).includes(w) && !tDia().some(r=>r.ref===p.id && r.fecha===f && !r.previa)){
         tDia().push({id:'td'+randId(8), user:p.user, fecha:f, origen:'diaria', ref:p.id, titulo:p.titulo, detalle:p.detalle||'', estado:'pendiente'}); cambio = true; }
       const d = new Date(f+'T12:00:00'); d.setDate(d.getDate()+1); f = iso(d);
     }
   });
   const cerradas = {};
-  tDia().forEach(r=>{ if(r.estado==='pendiente' && r.fecha < hoy){ r.estado = 'nohecha'; r.auto = true; r.respondidaEn = new Date().toISOString(); cambio = true; const k = r.user+'|'+r.fecha; (cerradas[k] = cerradas[k]||[]).push(r); } });
+  const sigHabil = f => { const d = new Date(f+'T12:00:00'); for(let i=0;i<15;i++){ d.setDate(d.getDate()+1); const x = iso(d); if(esHabilDia(x)) return x; } return null; };
+  for(let vuelta=0; vuelta<30; vuelta++){ let mov = false;
+  tDia().forEach(r=>{ if(r.estado==='pendiente' && r.fecha < hoy){ r.estado = 'nohecha'; r.auto = true; r.respondidaEn = new Date().toISOString(); cambio = true; const k = r.user+'|'+r.fecha; (cerradas[k] = cerradas[k]||[]).push(r); mov = true; } });
+  // lo que no se pudo hacer o quedó en rojo pasa al día hábil siguiente
+  tDia().slice().forEach(r=>{ if((r.estado==='nose' || r.estado==='nohecha') && !r.pasadaA && !r.cerrada && r.fecha < hoy && r.fecha >= desde){ const sig = sigHabil(r.fecha); if(!sig || sig > hoy) return;
+    const n = {id:'td'+randId(8), user:r.user, fecha:sig, origen:r.origen, ref:r.ref, asignadaPor:r.asignadaPor, titulo:r.titulo, detalle:r.detalle||'', vence:r.vence||'', estado:'pendiente', desde:r.desde||r.fecha, previa:r.id, veces:(r.veces||0)+1};
+    tDia().push(n); r.pasadaA = n.id; cambio = true; mov = true; } });
+  if(!mov) break; }
   Object.entries(cerradas).forEach(([k, rs])=>{ const [uid, f] = k.split('|'); const sup = superiorDe(uid);
     notificar(sup, `${userName(uid)} no respondió ${rs.length===1?'una tarea':rs.length+' tareas'} del ${fmt(f)}: ${rs.map(r=>r.titulo).join(', ')}. Quedó en rojo: no se hizo.`, 'tareas', 'alerta');
     notificar(uid, `${rs.length===1?'Una tarea tuya del '+fmt(f)+' quedó':rs.length+' tareas tuyas del '+fmt(f)+' quedaron'} en rojo porque no ${rs.length===1?'la':'las'} respondiste: ${rs.map(r=>r.titulo).join(', ')}. Se le informó a ${userName(sup)||'tu superior'}.`, 'tareas', 'alerta');
@@ -4315,8 +4322,9 @@ function tRow(r, editable){
   const e = T_EST[r.estado]; const asig = r.origen==='asignada';
   return `<div class="trow ${r.estado}">
     <div class="trow-t"><b>${esc(r.titulo)}</b>${r.detalle?`<div class="small muted">${esc(r.detalle)}</div>`:''}
-      <div class="row" style="gap:6px;margin-top:6px;flex-wrap:wrap"><span class="pill ${asig?'acc':''}">${asig?`Asignada por ${esc(userName(r.asignadaPor).split(' ')[0])}`:'Diaria'}</span><span class="pill ${e.c}">${e.l}${r.auto?' · automático':''}</span>${r.vence?`<span class="pill">Hasta ${esc(r.vence)} hs</span>`:''}</div>
-      ${r.motivo?`<div class="small" style="margin-top:6px"><b>Motivo:</b> ${esc(r.motivo)}</div>`:''}
+      <div class="row" style="gap:6px;margin-top:6px;flex-wrap:wrap"><span class="pill ${asig?'acc':''}">${asig?`Asignada por ${esc(userName(r.asignadaPor).split(' ')[0])}`:'Diaria'}</span><span class="pill ${e.c}">${e.l}${r.auto?' · automático':''}</span>${r.vence?`<span class="pill">Hasta ${esc(r.vence)} hs</span>`:''}${r.previa?`<span class="pill red">Pendiente desde el ${fmt(r.desde)}${r.veces>1?` · ${r.veces} días`:''}</span>`:''}${r.pasadaA && !editable?`<span class="pill">Pasó al día siguiente</span>`:''}</div>
+      ${r.motivo?`<div class="small" style="margin-top:6px"><b>Motivo:</b> ${esc(r.motivo)}</div>`:''}${r.cerrada&&r.estado!=='cerrada'?`<div class="small muted" style="margin-top:6px">${esc(userName(r.cerradaPor))} la dio por cerrada: no pasa al día siguiente.</div>`:''}
+      ${!editable && r.user!==S.user && superiorDe(r.user)===S.user && !r.cerrada && !r.pasadaA && ((r.estado==='pendiente' && r.previa) || r.estado==='nose' || r.estado==='nohecha') ? `<div style="margin-top:8px"><button class="linkbtn" data-act="tcerrar" data-t="${r.id}">Dar por cerrada (que no pase al día siguiente)</button></div>`:''}
       ${ui.tNose===r.id?`<div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap"><input type="text" id="tMotivo" placeholder="¿Por qué no se puede? (lo ve tu superior)" style="flex:1;min-width:200px"><button class="btn sm" data-act="tnoseok" data-t="${r.id}">Enviar</button><button class="btn sm ghost" data-act="tnosecancel">Cancelar</button></div>`:''}</div>
     ${editable?`<div class="tbtns">
       <button class="tbtn ok ${r.estado==='hecha'?'on':''}" data-act="tresp" data-v="hecha" data-t="${r.id}" title="Completa">${ic('check','sm')}<span>Completa</span></button>
@@ -4331,11 +4339,11 @@ function vTareas(){
   const tabs = [['mias','check','Mis tareas'], ...(subs.length?[['equipo','users',`Mi equipo${pendVal.length?` <span class="badge red">${pendVal.length}</span>`:''}`]]:[])];
   let body = '';
   if(tab==='mias'){
-    const del = tDia().filter(r=>r.user===S.user && r.fecha===f).sort((a,b)=>(a.origen==='asignada'?0:1)-(b.origen==='asignada'?0:1) || a.titulo.localeCompare(b.titulo));
+    const del = tDia().filter(r=>r.user===S.user && r.fecha===f).sort((a,b)=>(a.previa?0:1)-(b.previa?0:1) || (a.origen==='asignada'?0:1)-(b.origen==='asignada'?0:1) || a.titulo.localeCompare(b.titulo));
     const resp = del.filter(r=>r.estado!=='pendiente').length;
     const plan = tPlan().filter(p=>p.user===S.user);
     body = `<section class="card">
-      <div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:10px"><div><h2>${esHoy?'Hoy':fmtLargo(f)}</h2><div class="small muted">${del.length?`Respondiste ${resp} de ${del.length}.`:''} ${esHoy?'Lo que no respondas hoy queda en rojo (no se hizo) y se le avisa a '+esc(userName(sup)||'tu superior')+'.':''}</div></div>
+      <div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:10px"><div><h2>${esHoy?'Hoy':fmtLargo(f)}</h2><div class="small muted">${del.length?`Respondiste ${resp} de ${del.length}.`:''} ${esHoy?'Lo que no respondas hoy queda en rojo (no se hizo), se le avisa a '+esc(userName(sup)||'tu superior')+' y pasa a mañana.':''}</div></div>
         <div class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn sm ghost" data-act="tdia" data-v="-1" title="Día anterior">${ic('back','sm')}</button><input type="date" id="tFecha" value="${f}" max="${hoy}" style="max-width:170px"><button class="btn sm ghost" data-act="tdia" data-v="1" title="Día siguiente" ${esHoy?'disabled':''}>${ic('next','sm')}</button>${esHoy?'':`<button class="btn sm" data-act="tdia" data-v="hoy">Hoy</button>`}</div></div>
       ${!esHabilDia(f) && !del.length ? `<div class="empty small">${esc(motivoInhabil(f))[0].toUpperCase()+esc(motivoInhabil(f)).slice(1)}: no hay tareas diarias.</div>` : ''}
       <div class="tlist">${del.map(r=>tRow(r, esHoy)).join('') || (esHabilDia(f)?`<div class="empty small">No hay tareas para este día. Agregá tus tareas diarias abajo: cuando ${esc(userName(sup)||'tu superior')} las valide, aparecen acá todos los días.</div>`:'')}</div>
@@ -4364,7 +4372,7 @@ function vTareas(){
         <div class="tlist">${rs.map(r=>tRow(r,false)).join('') || '<div class="empty small">No tiene tareas este día.</div>'}</div>
         ${tPlan().filter(p=>p.user===u.id && p.estado==='aprobada').length?`<div class="small muted" style="padding:6px 4px">Tareas diarias validadas: ${tPlan().filter(p=>p.user===u.id && p.estado==='aprobada').map(p=>`${esc(p.titulo)} <button class="linkbtn" data-act="tplanbaja" data-p="${p.id}" title="Dejar de pedirla">quitar</button>`).join(' · ')}</div>`:''}</details>`; }).join('')}</section>`;
   }
-  return `<div><h1>Tareas diarias</h1><p class="sub">Cada tarea se responde con <b style="color:var(--accent)">Completa</b>, <b style="color:#b7791f">No se puede realizar</b> o <b style="color:var(--danger)">No se hizo</b>. Si no la respondés en el día, queda en rojo sola y se le avisa a tu superior.</p></div>
+  return `<div><h1>Tareas diarias</h1><p class="sub">Cada tarea se responde con <b style="color:var(--accent)">Completa</b>, <b style="color:#b7791f">No se puede realizar</b> o <b style="color:var(--danger)">No se hizo</b>. Si no la respondés en el día, queda en rojo sola y se le avisa a tu superior. Lo que no se pudo hacer o quedó en rojo <b>pasa al día hábil siguiente</b> hasta que se complete.</p></div>
     ${tabs.length>1?`<div class="tabs">${tabs.map(([k,i,l])=>`<button class="${tab===k?'on':''}" data-act="ttab" data-v="${k}">${ic(i,'sm')} ${l}</button>`).join('')}</div>`:''}${body}`;
 }
 function tPendHoy(){ const hoy = iso(today()); return tDia().filter(r=>r.user===S.user && r.fecha===hoy && r.estado==='pendiente').length; }
@@ -4398,6 +4406,8 @@ document.addEventListener('click', async ev => {
   if(a==='trechok'){ const p = tPlan().find(x=>x.id===d.p); if(!p) return; p.estado = 'rechazada'; p.comentario = ($('#tRechTxt')||{}).value ? $('#tRechTxt').value.trim() : ''; p.validadaPor = S.user; ui.tRech = null;
     notificar(p.user, `${userName(S.user)} no validó tu tarea diaria «${p.titulo}»${p.comentario?`: ${p.comentario}`:'.'}`, 'tareas', 'alerta');
     save(); audit('No validó una tarea diaria', 'Tareas diarias', `${userName(p.user)}: ${p.titulo}`); render(); toast('Listo, se le avisó'); return; }
+  if(a==='tcerrar'){ const r = tDia().find(x=>x.id===d.t); if(!r || superiorDe(r.user)!==S.user) return; r.cerrada = true; r.cerradaPor = S.user; if(r.estado==='pendiente') r.estado = 'cerrada';
+    notificar(r.user, `${userName(S.user)} dio por cerrada la tarea «${r.titulo}»: ya no pasa al día siguiente.`, 'tareas'); save(); audit('Dio por cerrada una tarea', 'Tareas diarias', `${userName(r.user)}: ${r.titulo}`); render(); toast('Tarea cerrada'); return; }
   if(a==='tplanbaja'){ const p = tPlan().find(x=>x.id===d.p); if(!p) return; tPlan().splice(tPlan().indexOf(p),1); tDia().filter(r=>r.ref===p.id && r.fecha===hoy && r.estado==='pendiente').forEach(r=>tDia().splice(tDia().indexOf(r),1));
     notificar(p.user, `${userName(S.user)} quitó la tarea diaria «${p.titulo}».`, 'tareas'); save(); audit('Quitó una tarea diaria de su equipo', 'Tareas diarias', `${userName(p.user)}: ${p.titulo}`); render(); toast('Tarea quitada'); return; }
   if(a==='tasignar'){ const uid = $('#taU').value, t = $('#taT').value.trim(), f = $('#taF').value || hoy; if(!t){ toast('Escribí la tarea'); $('#taT').focus(); return; } if(f<hoy){ toast('Elegí hoy o un día futuro'); return; }
