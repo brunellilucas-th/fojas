@@ -1077,6 +1077,7 @@ function vExpediente(id){
   const tabs = [['resumen','list','Resumen'],['sugerencias','spark','Qué hacer'],['novedades','clock',`Novedades (${e.movimientos.length})`],['documentos','file',`Documentos (${e.docs.length})`],['plazos','cal',`Plazos (${pending(e).length})`],['asistente','help','Asistente'],['historial','history','Historial']];
   let body = '';
   if(t==='resumen') body = `
+    <div class="row" style="justify-content:flex-end"><button class="btn sm" data-act="editdatos" data-e="${e.id}">${ic('pen','sm')} Editar datos del expediente</button></div>
     <div class="fact"><span>Autos</span><b>${esc(e.caratula)}</b></div>
     <div class="fact"><div class="row" style="justify-content:space-between"><span>Sumario del expediente</span>${ui.editSum?'':'<button class="btn sm ghost" data-act="editsum">'+ic('pen','sm')+' Editar</button>'}</div>
       ${ui.editSum?`<textarea id="sumEdit" rows="6" style="margin-top:6px">${esc(e.sumario || buildSumario({...e, plazoDesc:(nextPlazo(e)||{}).desc, plazoFecha:(nextPlazo(e)||{}).vence, flags:caseFlags(e)}))}</textarea><div class="row" style="margin-top:8px"><button class="btn pri sm" data-act="savesum">Guardar sumario</button><button class="btn ghost sm" data-act="cancelsum">Cancelar</button></div>`
@@ -1470,6 +1471,21 @@ function vIngreso(){
 // ---------- modales ----------
 function showModal(html, forced){ $('#modal').innerHTML = html; $('#overlay').dataset.forced = forced?'1':''; $('#overlay').classList.add('show'); }
 let VIEW_BACK = false;
+function openEditDatos(e){
+  showModal(`
+    <div class="row" style="justify-content:space-between"><h2 style="font-size:22px">Editar datos del expediente</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div>
+    <div class="form">
+      <label class="full">Autos<input type="text" id="edAutos" value="${esc(e.caratula)}"></label>
+      <label>Asociado<input type="text" id="edAf" value="${esc(e.afiliado)}"></label>
+      <label>DNI<input type="text" id="edDni" value="${esc(e.dni&&e.dni!=='—'?e.dni:'')}"></label>
+      <label>Número de expediente<input type="text" id="edNum" value="${esc(e.numero)}"></label>
+      <label>Qué reclama<select id="edPr">${PRESTACIONES.map(p=>`<option ${p===e.prestacion?'selected':''}>${p}</option>`).join('')}</select></label>
+      <label class="full">Juzgado<input type="text" id="edJz" list="jzlist2" value="${esc(e.juzgado)}"><datalist id="jzlist2">${JUZGADOS_ALL.map(([n,g])=>`<option value="${esc(n)}">${esc(g)}</option>`).join('')}</datalist></label>
+      <label>Secretaría<input type="text" id="edSec" value="${esc(e.secretaria||'')}"></label>
+    </div>
+    <div id="edErr"></div>
+    <div class="row"><button class="btn pri big" data-act="savedatos" data-e="${e.id}">${ic('check')} Guardar cambios</button></div>`);
+}
 const closeModal = () => { if(VIEW) closeViewer(); $('#overlay').classList.remove('show'); $('#overlay').dataset.forced=''; };
 
 const TOUR = [
@@ -1704,6 +1720,54 @@ function peRead(){ const v = id => { const el = $('#'+id); return el ? el.value 
   const f = $('#peFeria'); if(f) PE.feria = f.checked; }
 function upcomingHolidays(n=8){ const t = iso(today()); return Object.entries({...FERIADOS, ...NO_LABORABLES}).filter(([d])=>d>=t).sort().slice(0,n); }
 
+// ---------- autos del caso (y no los de la jurisprudencia citada) ----------
+// Quién se presenta en la demanda: "NOMBRE APELLIDO, D.N.I. ..., por derecho propio / en representación ... vengo a promover"
+function presentante(one){
+  const m = String(one||'').match(/(?:^|[.:;]\s*|Juez:?\s*|Juez\/a:?\s*)([A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑa-záéíóúñ'’\- ]{2,50}?(?:,\s*[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑa-záéíóúñ'’\- ]{2,40})?),?\s+(?:D\.?\s?N\.?\s?I\.?|DNI)[^;]{0,160}?(?:por\s+derecho\s+propio|en\s+(?:nombre\s+y\s+)?representaci[oó]n|vengo\s+a|promuev|interpong|me\s+presento)/);
+  if(!m) return null;
+  let n = m[1].trim().replace(/\s+/g,' ');
+  if(/^(se[ñn]or|juez|demanda|promueve|objeto)/i.test(n)) return null;
+  if(!n.includes(',')){ const w = n.split(' '); if(w.length>=2){ n = `${w[w.length-1]}, ${w.slice(0,-1).join(' ')}`; } }
+  return titleCase(n);
+}
+function limpiarActor(s){ return titleCase(String(s||'').replace(/^(?:en\s+)?(?:los\s+)?(?:autos\s+)?(?:caratulados\s*:?)?\s*/i,'').replace(/^(?:del?\s+)?(?:Sr\.?|Sra\.?)\s+/i,'').replace(/^[“"«'\s]+/,'').trim()); }
+function autosCandidatos(raw, docsInfo){
+  const docs = (docsInfo && docsInfo.length) ? docsInfo : [{text:raw, tipo:''}];
+  const emp = normTxt(cfg().empresa).split(' ').filter(w=>w.length>3 && !['asociacion','civil','sociedad','anonima'].includes(w));
+  const RE = /([A-ZÁÉÍÓÚÑa-záéíóúñ][A-ZÁÉÍÓÚÑa-záéíóúñ.,'() ]{2,120}?)\s+[cC]\s*\/\s*([^"”»\n]{3,160}?)\s+[sS]\s*\/\s*([A-ZÁÉÍÓÚÑa-záéíóúñ][^"”»\n]{2,120})/g;
+  const map = new Map();
+  docs.forEach(doc=>{
+    const t = String(doc.text||'').replace(/[ \t\r\f]+/g,' ');
+    let m; RE.lastIndex = 0;
+    while((m = RE.exec(t))){
+      const antes = t.slice(Math.max(0, m.index-90), m.index), despues = t.slice(m.index + m[0].length, m.index + m[0].length + 70);
+      let actorRaw = m[1].replace(/^.*?(?:autos\s+caratulados|en\s+(?:los\s+)?autos|autos\s*:|caratulad[oa]s?\s*:?)\s*[“"«']*/i,'').replace(/^[“"«'\s]+/,'');
+      // si el texto anterior es largo, quedarse con la última frase (el nombre suele estar en mayúsculas o después de comillas)
+      const q = actorRaw.split(/[“"«]|\s{2,}|\.\s+(?=[A-ZÁÉÍÓÚÑ][a-záéíóúñ])/); actorRaw = q[q.length-1];
+      const actor = limpiarActor(actorRaw.replace(/\s*\((?:en\s+)?(?:rep|representaci)[^)]*\)/i,'').replace(/\s+(?:en\s+(?:nombre\s+y\s+)?representaci[oó]n|por\s+s[ií]\s+y\s+en).*$/i,''));
+      if(!actor || actor.length < 3 || /^(autos|en|los|que)$/i.test(actor)) continue;
+      const demRaw = m[2].trim();
+      const dem = titleCase(demRaw).replace(/\bS\.?\s?a\.?(?=\s|$)/g,'S.A.').replace(/\bS\.?r\.?l\.?(?=\s|$)/gi,'S.R.L.');
+      const obj = m[3].replace(/\s*(?:\(?\s*Expte?\.?|Expediente|N[°º]\s*\d|\/\/|Fallos|Sala\b).*$/i,'').replace(/[.,;:\s”"»]+$/,'').trim();
+      let score = 0;
+      if(/autos\s+caratulados|en\s+(los\s+)?autos|autos\s*:|caratulad/i.test(antes)) score += 5;
+      if(emp.length && emp.some(w=>normTxt(demRaw).includes(w))) score += 6;
+      if(/c[eé]dula|oficio|resoluci/i.test(doc.tipo||'')) score += 4; else if(/demanda/i.test(doc.tipo||'')) score += 1;
+      if(/(fallos|csjn|c\.\s?s\.\s?j\.\s?n|cnccf|cnciv|cncont|c[aá]m(?:ara)?\.?\s|sala\s+[ivx\d]|in\s+re|cfr\.|conf\.|ver\s+causa|causa\s|precedente|jurisprudencia|fallo|sentencia\s+de|resuelto\s+en)/i.test(antes)) score -= 8;
+      if(/^[^a-z]{0,6}(?:\(|,)?\s*(?:sala|cnccf|csjn|fallos|del?\s+\d{1,2}\/\d{1,2}\/\d{2,4}|\d{1,2}\/\d{1,2}\/\d{2,4}|\(\d{4}\)|causa)/i.test(despues)) score -= 6;
+      const autos = `${limpiarActor(actorRaw)} c/ ${dem} s/ ${obj.toLowerCase()}`;
+      const key = normTxt(actor);
+      const prev = map.get(key);
+      if(prev){ prev.count++; prev.score = Math.max(prev.score, score) + 2; }
+      else map.set(key, {autos, actor:actor.replace(/\s*\(.*\)\s*$/,'').trim(), score, count:1});
+    }
+  });
+  // la persona con DNI mencionado en la demanda o la cédula suma puntos
+  const all = docs.map(d=>d.text||'').join(' ');
+  map.forEach(c=>{ const ap = normTxt(c.actor.split(',')[0]).split(' ')[0]; const low = normTxt(all); const k = low.indexOf(ap); if(k>=0 && /\bd n i\b|\bdni\b/.test(low.slice(k, k+160))) c.score += 4; });
+  return [...map.values()].sort((a,b)=>b.score-a.score || b.count-a.count);
+}
+
 // ---------- lectura de plazos del oficio o la cédula ----------
 const NUMS = {un:1,uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,once:11,doce:12,quince:15,veinte:20,treinta:30,veinticuatro:24,'cuarenta y ocho':48,'setenta y dos':72,'noventa y seis':96};
 const ORD = {primer:1,primero:1,segundo:2,tercer:3,tercero:3,cuarto:4,quinto:5,sexto:6,septimo:7,'séptimo':7,octavo:8,noveno:9,decimo:10,'décimo':10};
@@ -1739,7 +1803,7 @@ function extractPlazos(text, hayCautelar){
 // ---------- extracción de datos del texto ----------
 const titleCase = s => String(s||'').replace(/[A-ZÁÉÍÓÚÑÜ]{2,}/g, w => w[0] + w.slice(1).toLowerCase());
 const NUM_WORDS = {un:1,uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,quince:15,veinte:20,'veinticuatro':24,'cuarenta y ocho':48,'setenta y dos':72};
-function extractFields(raw){
+function extractFields(raw, docsInfo){
   const t = raw.replace(/[ \t\r\f]+/g,' ').replace(/\n+/g,'\n');
   const one = t.replace(/\n/g,' ');
   const f = {};
@@ -1747,21 +1811,23 @@ function extractFields(raw){
   let m = one.match(/\b(CCF|CIV|COM|CAF|CNT|CSS|FSM|FLP|FRO|FCB|FMZ|FTU|FMP|FCR|FRE|FPO|FBB|FGR|FCT|FSA|FPA|FLP)\s*0*(\d{1,6})\s*\/\s*(\d{4})/i);
   if(m) f.numero = `${m[1].toUpperCase()} ${m[2]}/${m[3]}`;
   else if((m = one.match(/Exp(?:ediente|te)?\.?\s*(?:N[°ºo]\.?|Nro\.?|n[uú]mero)?\s*:?\s*([\d.]{1,9}\s*\/\s*\d{4})/i))) f.numero = 'Expte. ' + m[1].replace(/\s/g,'');
-  // autos y asociado: primero se busca la mención expresa de "autos"; si no aparece, cualquier "X c/ Y s/ Z"
-  const AUT = /\bautos\s*(?:caratulados|rotulados|que\s+se\s+caratulan|n[°º.]*\s*[\w\/ ]{0,20})?\s*[:\-–]?\s*[“"«']*\s*([^"”»\n]{3,160}?)\s+[cC]\s*\/\s*([^"”»\n]{3,160}?)\s+[sS]\s*\/\s*([^"”»\n]{2,120})/;
-  const GEN = /([A-ZÁÉÍÓÚÑa-záéíóúñ][A-ZÁÉÍÓÚÑa-záéíóúñ.,'() ]{3,120}?)\s+[cC]\s*\/\s*([^"”»\n]{3,160}?)\s+[sS]\s*\/\s*([A-ZÁÉÍÓÚÑa-záéíóúñ][^"”»\n]{2,120})/;
-  m = t.match(AUT) || one.match(AUT) || t.match(GEN);
-  if(m){
-    let af = m[1].replace(/^(?:en\s+)?(?:los\s+)?(?:autos\s+)?(?:caratulados\s*:?)?\s*/i,'').replace(/^(?:del?\s+)?(?:Sr\.?|Sra\.?)\s+/i,'').replace(/^[“"«'\s]+/,'').trim();
-    const dem = titleCase(m[2].trim()).replace(/\bS\.?\s?a\.?(?=\s|$)/g,'S.A.').replace(/\bS\.?r\.?l\.?(?=\s|$)/gi,'S.R.L.');
-    const obj = m[3].replace(/\s*(?:\(?\s*Expte?\.?|Expediente|N[°º]\s*\d|\/\/).*$/i,'').replace(/[.,;:\s]+$/,'').trim();
-    f.autos = `${titleCase(af)} c/ ${dem} s/ ${obj.toLowerCase()}`;
-    // el asociado es la parte actora de los autos (sin aclaraciones de representación)
-    f.afiliado = titleCase(af.replace(/\s*\((?:en\s+)?(?:rep|representaci)[^)]*\)/i,'').replace(/\s+(?:en\s+(?:nombre\s+y\s+)?representaci[oó]n|por\s+s[ií]\s+y\s+en).*$/i,'').trim());
-  }
-  // DNI
-  m = one.match(/D\.?\s?N\.?\s?I\.?\s*(?:N\s*[°ºo*”"'´.]*|Nro\.?)?\s*:?\s*(\d{1,2})[.\s]?(\d{3})[.\s]?(\d{3})\b/i);
-  if(m) f.dni = `${m[1]}.${m[2]}.${m[3]}`;
+  // autos y asociado: se buscan TODOS los "X c/ Y s/ Z" y se elige el del caso, descartando jurisprudencia citada
+  const cands = autosCandidatos(raw, docsInfo);
+  const pres = presentante(one);
+  let b = null;
+  if(pres){ const ap = normTxt(pres.split(',')[0]); b = cands.find(c=>normTxt(c.actor).includes(ap)) || null; }
+  if(!b && cands.length && cands[0].score >= 0) b = cands[0];
+  if(b){ f.autos = b.autos; f.afiliado = b.actor; }
+  else if(pres){ f.afiliado = pres; f.autos = `${pres} c/ ${titleCase(cfg().empresa).replace(/\bS\.?\s?a\.?(?=\s|$)/g,'S.A.')} s/ amparo de salud`; f.autosArmados = true; }
+  else if(cands.length){ b = cands[0]; f.autos = b.autos; f.afiliado = b.actor; f.autosDudoso = true; }
+  f.autosAlternativos = cands.filter(c=>c!==b).slice(0,4).map(c=>({autos:c.autos, actor:c.actor}));
+  if(b && cands.some(c=>c!==b && c.score >= b.score - 2)) f.autosDudoso = true;
+  // DNI: el más cercano al nombre del asociado; si no, el primero
+  { const dnis = [...one.matchAll(/D\.?\s?N\.?\s?I\.?\s*(?:N\s*[°ºo*”"'´.]*|Nro\.?)?\s*:?\s*(\d{1,2})[.\s]?(\d{3})[.\s]?(\d{3})\b/gi)];
+    if(dnis.length){ let pick = dnis[0];
+      if(f.afiliado){ const ap = normTxt(f.afiliado.split(',')[0]).split(' ')[0]; const low = normTxt(one); let best = 1e9;
+        dnis.forEach(dm=>{ const pos = normTxt(one.slice(0, dm.index)).length; const k = low.lastIndexOf(ap, pos); if(k>=0 && pos-k < best){ best = pos-k; pick = dm; } }); }
+      f.dni = `${pick[1]}.${pick[2]}.${pick[3]}`; } }
   // juzgado y secretaría
   const jzm = matchJuzgado(one);
   if(jzm) f.juzgado = jzm;
@@ -2019,7 +2085,7 @@ function drawWizard(){
     <label class="fld">Asociado que presentó el amparo ${fb('afiliado')}${W.found.afiliado&&W.found.autos?'<span class="hint">Sacado de los autos.</span>':''}<input type="text" id="wAf" value="${esc(W.afiliado)}" placeholder="Apellido, Nombre"></label>
     <label class="fld">DNI del afiliado ${fb('dni')}<input type="text" id="wDni" value="${esc(W.dni)}" placeholder="Ej.: 30.123.456" inputmode="numeric"></label>
     <label class="fld">Número de expediente ${fb('numero')}<input type="text" id="wNum" value="${esc(W.numero)}" placeholder="Ej.: CCF 1234/2026"></label>
-    <label class="fld">Autos ${fb('autos')}<span class="hint">Los tomamos de donde el documento dice «autos caratulados…». De ahí sale también el asociado.</span><input type="text" id="wCar" value="${esc(W.autos)}" placeholder="Apellido, Nombre c/ Salud Integral Demo S.A. s/ amparo de salud"></label>
+    <label class="fld">Autos ${fb('autos')}<span class="hint">Los tomamos de donde el documento dice «autos caratulados…». De ahí sale también el asociado.</span>${W.autosArmados?`<span class="hint" style="color:var(--warn)">Los documentos todavía no tienen autos asignados: los armamos con el nombre de quien presenta la demanda. Revisalos.</span>`:''}${(W.autosAlt||[]).length?`<span class="hint" style="color:${W.autosDudoso?'var(--warn)':'var(--faint)'}">${W.autosDudoso?'No estamos seguros: ':''}en los documentos también aparecen otros autos (pueden ser jurisprudencia citada). Si el correcto es otro, tocalo:</span><div class="chips">${W.autosAlt.map((x,i)=>`<button type="button" class="chipbtn" data-autoalt="${i}" style="font-size:13px;padding:6px 12px">${esc(x.autos)}</button>`).join('')}</div>`:''}<input type="text" id="wCar" value="${esc(W.autos)}" placeholder="Apellido, Nombre c/ Salud Integral Demo S.A. s/ amparo de salud"></label>
     <label class="fld">Juzgado ${fb('juzgado')}<input type="text" id="wJz" list="jzlist" value="${esc(W.juzgado)}" placeholder="Escribí para buscar: «civil y comercial federal 7», «Córdoba», «Mar del Plata»…" autocomplete="off">
       <datalist id="jzlist">${JUZGADOS_ALL.map(([n,g])=>`<option value="${esc(n)}">${esc(g)}</option>`).join('')}</datalist>
       <span class="hint">Están los ${JUZGADOS_ALL.length} juzgados federales y nacionales de todo el país. Si es un juzgado provincial, escribilo igual.</span></label>
@@ -2083,8 +2149,9 @@ async function wProcess(fileList, append){
   const order = t => /Cédula|Oficio|Resolución/.test(t) ? 0 : t==='Demanda' ? 1 : 2;
   const text = [...W.files].sort((a,b)=>order(a.tipo)-order(b.tipo)).map(f=>f.text).join('\n');
   W.text = text; W.processing = false;
-  const f = extractFields(text);
+  const f = extractFields(text, W.files.map(x=>({text:x.text, tipo:x.tipo})));
   if(!append) W.found = {};
+  W.autosAlt = f.autosAlternativos || []; W.autosDudoso = !!f.autosDudoso; W.autosArmados = !!f.autosArmados;
   for(const k of ['afiliado','dni','numero','juzgado','secretaria','prestacion','estado','plazoDesc','plazoFecha','autos','detalle']) if(f[k] && (!append || !W.found[k])){ W[k] = f[k]; W.found[k] = true; }
   if(f.otrasPrestaciones) W.otrasPrestaciones = f.otrasPrestaciones;
   if(f.juzgadoLibre) delete W.found.juzgado;
@@ -2157,6 +2224,7 @@ document.addEventListener('click', async ev => {
   const pe = ev.target.closest('[data-pe]');
   if(pe && PE){ peRead(); PE[pe.dataset.pe] = pe.dataset.pe==='cant' ? +pe.dataset.v : pe.dataset.v; drawPlazoEditor(); return; }
   const vm = ev.target.closest('[data-vmode]'); if(vm && VIEW){ VIEW.modo = vm.dataset.vmode; drawViewer(); return; }
+  const aa = ev.target.closest('[data-autoalt]'); if(aa && W){ wRead(); const x = W.autosAlt[+aa.dataset.autoalt]; const prev = {autos:W.autos, actor:W.afiliado}; W.autos = x.autos; W.afiliado = x.actor; W.autosAlt[+aa.dataset.autoalt] = prev; W.autosDudoso = false; W.sumarioEditado = false; drawWizard(); return; }
   const t = ev.target.closest('[data-enfoque],[data-mvar],[data-act],[data-tab],[data-go],[data-ia],[data-filtro],[data-riesgo],[data-estado],[data-tour],[data-tpl],[data-tplexp],[data-w],[data-wnav],[data-quick]');
   if(!t) return;
   const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
@@ -2178,6 +2246,17 @@ document.addEventListener('click', async ev => {
   if(d.wnav){ wRead(); if(+d.wnav>0){ const err = wCheck(); if(err){ $('#wErr').innerHTML = `<div class="notice bad">${esc(err)}</div>`; return; } } W.step += +d.wnav; drawWizard(); return; }
   const a = d.act;
   if(a==='close') closeModal();
+  if(a==='editdatos'){ const x = expById(d.e); if(x) openEditDatos(x); }
+  if(a==='savedatos'){ const x = expById(d.e); if(!x) return; const v = id => $('#'+id).value.trim();
+    const nuevo = {caratula:v('edAutos'), afiliado:v('edAf'), dni:v('edDni')||'—', numero:v('edNum'), prestacion:v('edPr'), juzgado:v('edJz'), secretaria:v('edSec')};
+    if(!nuevo.afiliado || !nuevo.numero){ $('#edErr').innerHTML = '<div class="notice bad">El asociado y el número de expediente no pueden quedar vacíos.</div>'; return; }
+    if(S.exps.some(o=>o!==x && o.numero.toLowerCase()===nuevo.numero.toLowerCase())){ $('#edErr').innerHTML = '<div class="notice bad">Ya hay otro expediente con ese número.</div>'; return; }
+    const nombres = {caratula:'autos', afiliado:'asociado', dni:'DNI', numero:'número', prestacion:'qué reclama', juzgado:'juzgado', secretaria:'secretaría'};
+    const cambios = Object.keys(nuevo).filter(k=>String(x[k]||'')!==String(nuevo[k]||''));
+    if(!cambios.length){ closeModal(); return; }
+    const detalle = cambios.map(k=>`${nombres[k]}: "${x[k]||'—'}" → "${nuevo[k]||'—'}"`).join('; ');
+    Object.assign(x, nuevo); if(cambios.some(k=>k!=='caratula')) x.sumario = x.sumario && !cambios.includes('afiliado') ? x.sumario : '';
+    save(); audit('Editó los datos del expediente', x.numero, detalle); closeModal(); render(); toast('Datos actualizados'); }
   if(a==='delexp'){ const x = expById(d.e); if(!x || !canDelete(x)) return;
     askConfirm({titulo:'¿Eliminar este expediente?', texto:`Vas a eliminar el expediente de <b>${esc(x.afiliado)}</b> (${esc(x.numero)}), con sus ${x.docs.length} documento(s), ${x.plazos.length} plazo(s) y novedades. Va a quedar en la papelera y lo podés restaurar desde ahí.`, requiere:x.numero, boton:'Sí, eliminar expediente', run:()=>eliminarExpediente(x)}); }
   if(a==='deldoc'){ const x = expById(d.e); const doc = x && x.docs[+d.di]; if(!doc || !canDelete(x)) return;
