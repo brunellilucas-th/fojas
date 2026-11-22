@@ -160,6 +160,12 @@ textarea{resize:vertical}
 .fact span{display:block;font-size:13px;color:var(--muted);font-weight:600}
 .fact b{font-weight:600}
 .timeline{display:flex;flex-direction:column}
+.dropband{display:flex;gap:12px;align-items:center;border:2px dashed var(--accent);background:var(--accent-soft);color:var(--ink);border-radius:var(--r);padding:12px 16px;cursor:pointer}
+.dropband:hover{background:#d9eAd6} .dropband svg{color:var(--accent);flex:none}
+#expOver{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;background:rgba(47,107,63,.18);backdrop-filter:blur(2px);pointer-events:none}
+#expOver.on{display:flex}
+#expOver>div{background:#fff;border:3px dashed var(--accent);border-radius:20px;padding:36px 48px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--accent);box-shadow:var(--shadow);text-align:center}
+#expOver b{font-size:22px;color:var(--ink)} #expOver span{color:var(--muted)}
 .duo{position:relative;display:flex;flex-direction:column;gap:12px}
 .duo::before{content:'';position:absolute;left:50%;top:58px;bottom:6px;width:2px;background:var(--line);transform:translateX(-1px)}
 .duo-h,.duo-r{display:grid;grid-template-columns:1fr minmax(200px,250px) 1fr;gap:14px;align-items:center;position:relative}
@@ -976,6 +982,76 @@ function vPapelera(){
     : `<div class="empty"><div class="ico g">${ic('check','lg')}</div><b>La papelera está vacía</b></div>`}</section>`;
 }
 
+// ---------- mails (.eml / .msg de Outlook), zip y cualquier otro archivo ----------
+function binStr(u8){ let s = ''; for(let i=0;i<u8.length;i+=0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i+0x8000)); return s; }
+function strBytes(s){ const u = new Uint8Array(s.length); for(let i=0;i<s.length;i++) u[i] = s.charCodeAt(i) & 255; return u; }
+function decCharset(bytes, cs){ try{ return new TextDecoder((cs||'utf-8').toLowerCase().replace(/^(us-ascii|ascii)$/,'utf-8')).decode(bytes); }catch(e){ return new TextDecoder('utf-8').decode(bytes); } }
+function qpDec(s){ return s.replace(/=\r?\n/g,'').replace(/=([0-9A-F]{2})/gi,(m,x)=>String.fromCharCode(parseInt(x,16))); }
+function mimeWords(s){ return String(s||'').replace(/=\?([^?]+)\?([BQ])\?([^?]*)\?=\s*/gi,(m,cs,enc,t)=>{ try{ const bin = enc.toUpperCase()==='B' ? atob(t) : qpDec(t.replace(/_/g,' ')); return decCharset(strBytes(bin), cs); }catch(e){ return t; } }).trim(); }
+function mimeHeaders(block){ const H = {}; block.replace(/\r?\n[ \t]+/g,' ').split(/\r?\n/).forEach(l=>{ const i = l.indexOf(':'); if(i>0){ const k = l.slice(0,i).trim().toLowerCase(); if(!(k in H)) H[k] = l.slice(i+1).trim(); } }); return H; }
+const hParam = (v, p) => { const m = String(v||'').match(new RegExp(p+'\\*?=\\s*(?:"([^"]*)"|([^;\\s]+))','i')); if(!m) return ''; let v2 = m[1]!=null?m[1]:m[2]; if(/^[\w-]+''/.test(v2)){ v2 = v2.replace(/^[\w-]+''/,''); try{ v2 = decodeURIComponent(v2); }catch(e){} } return v2; };
+function htmlATexto(h){ return String(h||'').replace(/<(style|script|head)[\s\S]*?<\/\1>/gi,' ').replace(/<br\s*\/?>|<\/(p|div|tr|li|h\d)>/gi,'\n').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#(\d+);/g,(m,n)=>String.fromCharCode(+n)).replace(/[ \t]+/g,' ').replace(/\n\s*\n\s*\n+/g,'\n\n').trim(); }
+function mimeParte(raw, out){
+  const cut = raw.search(/\r?\n\r?\n/); const head = cut<0 ? raw : raw.slice(0,cut); let body = cut<0 ? '' : raw.slice(cut).replace(/^\r?\n\r?\n/,'');
+  const H = mimeHeaders(head); const ct = H['content-type'] || 'text/plain'; const tipo = ct.split(';')[0].trim().toLowerCase();
+  if(!out.h) out.h = H;
+  if(tipo.startsWith('multipart/')){ const b = hParam(ct,'boundary'); if(!b) return; body.split('--'+b).slice(1).forEach(p=>{ if(/^--/.test(p)) return; mimeParte(p.replace(/^\r?\n/,''), out); }); return; }
+  const te = (H['content-transfer-encoding']||'').toLowerCase();
+  let bin = te==='base64' ? (()=>{ try{ return atob(body.replace(/[^A-Za-z0-9+/=]/g,'')); }catch(e){ return ''; } })() : te==='quoted-printable' ? qpDec(body) : body;
+  const disp = H['content-disposition']||''; const nombre = mimeWords(hParam(disp,'filename') || hParam(ct,'name'));
+  if(tipo==='message/rfc822'){ out.adj.push(new File([strBytes(bin)], (nombre||'mail adjunto')+'.eml', {type:'message/rfc822'})); return; }
+  if(!nombre && /^text\/(plain|html)/.test(tipo) && !/attachment/i.test(disp)){ const t = decCharset(strBytes(bin), hParam(ct,'charset')); if(tipo==='text/plain'){ if(!out.txt) out.txt = t; } else if(!out.html) out.html = t; return; }
+  const bytes = strBytes(bin);
+  if(/^image\//.test(tipo) && (H['content-id'] || /inline/i.test(disp)) && bytes.length < 40000) return; // logos y firmas
+  if(bytes.length) out.adj.push(new File([bytes], nombre || ('adjunto.'+(tipo.split('/')[1]||'bin')), {type:tipo}));
+}
+async function leerEml(file){
+  const raw = binStr(new Uint8Array(await file.arrayBuffer())); const out = {adj:[]}; mimeParte(raw, out);
+  const H = out.h||{}; let fecha = null; try{ const d = new Date(H.date); if(!isNaN(d)) fecha = iso(d); }catch(e){}
+  return {asunto:mimeWords(H.subject)||file.name, de:mimeWords(H.from), fecha, cuerpo:(out.txt || htmlATexto(out.html)||'').trim(), adjuntos:out.adj};
+}
+async function leerMsg(file){
+  await loadScript(XLSX_URL);
+  const cfb = XLSX.CFB.read(new Uint8Array(await file.arrayBuffer()), {type:'array'});
+  const M = {}; cfb.FullPaths.forEach((p,i)=>{ const c = cfb.FileIndex[i] && cfb.FileIndex[i].content; if(c && c.length!=null) M[p.replace(/^[^/]*\//,'')] = c; });
+  const u8 = c => c instanceof Uint8Array ? c : Uint8Array.from(c);
+  const str = (pre, id) => { const w = M[pre+'__substg1.0_'+id+'001F']; if(w) return new TextDecoder('utf-16le').decode(u8(w)).replace(/\0+$/,''); const a = M[pre+'__substg1.0_'+id+'001E']; if(a) return decCharset(u8(a), 'windows-1252').replace(/\0+$/,''); return ''; };
+  let fecha = null; const pr = M['__properties_version1.0'];
+  if(pr){ const b = u8(pr), dv = new DataView(b.buffer, b.byteOffset, b.byteLength); for(let o=32;o+16<=b.length;o+=16){ const tag = dv.getUint32(o,true), id = tag>>>16, ty = tag & 0xffff; if(ty===0x40 && (id===0x0039 || id===0x0E06)){ const ft = dv.getUint32(o+8,true) + dv.getUint32(o+12,true)*4294967296; const d = new Date(ft/10000 - 11644473600000); if(!isNaN(d)){ fecha = iso(d); if(id===0x0039) break; } } } }
+  let cuerpo = str('', '1000'); if(!cuerpo){ const hb = M['__substg1.0_10130102']; if(hb) cuerpo = htmlATexto(decCharset(u8(hb),'utf-8')); }
+  const pres = [...new Set(Object.keys(M).map(k=>(k.match(/^(__attach_version1\.0_#[0-9A-F]+\/)/i)||[])[1]).filter(Boolean))];
+  const adjuntos = [];
+  pres.forEach(p=>{ const data = M[p+'__substg1.0_37010102']; if(!data) return; const nombre = str(p,'3707') || str(p,'3704') || 'adjunto'; const mime = str(p,'370E') || ''; const cid = str(p,'3712');
+    const b = u8(data); if(/^image\//.test(mime||'') && cid && b.length < 40000) return; adjuntos.push(new File([b], nombre, {type:mime||''})); });
+  const de = [str('','0C1A'), str('','5D01')||str('','0C1F')].filter(Boolean).join(' · ');
+  return {asunto:str('','0037')||file.name, de, fecha, cuerpo:cuerpo.trim(), adjuntos};
+}
+const esMail = f => /\.(eml|msg)$/i.test(f.name) || f.type==='message/rfc822' || f.type==='application/vnd.ms-outlook';
+// Abre mails y zips: devuelve la lista de documentos a cargar, cada uno con el mail del que vino.
+async function expandirArchivos(files, progress){
+  const out = [];
+  for(const f of files){
+    try{
+      if(esMail(f)){
+        progress && progress(`Abriendo el mail ${f.name}…`);
+        const m = /\.msg$/i.test(f.name) || f.type==='application/vnd.ms-outlook' ? await leerMsg(f) : await leerEml(f);
+        const info = {asunto:m.asunto, de:m.de, fecha:m.fecha, cuerpo:m.cuerpo.slice(0,20000), archivo:f.name};
+        const sub = await expandirArchivos(m.adjuntos, progress);
+        if(sub.length) sub.forEach(s=>out.push({file:s.file, mail:s.mail||info}));
+        else out.push({file:new File([`Mail: ${m.asunto}\nDe: ${m.de}\nFecha: ${m.fecha||''}\n\n${m.cuerpo}`], (m.asunto||'mail').replace(/[\\/:*?"<>|]+/g,' ').slice(0,80)+'.txt', {type:'text/plain'}), mail:info, esCuerpo:true});
+        continue;
+      }
+      if(/\.zip$/i.test(f.name) || /zip/.test(f.type)){
+        await loadScript(JSZIP_URL); const z = await JSZip.loadAsync(await f.arrayBuffer()); const hijos = [];
+        for(const n of Object.keys(z.files)){ const zf = z.files[n]; if(zf.dir || /(^|\/)(__MACOSX|\.DS_Store)/.test(n)) continue; hijos.push(new File([await zf.async('uint8array')], n.split('/').pop())); }
+        (await expandirArchivos(hijos, progress)).forEach(s=>out.push(s)); continue;
+      }
+    }catch(err){ console.warn('No se pudo abrir', f.name, err); }
+    out.push({file:f});
+  }
+  return out;
+}
+
 // ---------- subir un documento al expediente e indicar a qué corresponde ----------
 const UP_TIPOS = [
   {id:'cedula', l:'Cédula / notificación del juzgado', doc:'Cédula de notificación', mov:'Notificación'},
@@ -1039,14 +1115,14 @@ const MESES = {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8
 function fechaDelTexto(t){ const m = String(t||'').match(/\b(\d{1,2})\s+de\s+(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre)\s+(?:de|del)\s+(\d{4})/i); if(m) return `${m[3]}-${String(MESES[m[2].toLowerCase()]).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`; const m2 = String(t||'').match(/\b(\d{1,2})\/(\d{1,2})\/(20\d{2})\b/); if(m2) return `${m2[3]}-${m2[2].padStart(2,'0')}-${m2[1].padStart(2,'0')}`; return null; }
 function upTipoSugerido(text, name){
   const t = String(text||'') + ' ' + name;
-  if(/\bFALLO\b|\bSENTENCIA\b(?!\s+del?\s)|RESUELVO[\s\S]{0,200}hacer lugar a la (acci[oó]n|demanda)/i.test(t) && /sentencia/i.test(t)) return 'sentencia';
+  if(!/para\s+(dictar\s+)?sentencia|llamamiento\s+de\s+autos/i.test(t) && /\bFALLO\b|\bSENTENCIA\b(?!\s+del?\s)|RESUELVO[\s\S]{0,200}hacer lugar a la (acci[oó]n|demanda)/i.test(t) && /sentencia/i.test(t)) return 'sentencia';
   if(/hacer lugar|h[aá]gase lugar|decr[eé]tase/i.test(t) && /cautelar|precautoria|innovar/i.test(t)) return 'cautelar';
   if(/c[eé]dula\s+de\s+notificaci|oficio/i.test(t)) return 'cedula';
   if(/constancia|remito|autorizaci[oó]n\s+n|entrega\s+de\s+la\s+prestaci/i.test(t)) return 'cumplimiento';
   if(/(salud integral demo|en mi car[aá]cter de apoderad|por la demandada|mi mandante)/i.test(t)) return 'propio';
   if(/(promuev|por derecho propio|la actora|parte actora)/i.test(t) && /(se[ñn]or\s+juez|petitorio)/i.test(t)) return 'actora';
-  if(/(prescrip|historia cl[ií]nica|certificado|estudio|presupuesto)/i.test(t)) return 'prueba';
   if(/(prove[ií]do|providencia|t[eé]ngase|agr[eé]guese|resuelvo|autos y vistos|atento\s+(el|lo)|notif[ií]quese|h[aá]gase saber|c[oó]rrase|[aá]brase|l[ií]brese|req[uú]i[eé]rase)/i.test(t)) return 'resolucion';
+  if(/(prescrip|historia cl[ií]nica|certificado|estudio|presupuesto)/i.test(t)) return 'prueba';
   return 'otro';
 }
 function upResumen(text, tipo){
@@ -1092,28 +1168,31 @@ function upSugerir(){
   u.ac = ac;
   if(!u.parteEditada) u.parte = PARTE_DE_BASE[bt] || 'juzgado';
   if(!u.descEditada) u.desc = upResumen(text, upTipo(u.tipo).base) || `Se incorpora ${upTipo(u.tipo).l.toLowerCase()}: ${it.file.name}.`;
-  if(!u.fechaEditada) u.fecha = fechaDelTexto(text) || iso(today());
+  if(!u.fechaEditada) u.fecha = fechaDelTexto(text) || (it.mail && it.mail.fecha) || iso(today());
 }
 async function addFiles(e, files){
   files = [...files]; if(!files.length) return;
   toast(files.length===1?'Leyendo el documento completo…':`Leyendo ${files.length} documentos completos…`);
   const queue = [];
-  for(const f of files){
+  const tmsg = t => { const el = $('#toast'); if(el){ const s = el.querySelector('span'); if(s) s.textContent = t; el.classList.add('show'); clearTimeout(toast.t); } };
+  const items = await expandirArchivos(files, tmsg);
+  for(const {file:f, mail, esCuerpo} of items){
     let r = {text:'', paginas:null}; try{ r = await readFile(f, (t)=>{ const el = $('#toast'); if(el){ const s = el.querySelector('span'); if(s) s.textContent = `${f.name}: ${t}`; el.classList.add('show'); clearTimeout(toast.t); } }); }catch(err){}
     const pv = randId(6); PREVIEW[pv] = {file:f, text:r.text||''};
-    queue.push({file:f, text:r.text||'', paginas:r.paginas||null, pv});
+    const ctx = mail && !esCuerpo && mail.cuerpo ? `\n\n[Mail en el que vino: ${mail.asunto}]\n${mail.cuerpo}` : '';
+    queue.push({file:f, text:r.text||'', ctxText:ctx, mail:mail||null, paginas:r.paginas||null, pv});
   }
   $('#toast').classList.remove('show');
   UP = {exp:e.id, queue, i:0};
   upStart();
 }
-function upStart(){ const it = UP.queue[UP.i]; UP.tipo = upTipoSugerido(it.text, it.file.name); UP.tipoSug = UP.tipo; UP.descEditada = false; UP.fechaEditada = false; UP.parteEditada = false; upSugerir(); drawUp(); }
+function upStart(){ const it = UP.queue[UP.i]; UP.tipo = upTipoSugerido((it.text||'') + (it.ctxText||''), it.file.name); UP.tipoSug = UP.tipo; UP.descEditada = false; UP.fechaEditada = false; UP.parteEditada = false; upSugerir(); drawUp(); }
 function drawUp(){
   const u = UP, it = u.queue[u.i], e = expById(u.exp), ac = u.ac;
   const cambios = (ac.etapa.on && ac.etapa.val!==e.estado ? 1:0) + (ac.cautelar.on?1:0) + ac.plazos.filter(p=>p.on).length + ac.cumplir.filter(c=>c.on).length;
   showModal(`
     <div class="row" style="justify-content:space-between"><span class="small muted">${u.queue.length>1?`Documento ${u.i+1} de ${u.queue.length} · `:''}${esc(e.afiliado)} · ${esc(e.numero)}</span><button class="btn ghost sm" data-act="upcancel">Cancelar</button></div>
-    <div class="docrow"><div class="ico a" style="width:40px;height:40px">${ic('file')}</div><div style="flex:1;min-width:0"><b style="word-break:break-all">${esc(it.file.name)}</b><div class="small muted">${it.paginas?`${it.paginas} página${it.paginas>1?'s':''} leída${it.paginas>1?'s':''}`:(it.text?'Leído':'No se pudo leer el contenido')}</div></div><button type="button" class="btn sm" data-act="upver">${ic('search','sm')} Ver</button></div>
+    <div class="docrow"><div class="ico a" style="width:40px;height:40px">${ic('file')}</div><div style="flex:1;min-width:0"><b style="word-break:break-all">${esc(it.file.name)}</b><div class="small muted">${it.paginas?`${it.paginas} página${it.paginas>1?'s':''} leída${it.paginas>1?'s':''}`:(it.text?'Leído':'No se pudo leer el contenido')}</div>${it.mail?`<div class="small" style="margin-top:2px">${ic('file','sm')} Vino en el mail «${esc(it.mail.asunto)}»${it.mail.de?` de ${esc(it.mail.de)}`:''}${it.mail.fecha?` · ${fmt(it.mail.fecha)}`:''}</div>`:''}</div><button type="button" class="btn sm" data-act="upver">${ic('search','sm')} Ver</button></div>
     <div class="row" style="justify-content:space-between;align-items:baseline"><h2 style="font-size:22px">¿A qué corresponde este documento?</h2><button type="button" class="btn ghost sm" data-act="upcats">${ic('pen','sm')} Editar categorías</button></div>
     <div class="opts">${upTipos().map(t=>`<button type="button" class="opt ${u.tipo===t.id?'on':''}" data-uptipo="${t.id}">${esc(t.l)}${u.tipoSug===t.id&&it.text?'<div class="small" style="font-weight:500;opacity:.75;margin-top:2px">Sugerido por el contenido</div>':''}${t.propia?'<div class="small" style="font-weight:500;opacity:.75;margin-top:2px">Creada por el equipo</div>':''}</button>`).join('')}</div>
     ${u.tipo==='otro'?`<div class="card" style="box-shadow:none;background:var(--sunken);display:flex;flex-direction:column;gap:10px">
@@ -1150,7 +1229,7 @@ function upRead(){
 async function upSave(){
   upRead(); const u = UP, it = u.queue[u.i], e = expById(u.exp), ac = u.ac, tipo = upTipo(u.tipo);
   const fid = await saveFileBlob(it.file, it.text);
-  e.docs.push({nombre:it.file.name, fid, tipo:tipo.doc, parte:u.parte, ...(tipo.propia?{cat:tipo.id}:{}), fecha:u.fecha||iso(today()), paginas:it.paginas, size: it.file.size>1e6?(it.file.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(it.file.size/1000))+' KB'});
+  e.docs.push({nombre:it.file.name, fid, tipo:tipo.doc, parte:u.parte, ...(it.mail?{mail:{asunto:it.mail.asunto, de:it.mail.de, fecha:it.mail.fecha}}:{}), ...(tipo.propia?{cat:tipo.id}:{}), fecha:u.fecha||iso(today()), paginas:it.paginas, size: it.file.size>1e6?(it.file.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(it.file.size/1000))+' KB'});
   const bt0 = tipo.base, tx = it.text||'';
   const titulo = bt0==='propio' && /informe\s+circunstanciado|contesta\w*\s+(la\s+)?demanda|art(?:[ií]culo|\.)?\s*8/i.test(tx) ? 'Contestación de demanda (informe art. 8)'
     : bt0==='propio' && /apela/i.test(tx) ? 'Recurso de apelación'
@@ -1172,7 +1251,7 @@ async function upSave(){
   ac.plazos.filter(p=>p.on && p.desc && p.vence).forEach(p=>{ e.plazos.push({desc:p.desc, vence:p.vence, hecho:false, ...(p.regla?{regla:p.regla}:{})}); audit('Agendó un plazo', e.numero, `${p.desc} (${fmt(p.vence)}), por ${it.file.name}`); hechos.push(`plazo: ${p.desc} (${fmt(p.vence)})`); });
   save(); audit('Subió un documento', e.numero, `${it.file.name} · ${hechos.join(' · ')}`);
   if(u.i < u.queue.length-1){ u.i++; upStart(); toast('Guardado. Seguimos con el próximo documento.'); }
-  else { UP = null; closeModal(); ui.tab = 'documentos'; render(); toast(`Expediente actualizado: ${hechos.join(' · ')}.`); }
+  else { UP = null; closeModal(); ui.tab = 'novedades'; render(); toast(`Expediente actualizado: ${hechos.join(' · ')}.`); }
 }
 
 // ---------- visor de documentos ----------
@@ -1658,6 +1737,8 @@ function vExpediente(id){
       <button class="btn ghost" data-act="plazoedit" data-e="${e.id}" data-i="${e.plazos.indexOf(p)}">${ic('cal','sm')} Modificar plazo</button></div>
   </section>`:`<section class="next"><div class="ico g">${ic('check','lg')}</div><div class="txt"><div class="lbl">Lo próximo</div><h2>No hay nada pendiente</h2><div class="muted">Cuando llegue una novedad, cargala para no perder el hilo.</div></div><button class="btn big" data-act="addplazo" data-tabgo="plazos">${ic('plus')} Agregar plazo</button></section>`}
 
+  <label class="dropband" for="fileTop">${ic('upload')}<span><b>¿Llegó algo nuevo?</b> Arrastralo en cualquier parte de esta pantalla o tocá acá: un PDF, el mail con el PDF adentro (Outlook o .eml), un Word, una foto. Fojas lo lee y te propone cómo avanza el expediente.</span></label>
+  <input type="file" id="fileTop" multiple hidden>
   <section class="card"><div class="row" style="justify-content:space-between"><h3>¿En qué etapa está?</h3><span class="small muted">Tocá una etapa para cambiarla · tocá la cautelar para marcar si tiene o no</span></div>
     <div class="steps">${ESTADOS.map((s,i)=>`<button class="step ${i<si?'done':i===si?'cur':''} ${s==='Cautelar otorgada'?(e.cautelar?'caut-si':'caut-no'):''}" data-estado="${i}" title="${s==='Cautelar otorgada'?(e.cautelar?'Tiene medida cautelar. Tocá para marcar que no tiene':'No tiene medida cautelar. Tocá para marcar que tiene'):esc(s)}"><span class="dot">${s==='Cautelar otorgada'?(e.cautelar?'✓':'✕'):(i<si?'✓':i+1)}</span>${s==='Cautelar otorgada'?(e.cautelar?'Con cautelar':'Sin cautelar'):ESTADO_CORTO[i]}</button>`).join('')}</div>
     <div class="row small muted" style="gap:14px"><span><span class="legend" style="background:var(--accent)"></span> Etapa cumplida</span><span><span class="legend" style="background:var(--ok)"></span> Con medida cautelar</span><span><span class="legend" style="background:var(--danger)"></span> Sin medida cautelar</span></div>
@@ -2101,7 +2182,11 @@ async function readFile(file, progress){
   }
   if(file.type.startsWith('image/')) return {text: await ocr(file, progress), paginas:1, conImagen:1};
   if(name.endsWith('.docx')){ await loadScript(LIB.mammoth); progress('Leyendo el Word…', .5); const r = await mammoth.extractRawText({arrayBuffer: await file.arrayBuffer()}); return {text:r.value, paginas:null, conImagen:0}; }
-  if(file.type.startsWith('text/') || name.endsWith('.txt')) return {text: await file.text(), paginas:null, conImagen:0};
+  if(/\.html?$/.test(name) || file.type==='text/html') return {text: htmlATexto(await file.text()), paginas:null, conImagen:0};
+  if(name.endsWith('.rtf')) return {text: (await file.text()).replace(/\\par[d]?/g,'\n').replace(/\{\*?\\[^{}]+}|[{}]|\\[a-z]+-?\d* ?/gi,'').trim(), paginas:null, conImagen:0};
+  if(file.type.startsWith('text/') || /\.(txt|csv|xml|json|md)$/.test(name)) return {text: await file.text(), paginas:null, conImagen:0};
+  if(/\.(xlsx?|ods)$/.test(name)){ try{ await loadScript(XLSX_URL); const wb = XLSX.read(new Uint8Array(await file.arrayBuffer()), {type:'array'}); return {text: wb.SheetNames.map(n=>XLSX.utils.sheet_to_csv(wb.Sheets[n])).join('\n'), paginas:null, conImagen:0}; }catch(e){} }
+  try{ const t = binarioATexto(await file.arrayBuffer()); if(t && t.replace(/\s/g,'').length > 40) return {text:t, paginas:null, conImagen:0}; }catch(e){}
   return {text:'', paginas:null, conImagen:0};
 }
 
@@ -2914,7 +2999,7 @@ $('#overlay').addEventListener('click', ev => { if(ev.target.id==='overlay' && !
 
 document.addEventListener('change', async ev => {
   const t = ev.target; const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
-  if(t.id==='fileIn' && e) addFiles(e, t.files);
+  if((t.id==='fileIn' || t.id==='fileTop') && e){ addFiles(e, t.files); t.value = ''; }
   if(t.id==='mfile') addModels(t.files);
   if(t.dataset && t.dataset.mvparte!==undefined){ const r = route(); const ex = r.name==='expediente' ? expById(r.id) : null; const m = ex && ex.movimientos[+t.dataset.mvparte]; if(m){ const old = m.parte; m.parte = t.value; save(); audit('Cambió la parte de una novedad', ex.numero, `${movTitulo(m)}: ${parteNom(old)} → ${parteNom(m.parte)}`); render(); toast(`Movido a ${parteNom(m.parte)}`); } }
   if(UP && t.dataset){ if(t.dataset.upac){ upRead(); UP.ac[t.dataset.upac].on = t.checked; } if(t.dataset.upplazo!==undefined){ upRead(); UP.ac.plazos[+t.dataset.upplazo].on = t.checked; } if(t.dataset.upcumplir!==undefined){ upRead(); UP.ac.cumplir[+t.dataset.upcumplir].on = t.checked; } if(t.id==='upEtapa'){ UP.ac.etapa.val = t.value; UP.ac.etapa.on = t.value!==expById(UP.exp).estado; drawUp(); } }
@@ -2933,9 +3018,15 @@ document.addEventListener('change', async ev => {
   if(t.dataset && t.dataset.mod){ S.modules[t.dataset.mod] = t.checked; save(); const m = MODULES.find(x=>x.id===t.dataset.mod); audit(t.checked?'Activó un módulo':'Apagó un módulo', m.nombre, 'Configuración'); render(); toast(t.checked?`${m.nombre} activado: ya aparece en el menú`:`${m.nombre} apagado`); }
 });
 document.addEventListener('toggle', ev => { const d = ev.target; if(d.matches && d.matches('details[data-sugkey]')){ if(d.open) ui.openSug = d.dataset.sugkey; else if(ui.openSug===d.dataset.sugkey) ui.openSug = null; } if(d.matches && d.matches('details[data-member]')) ui.open[d.dataset.member] = d.open; }, true);
-document.addEventListener('dragover', ev => { const xd = ev.target.closest('#xdrop'); if(xd){ ev.preventDefault(); xd.classList.add('over'); return; } const md = ev.target.closest('#mdrop'); if(md){ ev.preventDefault(); md.classList.add('over'); return; } const wz = ev.target.closest('#wdrop'); if(wz){ ev.preventDefault(); wz.classList.add('over'); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); dz.classList.add('over'); } });
+const DRAGFILES = ev => ev.dataTransfer && [...(ev.dataTransfer.types||[])].includes('Files');
+let DRAGN = 0;
+function expDropOn(){ const r = route(); if(r.name!=='expediente' || W || XL || UP || !logged()) return false; const e = expById(r.id); if(!e) return false; let o = $('#expOver'); if(!o){ o = document.createElement('div'); o.id = 'expOver'; document.body.appendChild(o); } o.innerHTML = `<div>${ic('upload','lg')}<b>Soltá acá para que Fojas lea el avance</b><span>${esc(e.afiliado)} · ${esc(e.numero)}</span><span class="small">PDF, mails (Outlook .msg o .eml) con sus adjuntos, Word, fotos, zip…</span></div>`; o.classList.add('on'); return true; }
+function expDropOff(){ DRAGN = 0; const o = $('#expOver'); if(o) o.classList.remove('on'); }
+document.addEventListener('dragenter', ev => { if(!DRAGFILES(ev) || ev.target.closest('#xdrop,#mdrop,#wdrop')) return; if(route().name==='expediente' && !W && !XL && !UP){ DRAGN++; expDropOn(); } });
+document.addEventListener('dragleave', ev => { if(route().name==='expediente' && DRAGN>0){ DRAGN--; if(DRAGN===0) expDropOff(); } });
+document.addEventListener('dragover', ev => { if(DRAGFILES(ev) && $('#expOver.on')){ ev.preventDefault(); ev.dataTransfer.dropEffect = 'copy'; return; } const xd = ev.target.closest('#xdrop'); if(xd){ ev.preventDefault(); xd.classList.add('over'); return; } const md = ev.target.closest('#mdrop'); if(md){ ev.preventDefault(); md.classList.add('over'); return; } const wz = ev.target.closest('#wdrop'); if(wz){ ev.preventDefault(); wz.classList.add('over'); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); dz.classList.add('over'); } });
 document.addEventListener('dragleave', ev => { const wz = ev.target.closest('#wdrop'); if(wz) wz.classList.remove('over'); const dz = ev.target.closest('#drop'); if(dz) dz.classList.remove('over'); });
-document.addEventListener('drop', ev => { const xd = ev.target.closest('#xdrop'); if(xd && XL){ ev.preventDefault(); if(ev.dataTransfer.files.length) xLoadFiles(ev.dataTransfer.files); return; } const md = ev.target.closest('#mdrop'); if(md){ ev.preventDefault(); md.classList.remove('over'); addModels(ev.dataTransfer.files); return; } const wz = ev.target.closest('#wdrop'); if(wz && W){ ev.preventDefault(); wProcess(ev.dataTransfer.files); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); const e = expById(route().id); if(e) addFiles(e, ev.dataTransfer.files); } });
+document.addEventListener('drop', ev => { if($('#expOver.on')){ ev.preventDefault(); expDropOff(); const e = expById(route().id); if(e && ev.dataTransfer.files.length){ ui.tab = 'novedades'; addFiles(e, ev.dataTransfer.files); } return; } const xd = ev.target.closest('#xdrop'); if(xd && XL){ ev.preventDefault(); if(ev.dataTransfer.files.length) xLoadFiles(ev.dataTransfer.files); return; } const md = ev.target.closest('#mdrop'); if(md){ ev.preventDefault(); md.classList.remove('over'); addModels(ev.dataTransfer.files); return; } const wz = ev.target.closest('#wdrop'); if(wz && W){ ev.preventDefault(); wProcess(ev.dataTransfer.files); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); const e = expById(route().id); if(e) addFiles(e, ev.dataTransfer.files); } });
 
 document.addEventListener('input', ev => {
   const t = ev.target;
