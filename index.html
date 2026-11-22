@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.16">
+<meta name="fojas-version" content="2026-11-22.17">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -58,6 +58,7 @@ svg.i.lg{width:30px;height:30px}
 .main{display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden}
 .top{display:flex;align-items:center;gap:14px;padding:12px 28px;background:var(--surface);border-bottom:1px solid var(--line);flex-wrap:wrap}
 .who{display:flex;align-items:center;gap:10px;margin-left:auto}
+.ucard .ukv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px} .ucard .ukv span{color:var(--muted)} .ucard .ukv b{font-weight:600;min-width:0;overflow-wrap:anywhere}
 .umenu-wrap{position:relative}
 .cttipos{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
 .cttipo{display:flex;flex-direction:column;gap:4px;text-align:left;border:1.5px solid var(--line);border-radius:14px;padding:14px;background:var(--surface);cursor:pointer;font:inherit;color:var(--ink)}
@@ -1698,6 +1699,7 @@ function shell(content){
       <div class="brand"><div class="mark">${fojasMark('lgS')}</div><b>Fojas</b></div>
       <nav class="nav" aria-label="Principal">
         ${link('inicio','home','Inicio')}
+        ${isAdmin()?link('usuarios','user','Usuarios'):''}
         ${link('tareas','check','Tareas diarias', (()=>{ const n = tPendHoy() + tParaValidar(); return n?`<span class="badge red">${n}</span>`:''; })())}
         ${amp?link('amparos','folder','Amparos', `<span class="badge">${active().length}</span>`):''}
         ${amp?link('escritos','pen','Escritos'):''}
@@ -1711,7 +1713,6 @@ function shell(content){
         ${link('historial','history','Historial de cambios')}
         ${link('respaldo','cloud','Copias y migración')}
         ${link('modulos','grid','Módulos')}
-        ${isAdmin()?link('usuarios','key','Usuarios'):''}
       </nav>`:''}
     </aside>
     <div class="main">
@@ -2272,17 +2273,14 @@ function vEquipo(){
 }
 function teamEditor(){
   const people = S.users.filter(u=>u.activo && u.rol!=='Administrador');
-  return `<section class="card"><div class="row" style="justify-content:space-between;gap:10px;flex-wrap:wrap"><h2>Armar equipos</h2><button class="btn pri" data-act="eqnuevo">${ic('plus','sm')} Crear usuario</button></div><p class="muted small">Creá a las personas y armá los equipos: elegí quién lo dirige y quiénes son sus analistas. Una persona puede estar en un solo equipo como analista.</p>
+  return `<section class="card"><h2>Armar equipos</h2><p class="muted small">Creá los equipos y distribuí a las personas: elegí quién lo dirige y quiénes son sus analistas. Una persona puede estar en un solo equipo como analista. Para crear, editar o eliminar personas, andá a <a href="#usuarios">Usuarios</a>.</p>
     ${S.teams.map(t=>`<form class="form teamform" data-team="${t.id}" style="padding:16px;border:1px solid var(--line);border-radius:12px">
       <label>Nombre del equipo<input type="text" name="nombre" value="${esc(t.nombre)}" required></label>
       <label>Jefa/e<select name="jefe">${people.map(u=>`<option value="${u.id}" ${u.id===t.jefe?'selected':''}>${esc(u.nombre)}</option>`).join('')}</select></label>
       <div class="fld full">Analistas<div class="chips">${people.map(u=>`<label class="chipbtn" style="font-weight:600"><input type="checkbox" name="m" value="${u.id}" ${t.miembros.includes(u.id)?'checked':''} style="accent-color:var(--accent)"> ${esc(u.nombre)}</label>`).join('')}</div></div>
-      <div class="full row" style="flex-wrap:wrap"><button class="btn pri" type="submit">Guardar equipo</button><button class="btn" type="button" data-act="eqnuevo" data-team="${t.id}">${ic('plus','sm')} Crear usuario para este equipo</button><button class="btn ghost danger" type="button" data-act="delteam" data-team="${t.id}">Eliminar equipo</button></div>
+      <div class="full row" style="flex-wrap:wrap"><button class="btn pri" type="submit">Guardar equipo</button><button class="btn ghost danger" type="button" data-act="delteam" data-team="${t.id}">Eliminar equipo</button></div>
     </form>`).join('')}
     <div><button class="btn" data-act="newteam">${ic('plus','sm')} Crear otro equipo</button></div>
-    <div class="fld" style="margin-top:8px">Personas <span class="hint">eliminá a quien ya no tenga que entrar a Fojas; si tiene trabajo a cargo, te preguntamos a quién pasárselo</span>
-      <div class="list">${S.users.map(u=>{ const tms = (S.teams||[]).filter(t=>t.jefe===u.id || t.miembros.includes(u.id)).map(t=>`${t.jefe===u.id?'jefa/e de ':''}${esc(t.nombre)}`); return `<div class="li"><span style="display:flex;gap:10px;align-items:center;min-width:0"><span class="avatar" style="width:32px;height:32px;font-size:12px;flex:none">${initials(u.nombre)}</span><span><b>${esc(u.nombre)}</b>${u.activo?'':' <span class="pill">desactivado</span>'}<div class="small muted">${esc(u.rol)}${u.area?' · '+esc(u.area):''} · ${tms.length?tms.join(', '):'sin equipo'}</div></span></span>
-        <span class="row" style="gap:6px"><button class="btn sm ghost" data-act="uedit" data-u="${u.id}">${ic('pen','sm')} Editar</button>${u.id===S.user?'<span class="small muted">(vos)</span>':`<button class="btn sm ghost danger" data-act="udel" data-u="${u.id}">${ic('trash','sm')} Eliminar</button>`}</span></div>`; }).join('')}</div></div>
   </section>`;
 }
 
@@ -2414,31 +2412,40 @@ function eliminarUsuario(u){
 }
 function vUsuarios(){
   if(!isAdmin()) return `<div class="card empty"><b>Esta sección es solo para el administrador.</b></div>`;
-  const m = ui.userMsg;
+  const m = ui.userMsg, hoy = iso(today());
+  const solo = u => u.rol!=='Administrador' && modsDe(u).length===1 && modsDe(u)[0]==='contratos' && ctPerfil(u)==='solicitante';
+  const F = {todos:{l:'Todos', f:()=>true}, legales:{l:'Legales', f:u=>!solo(u)}, sol:{l:'Solicitantes de otras áreas', f:solo}, off:{l:'Desactivados', f:u=>!u.activo}};
+  if(!F[ui.uFil]) ui.uFil = 'todos';
+  const q = normTxt(ui.uQ||'');
+  const lista = S.users.filter(F[ui.uFil].f).filter(u=>!q || normTxt([u.nombre,u.id,u.rol,u.area].join(' ')).includes(q));
+  const equipoDe = u => (S.teams||[]).filter(t=>t.jefe===u.id || t.miembros.includes(u.id)).map(t=>`${t.jefe===u.id?'jefa/e de ':''}${esc(t.nombre)}`);
   return `
-  <div><h1>Usuarios</h1><p class="sub">Solo el administrador agrega personas y les asigna rol, área, módulos y qué son en Contratos (solicitante de otra área o equipo de Legales). Las contraseñas se guardan cifradas: nadie puede verlas, ni el administrador, pero sí ponerles una nueva.</p></div>
+  <div class="head"><div><h1>Usuarios</h1><p class="sub">Todo lo de cada persona en un solo lugar: crearla, sus permisos (rol, área, módulos y qué es en Contratos), su contraseña, indicarle tareas, desactivarla o eliminarla. Los equipos se arman en <a href="#equipo">Equipo</a>.</p></div>
+    <button class="btn pri big" data-act="eqnuevo">${ic('plus')} Crear usuario</button></div>
   ${m?`<div class="notice ${m.ok?'good':'bad'}">${m.html||esc(m.t)}</div>`:''}
-  ${(()=>{ const solo = u => u.rol!=='Administrador' && modsDe(u).length===1 && modsDe(u)[0]==='contratos' && ctPerfil(u)==='solicitante'; const F = {todos:{l:'Todos', f:()=>true}, legales:{l:'Legales', f:u=>!solo(u)}, sol:{l:'Solicitantes de otras áreas', f:solo}}; if(!F[ui.uFil]) ui.uFil = 'todos'; ui._uF = F[ui.uFil].f;
-    return `<div class="chips">${Object.entries(F).map(([k,v])=>`<button class="chipbtn ${ui.uFil===k?'on':''}" data-act="ufil" data-v="${k}">${v.l} <span class="badge">${S.users.filter(v.f).length}</span></button>`).join('')}</div>`; })()}
-  <div class="grid g3">${S.users.filter(u=>ui._uF(u)).map(u=>{ const l = (S.lock||{})[u.id]; const locked = l && l.until > Date.now(); return `
-    <section class="card"><div class="row"><div class="avatar">${initials(u.nombre)}</div><div style="flex:1"><b>${esc(u.nombre)}</b><div class="small muted">${esc(u.rol)} · <span class="mono">${esc(u.id)}</span></div></div></div>
-      ${u.area?`<div class="small"><span class="muted">Área:</span> ${esc(u.area)}</div>`:''}${modsDe(u).includes('contratos')?`<div class="row" style="gap:6px"><span class="pill ${ctPerfil(u)==='solicitante'?'':'acc'}">${ic('file','sm')} Contratos · ${({solicitante:'Solicitante'+(u.area?' de '+esc(u.area):''), analista:'Legales · Analista', jefe:'Legales · Jefa/e (asigna)'})[ctPerfil(u)]}</span></div>`:''}<div class="small"><span class="muted">Módulos:</span> ${u.rol==='Administrador'?'todos (es administrador)':(modsDe(u).map(id=>esc((MODULES.find(m=>m.id===id)||{}).nombre||id)).join(' · ')||'<b style="color:var(--danger)">ninguno</b>')}</div>
+  <div class="row" style="justify-content:space-between;gap:12px;flex-wrap:wrap"><div class="chips">${Object.entries(F).map(([k,v])=>`<button class="chipbtn ${ui.uFil===k?'on':''}" data-act="ufil" data-v="${k}">${v.l} <span class="badge">${S.users.filter(v.f).length}</span></button>`).join('')}</div>
+    <input type="search" id="uQ" placeholder="Buscar por nombre, usuario, rol o área" value="${esc(ui.uQ||'')}" style="max-width:320px"></div>
+  <div class="grid g3">${lista.map(u=>{ const l = (S.lock||{})[u.id]; const locked = l && l.until > Date.now(); const eqs = equipoDe(u); const sup = superiorDe(u.id);
+    const tHoy = tDia().filter(r=>r.user===u.id && r.fecha===hoy), tPend = tHoy.filter(r=>r.estado==='pendiente').length, tRojo = tDia().filter(r=>r.user===u.id && r.estado==='nohecha' && !r.pasadaA && !r.cerrada).length;
+    return `
+    <section class="card ucard"><div class="row"><div class="avatar">${initials(u.nombre)}</div><div style="flex:1;min-width:0"><b>${esc(u.nombre)}</b><div class="small muted">${esc(u.rol)} · <span class="mono">${esc(u.id)}</span></div></div></div>
+      <div class="ukv"><span>Área</span><b>${esc(u.area||'—')}</b><span>Equipo</span><b>${eqs.length?eqs.join(', '):'Sin equipo'}</b><span>Superior</span><b>${sup?esc(userName(sup)):'—'}</b>
+        <span>Módulos</span><b>${u.rol==='Administrador'?'Todos (es administrador)':(modsDe(u).map(id=>esc((MODULES.find(m=>m.id===id)||{}).nombre||id)).join(' · ')||'<span style="color:var(--danger)">Ninguno</span>')}</b>
+        ${modsDe(u).includes('contratos')?`<span>Contratos</span><b>${({solicitante:'Solicitante'+(u.area?' de '+esc(u.area):''), analista:'Legales · Analista', jefe:'Legales · Jefa/e (asigna)'})[ctPerfil(u)]}</b>`:''}
+        <span>Tareas hoy</span><b>${tHoy.length?`${tHoy.length-tPend} de ${tHoy.length} respondidas`:'Sin tareas'}${tRojo?` · <span style="color:var(--danger)">${tRojo} en rojo</span>`:''}</b></div>
       <div class="row">${u.activo?(locked?'<span class="pill yel">Bloqueado</span>':'<span class="pill grn">Puede entrar</span>'):'<span class="pill">Desactivado</span>'}${u.mustChange?'<span class="pill">Debe cambiar su contraseña</span>':''}</div>
-      <div class="row"><button class="btn sm pri" data-act="uedit" data-u="${u.id}">${ic('pen','sm')} Editar</button></div>
-      ${u.id===S.user?'<span class="small muted">Sos vos</span>':`<div class="row"><button class="btn sm" data-act="ureset" data-u="${u.id}">${ic('key','sm')} Restablecer contraseña</button><button class="btn sm" data-act="utoggle" data-u="${u.id}">${u.activo?'Desactivar':'Activar'}</button>${locked?`<button class="btn sm" data-act="uunlock" data-u="${u.id}">Desbloquear</button>`:''}<button class="btn sm ghost danger" data-act="udel" data-u="${u.id}">${ic('trash','sm')} Eliminar</button></div>`}
-    </section>`;}).join('')}</div>
-  <section class="card"><h2>Agregar una persona</h2>
-    <form class="form" id="userForm">
-      <label>Nombre y apellido<input type="text" id="nuNom" required></label>
-      <label>Usuario para entrar <span class="hint">minúsculas, sin espacios</span><input type="text" id="nuId" required pattern="[a-z0-9._-]{3,30}" placeholder="ej.: mlopez"></label>
-      <label>Rol<select id="nuRol">${ROLES.map(r=>`<option>${esc(r)}</option>`).join('')}</select></label>
-      <label>Área<input type="text" id="nuArea" list="nuAreas" placeholder="Ej.: Compras"><datalist id="nuAreas">${CT_AREAS.map(a=>`<option value="${esc(a)}">`).join('')}</datalist></label>
-      <div class="full" id="nuCtWrap">${ctPerfilBloque('nu', ui.nuCt||'solicitante')}</div>
-      <div class="full"><span class="small" style="font-weight:600">Módulos que puede usar</span>${modChecks('nuMod', null, false)}</div>
-      <div class="full"><button class="btn pri" type="submit">${ic('plus','sm')} Agregar</button> <span class="small muted">La primera vez entra con su usuario como contraseña y Fojas le pide cambiarla.</span></div>
-    </form></section>`;
+      <div class="row" style="gap:6px;flex-wrap:wrap"><button class="btn sm pri" data-act="uedit" data-u="${u.id}">${ic('pen','sm')} Editar</button>${u.id===S.user?'':`<button class="btn sm" data-act="utarea" data-u="${u.id}">${ic('check','sm')} Indicar tarea</button>`}</div>
+      ${u.id===S.user?'<span class="small muted">Sos vos</span>':`<div class="row" style="gap:6px;flex-wrap:wrap"><button class="btn sm" data-act="ureset" data-u="${u.id}">${ic('key','sm')} Restablecer contraseña</button><button class="btn sm" data-act="utoggle" data-u="${u.id}">${u.activo?'Desactivar':'Activar'}</button>${locked?`<button class="btn sm" data-act="uunlock" data-u="${u.id}">Desbloquear</button>`:''}<button class="btn sm ghost danger" data-act="udel" data-u="${u.id}">${ic('trash','sm')} Eliminar</button></div>`}
+    </section>`;}).join('') || '<div class="empty small">No hay personas con ese filtro.</div>'}</div>`;
 }
-
+function uTareaModal(uid){ const u = S.users.find(x=>x.id===uid); if(!u) return; const hoy = iso(today());
+  const plan = tPlan().filter(p=>p.user===uid);
+  showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:22px">Tareas de ${esc(u.nombre)}</h2><button class="btn ghost sm" data-act="close">Cerrar</button></div>
+    <div class="form"><label class="full">Tarea<input type="text" id="utT" placeholder="Ej.: Actualizar el padrón de prestadores"></label><label class="full">Detalle (opcional)<input type="text" id="utD"></label>
+      <label>Día<input type="date" id="utF" value="${hoy}" min="${hoy}"></label><label>Hasta qué hora (opcional)<input type="time" id="utH"></label>
+      <label class="full" style="display:flex;flex-direction:row;gap:10px;align-items:center;font-weight:500"><input type="checkbox" id="utRep" style="width:18px;height:18px;flex:none"> Que sea una tarea diaria (todos los días hábiles)</label></div>
+    <div class="row"><button class="btn pri" data-act="utareaok" data-u="${uid}">${ic('send','sm')} Indicar tarea</button><span class="small muted">Le llega una notificación${superiorDe(uid)&&superiorDe(uid)!==S.user?` y se le avisa a ${esc(userName(superiorDe(uid)))}, su superior`:''}.</span></div>
+    <div class="fld">Sus tareas diarias<div class="list">${plan.map(p=>`<div class="li"><span><b>${esc(p.titulo)}</b><div class="small muted">${p.estado==='aprobada'?'Validada':p.estado==='rechazada'?'No validada':'Esperando validación'}${p.creadaPor&&p.creadaPor!==p.user?` · la indicó ${esc(userName(p.creadaPor))}`:''}</div></span><span class="row" style="gap:6px">${p.estado==='pendiente'?`<button class="btn sm ok" data-act="utvalidar" data-p="${p.id}" data-u="${uid}">${ic('check','sm')} Validar</button>`:''}<button class="btn sm ghost danger" data-act="utquitar" data-p="${p.id}" data-u="${uid}">${ic('trash','sm')} Quitar</button></span></div>`).join('') || '<div class="empty small">No tiene tareas diarias.</div>'}</div></div>`); }
 function vIngreso(){
   return `
   <div class="login">
@@ -3291,6 +3298,15 @@ document.addEventListener('click', async ev => {
   if(d.ctp==='eq' && isAdmin()){ ui.eqCt = d.v; const w = $('#eqCtWrap'); if(w) w.innerHTML = ctPerfilBloque('eq', d.v); return; }
   if(d.ctp && isAdmin()){ if(d.ctp==='ue' && UE){ ueRead(); UE.ctPerfil = d.v; drawUserEdit(); } else if(d.ctp==='nu'){ ui.nuCt = d.v; const w = $('#nuCtWrap'); if(w) w.innerHTML = ctPerfilBloque('nu', d.v); } return; }
   if(a==='ufil' && isAdmin()){ ui.uFil = d.v; render(); return; }
+  if(a==='utarea' && isAdmin()){ uTareaModal(d.u); return; }
+  if(a==='utareaok' && isAdmin()){ const uid = d.u, t = $('#utT').value.trim(), f = $('#utF').value || iso(today()), hoy = iso(today()); if(!t){ toast('Escribí la tarea'); $('#utT').focus(); return; } if(f<hoy){ toast('Elegí hoy o un día futuro'); return; }
+    const det = $('#utD').value.trim(), hs = $('#utH').value, sup = superiorDe(uid);
+    if($('#utRep').checked){ tPlan().push({id:'tp'+randId(8), user:uid, titulo:t, detalle:det, dias:['1','2','3','4','5'], estado:'aprobada', aprobadaEn:f, creadaPor:S.user, validadaPor:S.user, creada:new Date().toISOString()}); notificar(uid, `${userName(S.user)} te indicó una tarea diaria: «${t}». Aparece en tu lista todos los días hábiles.`, 'tareas', 'tarea'); tareasMantener(); }
+    else { tDia().push({id:'td'+randId(8), user:uid, fecha:f, origen:'asignada', asignadaPor:S.user, titulo:t, detalle:det, vence:hs||'', estado:'pendiente'}); notificar(uid, `${userName(S.user)} te indicó una tarea para ${f===hoy?'hoy':'el '+fmt(f)}: «${t}»${hs?` (hasta las ${hs} hs)`:''}.`, 'tareas', 'tarea'); }
+    if(sup && sup!==S.user) notificar(sup, `${userName(S.user)} le indicó una tarea a ${userName(uid)}: «${t}».`, 'tareas');
+    save(); audit('Indicó una tarea', 'Tareas diarias', `${userName(uid)}: ${t}`); render(); uTareaModal(uid); toast(`Listo: ${userName(uid).split(' ')[0]} ya tiene la tarea y una notificación`); return; }
+  if(a==='utvalidar' && isAdmin()){ const p = tPlan().find(x=>x.id===d.p); if(p){ p.estado = 'aprobada'; p.aprobadaEn = iso(today()); p.validadaPor = S.user; notificar(p.user, `${userName(S.user)} validó tu tarea diaria «${p.titulo}».`, 'tareas', 'ok'); save(); audit('Validó una tarea diaria','Tareas diarias', `${userName(p.user)}: ${p.titulo}`); tareasMantener(); } render(); uTareaModal(d.u); return; }
+  if(a==='utquitar' && isAdmin()){ const i = tPlan().findIndex(x=>x.id===d.p); if(i>=0){ const p = tPlan().splice(i,1)[0]; notificar(p.user, `${userName(S.user)} quitó la tarea diaria «${p.titulo}».`, 'tareas'); save(); audit('Quitó una tarea diaria','Tareas diarias', `${userName(p.user)}: ${p.titulo}`); } render(); uTareaModal(d.u); return; }
   if(a==='uedit' && isAdmin()) openUserEdit(d.u);
   if(a==='udel' && isAdmin()){ const u = S.users.find(x=>x.id===d.u); if(u) eliminarUsuario(u); }
   if(a==='uesave' && UE && isAdmin()) await ueSave();
@@ -4368,7 +4384,7 @@ document.addEventListener('click', async ev => {
     S.guiaPropia = S.guiaPropia || []; S.guiaPropia.push(g); save(); audit('Agregó un trámite a la guía', g.t, orgById(g.org).c); closeModal(); ui.admTab = 'guia'; ui.guiaOpen = g.id; render(); toast('Agregado a la guía'); return; }
   if(a==='guiadel'){ const i = (S.guiaPropia||[]).findIndex(x=>x.id===d.g); if(i<0) return; const g = S.guiaPropia.splice(i,1)[0]; S.trBorrados = [...new Set([...(S.trBorrados||[]), g.id])]; save(); audit('Quitó un trámite de la guía', g.t, ''); render(); toast('Quitado de la guía', ()=>{ S.guiaPropia.splice(i,0,g); S.trBorrados = S.trBorrados.filter(x=>x!==g.id); save(); render(); }); return; }
 });
-document.addEventListener('input', ev => { if(ev.target.id==='guiaQ'){ ui.guiaQ = ev.target.value; const pos = ev.target.selectionStart; render(); const n = $('#guiaQ'); if(n){ n.focus(); try{ n.setSelectionRange(pos,pos); }catch(e){} } } });
+document.addEventListener('input', ev => { if(ev.target.id==='uQ'){ ui.uQ = ev.target.value; const pos = ev.target.selectionStart; render(); const n = $('#uQ'); if(n){ n.focus(); try{ n.setSelectionRange(pos,pos); }catch(e){} } return; } if(ev.target.id==='guiaQ'){ ui.guiaQ = ev.target.value; const pos = ev.target.selectionStart; render(); const n = $('#guiaQ'); if(n){ n.focus(); try{ n.setSelectionRange(pos,pos); }catch(e){} } } });
 document.addEventListener('change', ev => { if((ev.target.id==='ueRol' || /^ueMod/.test(ev.target.id)) && UE){ ueRead(); drawUserEdit(); return; } if(ev.target.id==='eqModcontratos'){ const w = $('#eqCtWrap'); if(w) w.style.display = ev.target.checked ? '' : 'none'; } if(ev.target.id==='nuModcontratos'){ const w = $('#nuCtWrap'); if(w) w.style.display = ev.target.checked ? '' : 'none'; } if(ev.target.id==='trOrg' && TRF){ const o = orgById(ev.target.value), r = o.plazo||{}; const n = $('#trNota'); if(n) n.textContent = o.plazoNota||''; const lab = $('#trVence') && $('#trVence').closest('label'); if(lab) lab.firstChild.textContent = o.plazoDesc||'Próximo vencimiento'; if(r.modo && r.modo!=='fecha'){ const ini = ($('#trIni')||{}).value || iso(today()); $('#trVence').value = calcPlazo({...r, desde:ini}).vence; } } });
 
 // ---------- Tareas diarias: las propone cada persona, las valida su superior; el superior también asigna ----------
