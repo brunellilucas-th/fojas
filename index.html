@@ -419,11 +419,11 @@ async function copy(text){ try{ await navigator.clipboard.writeText(text); toast
 
 // ---------- datos de ejemplo ----------
 const DEFAULT_USERS = [
-  {id:'dfraerman', nombre:'Deborah Fraerman', rol:'Jefa de Amparos', pass:'Fojas2026!'},
-  {id:'lbrunelli', nombre:'Lucas Emmanuel Brunelli', rol:'Analista legal', pass:'Fojas2026!'},
-  {id:'fzaurdo', nombre:'Florencia Zaurdo', rol:'Analista legal', pass:'Fojas2026!'},
-  {id:'rperez', nombre:'Ramiro Pérez', rol:'Procurador', pass:'Fojas2026!'},
-  {id:'admin', nombre:'Administración', rol:'Administrador', pass:'Admin2026!'}
+  {id:'dfraerman', nombre:'Deborah Fraerman', rol:'Jefa de Amparos'},
+  {id:'lbrunelli', nombre:'Lucas Emmanuel Brunelli', rol:'Analista legal'},
+  {id:'fzaurdo', nombre:'Florencia Zaurdo', rol:'Analista legal'},
+  {id:'rperez', nombre:'Ramiro Pérez', rol:'Procurador'},
+  {id:'admin', nombre:'Administración', rol:'Administrador'}
 ];
 const DEFAULT_TEAMS = [{id:'t1', nombre:'Amparos', jefe:'dfraerman', miembros:['lbrunelli','fzaurdo']}];
 const ORG = 'saludintegral-demo';
@@ -650,8 +650,8 @@ const SCHEMA = 11;
 const OLD_KEYS = ['fojas-demo-v9','fojas-demo-v8','fojas-demo-v7','fojas-demo-v6','fojas-demo-v5','fojas-demo-v4','fojas-demo-v3','fojas-demo-v2','fojas-demo-v1'];
 let S;
 async function makeUser(u, pass, mustChange){ const salt = randId(16); return {id:u.id, nombre:u.nombre, rol:u.rol, activo:true, salt, hash: await hashPass(pass, salt), mustChange:!!mustChange}; }
-async function fresh(){ const users = []; for(const u of DEFAULT_USERS) users.push(await makeUser(u, u.pass, false));
-  return {user:null, users, lock:{}, toured:{}, teams:JSON.parse(JSON.stringify(DEFAULT_TEAMS)), modules:{amparos:true, administrativos:false, contratos:false, cartas:false}, exps:seed(), audit:[], nextId:10}; }
+async function fresh(){ const users = []; for(const u of DEFAULT_USERS) users.push(await makeUser(u, u.id, true));
+  return {user:null, users, lock:{}, toured:{}, teams:JSON.parse(JSON.stringify(DEFAULT_TEAMS)), modules:{amparos:true, administrativos:false, contratos:false, cartas:false}, exps:seed(), audit:[], nextId:10, pwInicial:true, ejemploDni:true}; }
 // ---------- guardado: navegador (2 lugares), versiones automáticas y archivo en la computadora ----------
 const IDB = {
   db:null,
@@ -1453,6 +1453,8 @@ async function migrate(d){
   d.exps = (d.exps||[]).map(e=>migExp(e, d.users));
   d.nextId = Math.max(d.nextId||0, ...d.exps.map(e=>+e.id||0)) + 1;
   if(!d.ejemploDni){ d.ejemploDni = true; const bor = new Set(d.borrados||[]); ejemplosDni(d.nextId).forEach(x=>{ const n = x.numero.toLowerCase(); if(!bor.has(n) && !d.exps.some(e=>String(e.numero).toLowerCase()===n)){ d.exps.push(migExp(x, d.users)); } }); d.nextId = Math.max(...d.exps.map(e=>+e.id||0)) + 1; }
+  if(!d.pwInicial){ d.pwInicial = true; const propias = new Set((d.audit||[]).filter(a=>a.accion==='Cambió su contraseña').map(a=>a.detalle));
+    for(const u of d.users){ if(propias.has(u.id)) continue; u.salt = randId(16); u.hash = await hashPass(u.id, u.salt); u.mustChange = true; } }
   d.schema = SCHEMA; d.user = null;
   return d;
 }
@@ -2151,14 +2153,14 @@ function drawUserEdit(){
       <div class="opts" style="grid-template-columns:repeat(3,1fr)">
         <button type="button" class="opt ${UE.pw==='no'?'on':''}" data-uepw="no">No cambiarla</button>
         <button type="button" class="opt ${UE.pw==='nueva'?'on':''}" data-uepw="nueva">Escribir una nueva</button>
-        <button type="button" class="opt ${UE.pw==='gen'?'on':''}" data-uepw="gen">Generar una provisoria</button>
+        ${yo?'':`<button type="button" class="opt ${UE.pw==='ini'?'on':''}" data-uepw="ini">Volver a la inicial (igual al usuario)</button>`}
       </div></div>
     ${UE.pw==='nueva'?`<div class="form">
       <label>Nueva contraseña<input type="password" id="ueP1" value="${esc(UE.p1)}" autocomplete="new-password"></label>
       <label>Repetila<input type="password" id="ueP2" value="${esc(UE.p2)}" autocomplete="new-password"></label>
       <div class="full hint">Mínimo 8 caracteres, con letras y números.</div>
-      ${yo?'':`<label class="full" style="display:flex;flex-direction:row;gap:10px;align-items:center;font-weight:500;cursor:pointer"><input type="checkbox" id="ueCambiar" ${UE.cambiar?'checked':''} style="width:18px;height:18px;accent-color:var(--accent);flex:none"> Pedirle que la cambie la primera vez que entre</label>`}</div>`:''}
-    ${UE.pw==='gen'?`<div class="notice">Fojas va a crear una contraseña provisoria y te la muestra una sola vez. ${esc(u.nombre.split(' ')[0])} la cambia al entrar.</div>`:''}
+      ${yo?'':`<div class="full notice small">Al entrar con esta contraseña, ${esc(u.nombre.split(' ')[0])} la va a tener que cambiar sí o sí.</div>`}</div>`:''}
+    ${UE.pw==='ini'?`<div class="notice">La contraseña vuelve a ser igual a su usuario (<span class="mono">${esc((UE.nuevoId||u.id).trim().toLowerCase())}</span>) y la tiene que cambiar al entrar.</div>`:''}
     <div class="row" style="justify-content:flex-end"><button class="btn" data-act="close">Cancelar</button><button class="btn ok big" data-act="uesave">${ic('check')} Guardar cambios</button></div>`);
 }
 function ueRead(){ if(!UE) return; const g = id => $(id); if(g('#ueNom')) UE.nombre = g('#ueNom').value; if(g('#ueId') && !g('#ueId').disabled) UE.nuevoId = g('#ueId').value; if(g('#ueRol')) UE.rol = g('#ueRol').value; if(g('#ueP1')) UE.p1 = g('#ueP1').value; if(g('#ueP2')) UE.p2 = g('#ueP2').value; if(g('#ueCambiar')) UE.cambiar = g('#ueCambiar').checked; }
@@ -2171,7 +2173,8 @@ async function ueSave(){
   if(u.rol==='Administrador' && UE.rol!=='Administrador' && !S.users.some(x=>x.id!==u.id && x.activo && x.rol==='Administrador')) return err('Tiene que quedar al menos un administrador activo. Nombrá a otra persona administradora antes de cambiarle el rol.');
   let nuevaPass = null;
   if(UE.pw==='nueva'){ if(!passOk(UE.p1)) return err('La contraseña tiene que tener al menos 8 caracteres, con letras y números.'); if(UE.p1 !== UE.p2) return err('Las dos contraseñas no son iguales.'); nuevaPass = UE.p1; }
-  if(UE.pw==='gen') nuevaPass = tempPass();
+  if(UE.pw==='ini') nuevaPass = nid;
+  if(UE.pw==='no' && nid !== u.id && u.mustChange && !yo){ nuevaPass = nid; UE.pw = 'ini'; }
   const cambios = [];
   if(nombre !== u.nombre){ cambios.push(`nombre: ${u.nombre} → ${nombre}`); u.nombre = nombre; }
   if(UE.rol !== u.rol){ cambios.push(`rol: ${u.rol} → ${UE.rol}`); u.rol = UE.rol; }
@@ -2180,10 +2183,10 @@ async function ueSave(){
     (S.teams||[]).forEach(t=>{ if(t.jefe===old) t.jefe = nid; t.miembros = t.miembros.map(m=>m===old?nid:m); });
     (S.modelos||[]).forEach(m=>{ if(m.autor===old) m.autor = nid; }); (S.docCats||[]).forEach(c=>{ if(c.autor===old) c.autor = nid; });
     if(S.lock && S.lock[old]){ S.lock[nid] = S.lock[old]; delete S.lock[old]; } if(S.toured && S.toured[old]){ S.toured[nid] = S.toured[old]; delete S.toured[old]; } }
-  if(nuevaPass){ u.salt = randId(16); u.hash = await hashPass(nuevaPass, u.salt); u.mustChange = UE.pw==='gen' || (!yo && UE.cambiar); if(S.lock) delete S.lock[u.id]; cambios.push(UE.pw==='gen'?'contraseña provisoria nueva':'contraseña nueva'); }
+  if(nuevaPass){ u.salt = randId(16); u.hash = await hashPass(nuevaPass, u.salt); u.mustChange = !yo; if(S.lock) delete S.lock[u.id]; cambios.push(UE.pw==='ini'?'contraseña restablecida (igual al usuario)':'contraseña nueva'); }
   if(!cambios.length){ UE = null; closeModal(); toast('No hubo cambios'); return; }
   save(); audit('Modificó un usuario','Usuarios', `${u.id} · ${cambios.join(' · ')}`);
-  ui.userMsg = {ok:true, html: `Listo, se guardaron los cambios de <b>${esc(u.nombre)}</b>${nid!==UE.id?` (ahora entra como <span class="mono">${esc(nid)}</span>)`:''}.` + (UE.pw==='gen' ? ` Contraseña provisoria: <span class="mono">${esc(nuevaPass)}</span>. Pasásela en persona o por un canal seguro; no se vuelve a mostrar.` : UE.pw==='nueva' ? ` La contraseña nueva ya funciona${u.mustChange?'; la va a tener que cambiar al entrar':''}.` : '')};
+  ui.userMsg = {ok:true, html: `Listo, se guardaron los cambios de <b>${esc(u.nombre)}</b>${nid!==UE.id?` (ahora entra como <span class="mono">${esc(nid)}</span>)`:''}.` + (UE.pw==='ini' ? ` Su contraseña es <span class="mono">${esc(nid)}</span> (igual al usuario) y la tiene que cambiar al entrar.` : UE.pw==='nueva' ? ` La contraseña nueva ya funciona${u.mustChange?'; la va a tener que cambiar al entrar':''}.` : '')};
   UE = null; closeModal(); await chain; render();
 }
 function vUsuarios(){
@@ -2196,14 +2199,14 @@ function vUsuarios(){
     <section class="card"><div class="row"><div class="avatar">${initials(u.nombre)}</div><div style="flex:1"><b>${esc(u.nombre)}</b><div class="small muted">${esc(u.rol)} · <span class="mono">${esc(u.id)}</span></div></div></div>
       <div class="row">${u.activo?(locked?'<span class="pill yel">Bloqueado</span>':'<span class="pill grn">Puede entrar</span>'):'<span class="pill">Desactivado</span>'}${u.mustChange?'<span class="pill">Debe cambiar su contraseña</span>':''}</div>
       <div class="row"><button class="btn sm pri" data-act="uedit" data-u="${u.id}">${ic('pen','sm')} Editar</button></div>
-      ${u.id===S.user?'<span class="small muted">Sos vos</span>':`<div class="row"><button class="btn sm" data-act="ureset" data-u="${u.id}">${ic('key','sm')} Nueva contraseña</button><button class="btn sm" data-act="utoggle" data-u="${u.id}">${u.activo?'Desactivar':'Activar'}</button>${locked?`<button class="btn sm" data-act="uunlock" data-u="${u.id}">Desbloquear</button>`:''}</div>`}
+      ${u.id===S.user?'<span class="small muted">Sos vos</span>':`<div class="row"><button class="btn sm" data-act="ureset" data-u="${u.id}">${ic('key','sm')} Restablecer contraseña</button><button class="btn sm" data-act="utoggle" data-u="${u.id}">${u.activo?'Desactivar':'Activar'}</button>${locked?`<button class="btn sm" data-act="uunlock" data-u="${u.id}">Desbloquear</button>`:''}</div>`}
     </section>`;}).join('')}</div>
   <section class="card"><h2>Agregar una persona</h2>
     <form class="form" id="userForm">
       <label>Nombre y apellido<input type="text" id="nuNom" required></label>
       <label>Usuario para entrar <span class="hint">minúsculas, sin espacios</span><input type="text" id="nuId" required pattern="[a-z0-9._-]{3,30}" placeholder="ej.: mlopez"></label>
       <label>Rol<select id="nuRol"><option>Abogada/o a cargo</option><option>Analista legal</option><option>Procurador</option><option>Administrador</option></select></label>
-      <div class="full"><button class="btn pri" type="submit">${ic('plus','sm')} Agregar</button> <span class="small muted">Le vamos a dar una contraseña provisoria que cambia la primera vez que entra.</span></div>
+      <div class="full"><button class="btn pri" type="submit">${ic('plus','sm')} Agregar</button> <span class="small muted">La primera vez entra con su usuario como contraseña y Fojas le pide cambiarla.</span></div>
     </form></section>`;
 }
 
@@ -2225,13 +2228,12 @@ function vIngreso(){
       <label class="fld" for="lgUser">Usuario<input type="text" id="lgUser" required autocomplete="username" autocapitalize="off"></label>
       <label class="fld" for="lgPass">Contraseña<input type="password" id="lgPass" required autocomplete="current-password"></label>
       <button class="btn pri big" type="submit" id="lgBtn">Ingresar</button>
-      <p class="small muted">¿Olvidaste tu contraseña? Pedile al administrador de tu organización que te dé una nueva.</p>
+      <p class="small muted">¿Olvidaste tu contraseña? Pedile al administrador que te la restablezca: vuelve a ser igual a tu usuario y la cambiás al entrar.</p>
+      <div class="notice small" style="margin:0"><b>¿Es tu primer ingreso?</b> Tu contraseña es igual a tu usuario. Apenas entres, Fojas te pide que elijas una nueva.</div>
       <details class="small muted"><summary style="cursor:pointer">Datos para probar</summary>
         <div style="margin-top:6px">Organización: <span class="mono">saludintegral-demo</span><br>
-        Usuario <span class="mono">lbrunelli</span> · contraseña <span class="mono">Fojas2026!</span><br>
-        Jefa de equipo: <span class="mono">dfraerman</span> · contraseña <span class="mono">Fojas2026!</span><br>
-        Analista: <span class="mono">fzaurdo</span> · contraseña <span class="mono">Fojas2026!</span><br>
-        Administrador: <span class="mono">admin</span> · contraseña <span class="mono">Admin2026!</span></div></details>
+        Usuarios: <span class="mono">lbrunelli</span>, <span class="mono">dfraerman</span> (jefa), <span class="mono">fzaurdo</span>, <span class="mono">rperez</span> y <span class="mono">admin</span>.<br>
+        La primera vez, la contraseña es igual al usuario (por ejemplo <span class="mono">lbrunelli</span> / <span class="mono">lbrunelli</span>).</div></details>
     </form></div>
   </div>`;
 }
@@ -2957,16 +2959,16 @@ function wCheck(){
 function openPwd(forced){
   showModal(`
     <h2>${forced?'Elegí tu contraseña':'Cambiar contraseña'}</h2>
-    ${forced?'<div class="notice">Entraste con una contraseña provisoria. Elegí una tuya para seguir.</div>':''}
+    ${forced?'<div class="notice">Es tu primer ingreso (o te restablecieron la contraseña). Por seguridad, elegí una contraseña tuya para seguir.</div>':''}
     <form class="form" id="pwdForm">
-      <label class="full">Contraseña actual<input type="password" id="pwOld" required autocomplete="current-password"></label>
+      ${forced?'':'<label class="full">Contraseña actual<input type="password" id="pwOld" required autocomplete="current-password"></label>'}
       <label>Nueva contraseña<input type="password" id="pwNew" required autocomplete="new-password"></label>
       <label>Repetila<input type="password" id="pwRep" required autocomplete="new-password"></label>
-      <div class="full hint">Mínimo 8 caracteres, con letras y números.</div>
+      <div class="full hint">Mínimo 8 caracteres, con letras y números. No puede ser igual a tu usuario.</div>
       <div class="full" id="pwMsg"></div>
       <div class="full row"><button class="btn pri" type="submit">Guardar</button>${forced?'<button class="btn ghost" type="button" data-act="logout">Salir</button>':'<button class="btn ghost" type="button" data-act="close">Cancelar</button>'}</div>
     </form>`, forced);
-  setTimeout(()=>$('#pwOld').focus(), 30);
+  setTimeout(()=>{ const f = $('#pwOld') || $('#pwNew'); if(f) f.focus(); }, 30);
 }
 
 // ---------- render ----------
@@ -3161,8 +3163,8 @@ document.addEventListener('click', async ev => {
     save(); if(ok) audit('Trajo expedientes','Migración',`${ok} expediente(s) desde planilla`);
     ui.csvMsg={ok:ok>0, t:`Listo: se trajeron ${ok} expediente(s).${dup?` ${dup} ya estaban cargados y no se repitieron.`:''}`}; await chain; render(); }
   if((a==='ureset'||a==='utoggle'||a==='uunlock') && isAdmin()){ const u = S.users.find(x=>x.id===d.u);
-    if(a==='ureset'){ const p = tempPass(); u.salt = randId(16); u.hash = await hashPass(p, u.salt); u.mustChange = true; delete S.lock[u.id]; save(); audit('Dio una contraseña nueva','Usuarios',u.id);
-      ui.userMsg={ok:true, html:`Contraseña provisoria para <b>${esc(u.nombre)}</b>: <span class="mono">${esc(p)}</span>. Pasásela en persona o por un canal seguro; no se vuelve a mostrar.`}; }
+    if(a==='ureset'){ u.salt = randId(16); u.hash = await hashPass(u.id, u.salt); u.mustChange = true; delete S.lock[u.id]; save(); audit('Restableció la contraseña','Usuarios',`${u.id} (vuelve a ser igual al usuario)`);
+      ui.userMsg={ok:true, html:`Listo: la contraseña de <b>${esc(u.nombre)}</b> volvió a ser <span class="mono">${esc(u.id)}</span> (igual a su usuario). Al entrar la tiene que cambiar.`}; }
     if(a==='utoggle'){ u.activo = !u.activo; save(); audit(u.activo?'Activó un usuario':'Desactivó un usuario','Usuarios',u.id); ui.userMsg={ok:true,t:`${u.nombre} ${u.activo?'ya puede entrar':'ya no puede entrar'}.`}; }
     if(a==='uunlock'){ delete S.lock[u.id]; save(); audit('Desbloqueó un usuario','Usuarios',u.id); ui.userMsg={ok:true,t:`${u.nombre} ya puede volver a intentar.`}; }
     await chain; render(); }
@@ -3245,8 +3247,10 @@ document.addEventListener('submit', async ev => {
   }
   if(id==='pwdForm'){
     const u = me(), msg = t => { $('#pwMsg').innerHTML = `<div class="notice bad">${esc(t)}</div>`; };
-    const o = $('#pwOld').value, n = $('#pwNew').value, r2 = $('#pwRep').value;
-    if((await hashPass(o, u.salt)) !== u.hash) return msg('La contraseña actual no es correcta.');
+    const forzado = !!u.mustChange && !$('#pwOld');
+    const o = forzado ? u.id : $('#pwOld').value, n = $('#pwNew').value, r2 = $('#pwRep').value;
+    if(!forzado && (await hashPass(o, u.salt)) !== u.hash) return msg('La contraseña actual no es correcta.');
+    if(n.trim().toLowerCase() === u.id) return msg('La contraseña nueva no puede ser igual a tu usuario.');
     if(!passOk(n)) return msg('La nueva contraseña tiene que tener al menos 8 caracteres, con letras y números.');
     if(n !== r2) return msg('Las dos contraseñas nuevas no son iguales.');
     if(n === o) return msg('Elegí una contraseña distinta de la actual.');
@@ -3269,9 +3273,9 @@ document.addEventListener('submit', async ev => {
   if(id==='userForm' && isAdmin()){
     const uid = $('#nuId').value.trim().toLowerCase();
     if(S.users.some(x=>x.id===uid)){ ui.userMsg={ok:false,t:'Ya hay alguien con ese usuario. Probá con otro.'}; render(); return; }
-    const p = tempPass(); S.users.push(await makeUser({id:uid, nombre:$('#nuNom').value.trim(), rol:$('#nuRol').value}, p, true)); save();
+    S.users.push(await makeUser({id:uid, nombre:$('#nuNom').value.trim(), rol:$('#nuRol').value}, uid, true)); save();
     audit('Agregó un usuario','Usuarios', `${uid} (${$('#nuRol').value})`);
-    ui.userMsg={ok:true, html:`Listo. <b>${esc(uid)}</b> ya puede entrar con la contraseña provisoria <span class="mono">${esc(p)}</span>. Pasásela en persona o por un canal seguro; no se vuelve a mostrar.`}; await chain; render();
+    ui.userMsg={ok:true, html:`Listo. <b>${esc(uid)}</b> ya puede entrar: la primera vez su contraseña es <span class="mono">${esc(uid)}</span> (igual al usuario) y al ingresar la tiene que cambiar sí o sí.`}; await chain; render();
   }
 });
 
