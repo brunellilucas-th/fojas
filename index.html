@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.9">
+<meta name="fojas-version" content="2026-11-22.10">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -58,7 +58,23 @@ svg.i.lg{width:30px;height:30px}
 .main{display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden}
 .top{display:flex;align-items:center;gap:14px;padding:12px 28px;background:var(--surface);border-bottom:1px solid var(--line);flex-wrap:wrap}
 .who{display:flex;align-items:center;gap:10px;margin-left:auto}
-.umenu-wrap{position:relative} .umenu-wrap .avatar{position:relative}
+.umenu-wrap{position:relative} .nmenu-wrap{position:relative}
+.bell{position:relative;width:42px;height:42px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.bell:hover{background:var(--sunken)} .bell-n{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--danger);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center;border:2px solid var(--surface)}
+.nmenu{width:380px;max-width:calc(100vw - 24px)} .nlist{max-height:420px;overflow:auto;display:flex;flex-direction:column}
+.umenu .nitem{display:flex;align-items:flex-start;gap:10px;font-weight:500;line-height:1.4} .nitem .ntxt{display:flex;flex-direction:column;gap:2px} .nitem .ndot{width:9px;height:9px;border-radius:50%;margin-top:7px;flex:none!important;background:transparent}
+.nitem.nueva{background:var(--accent-soft)} .nitem.nueva .ndot{background:var(--accent)} .nitem.nueva.alerta .ndot{background:var(--danger)}
+.who .bell-n{color:#fff;font-size:11px;line-height:1} .umenu .linkbtn{width:auto;padding:0;color:var(--accent);font-size:13px;font-weight:600;text-decoration:underline} .umenu .linkbtn:hover{background:none}
+.linkbtn{border:0;background:none;color:var(--accent);font:inherit;font-size:13px;font-weight:600;cursor:pointer;text-decoration:underline;padding:0}
+.tlist{display:flex;flex-direction:column;gap:10px}
+.trow{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;border:1.5px solid var(--line);border-left-width:6px;border-radius:14px;padding:14px 16px;background:var(--surface)}
+.trow.hecha{border-left-color:var(--accent)} .trow.nose{border-left-color:#b7791f} .trow.nohecha{border-left-color:var(--danger);background:var(--danger-soft,#fbecea)}
+.tbtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.tbtn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 12px;font:inherit;font-weight:700;cursor:pointer;color:var(--ink)}
+.tbtn.ok{color:var(--accent)} .tbtn.warn{color:#b7791f} .tbtn.bad{color:var(--danger)}
+.tbtn.ok:hover,.tbtn.ok.on{background:var(--accent);border-color:var(--accent);color:#fff} .tbtn.warn:hover,.tbtn.warn.on{background:#b7791f;border-color:#b7791f;color:#fff} .tbtn.bad:hover,.tbtn.bad.on{background:var(--danger);border-color:var(--danger);color:#fff}
+.teq{border:1px solid var(--line);border-radius:14px;padding:4px 12px;margin-top:10px} .teq summary{display:flex;align-items:center;gap:10px;flex-wrap:wrap;cursor:pointer;padding:8px 0;list-style:none} .teq summary::-webkit-details-marker{display:none} .teq .tlist{padding:4px 0 10px}
+@media (max-width:700px){ .trow{grid-template-columns:1fr} .tbtns{justify-content:flex-start} .tbtn span{display:none} } .umenu-wrap .avatar{position:relative}
 .av-dot{position:absolute;top:-1px;right:-1px;width:12px;height:12px;border-radius:50%;background:var(--danger);border:2px solid var(--surface)}
 .umenu{position:absolute;right:0;top:calc(100% + 8px);z-index:300;min-width:260px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:6px;display:flex;flex-direction:column}
 .umenu-h{display:flex;flex-direction:column;gap:2px;padding:10px 12px 12px;border-bottom:1px solid var(--line);margin-bottom:4px} .umenu-h span{font-size:13px;color:var(--muted)}
@@ -103,7 +119,7 @@ svg.i.lg{width:30px;height:30px}
 .view{flex:1;overflow:auto;padding:28px;display:flex;flex-direction:column;gap:24px}
 .demo{font-size:13px;background:var(--violet-soft);color:var(--violet);padding:6px 28px}
 
-input[type=text],input[type=password],input[type=date],input[type=search],select,textarea{background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+input[type=text],input[type=password],input[type=date],input[type=time],input[type=search],select,textarea{background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
 input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
 textarea{resize:vertical}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px 16px;cursor:pointer;font-weight:600}
@@ -777,6 +793,7 @@ function unir(base, otro){
   base.trBorrados = [...new Set([...(base.trBorrados||[]), ...(otro.trBorrados||[])])]; const trB = new Set(base.trBorrados);
   base.tramites = (base.tramites||[]).filter(x=>!trB.has(x.id)); (otro.tramites||[]).forEach(x=>{ if(!trB.has(x.id) && !base.tramites.some(y=>y.id===x.id)) base.tramites.push(x); });
   (otro.guiaPropia||[]).forEach(x=>{ base.guiaPropia = base.guiaPropia||[]; if(!base.guiaPropia.some(y=>y.id===x.id) && !trB.has(x.id)) base.guiaPropia.push(x); });
+  ['tareasPlan','tareasDia','notifs'].forEach(k=>{ base[k] = base[k]||[]; (otro[k]||[]).forEach(x=>{ if(!base[k].some(y=>y.id===x.id)) base[k].push(x); }); });
   base._sumados = (base._sumados||[]).concat(sum);
   return base;
 }
@@ -1507,7 +1524,7 @@ async function migrate(d){
   d.users = Array.isArray(d.users) && d.users.length ? d.users : base.users;
   base.users.forEach(u=>{ if(!d.users.some(x=>x.id===u.id)) d.users.push(u); });
   d.teams = Array.isArray(d.teams) ? d.teams : base.teams;
-  d.lock = d.lock || {}; d.toured = d.toured || {}; d.modelos = Array.isArray(d.modelos) ? d.modelos : []; d.tramites = Array.isArray(d.tramites) ? d.tramites : []; d.guiaPropia = Array.isArray(d.guiaPropia) ? d.guiaPropia : []; d.agSaber = Array.isArray(d.agSaber) ? d.agSaber : []; d.agPend = Array.isArray(d.agPend) ? d.agPend : []; d.docCats = Array.isArray(d.docCats) ? d.docCats : []; d.catEdit = d.catEdit || {}; d.papelera = Array.isArray(d.papelera) ? d.papelera : []; d.borrados = Array.isArray(d.borrados) ? d.borrados : []; d.config = d.config || {}; d.audit = Array.isArray(d.audit) ? d.audit : [];
+  d.lock = d.lock || {}; d.toured = d.toured || {}; d.modelos = Array.isArray(d.modelos) ? d.modelos : []; d.tramites = Array.isArray(d.tramites) ? d.tramites : []; d.tareasPlan = Array.isArray(d.tareasPlan) ? d.tareasPlan : []; d.tareasDia = Array.isArray(d.tareasDia) ? d.tareasDia : []; d.notifs = Array.isArray(d.notifs) ? d.notifs : []; d.guiaPropia = Array.isArray(d.guiaPropia) ? d.guiaPropia : []; d.agSaber = Array.isArray(d.agSaber) ? d.agSaber : []; d.agPend = Array.isArray(d.agPend) ? d.agPend : []; d.docCats = Array.isArray(d.docCats) ? d.docCats : []; d.catEdit = d.catEdit || {}; d.papelera = Array.isArray(d.papelera) ? d.papelera : []; d.borrados = Array.isArray(d.borrados) ? d.borrados : []; d.config = d.config || {}; d.audit = Array.isArray(d.audit) ? d.audit : [];
   d.modules = {...base.modules, ...(d.modules||{})};
   d.exps = (d.exps||[]).map(e=>migExp(e, d.users));
   d.nextId = Math.max(d.nextId||0, ...d.exps.map(e=>+e.id||0)) + 1;
@@ -1515,6 +1532,7 @@ async function migrate(d){
   if(!d.pwInicial){ d.pwInicial = true; const propias = new Set((d.audit||[]).filter(a=>a.accion==='Cambió su contraseña').map(a=>a.detalle));
     for(const u of d.users){ if(propias.has(u.id)) continue; u.salt = randId(16); u.hash = await hashPass(u.id, u.salt); u.mustChange = true; } }
   if(!d.modAdm){ d.modAdm = true; d.modules = d.modules || {}; d.modules.administrativos = true; }
+  if(!d.ejemploTareas){ d.ejemploTareas = true; try{ ejemplosTareas(d); }catch(err){ console.warn(err); } }
   if(!d.ejemploAdm){ d.ejemploAdm = true; try{ ejemplosAdm(d); }catch(err){ console.warn(err); } d.nextId = Math.max(d.nextId||1, ...d.exps.map(e=>+e.id||0)) + 1; }
   d.schema = SCHEMA; d.user = null;
   return d;
@@ -1597,7 +1615,7 @@ let lastActivity = Date.now();
 function getSession(){ try{ const s = JSON.parse(sessionStorage.getItem('fojas-session')||'null'); if(s) return s; }catch(e){} return getSession.mem || null; }
 function setSession(s){ getSession.mem = s; try{ s ? sessionStorage.setItem('fojas-session', JSON.stringify(s)) : sessionStorage.removeItem('fojas-session'); }catch(e){} }
 function logged(){ const s = getSession(); if(!s) return false; const u = S.users.find(x=>x.id===s.user && x.activo); if(!u) return false; S.user = u.id; return true; }
-function logout(msg){ if(getSession()) audit('Cerró sesión','Sistema', msg||'Salida manual'); setSession(null); S.user=null; ui.chat = null; AG.open = false; AG.cfg = false; save(); ui.loginMsg = msg ? {ok:false, t:msg} : null; closeModal(); render(); }
+function logout(msg){ if(getSession()) audit('Cerró sesión','Sistema', msg||'Salida manual'); setSession(null); S.user=null; ui.chat = null; ui.tFecha = ui.tTab = ui.tFechaEq = ui.tNose = ui.tRech = null; ui.umenu = ui.nmenu = false; ui.vencMios = true; AG.open = false; AG.cfg = false; save(); ui.loginMsg = msg ? {ok:false, t:msg} : null; closeModal(); render(); }
 ['click','keydown','input'].forEach(ev=>document.addEventListener(ev, ()=>{ lastActivity = Date.now(); }, true));
 setInterval(()=>{ if(getSession() && Date.now()-lastActivity > IDLE_MIN*60000) logout(`Por seguridad cerramos tu sesión después de ${IDLE_MIN} minutos sin uso. Volvé a ingresar.`); }, 30000);
 
@@ -1647,6 +1665,7 @@ function shell(content){
       <div class="brand"><div class="mark">${fojasMark('lgS')}</div><b>Fojas</b></div>
       <nav class="nav" aria-label="Principal">
         ${link('inicio','home','Inicio')}
+        ${link('tareas','check','Tareas diarias', (()=>{ const n = tPendHoy() + tParaValidar(); return n?`<span class="badge red">${n}</span>`:''; })())}
         ${amp?link('amparos','folder','Amparos', `<span class="badge">${active().length}</span>`):''}
         ${amp?link('escritos','pen','Escritos'):''}
         ${amp?link('modelos','file','Modelos', (S.modelos||[]).length?`<span class="badge">${S.modelos.length}</span>`:''):''}
@@ -1671,6 +1690,9 @@ function shell(content){
         </div>
         <a href="#respaldo" id="saveBadge" class="savebadge ${saveState().cls}" title="${esc(saveState().tip)}" ${PERSIST.fileNeeds?'data-act="reconnect"':''}>${ic(saveState().icon,'sm')} ${saveState().txt}</a>
         <div class="who"><div><b>${esc(u.nombre)}</b><br><span>${esc(u.rol)}</span></div>
+          <div class="nmenu-wrap">${(()=>{ const ns = misNotifs(), nl = ns.filter(n=>!n.leida).length; return `<button class="bell" data-act="nmenu" title="Notificaciones" aria-haspopup="menu" aria-expanded="${ui.nmenu?'true':'false'}">${ic('bell')}${nl?`<span class="bell-n">${nl>9?'9+':nl}</span>`:''}</button>
+          ${ui.nmenu?`<div class="umenu nmenu" role="menu"><div class="umenu-h" style="flex-direction:row;justify-content:space-between;align-items:center"><b>Notificaciones</b>${nl?'<button class="linkbtn" data-act="nleidas">Marcar todas como leídas</button>':''}</div>
+            <div class="nlist">${ns.slice(0,25).map(n=>`<button class="nitem ${n.leida?'':'nueva'} ${n.tipo||''}" data-act="nabrir" data-n="${n.id}"><span class="ndot"></span><span class="ntxt">${esc(n.texto)}<span class="small muted">${fmtTs(n.ts)}</span></span></button>`).join('') || '<div class="empty small">No tenés notificaciones.</div>'}</div></div>`:''}`; })()}</div>
           <div class="umenu-wrap"><button class="avatar" data-act="umenu" title="Tu menú" aria-haspopup="menu" aria-expanded="${ui.umenu?'true':'false'}" style="border:0;cursor:pointer">${initials(u.nombre)}${urgentes?'<span class="av-dot"></span>':''}</button>
           ${ui.umenu?`<div class="umenu" role="menu">
             <div class="umenu-h"><b>${esc(u.nombre)}</b><span>${esc(u.rol)} · <span class="mono">${esc(u.id)}</span></span></div>
@@ -2274,7 +2296,7 @@ async function ueSave(){
   if(nid !== u.id){ const old = u.id; cambios.push(`usuario: ${old} → ${nid}`); u.id = nid;
     S.exps.forEach(e=>{ if(e.abogado===old) e.abogado = nid; (e.movimientos||[]).forEach(m=>{ if(m.user===old) m.user = nid; }); });
     (S.teams||[]).forEach(t=>{ if(t.jefe===old) t.jefe = nid; t.miembros = t.miembros.map(m=>m===old?nid:m); });
-    (S.modelos||[]).forEach(m=>{ if(m.autor===old) m.autor = nid; }); trs().forEach(t=>{ if(t.abogado===old) t.abogado = nid; (t.movimientos||[]).forEach(m=>{ if(m.user===old) m.user = nid; }); }); (S.docCats||[]).forEach(c=>{ if(c.autor===old) c.autor = nid; });
+    (S.modelos||[]).forEach(m=>{ if(m.autor===old) m.autor = nid; }); trs().forEach(t=>{ if(t.abogado===old) t.abogado = nid; (t.movimientos||[]).forEach(m=>{ if(m.user===old) m.user = nid; }); }); tPlan().forEach(p=>['user','creadaPor','validadaPor'].forEach(k=>{ if(p[k]===old) p[k] = nid; })); tDia().forEach(r=>['user','asignadaPor'].forEach(k=>{ if(r[k]===old) r[k] = nid; })); notifs().forEach(n=>['para','de'].forEach(k=>{ if(n[k]===old) n[k] = nid; })); (S.docCats||[]).forEach(c=>{ if(c.autor===old) c.autor = nid; });
     if(S.lock && S.lock[old]){ S.lock[nid] = S.lock[old]; delete S.lock[old]; } if(S.toured && S.toured[old]){ S.toured[nid] = S.toured[old]; delete S.toured[old]; } }
   if(nuevaPass){ u.salt = randId(16); u.hash = await hashPass(nuevaPass, u.salt); u.mustChange = !yo; if(S.lock) delete S.lock[u.id]; cambios.push(UE.pw==='ini'?'contraseña restablecida (igual al usuario)':'contraseña nueva'); }
   if(!cambios.length){ UE = null; closeModal(); toast('No hubo cambios'); return; }
@@ -3107,9 +3129,10 @@ function render(){
   try{ (S.exps||[]).forEach(fixExp); }catch(err){}
   if(!logged()){ $('#root').innerHTML = vIngreso(); document.title='Fojas · Ingresar'; try{ drawAgente(); }catch(err){} return; }
   document.title='Fojas';
+  try{ if(tareasMantener()) save(); }catch(err){ console.warn(err); }
   let r = route();
   if(RUTA_MOD[r.name] && !tieneMod(RUTA_MOD[r.name])){ const alt = modsDe(me())[0]; const destino = alt==='administrativos' ? 'administrativos' : 'inicio'; if(location.hash.slice(1)!==destino){ history.replaceState(null,'','#'+destino); } r = {name:destino}; }
-  const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, modelos:vModelos, informes:vInformes, historial:vHistorial, papelera:vPapelera, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios, asistente:vAsistente, administrativos:vAdministrativos};
+  const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, modelos:vModelos, informes:vInformes, historial:vHistorial, papelera:vPapelera, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios, asistente:vAsistente, administrativos:vAdministrativos, tareas:vTareas};
   const html = r.name==='expediente' ? vExpediente(r.id) : r.name==='tramite' ? vTramite(r.id) : (views[r.name]||vInicio)();
   const scroll = $('#view') ? $('#view').scrollTop : 0;
   $('#root').innerHTML = shell(html);
@@ -3128,6 +3151,7 @@ function markDone(e, i){
 // ---------- eventos ----------
 document.addEventListener('click', async ev => {
   if(ui.umenu && !ev.target.closest('.umenu-wrap')){ ui.umenu = false; render(); }
+  if(ui.nmenu && !ev.target.closest('.nmenu-wrap')){ ui.nmenu = false; render(); }
   if(!ev.target.closest('.search')) { if(ui.results){ ui.results=false; const r=$('.results'); if(r) r.remove(); } }
   const dt = ev.target.closest('[data-dtree]'); if(dt){ ev.preventDefault(); const box = dt.closest('.dtree'); const on = !box.classList.contains('open'); box.classList.toggle('open', on); dt.setAttribute('aria-expanded', on); const hn = dt.querySelector('.dtree-hint'); if(hn) hn.textContent = on ? 'Ocultar' : 'Ver los '+box.querySelectorAll('.dtree-kid').length; ui.dtOpen = ui.dtOpen||{}; ui.dtOpen[dt.dataset.dtree] = on; return; }
   const om = ev.target.closest('[data-openmember]');
@@ -3238,7 +3262,7 @@ document.addEventListener('click', async ev => {
   if(a==='logout') logout();
   if(a==='pwd') openPwd(false);
   if(a==='vencq'){ ui.vencMios = d.v==='1'; render(); return; }
-  if(a==='umenu'){ ui.umenu = !ui.umenu; render(); return; }
+  if(a==='umenu'){ ui.umenu = !ui.umenu; ui.nmenu = false; render(); return; }
   if(a==='umclose'){ ui.umenu = false; }
   if(a==='umvenc'){ ui.umenu = false; ui.vencMios = true; if(location.hash==='#vencimientos'){ ev.preventDefault(); render(); } }
   if(a==='umpwd'){ ui.umenu = false; render(); openPwd(false); }
@@ -3318,6 +3342,7 @@ document.addEventListener('click', async ev => {
 document.addEventListener('keydown', ev => {
   if(ev.key==='Enter' && ev.target.matches('[data-go]')) location.hash = ev.target.dataset.go;
   if(ev.key==='Escape' && $('#overlay').classList.contains('show') && !$('#overlay').dataset.forced) closeModal();
+  if(ev.key==='Escape' && ui.nmenu){ ui.nmenu = false; render(); }
   if(ev.key==='Escape' && ui.umenu){ ui.umenu = false; render(); const b = $('[data-act=umenu]'); if(b) b.focus(); }
   if(ev.target.id==='gsearch'){
     const links = [...document.querySelectorAll('.results a')];
@@ -3434,10 +3459,12 @@ window.addEventListener('beforeunload', ()=>{ try{ if(S) localStorage.setItem(KE
 const expsVis = () => tieneMod('amparos') ? S.exps : [];
 // ---------- Agente IA interno: ayuda de la app, consultas de expedientes e informes ----------
 IC.book = '<path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M5 17a3 3 0 0 1 3-3h10" fill="none" stroke="currentColor" stroke-width="2"/>';
+IC.bell = '<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
 IC.send = '<path d="M4 12l16-8-6 16-2.5-6.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>';
 IC.x = '<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>';
 IC.bot = '<rect x="4" y="7" width="16" height="12" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7V4M9 13h.01M15 13h.01" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M2 12v3M22 12v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
 const AYUDA = [
+  {t:'Tareas diarias', k:['tarea','tareas','diaria','diarias','validar','superior','jefe','asignar','indicar','completa','rojo','notificacion','notificaciones','campana'], r:'En **Tareas diarias** (panel izquierdo) cada persona carga las tareas que hace todos los días y su **superior del organigrama** las valida. El superior también puede **indicar tareas** (para un día o diarias): a la persona le llega una **notificación** (la campana, arriba a la derecha). Cada tarea se responde con **Completa**, **No se puede realizar** (con el motivo) o **No se hizo**. Si no se responde en el día, queda **en rojo** sola y se le avisa al superior.', ir:'tareas'},
   {t:'Menú de tu usuario', k:['menu','iniciales','circulo','salir','cerrar sesion','contrasena','clave','papelera','ayuda','vencimientos','asistente'], r:'Tocá el **círculo con tus iniciales**, arriba a la derecha. Ahí están **Vencimientos** (tus próximos vencimientos), **Asistente IA**, **Papelera**, **Cambiar contraseña**, **Ayuda** y **Salir**.', ir:null},
   {t:'Asignar módulos a cada usuario', k:['modulo','modulos','asignar','habilitar','permisos','acceso','usuario','ver'], r:'El administrador entra a **Usuarios**, toca **Editar** en la persona y tilda los **Módulos que puede usar**: uno, varios o todos. También se eligen al agregar a alguien. Cada persona ve en el menú solo sus módulos; el administrador ve todos. Para prender o apagar un módulo para toda la organización, andá a **Módulos**.', ir:'usuarios'},
   {k:['cargar','nuevo expediente','crear expediente','alta','amparo nuevo','ingresar un amparo'], t:'Cargar un expediente nuevo', ir:'amparos',
@@ -4245,6 +4272,164 @@ document.addEventListener('click', async ev => {
 });
 document.addEventListener('input', ev => { if(ev.target.id==='guiaQ'){ ui.guiaQ = ev.target.value; const pos = ev.target.selectionStart; render(); const n = $('#guiaQ'); if(n){ n.focus(); try{ n.setSelectionRange(pos,pos); }catch(e){} } } });
 document.addEventListener('change', ev => { if(ev.target.id==='ueRol' && UE){ ueRead(); drawUserEdit(); return; } if(ev.target.id==='trOrg' && TRF){ const o = orgById(ev.target.value), r = o.plazo||{}; const n = $('#trNota'); if(n) n.textContent = o.plazoNota||''; const lab = $('#trVence') && $('#trVence').closest('label'); if(lab) lab.firstChild.textContent = o.plazoDesc||'Próximo vencimiento'; if(r.modo && r.modo!=='fecha'){ const ini = ($('#trIni')||{}).value || iso(today()); $('#trVence').value = calcPlazo({...r, desde:ini}).vence; } } });
+
+// ---------- Tareas diarias: las propone cada persona, las valida su superior; el superior también asigna ----------
+const DIAS_SEM = [['1','Lun'],['2','Mar'],['3','Mié'],['4','Jue'],['5','Vie']];
+const T_EST = {pendiente:{l:'Sin responder', c:''}, hecha:{l:'Completa', c:'grn'}, nose:{l:'No se puede realizar', c:'yel'}, nohecha:{l:'No se hizo', c:'red'}};
+function tPlan(){ return Array.isArray(S.tareasPlan) ? S.tareasPlan : (S.tareasPlan = []); }
+function tDia(){ return Array.isArray(S.tareasDia) ? S.tareasDia : (S.tareasDia = []); }
+function notifs(){ return Array.isArray(S.notifs) ? S.notifs : (S.notifs = []); }
+function superiorDe(uid){
+  const u = S.users.find(x=>x.id===uid); if(!u) return null;
+  const t = (S.teams||[]).find(t=>t.miembros.includes(uid) && t.jefe!==uid);
+  if(t && S.users.some(x=>x.id===t.jefe && x.activo!==false)) return t.jefe;
+  if(u.rol==='Administrador') return null;
+  const ad = S.users.find(x=>x.rol==='Administrador' && x.activo!==false && x.id!==uid); return ad ? ad.id : null;
+}
+const subordinados = (uid=S.user) => S.users.filter(u=>u.id!==uid && u.activo!==false && superiorDe(u.id)===uid);
+function notificar(para, texto, link, tipo='info'){ if(!para) return; notifs().push({id:'n'+randId(8), para, texto, link:link||'tareas', tipo, ts:new Date().toISOString(), leida:false, de:S.user||'sistema'}); }
+const misNotifs = () => notifs().filter(n=>n.para===S.user).sort((a,b)=>b.ts.localeCompare(a.ts));
+const esHabilDia = f => !motivoInhabil(f);
+// genera las tareas del día a partir de las diarias validadas y cierra en rojo lo que quedó sin responder
+function tareasMantener(){
+  if(!S || !S.users) return false; let cambio = false; const hoy = iso(today());
+  const desde = dPlus(-14);
+  tPlan().filter(p=>p.estado==='aprobada').forEach(p=>{
+    let f = (p.aprobadaEn||hoy).slice(0,10); if(f < desde) f = desde;
+    for(let i=0; i<20 && f<=hoy; i++){
+      const w = String(new Date(f+'T12:00:00').getDay());
+      if(esHabilDia(f) && (p.dias||['1','2','3','4','5']).includes(w) && !tDia().some(r=>r.ref===p.id && r.fecha===f)){
+        tDia().push({id:'td'+randId(8), user:p.user, fecha:f, origen:'diaria', ref:p.id, titulo:p.titulo, detalle:p.detalle||'', estado:'pendiente'}); cambio = true; }
+      const d = new Date(f+'T12:00:00'); d.setDate(d.getDate()+1); f = iso(d);
+    }
+  });
+  const cerradas = {};
+  tDia().forEach(r=>{ if(r.estado==='pendiente' && r.fecha < hoy){ r.estado = 'nohecha'; r.auto = true; r.respondidaEn = new Date().toISOString(); cambio = true; const k = r.user+'|'+r.fecha; (cerradas[k] = cerradas[k]||[]).push(r); } });
+  Object.entries(cerradas).forEach(([k, rs])=>{ const [uid, f] = k.split('|'); const sup = superiorDe(uid);
+    notificar(sup, `${userName(uid)} no respondió ${rs.length===1?'una tarea':rs.length+' tareas'} del ${fmt(f)}: ${rs.map(r=>r.titulo).join(', ')}. Quedó en rojo: no se hizo.`, 'tareas', 'alerta');
+    notificar(uid, `${rs.length===1?'Una tarea tuya del '+fmt(f)+' quedó':rs.length+' tareas tuyas del '+fmt(f)+' quedaron'} en rojo porque no ${rs.length===1?'la':'las'} respondiste: ${rs.map(r=>r.titulo).join(', ')}. Se le informó a ${userName(sup)||'tu superior'}.`, 'tareas', 'alerta');
+    try{ audit('Cerró tareas sin responder', 'Tareas diarias', `${userName(uid)} · ${fmt(f)} · ${rs.length}`, {user:'sistema'}); }catch(e){} });
+  return cambio;
+}
+function tRow(r, editable){
+  const e = T_EST[r.estado]; const asig = r.origen==='asignada';
+  return `<div class="trow ${r.estado}">
+    <div class="trow-t"><b>${esc(r.titulo)}</b>${r.detalle?`<div class="small muted">${esc(r.detalle)}</div>`:''}
+      <div class="row" style="gap:6px;margin-top:6px;flex-wrap:wrap"><span class="pill ${asig?'acc':''}">${asig?`Asignada por ${esc(userName(r.asignadaPor).split(' ')[0])}`:'Diaria'}</span><span class="pill ${e.c}">${e.l}${r.auto?' · automático':''}</span>${r.vence?`<span class="pill">Hasta ${esc(r.vence)} hs</span>`:''}</div>
+      ${r.motivo?`<div class="small" style="margin-top:6px"><b>Motivo:</b> ${esc(r.motivo)}</div>`:''}
+      ${ui.tNose===r.id?`<div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap"><input type="text" id="tMotivo" placeholder="¿Por qué no se puede? (lo ve tu superior)" style="flex:1;min-width:200px"><button class="btn sm" data-act="tnoseok" data-t="${r.id}">Enviar</button><button class="btn sm ghost" data-act="tnosecancel">Cancelar</button></div>`:''}</div>
+    ${editable?`<div class="tbtns">
+      <button class="tbtn ok ${r.estado==='hecha'?'on':''}" data-act="tresp" data-v="hecha" data-t="${r.id}" title="Completa">${ic('check','sm')}<span>Completa</span></button>
+      <button class="tbtn warn ${r.estado==='nose'?'on':''}" data-act="tnose" data-t="${r.id}" title="No se puede realizar">${ic('alert','sm')}<span>No se puede</span></button>
+      <button class="tbtn bad ${r.estado==='nohecha'?'on':''}" data-act="tresp" data-v="nohecha" data-t="${r.id}" title="No se hizo">${ic('x','sm')}<span>No se hizo</span></button></div>`:''}
+  </div>`;
+}
+function vTareas(){
+  const hoy = iso(today()), f = ui.tFecha || hoy, esHoy = f===hoy;
+  const subs = subordinados(); const sup = superiorDe(S.user); const tab = (ui.tTab==='equipo' && subs.length) ? 'equipo' : 'mias';
+  const pendVal = tPlan().filter(p=>p.estado==='pendiente' && subs.some(u=>u.id===p.user));
+  const tabs = [['mias','check','Mis tareas'], ...(subs.length?[['equipo','users',`Mi equipo${pendVal.length?` <span class="badge red">${pendVal.length}</span>`:''}`]]:[])];
+  let body = '';
+  if(tab==='mias'){
+    const del = tDia().filter(r=>r.user===S.user && r.fecha===f).sort((a,b)=>(a.origen==='asignada'?0:1)-(b.origen==='asignada'?0:1) || a.titulo.localeCompare(b.titulo));
+    const resp = del.filter(r=>r.estado!=='pendiente').length;
+    const plan = tPlan().filter(p=>p.user===S.user);
+    body = `<section class="card">
+      <div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:10px"><div><h2>${esHoy?'Hoy':fmtLargo(f)}</h2><div class="small muted">${del.length?`Respondiste ${resp} de ${del.length}.`:''} ${esHoy?'Lo que no respondas hoy queda en rojo (no se hizo) y se le avisa a '+esc(userName(sup)||'tu superior')+'.':''}</div></div>
+        <div class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn sm ghost" data-act="tdia" data-v="-1" title="Día anterior">${ic('back','sm')}</button><input type="date" id="tFecha" value="${f}" max="${hoy}" style="max-width:170px"><button class="btn sm ghost" data-act="tdia" data-v="1" title="Día siguiente" ${esHoy?'disabled':''}>${ic('next','sm')}</button>${esHoy?'':`<button class="btn sm" data-act="tdia" data-v="hoy">Hoy</button>`}</div></div>
+      ${!esHabilDia(f) && !del.length ? `<div class="empty small">${esc(motivoInhabil(f))[0].toUpperCase()+esc(motivoInhabil(f)).slice(1)}: no hay tareas diarias.</div>` : ''}
+      <div class="tlist">${del.map(r=>tRow(r, esHoy)).join('') || (esHabilDia(f)?`<div class="empty small">No hay tareas para este día. Agregá tus tareas diarias abajo: cuando ${esc(userName(sup)||'tu superior')} las valide, aparecen acá todos los días.</div>`:'')}</div>
+    </section>
+    <section class="card"><h2>Mis tareas diarias</h2><p class="small muted">Las tareas que hacés todos los días. ${sup?`Las valida ${esc(userName(sup))}: hasta que las valide no aparecen en tu lista del día.`:'Como no tenés un superior en el organigrama, quedan validadas al guardarlas.'}</p>
+      <div class="list">${plan.map(p=>`<div class="li"><div><b>${esc(p.titulo)}</b>${p.detalle?`<div class="small muted">${esc(p.detalle)}</div>`:''}<div class="small muted">${(p.dias||[]).length===5?'Lunes a viernes':DIAS_SEM.filter(([k])=>(p.dias||[]).includes(k)).map(x=>x[1]).join(', ')}${p.creadaPor && p.creadaPor!==p.user?` · la indicó ${esc(userName(p.creadaPor))}`:''}</div>${p.estado==='rechazada'&&p.comentario?`<div class="small"><b>Comentario:</b> ${esc(p.comentario)}</div>`:''}</div>
+        <div class="row" style="gap:6px"><span class="pill ${p.estado==='aprobada'?'grn':p.estado==='rechazada'?'red':'yel'}">${p.estado==='aprobada'?'Validada':p.estado==='rechazada'?'No validada':'Esperando validación'}</span>${p.creadaPor && p.creadaPor!==p.user?'':`<button class="btn sm ghost danger" data-act="tplandel" data-p="${p.id}" title="Quitar">${ic('trash','sm')}</button>`}</div></div>`).join('') || '<div class="empty small">Todavía no cargaste tareas diarias.</div>'}</div>
+      <div class="form"><label class="full">Nueva tarea diaria<input type="text" id="tpT" placeholder="Ej.: Revisar notificaciones del PJN"></label><label class="full">Detalle (opcional)<input type="text" id="tpD"></label>
+        <div class="full"><span class="small" style="font-weight:600">Días</span><div class="modchecks">${DIAS_SEM.map(([k,l])=>`<label class="modchk"><input type="checkbox" id="tpDia${k}" checked> ${l}</label>`).join('')}</div></div></div>
+      <div class="row"><button class="btn pri" data-act="tplanadd">${ic('plus','sm')} ${sup?'Enviar para validar':'Agregar'}</button></div></section>`;
+  }
+  if(tab==='equipo'){
+    const fq = ui.tFechaEq || hoy;
+    body = `${pendVal.length?`<section class="card" style="border-color:var(--warn,#b7791f)"><h2>Para validar</h2><div class="list">${pendVal.map(p=>`<div class="li" style="flex-wrap:wrap;gap:10px"><div style="flex:1;min-width:220px"><b>${esc(p.titulo)}</b> <span class="small muted">· ${esc(userName(p.user))}</span>${p.detalle?`<div class="small muted">${esc(p.detalle)}</div>`:''}<div class="small muted">${(p.dias||[]).length===5?'Lunes a viernes':DIAS_SEM.filter(([k])=>(p.dias||[]).includes(k)).map(x=>x[1]).join(', ')}</div>
+        ${ui.tRech===p.id?`<div class="row" style="gap:8px;margin-top:8px"><input type="text" id="tRechTxt" placeholder="Comentario para ${esc(userName(p.user).split(' ')[0])}" style="flex:1"><button class="btn sm danger" data-act="trechok" data-p="${p.id}">No validar</button></div>`:''}</div>
+        <div class="row" style="gap:6px"><button class="btn sm ok" data-act="tvalidar" data-p="${p.id}">${ic('check','sm')} Validar</button><button class="btn sm ghost" data-act="trech" data-p="${p.id}">No validar</button></div></div>`).join('')}</div></section>`:''}
+    <section class="card"><h2>Indicar una tarea</h2><p class="small muted">Le llega una notificación a la persona y le aparece en su lista.</p>
+      <div class="form"><label>Para<select id="taU">${subs.map(u=>`<option value="${u.id}">${esc(u.nombre)}</option>`).join('')}</select></label><label>Día<input type="date" id="taF" value="${hoy}" min="${hoy}"></label>
+        <label class="full">Tarea<input type="text" id="taT" placeholder="Ej.: Llamar al juzgado 4 por el oficio de Gómez"></label><label class="full">Detalle (opcional)<input type="text" id="taD"></label>
+        <label>Hasta qué hora (opcional)<input type="time" id="taH"></label>
+        <label style="display:flex;flex-direction:row;gap:10px;align-items:center;font-weight:500"><input type="checkbox" id="taRep" style="width:18px;height:18px;flex:none"> Que sea una tarea diaria (todos los días hábiles)</label></div>
+      <div class="row"><button class="btn pri" data-act="tasignar">${ic('send','sm')} Indicar tarea</button></div></section>
+    <section class="card"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:10px"><h2>${fq===hoy?'Cómo viene el día':fmtLargo(fq)}</h2><input type="date" id="tFechaEq" value="${fq}" max="${hoy}" style="max-width:170px"></div>
+      ${subs.map(u=>{ const rs = tDia().filter(r=>r.user===u.id && r.fecha===fq); const c = k => rs.filter(r=>r.estado===k).length; return `<details class="teq" ${ui.tEqOpen===u.id?'open':''} data-teq="${u.id}"><summary><div class="avatar" style="width:34px;height:34px;font-size:13px">${initials(u.nombre)}</div><b style="flex:1">${esc(u.nombre)}</b>
+        ${rs.length?`<span class="pill grn">${c('hecha')} completas</span>${c('nose')?`<span class="pill yel">${c('nose')} no se pueden</span>`:''}${c('nohecha')?`<span class="pill red">${c('nohecha')} no se hicieron</span>`:''}${c('pendiente')?`<span class="pill">${c('pendiente')} sin responder</span>`:''}`:'<span class="small muted">Sin tareas</span>'}</summary>
+        <div class="tlist">${rs.map(r=>tRow(r,false)).join('') || '<div class="empty small">No tiene tareas este día.</div>'}</div>
+        ${tPlan().filter(p=>p.user===u.id && p.estado==='aprobada').length?`<div class="small muted" style="padding:6px 4px">Tareas diarias validadas: ${tPlan().filter(p=>p.user===u.id && p.estado==='aprobada').map(p=>`${esc(p.titulo)} <button class="linkbtn" data-act="tplanbaja" data-p="${p.id}" title="Dejar de pedirla">quitar</button>`).join(' · ')}</div>`:''}</details>`; }).join('')}</section>`;
+  }
+  return `<div><h1>Tareas diarias</h1><p class="sub">Cada tarea se responde con <b style="color:var(--accent)">Completa</b>, <b style="color:#b7791f">No se puede realizar</b> o <b style="color:var(--danger)">No se hizo</b>. Si no la respondés en el día, queda en rojo sola y se le avisa a tu superior.</p></div>
+    ${tabs.length>1?`<div class="tabs">${tabs.map(([k,i,l])=>`<button class="${tab===k?'on':''}" data-act="ttab" data-v="${k}">${ic(i,'sm')} ${l}</button>`).join('')}</div>`:''}${body}`;
+}
+function tPendHoy(){ const hoy = iso(today()); return tDia().filter(r=>r.user===S.user && r.fecha===hoy && r.estado==='pendiente').length; }
+function tParaValidar(){ const subs = subordinados(); return tPlan().filter(p=>p.estado==='pendiente' && subs.some(u=>u.id===p.user)).length; }
+document.addEventListener('click', async ev => {
+  if(!S || !S.user) return;
+  const el = ev.target.closest('[data-act]'); if(!el) return; const a = el.dataset.act, d = el.dataset; const hoy = iso(today());
+  if(a==='ttab'){ ui.tTab = d.v; render(); return; }
+  if(a==='tdia'){ if(d.v==='hoy') ui.tFecha = hoy; else { const x = new Date((ui.tFecha||hoy)+'T12:00:00'); x.setDate(x.getDate()+(+d.v)); const n = iso(x); ui.tFecha = n>hoy?hoy:n; } render(); return; }
+  if(a==='tresp'){ const r = tDia().find(x=>x.id===d.t); if(!r || r.user!==S.user || r.fecha!==hoy) return; const old = {estado:r.estado, motivo:r.motivo};
+    r.estado = d.v; r.motivo = ''; r.auto = false; r.respondidaEn = new Date().toISOString(); ui.tNose = null;
+    if(d.v==='nohecha') notificar(superiorDe(S.user), `${userName(S.user)} marcó que no hizo: ${r.titulo} (${fmt(r.fecha)}).`, 'tareas', 'alerta');
+    save(); audit(d.v==='hecha'?'Completó una tarea':'Marcó una tarea como no hecha', 'Tareas diarias', r.titulo); render(); toast(d.v==='hecha'?'¡Bien! Tarea completa.':'Marcada: no se hizo. Se le avisó a tu superior.', ()=>{ r.estado = old.estado; r.motivo = old.motivo; save(); render(); }); return; }
+  if(a==='tnose'){ ui.tNose = d.t; render(); setTimeout(()=>{ const i = $('#tMotivo'); if(i) i.focus(); }, 30); return; }
+  if(a==='tnosecancel'){ ui.tNose = null; render(); return; }
+  if(a==='tnoseok'){ const r = tDia().find(x=>x.id===d.t); const m = ($('#tMotivo')||{}).value ? $('#tMotivo').value.trim() : ''; if(!m){ toast('Contá brevemente por qué no se puede'); return; }
+    r.estado = 'nose'; r.motivo = m; r.auto = false; r.respondidaEn = new Date().toISOString(); ui.tNose = null;
+    notificar(superiorDe(S.user), `${userName(S.user)} no puede realizar «${r.titulo}» (${fmt(r.fecha)}). Motivo: ${m}`, 'tareas', 'alerta');
+    save(); audit('Marcó que no se puede realizar una tarea', 'Tareas diarias', `${r.titulo}: ${m}`); render(); toast('Listo. Se le avisó a tu superior.'); return; }
+  if(a==='tplanadd'){ const t = $('#tpT').value.trim(); if(!t){ toast('Escribí la tarea'); $('#tpT').focus(); return; } const dias = DIAS_SEM.map(x=>x[0]).filter(k=>$('#tpDia'+k).checked); if(!dias.length){ toast('Elegí al menos un día'); return; }
+    const sup = superiorDe(S.user); const p = {id:'tp'+randId(8), user:S.user, titulo:t, detalle:$('#tpD').value.trim(), dias, estado: sup?'pendiente':'aprobada', creadaPor:S.user, creada:new Date().toISOString()};
+    if(!sup) p.aprobadaEn = hoy; tPlan().push(p);
+    if(sup) notificar(sup, `${userName(S.user)} propuso una tarea diaria para validar: «${t}».`, 'tareas', 'validar');
+    save(); audit('Propuso una tarea diaria', 'Tareas diarias', t); tareasMantener(); render(); toast(sup?`Enviada a ${userName(sup)} para validar`:'Tarea diaria agregada'); return; }
+  if(a==='tplandel'){ const i = tPlan().findIndex(x=>x.id===d.p); if(i<0) return; const p = tPlan()[i]; tPlan().splice(i,1); tDia().filter(r=>r.ref===p.id && r.fecha===hoy && r.estado==='pendiente').forEach(r=>tDia().splice(tDia().indexOf(r),1));
+    if(p.estado==='aprobada') notificar(superiorDe(S.user), `${userName(S.user)} quitó su tarea diaria «${p.titulo}».`, 'tareas');
+    save(); audit('Quitó una tarea diaria', 'Tareas diarias', p.titulo); render(); toast('Tarea quitada'); return; }
+  if(a==='tvalidar'){ const p = tPlan().find(x=>x.id===d.p); if(!p) return; p.estado = 'aprobada'; p.aprobadaEn = hoy; p.validadaPor = S.user; notificar(p.user, `${userName(S.user)} validó tu tarea diaria «${p.titulo}». Desde hoy aparece en tu lista.`, 'tareas', 'ok');
+    save(); audit('Validó una tarea diaria', 'Tareas diarias', `${userName(p.user)}: ${p.titulo}`); tareasMantener(); render(); toast('Tarea validada'); return; }
+  if(a==='trech'){ ui.tRech = d.p; render(); setTimeout(()=>{ const i = $('#tRechTxt'); if(i) i.focus(); }, 30); return; }
+  if(a==='trechok'){ const p = tPlan().find(x=>x.id===d.p); if(!p) return; p.estado = 'rechazada'; p.comentario = ($('#tRechTxt')||{}).value ? $('#tRechTxt').value.trim() : ''; p.validadaPor = S.user; ui.tRech = null;
+    notificar(p.user, `${userName(S.user)} no validó tu tarea diaria «${p.titulo}»${p.comentario?`: ${p.comentario}`:'.'}`, 'tareas', 'alerta');
+    save(); audit('No validó una tarea diaria', 'Tareas diarias', `${userName(p.user)}: ${p.titulo}`); render(); toast('Listo, se le avisó'); return; }
+  if(a==='tplanbaja'){ const p = tPlan().find(x=>x.id===d.p); if(!p) return; tPlan().splice(tPlan().indexOf(p),1); tDia().filter(r=>r.ref===p.id && r.fecha===hoy && r.estado==='pendiente').forEach(r=>tDia().splice(tDia().indexOf(r),1));
+    notificar(p.user, `${userName(S.user)} quitó la tarea diaria «${p.titulo}».`, 'tareas'); save(); audit('Quitó una tarea diaria de su equipo', 'Tareas diarias', `${userName(p.user)}: ${p.titulo}`); render(); toast('Tarea quitada'); return; }
+  if(a==='tasignar'){ const uid = $('#taU').value, t = $('#taT').value.trim(), f = $('#taF').value || hoy; if(!t){ toast('Escribí la tarea'); $('#taT').focus(); return; } if(f<hoy){ toast('Elegí hoy o un día futuro'); return; }
+    const det = $('#taD').value.trim(), hs = $('#taH').value;
+    if($('#taRep').checked){ tPlan().push({id:'tp'+randId(8), user:uid, titulo:t, detalle:det, dias:['1','2','3','4','5'], estado:'aprobada', aprobadaEn:f, creadaPor:S.user, validadaPor:S.user, creada:new Date().toISOString()});
+      notificar(uid, `${userName(S.user)} te indicó una tarea diaria: «${t}». Aparece en tu lista todos los días hábiles.`, 'tareas', 'tarea'); tareasMantener(); }
+    else { tDia().push({id:'td'+randId(8), user:uid, fecha:f, origen:'asignada', asignadaPor:S.user, titulo:t, detalle:det, vence:hs||'', estado:'pendiente'});
+      notificar(uid, `${userName(S.user)} te indicó una tarea para ${f===hoy?'hoy':'el '+fmt(f)}: «${t}»${hs?` (hasta las ${hs} hs)`:''}.`, 'tareas', 'tarea'); }
+    save(); audit('Indicó una tarea', 'Tareas diarias', `${userName(uid)}: ${t}`); render(); toast(`Listo: ${userName(uid).split(' ')[0]} ya tiene la tarea y una notificación`); return; }
+  // notificaciones
+  if(a==='nmenu'){ ui.nmenu = !ui.nmenu; ui.umenu = false; render(); return; }
+  if(a==='nabrir'){ const n = notifs().find(x=>x.id===d.n); if(n){ n.leida = true; save(); } ui.nmenu = false; if(n && n.link){ if(n.link==='tareas') ui.tTab = /validar|no respondió|no puede|marcó que no hizo|quitó su/.test(n.texto) && subordinados().length ? 'equipo' : 'mias'; location.hash = n.link; } render(); return; }
+  if(a==='nleidas'){ misNotifs().forEach(n=>n.leida = true); save(); render(); return; }
+});
+document.addEventListener('change', ev => { if(ev.target.id==='tFecha'){ ui.tFecha = ev.target.value || iso(today()); render(); } if(ev.target.id==='tFechaEq'){ ui.tFechaEq = ev.target.value || iso(today()); render(); } });
+document.addEventListener('toggle', ev => { const t = ev.target; if(t.matches && t.matches('details[data-teq]')){ if(t.open) ui.tEqOpen = t.dataset.teq; else if(ui.tEqOpen===t.dataset.teq) ui.tEqOpen = null; } }, true);
+function ejemplosTareas(d){
+  d.tareasPlan = d.tareasPlan || []; d.tareasDia = d.tareasDia || []; d.notifs = d.notifs || [];
+  const hab = []; for(let i=1; hab.length<2 && i<10; i++){ const f = dPlus(-i); if(!motivoInhabil(f)) hab.push(f); }
+  const ap = hab[1] || dPlus(-3);
+  d.tareasPlan.push(
+    {id:'tpej1', user:'lbrunelli', titulo:'Revisar el Boletín Oficial', detalle:'Normativa de prepagas y de la SSS.', dias:['1','2','3','4','5'], estado:'aprobada', aprobadaEn:ap, creadaPor:'lbrunelli', validadaPor:'dfraerman'},
+    {id:'tpej2', user:'lbrunelli', titulo:'Controlar notificaciones electrónicas del PJN', detalle:'', dias:['1','2','3','4','5'], estado:'aprobada', aprobadaEn:ap, creadaPor:'lbrunelli', validadaPor:'dfraerman'},
+    {id:'tpej3', user:'fzaurdo', titulo:'Actualizar el estado de las cautelares', detalle:'', dias:['1','3','5'], estado:'aprobada', aprobadaEn:ap, creadaPor:'fzaurdo', validadaPor:'dfraerman'},
+    {id:'tpej4', user:'fzaurdo', titulo:'Ordenar la bandeja de mails de Auditoría', detalle:'', dias:['1','2','3','4','5'], estado:'pendiente', creadaPor:'fzaurdo'});
+  if(hab[1]){ d.tareasDia.push({id:'tdej1', user:'lbrunelli', fecha:hab[1], origen:'diaria', ref:'tpej1', titulo:'Revisar el Boletín Oficial', detalle:'Normativa de prepagas y de la SSS.', estado:'hecha', respondidaEn:hab[1]+'T10:00:00'},
+    {id:'tdej2', user:'lbrunelli', fecha:hab[1], origen:'diaria', ref:'tpej2', titulo:'Controlar notificaciones electrónicas del PJN', detalle:'', estado:'nose', motivo:'El sistema del PJN estuvo caído toda la mañana.', respondidaEn:hab[1]+'T13:00:00'}); }
+  if(hab[0]) d.tareasDia.push({id:'tdej3', user:'lbrunelli', fecha:hab[0], origen:'diaria', ref:'tpej1', titulo:'Revisar el Boletín Oficial', detalle:'Normativa de prepagas y de la SSS.', estado:'hecha', respondidaEn:hab[0]+'T09:40:00'});
+  d.tareasDia.push({id:'tdej4', user:'lbrunelli', fecha:iso(today()), origen:'asignada', asignadaPor:'dfraerman', titulo:'Pasar en limpio el informe de Benítez', detalle:'Antes de presentarlo, revisalo conmigo.', vence:'16:00', estado:'pendiente'});
+  d.notifs.push({id:'nej1', para:'lbrunelli', de:'dfraerman', texto:'Deborah Fraerman te indicó una tarea para hoy: «Pasar en limpio el informe de Benítez» (hasta las 16:00 hs).', link:'tareas', tipo:'tarea', ts:new Date().toISOString(), leida:false},
+    {id:'nej2', para:'dfraerman', de:'fzaurdo', texto:'Florencia Zaurdo propuso una tarea diaria para validar: «Ordenar la bandeja de mails de Auditoría».', link:'tareas', tipo:'validar', ts:new Date().toISOString(), leida:false});
+}
 
 // ---------- actualización automática: si hay una versión nueva publicada, se carga sola ----------
 const APP_VERSION = (document.querySelector('meta[name=fojas-version]')||{}).content || '';
