@@ -621,6 +621,8 @@ function unir(base, otro){
   let next = Math.max(base.nextId||1, ...base.exps.map(e=>+e.id||0)) + 1; const sum = [];
   otro.exps.forEach(e=>{ const n = String(e.numero||'').trim().toLowerCase(); if(n && !known.has(n)){ base.exps.push({...e, id:next++}); known.add(n); sum.push(e.afiliado); } });
   base.nextId = next;
+  (otro.docCats||[]).forEach(c=>{ base.docCats = base.docCats||[]; if(!base.docCats.some(x=>x.id===c.id)) base.docCats.push(c); });
+  base.catEdit = {...(otro.catEdit||{}), ...(base.catEdit||{})};
   (otro.modelos||[]).forEach(m=>{ base.modelos = base.modelos||[]; if(!base.modelos.some(x=>x.id===m.id)) base.modelos.push(m); });
   base._sumados = (base._sumados||[]).concat(sum);
   return base;
@@ -960,6 +962,52 @@ const UP_TIPOS = [
   {id:'otro', l:'Otro', doc:'Otro documento', mov:'Interno'}
 ];
 let UP = null;
+// categorías: las de fábrica (se pueden renombrar) + las que crea el equipo (se renombran, se cambian y se eliminan)
+const upTipos = () => { const ov = S.catEdit||{}; const otro = UP_TIPOS.find(t=>t.id==='otro');
+  return [...UP_TIPOS.filter(t=>t.id!=='otro').map(t=>({...t, l:ov[t.id]||t.l, base:t.id, propia:false})),
+    ...(S.docCats||[]).map(c=>({id:c.id, l:c.l, doc:c.l, mov:c.l, base:c.base||'otro', propia:true})),
+    {...otro, l:ov.otro||otro.l, base:'otro', propia:false}]; };
+const upTipo = id => upTipos().find(t=>t.id===id) || upTipos().find(t=>t.id==='otro');
+let CATS = null;
+function catsOpen(){ CATS = {list: upTipos().map(t=>({id:t.id, l:t.l, base:t.base, propia:t.propia, def:(UP_TIPOS.find(x=>x.id===t.id)||{}).l})), del:null}; drawCats(); }
+function catRead(){ if(!CATS) return; document.querySelectorAll('[data-catl]').forEach(el=>{ const c = CATS.list.find(x=>x.id===el.dataset.catl); if(c) c.l = el.value; }); document.querySelectorAll('[data-catb]').forEach(el=>{ const c = CATS.list.find(x=>x.id===el.dataset.catb); if(c) c.base = el.value; }); }
+function drawCats(){
+  const bases = UP_TIPOS.map(t=>`<option value="${t.id}">${esc((S.catEdit||{})[t.id]||t.l)}</option>`).join('');
+  showModal(`
+    <div class="row" style="justify-content:space-between"><h2 style="font-size:22px">Categorías de documentos</h2><button class="btn ghost sm" data-act="catclose">${UP?'Volver al documento':'Cerrar'}</button></div>
+    <p class="muted small">Son las opciones de «¿A qué corresponde este documento?». Las podés renombrar. Las que crearon ustedes también se pueden eliminar, y elegís cómo las trata Fojas para proponer cambios en el expediente (por ejemplo, un «Oficio a perito» se puede tratar como cédula, así toma los plazos).</p>
+    <div class="list">${CATS.list.map(c=>`<div class="li" style="flex-wrap:wrap;gap:8px;align-items:center">
+      <input type="text" data-catl="${c.id}" value="${esc(c.l)}" style="flex:1;min-width:200px" aria-label="Nombre de la categoría">
+      ${c.propia?`<label class="small muted" style="display:flex;gap:6px;align-items:center">Se trata como <select data-catb="${c.id}" style="max-width:220px">${bases.replace(`value="${c.base}"`,`value="${c.base}" selected`)}</select></label>`
+        :`<span class="pill" title="Categoría de fábrica: se puede renombrar">De fábrica</span>${c.def && c.l!==c.def?`<button type="button" class="btn ghost sm" data-act="catreset" data-c="${c.id}">Volver a «${esc(c.def)}»</button>`:''}`}
+      ${c.propia?(CATS.del===c.id?`<span class="row" style="gap:6px"><b class="small">¿Eliminar?</b><button type="button" class="btn sm danger-solid" data-act="catdelok" data-c="${c.id}">Sí, eliminar</button><button type="button" class="btn sm" data-act="catdelno">Cancelar</button></span>`
+        :`<button type="button" class="btn ghost sm" data-act="catdel" data-c="${c.id}" title="Eliminar categoría">${ic('trash','sm')}</button>`):''}
+    </div>`).join('')}
+      <div class="li" style="gap:8px"><input type="text" id="catNew" placeholder="Nueva categoría (ej.: Oficio a perito)" style="flex:1;min-width:200px"><button type="button" class="btn sm" data-act="catadd">${ic('plus','sm')} Agregar</button></div>
+    </div>
+    <div class="row" style="justify-content:flex-end"><button class="btn ok big" data-act="catsave">${ic('check')} Guardar cambios</button></div>`);
+}
+function nuevaCategoria(nombre, base){
+  nombre = String(nombre||'').trim().replace(/\s+/g,' '); if(!nombre) return null;
+  const ya = upTipos().find(t=>normTxt(t.l)===normTxt(nombre)); if(ya) return ya.id;
+  S.docCats = S.docCats || []; const c = {id:'c'+randId(6), l:nombre, base:base||'otro', autor:S.user, fecha:iso(today())};
+  S.docCats.push(c); save(); audit('Creó una categoría de documento', 'Categorías', nombre); return c.id;
+}
+function catsSave(){
+  catRead(); const cambios = [];
+  S.catEdit = S.catEdit || {}; S.docCats = S.docCats || [];
+  CATS.list.forEach(c=>{ const l = String(c.l||'').trim().replace(/\s+/g,' ');
+    if(!c.propia){ const def = c.def; const prev = S.catEdit[c.id]||def; if(!l || l===def) delete S.catEdit[c.id]; else S.catEdit[c.id] = l; if((l||def)!==prev) cambios.push(`${prev} → ${l||def}`); return; }
+    let x = S.docCats.find(y=>y.id===c.id);
+    if(!x){ if(!l) return; x = {id:c.id, l, base:c.base||'otro', autor:S.user, fecha:iso(today())}; S.docCats.push(x); cambios.push(`nueva: ${l}`); return; }
+    if(l && l!==x.l){ cambios.push(`${x.l} → ${l}`); x.l = l; S.exps.forEach(e=>{ (e.docs||[]).forEach(d=>{ if(d.cat===x.id) d.tipo = l; }); (e.movimientos||[]).forEach(m=>{ if(m.cat===x.id) m.tipo = l; }); }); }
+    if(c.base && c.base!==x.base){ x.base = c.base; cambios.push(`${x.l}: se trata como ${upTipo(c.base).l}`); }
+  });
+  save(); if(cambios.length) audit('Modificó categorías de documento', 'Categorías', cambios.join(' · '));
+  const back = !!UP; CATS = null;
+  if(back){ if(!upTipos().some(t=>t.id===UP.tipo)) UP.tipo = 'otro'; upSugerir(); drawUp(); } else { closeModal(); render(); }
+  toast(cambios.length?'Categorías guardadas':'No hubo cambios');
+}
 const MESES = {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,setiembre:9,octubre:10,noviembre:11,diciembre:12};
 function fechaDelTexto(t){ const m = String(t||'').match(/\b(\d{1,2})\s+de\s+(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre)\s+(?:de|del)\s+(\d{4})/i); if(m) return `${m[3]}-${String(MESES[m[2].toLowerCase()]).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`; const m2 = String(t||'').match(/\b(\d{1,2})\/(\d{1,2})\/(20\d{2})\b/); if(m2) return `${m2[3]}-${m2[2].padStart(2,'0')}-${m2[1].padStart(2,'0')}`; return null; }
 function upTipoSugerido(text, name){
@@ -982,39 +1030,39 @@ function upResumen(text, tipo){
   return (clave || frases.find(f=>f.length>30 && !/^[A-ZÁÉÍÓÚa-z ]+,\s*\d{1,2}\s+de\s+\w+\s+de\s+\d{4}\.?$/.test(f)) || '').replace(/^(?:Buenos Aires|[A-ZÁÉÍÓÚ][a-záéíóú]+(?:\s[A-ZÁÉÍÓÚ][a-záéíóú]+)*),\s*\d{1,2}\s+de\s+\w+\s+de\s+\d{4}\.?\s*/,'').replace(/^(?:[A-Z]{3}\s*\d+\/\d{4}\s*)/,'').slice(0,220);
 }
 function upSugerir(){
-  const u = UP, it = u.queue[u.i], e = expById(u.exp); const text = it.text||'';
-  const x = text ? extractFields(text, [{text, tipo:UP_TIPOS.find(t=>t.id===u.tipo).doc}]) : {};
+  const u = UP, it = u.queue[u.i], e = expById(u.exp); const text = it.text||''; const bt = upTipo(u.tipo).base;
+  const x = text ? extractFields(text, [{text, tipo:upTipo(u.tipo).doc}]) : {};
   const ac = {etapa:{on:false, val:e.estado}, cautelar:{on:false}, plazos:[], cumplir:[]};
   const idx = s => ESTADOS.indexOf(s), cur = idx(e.estado);
   const proponer = s => { if(idx(s) > cur || s==='Archivado'){ ac.etapa = {on:true, val:s}; } };
-  if(u.tipo==='cautelar' || (x.cautelar && /cedula|resolucion/.test(u.tipo))){ if(!e.cautelar) ac.cautelar.on = true; proponer('Cautelar otorgada'); }
-  if(u.tipo==='sentencia') proponer('Sentencia');
+  if(bt==='cautelar' || (x.cautelar && /cedula|resolucion/.test(bt))){ if(!e.cautelar) ac.cautelar.on = true; proponer('Cautelar otorgada'); }
+  if(bt==='sentencia') proponer('Sentencia');
   if(/abr[ae]\w*\s+a\s+prueba|[aá]brase\s+a\s+prueba|apertura\s+a\s+prueba/i.test(text)) proponer('En prueba');
   if(/autos?\s+para\s+sentencia|pasen\s+los\s+autos\s+a\s+(dictar\s+)?sentencia|llamamiento\s+de\s+autos/i.test(text)) proponer('Para sentencia');
   if(/arch[ií]vese|arch[ií]vense|archivo\s+de\s+las\s+actuaciones/i.test(text)) proponer('Archivado');
-  if(/informe\s+circunstanciado|art(?:[ií]culo|\.)?\s*8/i.test(text) && /cedula|resolucion/.test(u.tipo) && cur < idx('Informe art. 8 pendiente') && !e.cautelar) proponer('Informe art. 8 pendiente');
+  if(/informe\s+circunstanciado|art(?:[ií]culo|\.)?\s*8/i.test(text) && /cedula|resolucion/.test(bt) && cur < idx('Informe art. 8 pendiente') && !e.cautelar) proponer('Informe art. 8 pendiente');
   // plazos nuevos que da el juzgado
-  if(/cedula|resolucion|cautelar|sentencia/.test(u.tipo)){
+  if(/cedula|resolucion|cautelar|sentencia/.test(bt)){
     const nuevos = [];
     if(x.plazoDesc && x.plazoFecha) nuevos.push({desc:x.plazoDesc, vence:x.plazoFecha, regla:x.plazoRegla, nota:x.plazoNota});
     (x.extra||[]).forEach(p=>nuevos.push(p));
-    if(u.tipo==='sentencia' && !nuevos.length){ const r = {modo:'habiles', cant:5, desde:iso(today())}; nuevos.push({desc:'Evaluar apelación de la sentencia', vence:calcPlazo(r).vence, regla:r, nota:'Te proponemos 5 días hábiles para evaluar la apelación. Verificá el plazo que corresponda.'}); }
+    if(bt==='sentencia' && !nuevos.length){ const r = {modo:'habiles', cant:5, desde:iso(today())}; nuevos.push({desc:'Evaluar apelación de la sentencia', vence:calcPlazo(r).vence, regla:r, nota:'Te proponemos 5 días hábiles para evaluar la apelación. Verificá el plazo que corresponda.'}); }
     const fd = fechaDelTexto(text); if(fd && fd > iso(today())) nuevos.forEach(p=>{ if(p.regla){ p.regla = {...p.regla, desde:fd}; p.vence = calcPlazo(p.regla).vence; p.nota = (p.nota||'').replace('desde hoy', `desde la fecha del documento (${fmt(fd)})`); } });
     nuevos.forEach(p=>{ if(!e.plazos.some(q=>!q.hecho && q.desc===p.desc)) ac.plazos.push({on:true, ...p}); });
   }
   // plazos pendientes que este documento cumple
   const pend = e.plazos.map((p,i)=>({p,i})).filter(o=>!o.p.hecho);
   const marcar = re => pend.filter(o=>re.test(o.p.desc)).forEach(o=>{ if(!ac.cumplir.some(c=>c.idx===o.i)) ac.cumplir.push({on:true, idx:o.i, desc:o.p.desc}); });
-  if(u.tipo==='propio'){
+  if(bt==='propio'){
     if(/informe|circunstanciado/i.test(text)) marcar(/informe/i);
     if(/acredit\w*\s+cumplimiento|cumplimiento\s+de\s+(la\s+)?medida/i.test(text)) marcar(/cautelar|intimaci/i);
     if(/apela|recurso/i.test(text)) marcar(/apela/i);
     if(/contesta|traslado/i.test(text)) marcar(/traslado/i);
     if(/pr[oó]rroga|ampliaci[oó]n\s+de\s+plazo/i.test(text)) {}
   }
-  if(u.tipo==='cumplimiento') marcar(/cautelar|intimaci|cumplir/i);
+  if(bt==='cumplimiento') marcar(/cautelar|intimaci|cumplir/i);
   u.ac = ac;
-  if(!u.descEditada) u.desc = upResumen(text, u.tipo) || `Se incorpora ${UP_TIPOS.find(t=>t.id===u.tipo).l.toLowerCase()}: ${it.file.name}.`;
+  if(!u.descEditada) u.desc = upResumen(text, upTipo(u.tipo).base) || `Se incorpora ${upTipo(u.tipo).l.toLowerCase()}: ${it.file.name}.`;
   if(!u.fechaEditada) u.fecha = fechaDelTexto(text) || iso(today());
 }
 async function addFiles(e, files){
@@ -1037,8 +1085,14 @@ function drawUp(){
   showModal(`
     <div class="row" style="justify-content:space-between"><span class="small muted">${u.queue.length>1?`Documento ${u.i+1} de ${u.queue.length} · `:''}${esc(e.afiliado)} · ${esc(e.numero)}</span><button class="btn ghost sm" data-act="upcancel">Cancelar</button></div>
     <div class="docrow"><div class="ico a" style="width:40px;height:40px">${ic('file')}</div><div style="flex:1;min-width:0"><b style="word-break:break-all">${esc(it.file.name)}</b><div class="small muted">${it.paginas?`${it.paginas} página${it.paginas>1?'s':''} leída${it.paginas>1?'s':''}`:(it.text?'Leído':'No se pudo leer el contenido')}</div></div><button type="button" class="btn sm" data-act="upver">${ic('search','sm')} Ver</button></div>
-    <h2 style="font-size:22px">¿A qué corresponde este documento?</h2>
-    <div class="opts">${UP_TIPOS.map(t=>`<button type="button" class="opt ${u.tipo===t.id?'on':''}" data-uptipo="${t.id}">${esc(t.l)}${u.tipoSug===t.id&&it.text?'<div class="small" style="font-weight:500;opacity:.75;margin-top:2px">Sugerido por el contenido</div>':''}</button>`).join('')}</div>
+    <div class="row" style="justify-content:space-between;align-items:baseline"><h2 style="font-size:22px">¿A qué corresponde este documento?</h2><button type="button" class="btn ghost sm" data-act="upcats">${ic('pen','sm')} Editar categorías</button></div>
+    <div class="opts">${upTipos().map(t=>`<button type="button" class="opt ${u.tipo===t.id?'on':''}" data-uptipo="${t.id}">${esc(t.l)}${u.tipoSug===t.id&&it.text?'<div class="small" style="font-weight:500;opacity:.75;margin-top:2px">Sugerido por el contenido</div>':''}${t.propia?'<div class="small" style="font-weight:500;opacity:.75;margin-top:2px">Creada por el equipo</div>':''}</button>`).join('')}</div>
+    ${u.tipo==='otro'?`<div class="card" style="box-shadow:none;background:var(--sunken);display:flex;flex-direction:column;gap:10px">
+      <b>¿No está en la lista? Creá una categoría nueva</b>
+      <div class="row" style="gap:8px;flex-wrap:wrap"><input type="text" id="upNewCat" placeholder="Ej.: Oficio a perito, Pericia médica, Carta documento" style="flex:1;min-width:220px">
+        <label class="small muted" style="display:flex;gap:6px;align-items:center">Se trata como <select id="upNewBase" style="max-width:220px">${UP_TIPOS.map(t=>`<option value="${t.id}" ${t.id==='otro'?'selected':''}>${esc(upTipo(t.id).l)}</option>`).join('')}</select></label>
+        <button type="button" class="btn pri sm" data-act="upnewcat">${ic('plus','sm')} Crear y usar</button></div>
+      <span class="hint">Queda guardada para todo el equipo y la vas a ver en la lista la próxima vez. «Se trata como» le dice a Fojas qué cambios proponer (plazos, etapa, cautelar).</span></div>`:''}
     <div class="form">
       <label>Fecha del documento<input type="date" id="upFecha" value="${u.fecha}"></label>
       <label class="full">Qué dice, en una línea <span class="hint">queda como novedad del expediente</span><input type="text" id="upDesc" value="${esc(u.desc)}"></label>
@@ -1064,10 +1118,10 @@ function upRead(){
   document.querySelectorAll('[data-upplazovence]').forEach(el=>{ const p = u.ac.plazos[+el.dataset.upplazovence]; if(el.value!==p.vence){ p.vence = el.value; p.regla = null; } });
 }
 async function upSave(){
-  upRead(); const u = UP, it = u.queue[u.i], e = expById(u.exp), ac = u.ac, tipo = UP_TIPOS.find(t=>t.id===u.tipo);
+  upRead(); const u = UP, it = u.queue[u.i], e = expById(u.exp), ac = u.ac, tipo = upTipo(u.tipo);
   const fid = await saveFileBlob(it.file, it.text);
-  e.docs.push({nombre:it.file.name, fid, tipo:tipo.doc, fecha:u.fecha||iso(today()), paginas:it.paginas, size: it.file.size>1e6?(it.file.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(it.file.size/1000))+' KB'});
-  e.movimientos.push({fecha:u.fecha||iso(today()), tipo:tipo.mov, desc:u.desc || `Se incorpora ${tipo.l.toLowerCase()}.`, user:S.user});
+  e.docs.push({nombre:it.file.name, fid, tipo:tipo.doc, ...(tipo.propia?{cat:tipo.id}:{}), fecha:u.fecha||iso(today()), paginas:it.paginas, size: it.file.size>1e6?(it.file.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(it.file.size/1000))+' KB'});
+  e.movimientos.push({fecha:u.fecha||iso(today()), tipo:tipo.mov, ...(tipo.propia?{cat:tipo.id}:{}), desc:u.desc || `Se incorpora ${tipo.l.toLowerCase()}.`, user:S.user});
   if(it.text){ const nf = flagsFromText(it.text); e.flags = e.flags || {}; for(const k in nf) if(nf[k]) e.flags[k] = true; }
   const hechos = [`documento guardado como ${tipo.l.toLowerCase()}`];
   if(ac.cautelar.on && !e.cautelar){ e.cautelar = true; hechos.push('medida cautelar registrada'); }
@@ -1166,7 +1220,7 @@ async function migrate(d){
   d.users = Array.isArray(d.users) && d.users.length ? d.users : base.users;
   base.users.forEach(u=>{ if(!d.users.some(x=>x.id===u.id)) d.users.push(u); });
   d.teams = Array.isArray(d.teams) ? d.teams : base.teams;
-  d.lock = d.lock || {}; d.toured = d.toured || {}; d.modelos = Array.isArray(d.modelos) ? d.modelos : []; d.papelera = Array.isArray(d.papelera) ? d.papelera : []; d.borrados = Array.isArray(d.borrados) ? d.borrados : []; d.config = d.config || {}; d.audit = Array.isArray(d.audit) ? d.audit : [];
+  d.lock = d.lock || {}; d.toured = d.toured || {}; d.modelos = Array.isArray(d.modelos) ? d.modelos : []; d.docCats = Array.isArray(d.docCats) ? d.docCats : []; d.catEdit = d.catEdit || {}; d.papelera = Array.isArray(d.papelera) ? d.papelera : []; d.borrados = Array.isArray(d.borrados) ? d.borrados : []; d.config = d.config || {}; d.audit = Array.isArray(d.audit) ? d.audit : [];
   d.modules = {...base.modules, ...(d.modules||{})};
   d.exps = (d.exps||[]).map(e=>migExp(e, d.users));
   d.nextId = Math.max(d.nextId||0, ...d.exps.map(e=>+e.id||0)) + 1;
@@ -1473,6 +1527,7 @@ function vExpediente(id){
   if(t==='documentos') body = `
     <label class="drop" id="drop" for="fileIn">${ic('upload','lg')}<b>Subí un documento nuevo del expediente</b><span class="small">Arrastralo acá o tocá para elegirlo. Después te preguntamos a qué corresponde (cédula, resolución, sentencia, escrito, prueba…) y actualizamos el expediente.</span></label>
     <input type="file" id="fileIn" multiple hidden>
+    <div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost sm" data-act="upcats">${ic('pen','sm')} Categorías de documentos</button></div>
     <div>${e.docs.map((d,di)=>`<div class="doc"><div class="ico a" style="width:40px;height:40px">${ic('file')}</div><div style="flex:1;min-width:0"><button class="linkbtn" data-act="vdoc" data-e="${e.id}" data-di="${di}"><b>${esc(d.nombre)}</b></button><div class="small muted">${esc(d.tipo)} · ${fmt(d.fecha)} · ${esc(d.size)}${d.paginas?` · ${d.paginas} página${d.paginas>1?'s':''} leída${d.paginas>1?'s':''}`:''}</div></div><button class="btn sm" data-act="vdoc" data-e="${e.id}" data-di="${di}">${ic('search','sm')} Ver</button>${canDelete(e)?`<button class="btn sm ghost danger" data-act="deldoc" data-e="${e.id}" data-di="${di}" title="Eliminar documento" aria-label="Eliminar ${esc(d.nombre)}">${ic('trash','sm')} Eliminar</button>`:''}</div>`).join('') || '<div class="empty small">Todavía no hay documentos.</div>'}</div>`;
   if(t==='plazos') body = `
     ${ui.addPlazo?`<form class="form card" id="plForm" style="box-shadow:none;background:var(--sunken)">
@@ -2617,6 +2672,15 @@ document.addEventListener('click', async ev => {
   const a = d.act;
   if(a==='close') closeModal();
   if(a==='upcancel'){ UP = null; closeModal(); }
+  if(a==='upnewcat' && UP){ upRead(); const n = ($('#upNewCat')||{}).value||''; if(!n.trim()){ toast('Escribí el nombre de la categoría'); const f=$('#upNewCat'); if(f) f.focus(); return; } const id = nuevaCategoria(n, ($('#upNewBase')||{}).value); UP.tipo = id; if(!UP.descEditada) UP.desc = ''; upSugerir(); drawUp(); toast(`Categoría «${upTipo(id).l}» creada`); }
+  if(a==='upcats'){ if(UP) upRead(); catsOpen(); }
+  if(a==='catclose'){ CATS = null; if(UP) drawUp(); else closeModal(); }
+  if(a==='catdel' && CATS){ catRead(); CATS.del = d.c; drawCats(); }
+  if(a==='catdelno' && CATS){ catRead(); CATS.del = null; drawCats(); }
+  if(a==='catreset' && CATS){ catRead(); const c = CATS.list.find(x=>x.id===d.c); if(c) c.l = c.def; drawCats(); }
+  if(a==='catdelok' && CATS){ catRead(); const c = CATS.list.find(x=>x.id===d.c); S.docCats = (S.docCats||[]).filter(x=>x.id!==d.c); CATS.list = CATS.list.filter(x=>x.id!==d.c); CATS.del = null; save(); audit('Eliminó una categoría de documento', 'Categorías', c?c.l:d.c); drawCats(); toast('Categoría eliminada. Los documentos que ya la tenían la conservan.'); }
+  if(a==='catadd' && CATS){ catRead(); const n = (($('#catNew')||{}).value||'').trim(); if(!n) { const f=$('#catNew'); if(f) f.focus(); return; } if(CATS.list.some(x=>normTxt(x.l)===normTxt(n))){ toast('Ya existe una categoría con ese nombre'); return; } CATS.list.splice(CATS.list.length-1, 0, {id:'c'+randId(6), l:n, base:'otro', propia:true}); drawCats(); }
+  if(a==='catsave' && CATS) catsSave();
   if(a==='upsave' && UP) await upSave();
   if(a==='upver' && UP){ upRead(); VIEW_BACK = 'up'; openViewer({preview:UP.queue[UP.i].pv, meta:{}}); }
   if(a==='upaddplazo' && UP){ upRead(); const r = {modo:'habiles', cant:5, desde:iso(today())}; UP.ac.plazos.push({on:true, desc:'', vence:calcPlazo(r).vence, regla:r}); drawUp(); }
