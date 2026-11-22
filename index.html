@@ -1658,8 +1658,8 @@ function vExpediente(id){
       <button class="btn ghost" data-act="plazoedit" data-e="${e.id}" data-i="${e.plazos.indexOf(p)}">${ic('cal','sm')} Modificar plazo</button></div>
   </section>`:`<section class="next"><div class="ico g">${ic('check','lg')}</div><div class="txt"><div class="lbl">Lo próximo</div><h2>No hay nada pendiente</h2><div class="muted">Cuando llegue una novedad, cargala para no perder el hilo.</div></div><button class="btn big" data-act="addplazo" data-tabgo="plazos">${ic('plus')} Agregar plazo</button></section>`}
 
-  <section class="card"><div class="row" style="justify-content:space-between"><h3>¿En qué etapa está?</h3><span class="small muted">Tocá una etapa para cambiarla</span></div>
-    <div class="steps">${ESTADOS.map((s,i)=>`<button class="step ${i<si?'done':i===si?'cur':''} ${s==='Cautelar otorgada'?(e.cautelar?'caut-si':'caut-no'):''}" data-estado="${i}" title="${s==='Cautelar otorgada'?(e.cautelar?'Tiene medida cautelar':'No tiene medida cautelar'):esc(s)}"><span class="dot">${s==='Cautelar otorgada'?(e.cautelar?'✓':'✕'):(i<si?'✓':i+1)}</span>${s==='Cautelar otorgada'?(e.cautelar?'Con cautelar':'Sin cautelar'):ESTADO_CORTO[i]}</button>`).join('')}</div>
+  <section class="card"><div class="row" style="justify-content:space-between"><h3>¿En qué etapa está?</h3><span class="small muted">Tocá una etapa para cambiarla · tocá la cautelar para marcar si tiene o no</span></div>
+    <div class="steps">${ESTADOS.map((s,i)=>`<button class="step ${i<si?'done':i===si?'cur':''} ${s==='Cautelar otorgada'?(e.cautelar?'caut-si':'caut-no'):''}" data-estado="${i}" title="${s==='Cautelar otorgada'?(e.cautelar?'Tiene medida cautelar. Tocá para marcar que no tiene':'No tiene medida cautelar. Tocá para marcar que tiene'):esc(s)}"><span class="dot">${s==='Cautelar otorgada'?(e.cautelar?'✓':'✕'):(i<si?'✓':i+1)}</span>${s==='Cautelar otorgada'?(e.cautelar?'Con cautelar':'Sin cautelar'):ESTADO_CORTO[i]}</button>`).join('')}</div>
     <div class="row small muted" style="gap:14px"><span><span class="legend" style="background:var(--accent)"></span> Etapa cumplida</span><span><span class="legend" style="background:var(--ok)"></span> Con medida cautelar</span><span><span class="legend" style="background:var(--danger)"></span> Sin medida cautelar</span></div>
   </section>
 
@@ -2750,6 +2750,12 @@ document.addEventListener('click', async ev => {
   if(d.tab){ ui.tab = d.tab; render(); return; }
   if(d.filtro){ ui.filtro = d.filtro; render(); return; }
   if(d.riesgo && e){ const old=e.riesgo; if(old===d.riesgo) return; e.riesgo = d.riesgo; save(); audit('Cambió el riesgo', e.numero, `${old} → ${d.riesgo}`); render(); toast('Riesgo actualizado'); return; }
+  if(d.estado!==undefined && e && ESTADOS[+d.estado]==='Cautelar otorgada'){ const old = e.estado, oldC = !!e.cautelar;
+    e.cautelar = !oldC;
+    if(e.cautelar && old==='Demanda') e.estado = 'Cautelar otorgada';
+    if(!e.cautelar && old==='Cautelar otorgada') e.estado = 'Demanda';
+    save(); audit(e.cautelar?'Marcó que tiene medida cautelar':'Marcó que no tiene medida cautelar', e.numero, e.estado!==old?`Etapa: ${old} → ${e.estado}`:'Sin cambio de etapa'); render();
+    toast(e.cautelar?'Marcado: tiene medida cautelar.':'Marcado: no tiene medida cautelar.', ()=>{ e.cautelar = oldC; e.estado = old; save(); audit('Deshizo cambio de cautelar', e.numero, oldC?'Vuelve a: con cautelar':'Vuelve a: sin cautelar'); render(); }); return; }
   if(d.estado!==undefined && e){ const nuevo = ESTADOS[+d.estado], old = e.estado, oldC = e.cautelar; if(nuevo===old && (nuevo!=='Cautelar otorgada' || e.cautelar)) return; e.estado = nuevo; if(nuevo==='Cautelar otorgada') e.cautelar = true; save(); audit('Cambió la etapa', e.numero, `${old} → ${nuevo}${nuevo==='Cautelar otorgada'&&!oldC?' (con medida cautelar)':''}`); render();
     toast(`Etapa cambiada a "${nuevo}".`, ()=>{ e.estado = old; e.cautelar = oldC; save(); audit('Deshizo cambio de etapa', e.numero, `${nuevo} → ${old}`); render(); }); return; }
   if(d.ia && e){ ui.ia = iaText(d.ia, e); audit('Usó el asistente', e.numero, {resumen:'Resumen del caso', paso:'Próximos pasos', riesgo:'Evaluación de riesgo'}[d.ia]); render(); return; }
