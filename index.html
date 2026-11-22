@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.11">
+<meta name="fojas-version" content="2026-11-22.12">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -58,7 +58,23 @@ svg.i.lg{width:30px;height:30px}
 .main{display:flex;flex-direction:column;min-width:0;height:100%;overflow:hidden}
 .top{display:flex;align-items:center;gap:14px;padding:12px 28px;background:var(--surface);border-bottom:1px solid var(--line);flex-wrap:wrap}
 .who{display:flex;align-items:center;gap:10px;margin-left:auto}
-.umenu-wrap{position:relative} .nmenu-wrap{position:relative}
+.umenu-wrap{position:relative}
+.cttipos{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.cttipo{display:flex;flex-direction:column;gap:4px;text-align:left;border:1.5px solid var(--line);border-radius:14px;padding:14px;background:var(--surface);cursor:pointer;font:inherit;color:var(--ink)}
+.cttipo span{font-size:13px;color:var(--muted);line-height:1.4} .cttipo:hover{border-color:var(--accent)} .cttipo.on{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 2px var(--accent) inset}
+.ctdocs{display:flex;flex-direction:column;gap:8px} .ctdoc{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden} .seg button{border:0;background:var(--surface);padding:7px 10px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink)} .seg button+button{border-left:1.5px solid var(--line)} .seg button.on{background:var(--accent);color:#fff}
+.ctdrop{display:flex;flex-direction:column;align-items:center;gap:6px;border:2px dashed var(--line);border-radius:16px;padding:26px;text-align:center;cursor:pointer;background:var(--sunken);color:var(--ink)} .ctdrop:hover,.ctdrop.over{border-color:var(--accent);background:var(--accent-soft)} .ctdrop.sm{padding:14px}
+.ctcarga,.ctasig{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.ctper{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--surface);cursor:pointer;font:inherit;color:var(--ink)} .ctper:hover{border-color:var(--accent)} .ctper.on{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 2px var(--accent) inset}
+.ctbar{width:70px;height:8px;border-radius:4px;background:var(--sunken);overflow:hidden} .ctbar span{display:block;height:100%;background:var(--accent)}
+.ctdatos{display:flex;flex-direction:column;gap:10px;line-height:1.45}
+.cthilo{display:flex;flex-direction:column;gap:10px} .ctev{font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:2px 4px}
+.ctmsg{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface);max-width:85%} .ctmsg.yo{align-self:flex-end;background:var(--accent-soft);border-color:transparent}
+.ctmsg.interno{background:#fff8e6;border-color:#ecd9a6} .ctmsg.pedido,.ctmsg.cambios{border-left:5px solid #b7791f}
+.ctmsg-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+.ctcomp{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px} .ctcomp textarea{width:100%}
+.ndotin{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--accent);margin-right:8px;vertical-align:middle} .nmenu-wrap{position:relative}
 .bell{position:relative;width:42px;height:42px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer}
 .bell:hover{background:var(--sunken)} .bell-n{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--danger);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center;border:2px solid var(--surface)}
 .nmenu{width:380px;max-width:calc(100vw - 24px)} .nlist{max-height:420px;overflow:auto;display:flex;flex-direction:column}
@@ -140,7 +156,7 @@ textarea{resize:vertical}
 .grid{display:grid;gap:18px}
 .g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
 .g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))} .grid2{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));align-items:start}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:flex;flex-direction:column;gap:14px;min-width:0;box-shadow:var(--shadow)}
 .sub{color:var(--muted);font-size:15px}
 
@@ -484,6 +500,10 @@ const DEFAULT_USERS = [
   {id:'lbrunelli', nombre:'Lucas Emmanuel Brunelli', rol:'Analista legal'},
   {id:'fzaurdo', nombre:'Florencia Zaurdo', rol:'Analista legal'},
   {id:'rperez', nombre:'Ramiro Pérez', rol:'Procurador'},
+  {id:'jpaz', nombre:'Julieta Paz', rol:'Jefa de Contratos', area:'Legales', ctPerfil:'jefe', modulos:['contratos']},
+  {id:'cortiz', nombre:'Camila Ortiz', rol:'Analista de Contratos', area:'Legales', ctPerfil:'analista', modulos:['contratos']},
+  {id:'mgimenez', nombre:'Marcos Giménez', rol:'Solicitante', area:'Compras', ctPerfil:'solicitante', modulos:['contratos']},
+  {id:'sruiz', nombre:'Sofía Ruiz', rol:'Solicitante', area:'Marketing', ctPerfil:'solicitante', modulos:['contratos']},
   {id:'admin', nombre:'Administración', rol:'Administrador'}
 ];
 const DEFAULT_TEAMS = [{id:'t1', nombre:'Amparos', jefe:'dfraerman', miembros:['lbrunelli','fzaurdo']}];
@@ -562,7 +582,7 @@ function ejemplosDni(id){
 const MODULES = [
   {id:'amparos', nombre:'Amparos de salud', desc:'Expedientes judiciales, cautelares, plazos, control de cumplimiento y escritos tipo.', disponible:true, icon:'shield'},
   {id:'administrativos', nombre:'Administrativos', desc:'Reclamos ante organismos (SSS, Defensa del Consumidor, COPREC, AAIP), obligaciones de la empresa y guía de trámites.', disponible:true, icon:'book'},
-  {id:'contratos', nombre:'Contratos', desc:'Contratos con prestadores y proveedores: versiones, firmantes y renovaciones.', disponible:false, icon:'file'},
+  {id:'contratos', nombre:'Contratos', desc:'Las áreas piden contratos a Legales con toda la información y archivos; la jefatura asigna y el equipo los arma.', disponible:true, icon:'file'},
   {id:'cartas', nombre:'Cartas documento', desc:'Redacción, envío y seguimiento de cartas documento e intimaciones.', disponible:false, icon:'pen'}
 ];
 
@@ -570,7 +590,8 @@ const MODULES = [
 const modsOrg = () => MODULES.filter(m=>m.disponible && S && S.modules && S.modules[m.id]).map(m=>m.id);
 function modsDe(u){ if(!u) return modsOrg(); if(u.rol==='Administrador') return modsOrg(); return Array.isArray(u.modulos) ? modsOrg().filter(id=>u.modulos.includes(id)) : modsOrg(); }
 function tieneMod(id){ const u = (S && S.user) ? S.users.find(x=>x.id===S.user) : null; if(!u) return true; return modsDe(u).includes(id); }
-const RUTA_MOD = {amparos:'amparos', expediente:'amparos', escritos:'amparos', modelos:'amparos', informes:'amparos', equipo:'amparos', administrativos:'administrativos', tramite:'administrativos'};
+const puedeMas = () => isAdmin() || tieneMod('amparos') || tieneMod('administrativos');
+const RUTA_MOD = {amparos:'amparos', expediente:'amparos', escritos:'amparos', modelos:'amparos', informes:'amparos', equipo:'amparos', administrativos:'administrativos', tramite:'administrativos', contratos:'contratos', contrato:'contratos'};
 const modChecks = (pref, sel, todos) => `<div class="modchecks">${MODULES.filter(m=>m.disponible && S.modules[m.id]).map(m=>`<label class="modchk"><input type="checkbox" id="${pref}${m.id}" ${todos || !Array.isArray(sel) || sel.includes(m.id) ? 'checked':''} ${todos?'disabled':''}> ${ic(m.icon,'sm')} ${esc(m.nombre)}</label>`).join('')}</div>`;
 const modLeer = pref => MODULES.filter(m=>m.disponible && S.modules[m.id] && ($('#'+pref+m.id)||{}).checked).map(m=>m.id);
 
@@ -718,7 +739,7 @@ const KEY = 'fojas-datos';
 const SCHEMA = 11;
 const OLD_KEYS = ['fojas-demo-v9','fojas-demo-v8','fojas-demo-v7','fojas-demo-v6','fojas-demo-v5','fojas-demo-v4','fojas-demo-v3','fojas-demo-v2','fojas-demo-v1'];
 let S;
-async function makeUser(u, pass, mustChange){ const salt = randId(16); return {id:u.id, nombre:u.nombre, rol:u.rol, activo:true, salt, hash: await hashPass(pass, salt), mustChange:!!mustChange}; }
+async function makeUser(u, pass, mustChange){ const salt = randId(16); return {id:u.id, nombre:u.nombre, rol:u.rol, ...(u.area?{area:u.area}:{}), ...(u.ctPerfil?{ctPerfil:u.ctPerfil}:{}), ...(u.modulos?{modulos:[...u.modulos]}:{}), activo:true, salt, hash: await hashPass(pass, salt), mustChange:!!mustChange}; }
 async function fresh(){ const users = []; for(const u of DEFAULT_USERS) users.push(await makeUser(u, u.id, true));
   return {user:null, users, lock:{}, toured:{}, teams:JSON.parse(JSON.stringify(DEFAULT_TEAMS)), modules:{amparos:true, administrativos:false, contratos:false, cartas:false}, exps:seed(), audit:[], nextId:10, pwInicial:true, ejemploDni:true}; }
 // ---------- guardado: navegador (2 lugares), versiones automáticas y archivo en la computadora ----------
@@ -793,6 +814,7 @@ function unir(base, otro){
   base.trBorrados = [...new Set([...(base.trBorrados||[]), ...(otro.trBorrados||[])])]; const trB = new Set(base.trBorrados);
   base.tramites = (base.tramites||[]).filter(x=>!trB.has(x.id)); (otro.tramites||[]).forEach(x=>{ if(!trB.has(x.id) && !base.tramites.some(y=>y.id===x.id)) base.tramites.push(x); });
   (otro.guiaPropia||[]).forEach(x=>{ base.guiaPropia = base.guiaPropia||[]; if(!base.guiaPropia.some(y=>y.id===x.id) && !trB.has(x.id)) base.guiaPropia.push(x); });
+  (otro.solicitudes||[]).forEach(x=>{ base.solicitudes = base.solicitudes||[]; const i = base.solicitudes.findIndex(y=>y.id===x.id); if(i<0) base.solicitudes.push(x); else if((x.hilo||[]).length > (base.solicitudes[i].hilo||[]).length) base.solicitudes[i] = x; });
   ['tareasPlan','tareasDia','notifs'].forEach(k=>{ base[k] = base[k]||[]; (otro[k]||[]).forEach(x=>{ if(!base[k].some(y=>y.id===x.id)) base[k].push(x); }); });
   base._sumados = (base._sumados||[]).concat(sum);
   return base;
@@ -1524,7 +1546,7 @@ async function migrate(d){
   d.users = Array.isArray(d.users) && d.users.length ? d.users : base.users;
   base.users.forEach(u=>{ if(!d.users.some(x=>x.id===u.id)) d.users.push(u); });
   d.teams = Array.isArray(d.teams) ? d.teams : base.teams;
-  d.lock = d.lock || {}; d.toured = d.toured || {}; d.modelos = Array.isArray(d.modelos) ? d.modelos : []; d.tramites = Array.isArray(d.tramites) ? d.tramites : []; d.tareasPlan = Array.isArray(d.tareasPlan) ? d.tareasPlan : []; d.tareasDia = Array.isArray(d.tareasDia) ? d.tareasDia : []; d.notifs = Array.isArray(d.notifs) ? d.notifs : []; d.guiaPropia = Array.isArray(d.guiaPropia) ? d.guiaPropia : []; d.agSaber = Array.isArray(d.agSaber) ? d.agSaber : []; d.agPend = Array.isArray(d.agPend) ? d.agPend : []; d.docCats = Array.isArray(d.docCats) ? d.docCats : []; d.catEdit = d.catEdit || {}; d.papelera = Array.isArray(d.papelera) ? d.papelera : []; d.borrados = Array.isArray(d.borrados) ? d.borrados : []; d.config = d.config || {}; d.audit = Array.isArray(d.audit) ? d.audit : [];
+  d.lock = d.lock || {}; d.toured = d.toured || {}; d.modelos = Array.isArray(d.modelos) ? d.modelos : []; d.tramites = Array.isArray(d.tramites) ? d.tramites : []; d.tareasPlan = Array.isArray(d.tareasPlan) ? d.tareasPlan : []; d.solicitudes = Array.isArray(d.solicitudes) ? d.solicitudes : []; d.tareasDia = Array.isArray(d.tareasDia) ? d.tareasDia : []; d.notifs = Array.isArray(d.notifs) ? d.notifs : []; d.guiaPropia = Array.isArray(d.guiaPropia) ? d.guiaPropia : []; d.agSaber = Array.isArray(d.agSaber) ? d.agSaber : []; d.agPend = Array.isArray(d.agPend) ? d.agPend : []; d.docCats = Array.isArray(d.docCats) ? d.docCats : []; d.catEdit = d.catEdit || {}; d.papelera = Array.isArray(d.papelera) ? d.papelera : []; d.borrados = Array.isArray(d.borrados) ? d.borrados : []; d.config = d.config || {}; d.audit = Array.isArray(d.audit) ? d.audit : [];
   d.modules = {...base.modules, ...(d.modules||{})};
   d.exps = (d.exps||[]).map(e=>migExp(e, d.users));
   d.nextId = Math.max(d.nextId||0, ...d.exps.map(e=>+e.id||0)) + 1;
@@ -1532,6 +1554,13 @@ async function migrate(d){
   if(!d.pwInicial){ d.pwInicial = true; const propias = new Set((d.audit||[]).filter(a=>a.accion==='Cambió su contraseña').map(a=>a.detalle));
     for(const u of d.users){ if(propias.has(u.id)) continue; u.salt = randId(16); u.hash = await hashPass(u.id, u.salt); u.mustChange = true; } }
   if(!d.modAdm){ d.modAdm = true; d.modules = d.modules || {}; d.modules.administrativos = true; }
+  if(!d.modContratos){ d.modContratos = true; d.modules = d.modules||{}; d.modules.contratos = true;
+    const lb = d.users.find(u=>u.id==='lbrunelli'); if(lb && !lb.ctPerfil){ lb.ctPerfil = 'analista'; lb.area = lb.area || 'Legales'; }
+    if(!(d.teams||[]).some(t=>t.jefe==='jpaz')) (d.teams = d.teams||[]).push({id:'t2', nombre:'Contratos', jefe:'jpaz', miembros:['cortiz']});
+    d.solicitudes = Array.isArray(d.solicitudes) ? d.solicitudes : []; try{ solicitudesEjemplo().forEach(s=>{ if(!d.solicitudes.some(x=>x.id===s.id)) d.solicitudes.push(s); }); }catch(err){ console.warn(err); }
+    (d.notifs = d.notifs||[]).push({id:'nct1', para:'jpaz', de:'mgimenez', texto:'Marcos Giménez (Compras) pidió locación de servicios con Limpiezas del Sur S.R.L. CT-2026-0001.', link:'contrato-cej1', tipo:'tarea', ts:new Date().toISOString(), leida:false},
+      {id:'nct2', para:'sruiz', de:'cortiz', texto:'Contratos necesita información para CT-2026-0002 (Juana Benítez): ¿Nos pasás la cesión de derechos de imagen firmada por la creadora?', link:'contrato-cej2', tipo:'alerta', ts:new Date().toISOString(), leida:false},
+      {id:'nct3', para:'lbrunelli', de:'jpaz', texto:'Julieta Paz te asignó CT-2026-0003: acuerdo de confidencialidad (nda) con Datasalud Analytics S.A.', link:'contrato-cej3', tipo:'tarea', ts:new Date().toISOString(), leida:false}); }
   if(!d.ejemploTareas){ d.ejemploTareas = true; try{ ejemplosTareas(d); }catch(err){ console.warn(err); } }
   if(!d.ejemploAdm){ d.ejemploAdm = true; try{ ejemplosAdm(d); }catch(err){ console.warn(err); } d.nextId = Math.max(d.nextId||1, ...d.exps.map(e=>+e.id||0)) + 1; }
   d.schema = SCHEMA; d.user = null;
@@ -1645,6 +1674,7 @@ function route(){
   const h = (location.hash||'').replace('#','') || 'inicio';
   const m = h.match(/^expediente-(\d+)$/); if(m) return {name:'expediente', id:+m[1]};
   const t = h.match(/^tramite-([\w-]+)$/); if(t) return {name:'tramite', id:t[1]};
+  const c = h.match(/^contrato-([\w-]+)$/); if(c) return {name:'contrato', id:c[1]};
   return {name:h};
 }
 window.addEventListener('hashchange', ()=>{ ui.editSum = false; const nt = ui.nextTab; ui.nextTab = null; if(ui.scrollTo){ const u = ui.scrollTo; ui.scrollTo=null; setTimeout(()=>{ const d = u==='panel' ? $('#miembroPanel') : document.querySelector(`[data-member="${u}"]`); if(d) d.scrollIntoView({behavior:'smooth', block:'start'}); }, 60); } ui.q=''; ui.rOpen=null; ui.dniOpen=false; ui.tab=nt||'resumen'; ui.ia=''; ui.addMov=false; ui.addPlazo=false; ui.results=false; render(); const v=$('#view'); if(v) v.scrollTop=0; });
@@ -1653,11 +1683,11 @@ const ui = {orden:(()=>{ try{ return localStorage.getItem('fojasOrden')||'alfa';
 // ---------- estructura ----------
 function shell(content){
   const r = route().name;
-  const act = n => (r===n || (n==='amparos' && r==='expediente') || (n==='administrativos' && r==='tramite')) ? 'on' : '';
+  const act = n => (r===n || (n==='amparos' && r==='expediente') || (n==='administrativos' && r==='tramite') || (n==='contratos' && r==='contrato')) ? 'on' : '';
   const misV = misVenc(), urgentes = misV.filter(p=>daysTo(p.vence)<=1).length;
   const link = (h, icon, label, badge='') => `<a href="#${h}" class="${act(h)}" title="${label}">${ic(icon)}<span class="lbl">${label}</span>${badge}</a>`;
   const amp = tieneMod('amparos');
-  const extra = MODULES.filter(m=>m.id!=='amparos' && S.modules[m.id] && (!m.disponible || tieneMod(m.id))).map(m=> m.id==='administrativos' ? link('administrativos','book','Administrativos', (()=>{ const n = trs().filter(t=>{ const p = trPend(t)[0]; return p && daysTo(p.vence)<=3; }).length; return n?`<span class="badge red">${n}</span>`:''; })()) : `<a href="#modulos" title="${esc(m.nombre)}">${ic(m.icon)}<span class="lbl">${esc(m.nombre)}</span><span class="badge">pronto</span></a>`).join('');
+  const extra = MODULES.filter(m=>m.id!=='amparos' && S.modules[m.id] && (!m.disponible || tieneMod(m.id))).map(m=> m.id==='contratos' ? link('contratos','file','Contratos', (()=>{ const n = ctBadge(); return n?`<span class="badge red">${n}</span>`:''; })()) : m.id==='administrativos' ? link('administrativos','book','Administrativos', (()=>{ const n = trs().filter(t=>{ const p = trPend(t)[0]; return p && daysTo(p.vence)<=3; }).length; return n?`<span class="badge red">${n}</span>`:''; })()) : `<a href="#modulos" title="${esc(m.nombre)}">${ic(m.icon)}<span class="lbl">${esc(m.nombre)}</span><span class="badge">pronto</span></a>`).join('');
   const u = me();
   return `
   <div class="app">
@@ -1673,19 +1703,19 @@ function shell(content){
         ${amp && (teamOf()||isAdmin())?link('equipo','users',isLeader()?'Mi equipo':'Equipo', isLeader()&&myPeople().some(u=>statsOf(u).vencidos)?`<span class="badge red">${myPeople().reduce((a,u)=>a+statsOf(u).vencidos,0)}</span>`:''):''}
         ${extra}
       </nav>
-      <div class="navlabel">Más opciones</div>
+      ${puedeMas()?`<div class="navlabel">Más opciones</div>
       <nav class="nav" aria-label="Más opciones">
         ${link('historial','history','Historial de cambios')}
         ${link('respaldo','cloud','Copias y migración')}
         ${link('modulos','grid','Módulos')}
         ${isAdmin()?link('usuarios','key','Usuarios'):''}
-      </nav>
+      </nav>`:''}
     </aside>
     <div class="main">
       <div class="demo">Versión de prueba con datos ficticios. No cargues datos reales de afiliados.</div>
       <header class="top">
         <div class="search">${ic('search')}
-          <input type="search" id="gsearch" placeholder="Buscar por afiliado, DNI o número de expediente" value="${esc(ui.q)}" aria-label="Buscar" autocomplete="off">
+          <input type="search" id="gsearch" placeholder="${tieneMod('amparos')?'Buscar por afiliado, DNI o número de expediente':'Buscar por contraparte o número de pedido'}" value="${esc(ui.q)}" aria-label="Buscar" autocomplete="off">
           ${ui.results?searchResults():''}
         </div>
         <a href="#respaldo" id="saveBadge" class="savebadge ${saveState().cls}" title="${esc(saveState().tip)}" ${PERSIST.fileNeeds?'data-act="reconnect"':''}>${ic(saveState().icon,'sm')} ${saveState().txt}</a>
@@ -1747,7 +1777,8 @@ function searchResults(){
   const fila = e => `<a href="#expediente-${e.id}"><b>${esc(e.afiliado)}</b><div class="small muted">${esc(e.numero)} · ${esc(e.prestacion)}${e.dni&&e.dni!=='—'?` · DNI ${esc(e.dni)}`:''}</div></a>`;
   const html = grupos.slice(0,8).map(g=>g.length>1 ? dniTree(g, {mini:true, ctx:'s', open: grupos.length===1}) : fila(g[0])).join('');
   const trh = tieneMod('administrativos') ? trBuscar(ui.q).map(t=>`<a href="#tramite-${t.id}"><b>${esc(trNombre(t))}</b><div class="small muted">Administrativos · ${esc(orgById(t.org).c)}${t.numero?' · '+esc(t.numero):''}${t.motivo?' · '+esc(t.motivo):''}</div></a>`).join('') : '';
-  return `<div class="results">${(html+trh) || '<div class="empty small">No encontramos nada con esa búsqueda.</div>'}</div>`;
+  const cth = ctBuscar(ui.q).map(s=>`<a href="#contrato-${s.id}"><b>${esc(s.contraparte.nombre)}</b><div class="small muted">Contratos · ${esc(s.numero)} · ${esc(ctTipo(s.tipo).l)} · ${esc(s.estado)}</div></a>`).join('');
+  return `<div class="results">${(html+trh+cth) || '<div class="empty small">No encontramos nada con esa búsqueda.</div>'}</div>`;
 }
 
 function taskRow(p, showExp=true){
@@ -1835,6 +1866,7 @@ function misVenc(){ const yo = S.user; return [...allPlazos().filter(p=>p.exp.ab
 function vInicioSinAmparos(){
   const u = me(), hr = new Date().getHours(), saludo = hr<12?'Buen día':hr<20?'Buenas tardes':'Buenas noches';
   const adm = tieneMod('administrativos');
+  if(!adm && tieneMod('contratos')) return `<div><h1>${saludo}, ${esc(u.nombre.split(' ')[0])}</h1><p class="sub">${new Date().toLocaleDateString('es-AR',{weekday:'long', day:'numeric', month:'long'})}</p></div>${ctInicioBlock()}`;
   const l = adm ? trs().flatMap(t=>(t.plazos||[]).map((p,i)=>({t,p,i})).filter(x=>!x.p.hecho)).sort((a,b)=>a.p.vence.localeCompare(b.p.vence)) : [];
   const urg = l.filter(x=>daysTo(x.p.vence)<=3);
   return `<div><h1>${saludo}, ${esc(u.nombre.split(' ')[0])}</h1><p class="sub">${new Date().toLocaleDateString('es-AR',{weekday:'long', day:'numeric', month:'long'})}${adm?` · ${urg.length?`Tenés ${urg.length} ${urg.length===1?'cosa urgente':'cosas urgentes'} para los próximos días.`:'Está todo al día.'}`:''}</p></div>
@@ -1845,7 +1877,7 @@ function vInicioSinAmparos(){
     <a class="action" href="#vencimientos"><div class="ico r">${ic('cal','lg')}</div><b>Ver qué vence</b><span>Ordenado por fecha.</span></a></div></section>
   <section class="card"><div class="head"><h2>Lo más urgente</h2><a href="#vencimientos" class="small">Ver todo</a></div>
     ${urg.length?`<div class="cases">${urg.slice(0,6).map(x=>trTaskRow(x.t,x.p,x.i)).join('')}</div>`:`<div class="empty"><div class="ico g">${ic('check','lg')}</div><b>No hay nada urgente</b><span>Nada vence en los próximos 3 días.</span></div>`}</section>`
-  : `<section class="card empty"><b>Todavía no tenés módulos asignados.</b><span class="muted">Pedile al administrador que te habilite el que necesitás.</span></section>`}`;
+  : ''}${adm ? ctInicioBlock() : ''}${adm || tieneMod('contratos') ? '' : `<section class="card empty"><b>Todavía no tenés módulos asignados.</b><span class="muted">Pedile al administrador que te habilite el que necesitás.</span></section>`}`;
 }
 function vVencimientos(){
   const mios = ui.vencMios !== false;
@@ -2248,9 +2280,9 @@ function teamEditor(){
   </section>`;
 }
 
-const ROLES = ['Abogada/o a cargo','Analista legal','Procurador','Administrador'];
+const ROLES = ['Abogada/o a cargo','Analista legal','Procurador','Jefa/e de Contratos','Analista de Contratos','Solicitante','Administrador'];
 let UE = null;
-function openUserEdit(uid){ const u = S.users.find(x=>x.id===uid); if(!u) return; UE = {id:uid, nombre:u.nombre, nuevoId:u.id, rol:u.rol, modulos: modsDe(u), pw:'no', p1:'', p2:'', cambiar:true, err:''}; drawUserEdit(); }
+function openUserEdit(uid){ const u = S.users.find(x=>x.id===uid); if(!u) return; UE = {id:uid, nombre:u.nombre, nuevoId:u.id, rol:u.rol, modulos: modsDe(u), area:u.area||'', ctPerfil:ctPerfil(u), pw:'no', p1:'', p2:'', cambiar:true, err:''}; drawUserEdit(); }
 function drawUserEdit(){
   const u = S.users.find(x=>x.id===UE.id), yo = u.id===S.user;
   const roles = ROLES.includes(UE.rol) ? ROLES : [UE.rol, ...ROLES];
@@ -2261,6 +2293,8 @@ function drawUserEdit(){
       <label>Nombre y apellido<input type="text" id="ueNom" value="${esc(UE.nombre)}"></label>
       <label>Usuario para entrar <span class="hint">${yo?'no podés cambiar tu propio usuario mientras estás adentro':'minúsculas, sin espacios'}</span><input type="text" id="ueId" value="${esc(UE.nuevoId)}" ${yo?'disabled':''} autocomplete="off"></label>
       <label>Rol<select id="ueRol">${roles.map(r=>`<option ${r===UE.rol?'selected':''}>${esc(r)}</option>`).join('')}</select></label>
+      <label>Área<input type="text" id="ueArea" list="ueAreas" value="${esc(UE.area||'')}" placeholder="Ej.: Compras"><datalist id="ueAreas">${CT_AREAS.map(a=>`<option value="${esc(a)}">`).join('')}</datalist></label>
+      <label>En Contratos es<select id="ueCt">${[['solicitante','Solicitante (pide contratos)'],['analista','Analista de Contratos'],['jefe','Jefa/e de Contratos (asigna)']].map(([k,l])=>`<option value="${k}" ${UE.ctPerfil===k?'selected':''}>${l}</option>`).join('')}</select></label>
     </div>
     <div class="fld">Módulos que puede usar <span class="hint">${UE.rol==='Administrador'?'el administrador ve todos los módulos':'tildá uno, varios o todos'}</span>${modChecks('ueMod', UE.modulos, UE.rol==='Administrador')}</div>
     <div class="fld">Contraseña
@@ -2277,7 +2311,7 @@ function drawUserEdit(){
     ${UE.pw==='ini'?`<div class="notice">La contraseña vuelve a ser igual a su usuario (<span class="mono">${esc((UE.nuevoId||u.id).trim().toLowerCase())}</span>) y la tiene que cambiar al entrar.</div>`:''}
     <div class="row" style="justify-content:flex-end"><button class="btn" data-act="close">Cancelar</button><button class="btn ok big" data-act="uesave">${ic('check')} Guardar cambios</button></div>`);
 }
-function ueRead(){ if(!UE) return; const g = id => $(id); if(g('#ueNom')) UE.nombre = g('#ueNom').value; if(g('#ueId') && !g('#ueId').disabled) UE.nuevoId = g('#ueId').value; if(g('#ueRol')) UE.rol = g('#ueRol').value; if(g('.modchecks') && UE.rol!=='Administrador') UE.modulos = modLeer('ueMod'); if(g('#ueP1')) UE.p1 = g('#ueP1').value; if(g('#ueP2')) UE.p2 = g('#ueP2').value; if(g('#ueCambiar')) UE.cambiar = g('#ueCambiar').checked; }
+function ueRead(){ if(!UE) return; const g = id => $(id); if(g('#ueNom')) UE.nombre = g('#ueNom').value; if(g('#ueId') && !g('#ueId').disabled) UE.nuevoId = g('#ueId').value; if(g('#ueRol')) UE.rol = g('#ueRol').value; if(g('#ueArea')) UE.area = g('#ueArea').value.trim(); if(g('#ueCt')) UE.ctPerfil = g('#ueCt').value; if(g('.modchecks') && UE.rol!=='Administrador') UE.modulos = modLeer('ueMod'); if(g('#ueP1')) UE.p1 = g('#ueP1').value; if(g('#ueP2')) UE.p2 = g('#ueP2').value; if(g('#ueCambiar')) UE.cambiar = g('#ueCambiar').checked; }
 async function ueSave(){
   ueRead(); const u = S.users.find(x=>x.id===UE.id); const yo = u.id===S.user; const err = t => { UE.err = t; drawUserEdit(); };
   const nombre = UE.nombre.trim().replace(/\s+/g,' '), nid = UE.nuevoId.trim().toLowerCase();
@@ -2292,11 +2326,13 @@ async function ueSave(){
   const cambios = [];
   if(nombre !== u.nombre){ cambios.push(`nombre: ${u.nombre} → ${nombre}`); u.nombre = nombre; }
   if(UE.rol !== u.rol){ cambios.push(`rol: ${u.rol} → ${UE.rol}`); u.rol = UE.rol; }
+  if((UE.area||'') !== (u.area||'')){ cambios.push(`área: ${u.area||'—'} → ${UE.area||'—'}`); u.area = UE.area; }
+  if(UE.ctPerfil && UE.ctPerfil !== ctPerfil(u)){ cambios.push(`en Contratos: ${ctPerfil(u)} → ${UE.ctPerfil}`); u.ctPerfil = UE.ctPerfil; }
   if(UE.rol!=='Administrador'){ const antes = modsDe(u).join(','), nuevos = (UE.modulos||[]); if(antes !== modsOrg().filter(id=>nuevos.includes(id)).join(',') || !Array.isArray(u.modulos)){ if(antes !== modsOrg().filter(id=>nuevos.includes(id)).join(',')) cambios.push(`módulos: ${antes||'ninguno'} → ${nuevos.join(',')||'ninguno'}`); u.modulos = [...nuevos]; } }
   if(nid !== u.id){ const old = u.id; cambios.push(`usuario: ${old} → ${nid}`); u.id = nid;
     S.exps.forEach(e=>{ if(e.abogado===old) e.abogado = nid; (e.movimientos||[]).forEach(m=>{ if(m.user===old) m.user = nid; }); });
     (S.teams||[]).forEach(t=>{ if(t.jefe===old) t.jefe = nid; t.miembros = t.miembros.map(m=>m===old?nid:m); });
-    (S.modelos||[]).forEach(m=>{ if(m.autor===old) m.autor = nid; }); trs().forEach(t=>{ if(t.abogado===old) t.abogado = nid; (t.movimientos||[]).forEach(m=>{ if(m.user===old) m.user = nid; }); }); tPlan().forEach(p=>['user','creadaPor','validadaPor'].forEach(k=>{ if(p[k]===old) p[k] = nid; })); tDia().forEach(r=>['user','asignadaPor'].forEach(k=>{ if(r[k]===old) r[k] = nid; })); notifs().forEach(n=>['para','de'].forEach(k=>{ if(n[k]===old) n[k] = nid; })); (S.docCats||[]).forEach(c=>{ if(c.autor===old) c.autor = nid; });
+    (S.modelos||[]).forEach(m=>{ if(m.autor===old) m.autor = nid; }); trs().forEach(t=>{ if(t.abogado===old) t.abogado = nid; (t.movimientos||[]).forEach(m=>{ if(m.user===old) m.user = nid; }); }); tPlan().forEach(p=>['user','creadaPor','validadaPor'].forEach(k=>{ if(p[k]===old) p[k] = nid; })); tDia().forEach(r=>['user','asignadaPor'].forEach(k=>{ if(r[k]===old) r[k] = nid; })); notifs().forEach(n=>['para','de'].forEach(k=>{ if(n[k]===old) n[k] = nid; })); sols().forEach(s=>{ ['solicitante','asignadoA','asignadoPor'].forEach(k=>{ if(s[k]===old) s[k] = nid; }); (s.hilo||[]).forEach(x=>{ if(x.user===old) x.user = nid; }); if(s.visto && s.visto[old]){ s.visto[nid] = s.visto[old]; delete s.visto[old]; } }); (S.docCats||[]).forEach(c=>{ if(c.autor===old) c.autor = nid; });
     if(S.lock && S.lock[old]){ S.lock[nid] = S.lock[old]; delete S.lock[old]; } if(S.toured && S.toured[old]){ S.toured[nid] = S.toured[old]; delete S.toured[old]; } }
   if(nuevaPass){ u.salt = randId(16); u.hash = await hashPass(nuevaPass, u.salt); u.mustChange = !yo; if(S.lock) delete S.lock[u.id]; cambios.push(UE.pw==='ini'?'contraseña restablecida (igual al usuario)':'contraseña nueva'); }
   if(!cambios.length){ UE = null; closeModal(); toast('No hubo cambios'); return; }
@@ -2333,7 +2369,7 @@ function vUsuarios(){
   ${m?`<div class="notice ${m.ok?'good':'bad'}">${m.html||esc(m.t)}</div>`:''}
   <div class="grid g3">${S.users.map(u=>{ const l = (S.lock||{})[u.id]; const locked = l && l.until > Date.now(); return `
     <section class="card"><div class="row"><div class="avatar">${initials(u.nombre)}</div><div style="flex:1"><b>${esc(u.nombre)}</b><div class="small muted">${esc(u.rol)} · <span class="mono">${esc(u.id)}</span></div></div></div>
-      <div class="small"><span class="muted">Módulos:</span> ${u.rol==='Administrador'?'todos (es administrador)':(modsDe(u).map(id=>esc((MODULES.find(m=>m.id===id)||{}).nombre||id)).join(' · ')||'<b style="color:var(--danger)">ninguno</b>')}</div>
+      ${u.area||modsDe(u).includes('contratos')?`<div class="small"><span class="muted">${u.area?'Área: '+esc(u.area):''}${u.area&&modsDe(u).includes('contratos')?' · ':''}${modsDe(u).includes('contratos')?'En Contratos: '+({solicitante:'solicitante',analista:'analista',jefe:'jefa/e'})[ctPerfil(u)]:''}</span></div>`:''}<div class="small"><span class="muted">Módulos:</span> ${u.rol==='Administrador'?'todos (es administrador)':(modsDe(u).map(id=>esc((MODULES.find(m=>m.id===id)||{}).nombre||id)).join(' · ')||'<b style="color:var(--danger)">ninguno</b>')}</div>
       <div class="row">${u.activo?(locked?'<span class="pill yel">Bloqueado</span>':'<span class="pill grn">Puede entrar</span>'):'<span class="pill">Desactivado</span>'}${u.mustChange?'<span class="pill">Debe cambiar su contraseña</span>':''}</div>
       <div class="row"><button class="btn sm pri" data-act="uedit" data-u="${u.id}">${ic('pen','sm')} Editar</button></div>
       ${u.id===S.user?'<span class="small muted">Sos vos</span>':`<div class="row"><button class="btn sm" data-act="ureset" data-u="${u.id}">${ic('key','sm')} Restablecer contraseña</button><button class="btn sm" data-act="utoggle" data-u="${u.id}">${u.activo?'Desactivar':'Activar'}</button>${locked?`<button class="btn sm" data-act="uunlock" data-u="${u.id}">Desbloquear</button>`:''}<button class="btn sm ghost danger" data-act="udel" data-u="${u.id}">${ic('trash','sm')} Eliminar</button></div>`}
@@ -2342,7 +2378,9 @@ function vUsuarios(){
     <form class="form" id="userForm">
       <label>Nombre y apellido<input type="text" id="nuNom" required></label>
       <label>Usuario para entrar <span class="hint">minúsculas, sin espacios</span><input type="text" id="nuId" required pattern="[a-z0-9._-]{3,30}" placeholder="ej.: mlopez"></label>
-      <label>Rol<select id="nuRol"><option>Abogada/o a cargo</option><option>Analista legal</option><option>Procurador</option><option>Administrador</option></select></label>
+      <label>Rol<select id="nuRol">${ROLES.map(r=>`<option>${esc(r)}</option>`).join('')}</select></label>
+      <label>Área<input type="text" id="nuArea" list="nuAreas" placeholder="Ej.: Compras"><datalist id="nuAreas">${CT_AREAS.map(a=>`<option value="${esc(a)}">`).join('')}</datalist></label>
+      <label>En Contratos es<select id="nuCt"><option value="solicitante">Solicitante (pide contratos)</option><option value="analista">Analista de Contratos</option><option value="jefe">Jefa/e de Contratos (asigna)</option></select></label>
       <div class="full"><span class="small" style="font-weight:600">Módulos que puede usar</span>${modChecks('nuMod', null, false)}</div>
       <div class="full"><button class="btn pri" type="submit">${ic('plus','sm')} Agregar</button> <span class="small muted">La primera vez entra con su usuario como contraseña y Fojas le pide cambiarla.</span></div>
     </form></section>`;
@@ -3131,9 +3169,10 @@ function render(){
   document.title='Fojas';
   try{ if(tareasMantener()) save(); }catch(err){ console.warn(err); }
   let r = route();
+  if(['historial','respaldo','modulos'].includes(r.name) && !puedeMas()){ history.replaceState(null,'','#inicio'); r = {name:'inicio'}; }
   if(RUTA_MOD[r.name] && !tieneMod(RUTA_MOD[r.name])){ const alt = modsDe(me())[0]; const destino = alt==='administrativos' ? 'administrativos' : 'inicio'; if(location.hash.slice(1)!==destino){ history.replaceState(null,'','#'+destino); } r = {name:destino}; }
-  const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, modelos:vModelos, informes:vInformes, historial:vHistorial, papelera:vPapelera, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios, asistente:vAsistente, administrativos:vAdministrativos, tareas:vTareas};
-  const html = r.name==='expediente' ? vExpediente(r.id) : r.name==='tramite' ? vTramite(r.id) : (views[r.name]||vInicio)();
+  const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, modelos:vModelos, informes:vInformes, historial:vHistorial, papelera:vPapelera, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios, asistente:vAsistente, administrativos:vAdministrativos, tareas:vTareas, contratos:vContratos};
+  const html = r.name==='expediente' ? vExpediente(r.id) : r.name==='tramite' ? vTramite(r.id) : r.name==='contrato' ? (r.id==='nuevo' ? vContratoNuevo() : vContrato(r.id)) : (views[r.name]||vInicio)();
   const scroll = $('#view') ? $('#view').scrollTop : 0;
   $('#root').innerHTML = shell(html);
   $('#view').scrollTop = scroll;
@@ -3444,7 +3483,7 @@ document.addEventListener('submit', async ev => {
   if(id==='userForm' && isAdmin()){
     const uid = $('#nuId').value.trim().toLowerCase();
     if(S.users.some(x=>x.id===uid)){ ui.userMsg={ok:false,t:'Ya hay alguien con ese usuario. Probá con otro.'}; render(); return; }
-    const nu = await makeUser({id:uid, nombre:$('#nuNom').value.trim(), rol:$('#nuRol').value}, uid, true); nu.modulos = modLeer('nuMod'); S.users.push(nu); save();
+    const nu = await makeUser({id:uid, nombre:$('#nuNom').value.trim(), rol:$('#nuRol').value}, uid, true); nu.modulos = modLeer('nuMod'); nu.area = ($('#nuArea')||{}).value ? $('#nuArea').value.trim() : ''; nu.ctPerfil = ($('#nuCt')||{}).value || 'solicitante'; S.users.push(nu); save();
     audit('Agregó un usuario','Usuarios', `${uid} (${$('#nuRol').value}) · módulos: ${nu.modulos.join(', ')||'ninguno'}`);
     ui.userMsg={ok:true, html:`Listo. <b>${esc(uid)}</b> ya puede entrar: la primera vez su contraseña es <span class="mono">${esc(uid)}</span> (igual al usuario) y al ingresar la tiene que cambiar sí o sí.`}; await chain; render();
   }
@@ -3464,6 +3503,7 @@ IC.send = '<path d="M4 12l16-8-6 16-2.5-6.5z" fill="none" stroke="currentColor" 
 IC.x = '<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>';
 IC.bot = '<rect x="4" y="7" width="16" height="12" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7V4M9 13h.01M15 13h.01" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M2 12v3M22 12v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
 const AYUDA = [
+  {t:'Pedir un contrato a Legales', k:['contrato','contratos','solicitud','pedir','pedido','nda','confidencialidad','proveedor','compras','marketing','adjuntar','asignar','jefe','analista','version','borrador'], r:'En **Contratos** tocá **Nueva solicitud**: elegí qué necesitás (locación de servicios, convenio con prestador, NDA, software, alquiler, marketing, adenda…), completá la contraparte y el detalle, y adjuntá los archivos (cualquier formato; te mostramos qué documentación suele hacer falta). Al enviarla, la **jefatura de Contratos** recibe una notificación y la **asigna** a alguien del equipo. Seguís todo en la **conversación** del pedido: ahí Contratos te pide información, te manda las **versiones** del documento y vos confirmás o pedís cambios.', ir:'contratos'},
   {t:'Tareas diarias', k:['tarea','tareas','diaria','diarias','validar','superior','jefe','asignar','indicar','completa','rojo','notificacion','notificaciones','campana'], r:'En **Tareas diarias** (panel izquierdo) cada persona carga las tareas que hace todos los días y su **superior del organigrama** las valida. El superior también puede **indicar tareas** (para un día o diarias): a la persona le llega una **notificación** (la campana, arriba a la derecha). Cada tarea se responde con **Completa**, **No se puede realizar** (con el motivo) o **No se hizo**. Si no se responde en el día, queda **en rojo** sola y se le avisa al superior. Lo que **no se pudo hacer** o quedó **en rojo** pasa al **día hábil siguiente** con la marca "Pendiente desde…", hasta que se complete o el superior la dé por cerrada.', ir:'tareas'},
   {t:'Menú de tu usuario', k:['menu','iniciales','circulo','salir','cerrar sesion','contrasena','clave','papelera','ayuda','vencimientos','asistente'], r:'Tocá el **círculo con tus iniciales**, arriba a la derecha. Ahí están **Vencimientos** (tus próximos vencimientos), **Asistente IA**, **Papelera**, **Cambiar contraseña**, **Ayuda** y **Salir**.', ir:null},
   {t:'Asignar módulos a cada usuario', k:['modulo','modulos','asignar','habilitar','permisos','acceso','usuario','ver'], r:'El administrador entra a **Usuarios**, toca **Editar** en la persona y tilda los **Módulos que puede usar**: uno, varios o todos. También se eligen al agregar a alguien. Cada persona ve en el menú solo sus módulos; el administrador ve todos. Para prender o apagar un módulo para toda la organización, andá a **Módulos**.', ir:'usuarios'},
@@ -4440,6 +4480,277 @@ function ejemplosTareas(d){
   d.notifs.push({id:'nej1', para:'lbrunelli', de:'dfraerman', texto:'Deborah Fraerman te indicó una tarea para hoy: «Pasar en limpio el informe de Benítez» (hasta las 16:00 hs).', link:'tareas', tipo:'tarea', ts:new Date().toISOString(), leida:false},
     {id:'nej2', para:'dfraerman', de:'fzaurdo', texto:'Florencia Zaurdo propuso una tarea diaria para validar: «Ordenar la bandeja de mails de Auditoría».', link:'tareas', tipo:'validar', ts:new Date().toISOString(), leida:false});
 }
+
+// ---------- Módulo Contratos: solicitudes de las áreas → jefe de Contratos asigna → analista elabora ----------
+const CT_TIPOS = [
+  {id:'servicios', l:'Locación de servicios', d:'Un proveedor presta un servicio (limpieza, mantenimiento, consultoría, sistemas…).', docs:['Propuesta o presupuesto','Constancia de inscripción en ARCA','Estatuto o contrato social','Poder o designación de quien firma','Seguros del personal (ART / accidentes personales) si trabajan en nuestras sedes']},
+  {id:'prestador', l:'Convenio con prestador de salud', d:'Clínica, sanatorio, profesional, laboratorio, farmacia o centro que atiende a nuestros asociados.', docs:['Habilitación del establecimiento','Inscripción en el Registro Nacional de Prestadores (SSS)','Matrícula de los profesionales','Seguro de mala praxis','Valores o nomenclador acordado','Constancia de ARCA','Estatuto y poder de quien firma']},
+  {id:'suministro', l:'Compra o suministro', d:'Compra de bienes o provisión periódica de insumos.', docs:['Presupuesto o cotización','Condiciones comerciales (plazos de entrega, pago, garantía)','Constancia de ARCA','Estatuto y poder de quien firma']},
+  {id:'nda', l:'Acuerdo de confidencialidad (NDA)', d:'Antes de compartir información con un tercero.', docs:['Datos de la contraparte','Qué información se va a compartir y para qué','Estatuto y poder de quien firma']},
+  {id:'software', l:'Software, sistemas o servicios en la nube', d:'Licencias, SaaS, desarrollo o soporte. Revisamos también datos personales.', docs:['Propuesta del proveedor','Términos y condiciones del proveedor','Dónde se alojan los datos (país)','Acuerdo de tratamiento de datos (si lo tienen)','Constancia de ARCA']},
+  {id:'inmueble', l:'Alquiler de inmueble', d:'Locación de oficinas, sucursales o depósitos.', docs:['Informe de dominio o título','Datos del locador','Plano o detalle del inmueble','Condiciones (precio, ajuste, depósito, plazo)','Poder de quien firma']},
+  {id:'marketing', l:'Publicidad, sponsoreo o influencers', d:'Acciones de Marketing con terceros: campañas, eventos, sorteos, creadores de contenido.', docs:['Propuesta y piezas','Cesión de derechos de imagen','Bases y condiciones (si hay sorteo o promoción)','Constancia de ARCA']},
+  {id:'adenda', l:'Adenda, renovación o rescisión', d:'Cambiar, renovar o terminar un contrato que ya existe.', docs:['Contrato original','Qué cambia y desde cuándo','Comunicaciones previas con la contraparte']},
+  {id:'revision', l:'Revisión de un contrato de la contraparte', d:'La otra parte mandó su modelo y hay que revisarlo.', docs:['Modelo de la contraparte (Word si es posible)','Propuesta comercial acordada']},
+  {id:'carta', l:'Carta documento o nota formal', d:'Intimaciones, comunicaciones formales o respuestas a terceros.', docs:['Antecedentes (contrato, mails, facturas)','Qué queremos lograr con la carta']},
+  {id:'otro', l:'Otro', d:'Contanos en el detalle qué necesitás.', docs:[]}
+];
+const CT_EST = ['Recibida','Asignada','En elaboración','Esperando información','En revisión','Enviada al solicitante','Cerrada'];
+const CT_PASOS = ['Recibida','Asignada','En elaboración','Enviada al solicitante','Cerrada'];
+const CT_AREAS = ['Compras','Marketing','Recursos Humanos','Prestaciones','Comercial','Sistemas','Administración y Finanzas','Farmacias','Dirección','Legales'];
+const ctUnidades = () => (S.config && Array.isArray(S.config.unidades) && S.config.unidades.length) ? S.config.unidades : ['Medifé','ASE','Sanatorio Finochietto','Fundación Medifé','OSPM'];
+function sols(){ return Array.isArray(S.solicitudes) ? S.solicitudes : (S.solicitudes = []); }
+const solById = id => sols().find(s=>s.id===id);
+const ctTipo = id => CT_TIPOS.find(t=>t.id===id) || CT_TIPOS[CT_TIPOS.length-1];
+function ctPerfil(u){ u = u || me(); if(!u) return 'solicitante'; if(u.ctPerfil) return u.ctPerfil; return u.rol==='Administrador' ? 'jefe' : 'solicitante'; }
+const ctEquipo = () => S.users.filter(u=>u.activo!==false && (u.rol!=='Administrador' || u.ctPerfil) && ['analista','jefe'].includes(ctPerfil(u)) && modsDe(u).includes('contratos'));
+const ctJefes = () => { const j = S.users.filter(u=>u.activo!==false && ctPerfil(u)==='jefe' && u.rol!=='Administrador'); return j.length ? j : S.users.filter(u=>u.rol==='Administrador' && u.activo!==false); };
+const esEquipoCt = () => ['analista','jefe'].includes(ctPerfil());
+const esJefeCt = () => ctPerfil()==='jefe';
+const ctVisibles = () => esEquipoCt() ? sols() : sols().filter(s=>s.solicitante===S.user);
+const ctAbierta = s => !['Cerrada','Cancelada'].includes(s.estado);
+function ctNumero(){ const y = new Date().getFullYear(); const n = sols().filter(s=>String(s.numero||'').includes('-'+y+'-')).length + 1; return `CT-${y}-${String(n).padStart(4,'0')}`; }
+function ctEvento(s, texto, user){ s.hilo = s.hilo||[]; s.hilo.push({id:'h'+randId(6), fecha:new Date().toISOString(), user:user||S.user, tipo:'evento', texto}); }
+function ctNuevo(s){ const u = S.user; if(!s.hilo || !s.hilo.length) return false; const v = (s.visto||{})[u]||''; return s.hilo.some(h=>h.user!==u && h.fecha>v && (!h.interno || esEquipoCt())); }
+function ctSemaforo(s){ if(!s.necesitaPara || !ctAbierta(s)) return {c:'', t:''}; const n = daysTo(s.necesitaPara); return {c:urg(n), t:whenText(n)}; }
+function ctBadge(){ if(!S || !S.user || !tieneMod('contratos')) return 0; const p = ctPerfil();
+  if(p==='jefe') return sols().filter(s=>s.estado==='Recibida' || (s.estado==='En revisión')).length + sols().filter(s=>s.asignadoA===S.user && ctAbierta(s) && ctNuevo(s)).length;
+  if(p==='analista') return sols().filter(s=>s.asignadoA===S.user && ctAbierta(s) && (ctNuevo(s) || s.estado==='Asignada')).length;
+  return sols().filter(s=>s.solicitante===S.user && ctAbierta(s) && (s.estado==='Esperando información' || s.estado==='Enviada al solicitante' || ctNuevo(s))).length; }
+const ctPill = est => `<span class="pill ${est==='Recibida'?'red':est==='Esperando información'?'yel':est==='Enviada al solicitante'?'acc':est==='Cerrada'?'grn':''}">${esc(est)}</span>`;
+function ctRow(s){ const t = ctTipo(s.tipo), sem = ctSemaforo(s), nuevo = ctNuevo(s);
+  return `<div class="case" data-go="contrato-${s.id}" tabindex="0" role="link"><div class="bar ${sem.c}"></div>
+    <div><div class="name">${nuevo?'<span class="ndotin"></span>':''}${esc(s.contraparte&&s.contraparte.nombre||'Sin contraparte')}</div>
+      <div class="meta"><span class="mono">${esc(s.numero)}</span><span>${esc(t.l)}</span>${esEquipoCt()?`<span>${esc(userName(s.solicitante))} · ${esc(s.area||'')}</span>`:''}${s.unidad?`<span>${esc(s.unidad)}</span>`:''}</div>
+      <div class="row" style="margin-top:8px;gap:6px;flex-wrap:wrap">${ctPill(s.estado)}${s.urgente?'<span class="pill red">Urgente</span>':''}${s.asignadoA?`<span class="pill">${ic('user','sm')} ${esc(userName(s.asignadoA))}</span>`:(ctAbierta(s)?'<span class="pill yel">Sin asignar</span>':'')}${(s.adjuntos||[]).length?`<span class="pill">${ic('file','sm')} ${s.adjuntos.length}</span>`:''}</div></div>
+    <div class="right">${s.necesitaPara && ctAbierta(s)?`<div class="when ${sem.c}">${sem.t}</div><div class="small muted">Lo necesitan el ${fmt(s.necesitaPara)}</div>`:`<div class="small muted">Pedido el ${fmt(s.creada.slice(0,10))}</div>`}</div></div>`; }
+function vContratos(){
+  const p = ctPerfil(), eq = esEquipoCt(); const all = ctVisibles();
+  const q = normTxt(ui.ctQ||'');
+  const match = s => !q || normTxt([s.numero, s.contraparte&&s.contraparte.nombre, s.contraparte&&s.contraparte.cuit, ctTipo(s.tipo).l, userName(s.solicitante), s.area, s.objeto, userName(s.asignadoA)].join(' ')).includes(q);
+  const F = eq ? {
+      ...(p==='jefe'?{sin:{l:'Sin asignar', f:s=>s.estado==='Recibida'}, rev:{l:'Para revisar', f:s=>s.estado==='En revisión'}}:{}),
+      mias:{l:'Asignadas a mí', f:s=>s.asignadoA===S.user && ctAbierta(s)},
+      espera:{l:'Esperando información', f:s=>s.estado==='Esperando información'},
+      abiertas:{l:'Todas abiertas', f:ctAbierta}, cerradas:{l:'Cerradas', f:s=>!ctAbierta(s)}}
+    : {abiertas:{l:'En curso', f:ctAbierta}, accion:{l:'Te necesitan', f:s=>['Esperando información','Enviada al solicitante'].includes(s.estado)}, cerradas:{l:'Cerradas', f:s=>!ctAbierta(s)}};
+  if(!F[ui.ctF]) ui.ctF = Object.keys(F)[0];
+  const list = all.filter(F[ui.ctF].f).filter(match).sort((a,b)=>(b.urgente?1:0)-(a.urgente?1:0) || String(a.necesitaPara||'9999').localeCompare(String(b.necesitaPara||'9999')) || b.creada.localeCompare(a.creada));
+  const carga = p==='jefe' ? ctEquipo().map(u=>({u, n:sols().filter(s=>s.asignadoA===u.id && ctAbierta(s)).length, e:sols().filter(s=>s.asignadoA===u.id && s.estado==='Esperando información').length})) : [];
+  return `<div class="head"><div><h1>Contratos</h1><p class="sub">${eq ? (p==='jefe'?'Recibís los pedidos de todas las áreas y decidís quién de tu equipo arma cada uno.':'Los pedidos que te asignaron y los de todo el equipo.') : 'Pedile al área de Contratos de Legales el documento que necesitás, con toda la información y los archivos.'}</p></div>
+      <div class="row" style="gap:8px">${eq && p==='jefe'?`<button class="btn ghost" data-act="ctconfig">${ic('grid','sm')} Configurar</button>`:''}<a class="btn pri big" href="#contrato-nuevo">${ic('plus')} Nueva solicitud</a></div></div>
+    ${carga.length?`<section class="card"><div class="row" style="justify-content:space-between"><h2>Carga del equipo</h2><span class="small muted">Pedidos abiertos de cada persona</span></div><div class="ctcarga">${carga.map(c=>`<button class="ctper" data-act="ctver" data-u="${c.u.id}"><div class="avatar" style="width:38px;height:38px;font-size:14px">${initials(c.u.nombre)}</div><div style="flex:1;text-align:left"><b>${esc(c.u.nombre)}</b><div class="small muted">${c.n} abiertos${c.e?` · ${c.e} esperando info`:''}</div></div><div class="ctbar"><span style="width:${Math.min(100, c.n*14)}%"></span></div></button>`).join('')}</div></section>`:''}
+    <section class="card"><div class="row" style="justify-content:space-between;gap:12px;flex-wrap:wrap"><div class="chips">${Object.entries(F).map(([k,v])=>`<button class="chipbtn ${ui.ctF===k?'on':''}" data-act="ctf" data-v="${k}">${v.l} <span class="badge ${k==='sin'&&all.filter(v.f).length?'red':''}">${all.filter(v.f).length}</span></button>`).join('')}</div>
+      <input type="search" id="ctQ" placeholder="Buscar por contraparte, número, área…" value="${esc(ui.ctQ||'')}" style="max-width:320px"></div>
+      ${ui.ctU?`<div class="notice small" style="display:flex;justify-content:space-between;align-items:center">Mostrando lo de ${esc(userName(ui.ctU))}<button class="linkbtn" data-act="ctver" data-u="">Ver todo</button></div>`:''}
+      <div class="cases">${list.filter(s=>!ui.ctU || s.asignadoA===ui.ctU).map(ctRow).join('') || `<div class="empty"><div class="ico g">${ic('file','lg')}</div><b>No hay solicitudes en esta lista</b>${eq?'':'<span class="muted small">Tocá "Nueva solicitud" para pedir un contrato.</span>'}</div>`}</div></section>`;
+}
+// ----- nueva solicitud -----
+let CTN = null;
+function ctnInit(){ const u = me(); CTN = {tipo:'', unidad:ctUnidades()[0], area:u.area||'', cp:{nombre:'',cuit:'',domicilio:'',contacto:'',email:'',tel:''}, objeto:'', monto:'', moneda:'$', pago:'', vigencia:'', inicio:'', necesitaPara:'', urgente:false, motivoUrg:'', modeloCp:'no', obs:'', checklist:{}, adjuntos:[]}; }
+function ctnRead(){ if(!CTN) return; const v = id => { const e = $('#'+id); return e ? e.value : null; }; const set = (k,id) => { const x = v(id); if(x!==null) CTN[k] = x; };
+  set('unidad','cnUni'); set('area','cnArea'); set('objeto','cnObj'); set('monto','cnMonto'); set('moneda','cnMon'); set('pago','cnPago'); set('vigencia','cnVig'); set('inicio','cnIni'); set('necesitaPara','cnNec'); set('motivoUrg','cnMotU'); set('obs','cnObs');
+  ['nombre','cuit','domicilio','contacto','email','tel'].forEach(k=>{ const x = v('cnCp_'+k); if(x!==null) CTN.cp[k] = x; });
+  if($('#cnUrg')) CTN.urgente = $('#cnUrg').checked; }
+function vContratoNuevo(){
+  if(!CTN) ctnInit(); const t = CTN.tipo ? ctTipo(CTN.tipo) : null; const N = CTN;
+  return `<div><a href="#contratos" class="btn ghost sm" style="padding-left:0">${ic('back','sm')} Volver a Contratos</a></div>
+  <div><h1>Nueva solicitud a Contratos</h1><p class="sub">Cuanto más completa, más rápido sale. Podés adjuntar archivos de cualquier formato: PDF, Word, Excel, mails, fotos, ZIP.</p></div>
+  <section class="card"><h2>1. ¿Qué necesitás?</h2>
+    <div class="cttipos">${CT_TIPOS.map(x=>`<button type="button" class="cttipo ${N.tipo===x.id?'on':''}" data-act="cntipo" data-v="${x.id}"><b>${esc(x.l)}</b><span>${esc(x.d)}</span></button>`).join('')}</div></section>
+  <section class="card"><h2>2. ¿Para quién es y con quién?</h2>
+    <div class="form">
+      <label>Empresa / unidad que contrata<select id="cnUni">${ctUnidades().map(u=>`<option ${u===N.unidad?'selected':''}>${esc(u)}</option>`).join('')}</select></label>
+      <label>Tu área<input type="text" id="cnArea" list="cnAreas" value="${esc(N.area)}" placeholder="Ej.: Compras"><datalist id="cnAreas">${CT_AREAS.map(a=>`<option value="${esc(a)}">`).join('')}</datalist></label>
+      <label>Contraparte (razón social o nombre)<input type="text" id="cnCp_nombre" value="${esc(N.cp.nombre)}" placeholder="Ej.: Limpiezas del Sur S.R.L."></label>
+      <label>CUIT<input type="text" id="cnCp_cuit" value="${esc(N.cp.cuit)}" inputmode="numeric" placeholder="30-12345678-9"></label>
+      <label class="full">Domicilio<input type="text" id="cnCp_domicilio" value="${esc(N.cp.domicilio)}"></label>
+      <label>Persona de contacto<input type="text" id="cnCp_contacto" value="${esc(N.cp.contacto)}"></label>
+      <label>Mail de contacto<input type="email" id="cnCp_email" value="${esc(N.cp.email)}"></label>
+    </div></section>
+  <section class="card"><h2>3. Detalle del acuerdo</h2>
+    <div class="form">
+      <label class="full">¿Qué se acuerda? <span class="hint">objeto, alcance, qué hace cada parte</span><textarea id="cnObj" rows="4" placeholder="Ej.: Servicio de limpieza de la sucursal Mendoza, de lunes a viernes de 7 a 10 hs, con insumos a cargo del proveedor.">${esc(N.objeto)}</textarea></label>
+      <label>Monto<div class="row" style="gap:6px;flex-wrap:nowrap"><select id="cnMon" style="max-width:90px">${['$','US$','€'].map(m=>`<option ${m===N.moneda?'selected':''}>${m}</option>`).join('')}</select><input type="text" id="cnMonto" value="${esc(N.monto)}" placeholder="Ej.: 850.000 mensuales"></div></label>
+      <label>Forma de pago<input type="text" id="cnPago" value="${esc(N.pago)}" placeholder="Ej.: a 30 días de factura"></label>
+      <label>Vigencia o plazo<input type="text" id="cnVig" value="${esc(N.vigencia)}" placeholder="Ej.: 12 meses, renovable"></label>
+      <label>Fecha de inicio<input type="date" id="cnIni" value="${esc(N.inicio)}"></label>
+      <label>¿Para cuándo lo necesitás?<input type="date" id="cnNec" value="${esc(N.necesitaPara)}" min="${iso(today())}"></label>
+      <label style="display:flex;flex-direction:row;gap:10px;align-items:center;font-weight:600;padding-top:26px"><input type="checkbox" id="cnUrg" ${N.urgente?'checked':''} style="width:18px;height:18px;flex:none"> Es urgente</label>
+      ${N.urgente?`<label class="full">¿Por qué es urgente?<input type="text" id="cnMotU" value="${esc(N.motivoUrg)}"></label>`:''}
+      <div class="full"><span class="small" style="font-weight:600">¿La contraparte mandó su propio modelo de contrato?</span><div class="opts" style="grid-template-columns:repeat(2,minmax(0,220px));margin-top:6px"><button type="button" class="opt ${N.modeloCp==='si'?'on':''}" data-act="cnmodelo" data-v="si">Sí, lo adjunto</button><button type="button" class="opt ${N.modeloCp!=='si'?'on':''}" data-act="cnmodelo" data-v="no">No, que lo arme Contratos</button></div></div>
+    </div></section>
+  <section class="card"><h2>4. Documentación</h2>
+    ${t && t.docs.length?`<p class="small muted">Para <b>${esc(t.l.toLowerCase())}</b> suele hacer falta esto. Marcá qué adjuntás; lo que falte, Contratos te lo pide después.</p>
+      <div class="ctdocs">${t.docs.map((d,i)=>{ const st = N.checklist[i]||''; return `<div class="ctdoc"><span>${esc(d)}</span><div class="seg">${[['si','Lo adjunto'],['luego','Lo mando después'],['na','No aplica']].map(([k,l])=>`<button type="button" class="${st===k?'on':''}" data-act="cncheck" data-i="${i}" data-v="${k}">${l}</button>`).join('')}</div></div>`; }).join('')}</div>`:(t?'':'<p class="small muted">Elegí arriba qué necesitás y te mostramos qué documentación suele hacer falta.</p>')}
+    <label class="ctdrop" id="ctdrop">${ic('upload','lg')}<b>Arrastrá acá los archivos o tocá para elegirlos</b><span class="small muted">Cualquier formato. Podés subir varios a la vez.</span><input type="file" id="cnFiles" multiple hidden></label>
+    <div class="list">${N.adjuntos.map((a,i)=>`<div class="li"><span>${ic('file','sm')} ${esc(a.nombre)} <span class="small muted">${fmtSize(a.size)}</span></span><button class="btn sm ghost danger" data-act="cnquitar" data-i="${i}">${ic('trash','sm')}</button></div>`).join('')}</div></section>
+  <section class="card"><h2>5. ¿Algo más?</h2><label class="full" style="display:block"><textarea id="cnObs" rows="3" style="width:100%" placeholder="Antecedentes, negociaciones previas, condiciones especiales, quién firma…">${esc(N.obs)}</textarea></label>
+    <div id="cnErr"></div>
+    <div class="row" style="gap:10px"><button class="btn pri big" data-act="cnenviar">${ic('send')} Enviar a Contratos</button><a class="btn ghost" href="#contratos" data-act="cncancel">Cancelar</a></div></section>`;
+}
+const fmtSize = n => !n ? '' : n<1024*1024 ? Math.max(1,Math.round(n/1024))+' KB' : (n/1024/1024).toFixed(1).replace('.',',')+' MB';
+async function ctGuardarArchivos(files){ const out = []; for(const f of files){ let text = ''; try{ if(/\.(txt|csv|eml|html?)$/i.test(f.name)) text = await f.text(); }catch(e){} const fid = await saveFileBlob(f, text); out.push({fid, nombre:f.name, size:f.size, tipo:f.type||'', fecha:new Date().toISOString(), user:S.user}); } return out; }
+async function cnAgregar(files){ ctnRead(); const n = await ctGuardarArchivos([...files]); CTN.adjuntos.push(...n); render(); toast(n.length===1?'Archivo agregado':`${n.length} archivos agregados`); }
+function cnEnviar(){
+  ctnRead(); const N = CTN, err = [];
+  if(!N.tipo) err.push('qué necesitás'); if(!N.cp.nombre.trim()) err.push('la contraparte'); if(!N.objeto.trim()) err.push('qué se acuerda');
+  if(err.length){ $('#cnErr').innerHTML = `<div class="notice bad">Falta completar: ${err.join(', ')}.</div>`; return; }
+  const s = {id:'c'+randId(8), numero:ctNumero(), solicitante:S.user, area:N.area.trim(), unidad:N.unidad, tipo:N.tipo, contraparte:{...N.cp}, objeto:N.objeto.trim(), monto:N.monto.trim()?`${N.moneda} ${N.monto.trim()}`:'', pago:N.pago.trim(), vigencia:N.vigencia.trim(), inicio:N.inicio, necesitaPara:N.necesitaPara, urgente:N.urgente, motivoUrg:N.motivoUrg.trim(), modeloCp:N.modeloCp==='si', obs:N.obs.trim(),
+    checklist:ctTipo(N.tipo).docs.map((d,i)=>({doc:d, estado:N.checklist[i]||''})), adjuntos:N.adjuntos, versiones:[], estado:'Recibida', creada:new Date().toISOString(), hilo:[], visto:{[S.user]:new Date().toISOString()}};
+  ctEvento(s, `Envió la solicitud${s.adjuntos.length?` con ${s.adjuntos.length} ${s.adjuntos.length===1?'archivo':'archivos'}`:''}.`);
+  sols().push(s);
+  if(me().area !== s.area && s.area){ me().area = s.area; }
+  ctJefes().forEach(j=>notificar(j.id, `${userName(S.user)} (${s.area||'sin área'}) pidió ${ctTipo(s.tipo).l.toLowerCase()} con ${s.contraparte.nombre}${s.urgente?' · URGENTE':''}. ${s.numero}.`, 'contrato-'+s.id, s.urgente?'alerta':'tarea'));
+  save(); audit('Envió una solicitud a Contratos', s.numero, `${ctTipo(s.tipo).l} · ${s.contraparte.nombre}`);
+  CTN = null; location.hash = 'contrato-'+s.id; toast(`Enviada. Tu número es ${s.numero}`);
+}
+// ----- detalle -----
+function vContrato(id){
+  const s = solById(id); if(!s || (!esEquipoCt() && s.solicitante!==S.user)) return `<div class="card empty"><b>No encontramos esa solicitud o no tenés acceso.</b><a class="btn" href="#contratos">Volver</a></div>`;
+  s.visto = s.visto||{}; const ahora = new Date().toISOString(); if((s.visto[S.user]||'') < ahora){ s.visto[S.user] = ahora; setTimeout(save, 0); }
+  const t = ctTipo(s.tipo), eq = esEquipoCt(), jefe = esJefeCt(), mio = s.asignadoA===S.user, sol = s.solicitante===S.user;
+  const paso = CT_PASOS.indexOf(['Esperando información','En revisión'].includes(s.estado)?'En elaboración':s.estado);
+  const acciones = [];
+  if(eq && ctAbierta(s)){
+    if(jefe) acciones.push(`<button class="btn ${s.estado==='Recibida'?'pri':''}" data-act="ctasignar">${ic('user','sm')} ${s.asignadoA?'Reasignar':'Asignar'}</button>`);
+    if((mio||jefe) && s.estado==='Asignada') acciones.push(`<button class="btn pri" data-act="ctest" data-v="En elaboración">${ic('pen','sm')} Empezar a trabajar</button>`);
+    if((mio||jefe) && s.asignadoA){ acciones.push(`<button class="btn" data-act="ctmodo" data-v="pedido">${ic('help','sm')} Pedir información</button>`); acciones.push(`<button class="btn" data-act="ctversion">${ic('upload','sm')} Subir versión</button>`);
+      if(s.estado!=='En revisión' && !jefe) acciones.push(`<button class="btn" data-act="ctest" data-v="En revisión">${ic('search','sm')} Pedir revisión a ${esc(userName(ctJefes()[0]&&ctJefes()[0].id).split(' ')[0]||'la jefatura')}</button>`);
+      if((s.versiones||[]).length) acciones.push(`<button class="btn ok" data-act="ctenviar">${ic('send','sm')} Enviar al solicitante</button>`); }
+    if(jefe && s.estado==='En revisión') acciones.push(`<button class="btn ok" data-act="ctaprobar">${ic('check','sm')} Aprobar revisión</button>`);
+    if(mio||jefe) acciones.push(`<button class="btn ghost" data-act="ctcerrar">${ic('check','sm')} Cerrar (firmado o terminado)</button>`);
+  }
+  if(sol && !eq && ctAbierta(s)){
+    if(s.estado==='Enviada al solicitante'){ acciones.push(`<button class="btn ok" data-act="ctconforme">${ic('check','sm')} Está bien, lo cierro</button>`); acciones.push(`<button class="btn" data-act="ctmodo" data-v="cambios">${ic('pen','sm')} Pedir cambios</button>`); }
+    acciones.push(`<button class="btn ghost danger" data-act="ctcancelar">Cancelar la solicitud</button>`);
+  }
+  if(sol && eq && ctAbierta(s) && s.estado==='Enviada al solicitante') acciones.push(`<button class="btn ok" data-act="ctconforme">${ic('check','sm')} Está bien, lo cierro</button>`);
+  const hilo = (s.hilo||[]).filter(h=>!h.interno || eq);
+  const campo = (l, v) => v ? `<div><span class="glbl">${l}</span>${esc(v)}</div>` : '';
+  const archivo = (a, extra='') => `<div class="li"><span style="min-width:0">${ic('file','sm')} <b style="overflow-wrap:anywhere">${esc(a.nombre)}</b> <span class="small muted">${fmtSize(a.size)}${a.user?` · ${esc(userName(a.user).split(' ')[0])}`:''} · ${fmt((a.fecha||'').slice(0,10))}</span>${extra}</span><button class="btn sm ghost" data-act="ctverarch" data-fid="${a.fid}" data-n="${esc(a.nombre)}">${ic('search','sm')} Ver</button></div>`;
+  return `<div><a href="#contratos" class="btn ghost sm" style="padding-left:0">${ic('back','sm')} Volver a Contratos</a></div>
+  <div class="head"><div><h1>${esc(s.contraparte.nombre)}</h1><p class="sub"><span class="mono">${esc(s.numero)}</span> · ${esc(t.l)}${s.unidad?` · ${esc(s.unidad)}`:''}</p>
+    <div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap">${ctPill(s.estado)}${s.urgente?'<span class="pill red">Urgente</span>':''}${s.necesitaPara&&ctAbierta(s)?`<span class="pill ${ctSemaforo(s).c==='red'?'red':ctSemaforo(s).c==='yel'?'yel':''}">Lo necesitan el ${fmt(s.necesitaPara)} · ${ctSemaforo(s).t}</span>`:''}</div></div></div>
+  <section class="card"><div class="steps">${CT_PASOS.map((x,i)=>`<div class="step ${i<paso?'done':''} ${i===paso?'cur':''}"><span class="dot">${i<paso?ic('check','sm'):i+1}</span><span>${esc(x)}</span></div>`).join('')}</div>
+    ${['Esperando información','En revisión','Cancelada'].includes(s.estado)?`<div class="notice small" style="display:block">${s.estado==='Esperando información'?(sol&&!eq?'<b>Contratos te pidió información.</b> Respondé abajo en la conversación (podés adjuntar archivos).':'<b>Esperando información del solicitante.</b>'):s.estado==='En revisión'?'<b>En revisión de la jefatura de Contratos.</b>':'<b>Solicitud cancelada.</b>'}</div>`:''}
+    <div class="row" style="gap:8px;flex-wrap:wrap">${acciones.join('')}</div></section>
+  <div class="grid2">
+    <section class="card"><h3>Datos de la solicitud</h3>
+      <div class="ctdatos">${campo('Pidió', `${userName(s.solicitante)}${s.area?' · '+s.area:''} · ${fmt(s.creada.slice(0,10))}`)}${campo('A cargo', s.asignadoA?`${userName(s.asignadoA)}${s.fechaObjetivo?' · objetivo '+fmt(s.fechaObjetivo):''}`:'Sin asignar todavía')}
+        ${campo('Contraparte', [s.contraparte.nombre, s.contraparte.cuit&&'CUIT '+s.contraparte.cuit].filter(Boolean).join(' · '))}${campo('Domicilio', s.contraparte.domicilio)}${campo('Contacto', [s.contraparte.contacto, s.contraparte.email].filter(Boolean).join(' · '))}
+        ${campo('Qué se acuerda', s.objeto)}${campo('Monto', s.monto)}${campo('Forma de pago', s.pago)}${campo('Vigencia', s.vigencia)}${campo('Inicio', s.inicio&&fmt(s.inicio))}${campo('Por qué es urgente', s.motivoUrg)}${campo('Modelo', s.modeloCp?'La contraparte mandó su propio modelo':'')}${campo('Comentarios', s.obs)}</div>
+      ${(s.checklist||[]).length?`<div><span class="glbl">Documentación</span><div class="list">${s.checklist.map((c,i)=>`<div class="li"><span>${esc(c.doc)}</span>${eq?`<select data-ctchk="${i}" style="max-width:170px">${[['','Sin indicar'],['si','Adjuntado'],['luego','Lo manda después'],['na','No aplica'],['ok','Revisado ✓']].map(([k,l])=>`<option value="${k}" ${c.estado===k?'selected':''}>${l}</option>`).join('')}</select>`:`<span class="pill ${c.estado==='ok'||c.estado==='si'?'grn':c.estado==='luego'?'yel':''}">${({si:'Adjuntado',luego:'Lo mandás después',na:'No aplica',ok:'Revisado ✓'})[c.estado]||'Sin indicar'}</span>`}</div>`).join('')}</div></div>`:''}</section>
+    <section class="card"><h3>Documentos</h3>
+      ${(s.versiones||[]).length?`<div><span class="glbl">Versiones de Contratos</span><div class="list">${s.versiones.slice().reverse().map(v=>archivo(v, ` <span class="pill ${v.final?'grn':''}" style="margin-left:4px">v${v.n}${v.final?' · final':''}${v.enviada?' · enviada':''}</span>${v.nota?`<div class="small muted">${esc(v.nota)}</div>`:''}`)).join('')}</div></div>`:''}
+      <div><span class="glbl">Archivos del pedido y de la conversación</span><div class="list">${[...(s.adjuntos||[]), ...hilo.flatMap(h=>h.adjuntos||[])].map(a=>archivo(a)).join('') || '<div class="empty small">Sin archivos.</div>'}</div></div>
+      <label class="ctdrop sm" id="ctdrop2">${ic('upload')}<b>Sumar archivos</b><span class="small muted">Arrastralos o tocá acá</span><input type="file" id="ctMasArch" multiple hidden></label></section>
+  </div>
+  <section class="card"><h3>Conversación</h3>
+    <div class="cthilo">${hilo.map(h=>{ const u = S.users.find(x=>x.id===h.user), yo = h.user===S.user, deEq = u && ['analista','jefe'].includes(ctPerfil(u)) && h.user!==s.solicitante;
+      if(h.tipo==='evento') return `<div class="ctev">${ic('check','sm')} <b>${esc(userName(h.user))}</b> ${esc(h.texto)} <span class="muted">· ${fmtTs(h.fecha)}</span></div>`;
+      return `<div class="ctmsg ${yo?'yo':''} ${h.interno?'interno':''} ${h.tipo}"><div class="ctmsg-h"><b>${esc(userName(h.user))}</b><span class="small muted">${deEq?'Contratos':esc(s.area||'Solicitante')} · ${fmtTs(h.fecha)}</span>${h.interno?'<span class="pill yel">Nota interna</span>':''}${h.tipo==='pedido'?'<span class="pill yel">Pedido de información</span>':''}${h.tipo==='cambios'?'<span class="pill yel">Pedido de cambios</span>':''}</div>
+        <div style="white-space:pre-wrap">${esc(h.texto)}</div>${(h.adjuntos||[]).length?`<div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px">${h.adjuntos.map(a=>`<button class="pill" data-act="ctverarch" data-fid="${a.fid}" data-n="${esc(a.nombre)}" style="cursor:pointer;border:0">${ic('file','sm')} ${esc(a.nombre)}</button>`).join('')}</div>`:''}</div>`; }).join('') || '<div class="empty small">Todavía no hay mensajes.</div>'}</div>
+    ${ctAbierta(s)?`<div class="ctcomp">
+      ${ui.ctModo==='pedido'?'<div class="notice small" style="display:block"><b>Pedido de información:</b> el pedido queda "Esperando información" y le avisamos al solicitante.</div>':ui.ctModo==='cambios'?'<div class="notice small" style="display:block"><b>Pedido de cambios:</b> vuelve a Contratos para que lo ajusten.</div>':''}
+      <textarea id="ctMsg" rows="3" placeholder="${ui.ctModo==='pedido'?'¿Qué información o documentación falta?':ui.ctModo==='cambios'?'¿Qué hay que cambiar?':'Escribí un mensaje…'}"></textarea>
+      <div class="row" style="gap:8px;flex-wrap:wrap;justify-content:space-between"><div class="row" style="gap:8px;flex-wrap:wrap"><label class="btn sm ghost" style="cursor:pointer">${ic('upload','sm')} Adjuntar<input type="file" id="ctMsgArch" multiple hidden></label><span class="small muted" id="ctMsgArchN">${(ui.ctMsgArch||[]).length?`${ui.ctMsgArch.length} archivo(s) listos`:''}</span>
+        ${eq && !ui.ctModo?`<label class="small" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="ctInterno"> Nota interna (no la ve el solicitante)</label>`:''}</div>
+        <div class="row" style="gap:8px">${ui.ctModo?'<button class="btn ghost" data-act="ctmodo" data-v="">Cancelar</button>':''}<button class="btn pri" data-act="ctmsg">${ic('send','sm')} ${ui.ctModo==='pedido'?'Pedir información':ui.ctModo==='cambios'?'Pedir cambios':'Enviar'}</button></div></div></div>`:''}
+  </section>`;
+}
+function ctNotificarOtros(s, texto, tipo){ const dest = new Set(); if(s.solicitante!==S.user) dest.add(s.solicitante); if(s.asignadoA && s.asignadoA!==S.user) dest.add(s.asignadoA); if(!s.asignadoA) ctJefes().forEach(j=>{ if(j.id!==S.user) dest.add(j.id); }); dest.forEach(u=>notificar(u, texto, 'contrato-'+s.id, tipo)); }
+function ctAsignarModal(s){ const eqp = ctEquipo(); const carga = id => sols().filter(x=>x.asignadoA===id && ctAbierta(x)).length;
+  showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:22px">${s.asignadoA?'Reasignar':'Asignar'} ${esc(s.numero)}</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div>
+    <p class="small muted">${esc(ctTipo(s.tipo).l)} · ${esc(s.contraparte.nombre)} · pidió ${esc(userName(s.solicitante))}${s.necesitaPara?` · lo necesitan el ${fmt(s.necesitaPara)}`:''}</p>
+    <div class="fld">¿Quién lo arma?<div class="ctasig">${eqp.map(u=>`<button type="button" class="ctper ${ui.ctAsig===u.id?'on':''}" data-act="ctasigsel" data-u="${u.id}"><div class="avatar" style="width:36px;height:36px;font-size:13px">${initials(u.nombre)}</div><div style="flex:1;text-align:left"><b>${esc(u.nombre)}${u.id===S.user?' (vos)':''}</b><div class="small muted">${carga(u.id)} pedidos abiertos</div></div></button>`).join('')}</div></div>
+    <div class="form"><label>Fecha objetivo<input type="date" id="ctaF" value="${esc(s.fechaObjetivo||s.necesitaPara||'')}"></label><label class="full">Indicaciones para quien lo arma (opcional)<input type="text" id="ctaNota" placeholder="Ej.: Usá el modelo de locación de servicios de 2026"></label></div>
+    <div class="row"><button class="btn pri big" data-act="ctasigok">${ic('check')} Asignar</button></div>`); }
+function ctVersionModal(){ showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:22px">Subir una versión del documento</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div>
+  <div class="form"><label class="full">Archivo<input type="file" id="cvF"></label><label class="full">Nota (opcional)<input type="text" id="cvN" placeholder="Ej.: Incorpora los cambios del proveedor en la cláusula 5"></label>
+  <label class="full" style="display:flex;flex-direction:row;gap:10px;align-items:center;font-weight:600"><input type="checkbox" id="cvFinal" style="width:18px;height:18px;flex:none"> Es la versión final</label></div>
+  <div class="row"><button class="btn pri big" data-act="ctversionok">${ic('upload')} Subir</button></div>`); }
+function ctBuscar(q){ const t = normTxt(q); if(!t.trim() || !tieneMod('contratos')) return []; return ctVisibles().filter(s=>normTxt([s.numero, s.contraparte&&s.contraparte.nombre, s.contraparte&&s.contraparte.cuit, ctTipo(s.tipo).l, userName(s.solicitante)].join(' ')).includes(t)).slice(0,5); }
+function ctInicioBlock(){ if(!tieneMod('contratos')) return ''; const eq = esEquipoCt(); const v = ctVisibles().filter(ctAbierta);
+  const top = eq ? (esJefeCt() ? v.filter(s=>s.estado==='Recibida' || s.estado==='En revisión' || s.asignadoA===S.user) : v.filter(s=>s.asignadoA===S.user)) : v;
+  return `<section class="card"><div class="head"><h2>Contratos</h2><div class="row" style="gap:8px"><a class="btn pri" href="#contrato-nuevo">${ic('plus','sm')} Nueva solicitud</a><a href="#contratos" class="small">Ver todo</a></div></div>
+    <div class="cases">${top.slice(0,6).map(ctRow).join('') || `<div class="empty small">${eq?'No tenés pedidos pendientes.':'No tenés solicitudes en curso.'}</div>`}</div></section>`; }
+document.addEventListener('click', async ev => {
+  if(!S || !S.user) return; const el = ev.target.closest('[data-act]'); if(!el) return; const a = el.dataset.act, d = el.dataset;
+  if(!/^(ct|cn)/.test(a)) return;
+  if(a==='ctf'){ ui.ctF = d.v; render(); return; }
+  if(a==='ctver'){ ui.ctU = d.u || null; if(d.u) ui.ctF = 'abiertas'; render(); return; }
+  if(a==='cntipo'){ ctnRead(); CTN.tipo = d.v; CTN.checklist = {}; render(); return; }
+  if(a==='cnmodelo'){ ctnRead(); CTN.modeloCp = d.v; render(); return; }
+  if(a==='cncheck'){ ctnRead(); CTN.checklist[d.i] = CTN.checklist[d.i]===d.v ? '' : d.v; render(); return; }
+  if(a==='cnquitar'){ ctnRead(); CTN.adjuntos.splice(+d.i,1); render(); return; }
+  if(a==='cnenviar'){ cnEnviar(); return; }
+  if(a==='cncancel'){ CTN = null; return; }
+  if(a==='ctconfig'){ showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:22px">Configurar Contratos</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div><label class="full" style="display:block">Empresas / unidades que contratan (una por renglón)<textarea id="ccUni" rows="6" style="width:100%">${esc(ctUnidades().join('\n'))}</textarea></label><p class="small muted">Quién es solicitante, analista o jefe de Contratos se elige en Usuarios.</p><div class="row"><button class="btn pri" data-act="ctconfigok">${ic('check')} Guardar</button></div>`); return; }
+  if(a==='ctconfigok'){ const l = $('#ccUni').value.split('\n').map(x=>x.trim()).filter(Boolean); S.config = {...(S.config||{}), unidades:l}; save(); audit('Configuró Contratos','Contratos', l.join(', ')); closeModal(); render(); toast('Guardado'); return; }
+  const r = route(), s = r.name==='contrato' ? solById(r.id) : null; if(!s) return;
+  if(a==='ctverarch'){ openViewer({fid:d.fid, meta:{nombre:d.n}}); return; }
+  if(a==='ctmodo'){ ui.ctModo = d.v || null; render(); setTimeout(()=>{ const m = $('#ctMsg'); if(m) m.focus(); }, 30); return; }
+  if(a==='ctasignar'){ ui.ctAsig = s.asignadoA || null; ctAsignarModal(s); return; }
+  if(a==='ctasigsel'){ ui.ctAsig = d.u; const f = $('#ctaF').value, n = $('#ctaNota').value; ctAsignarModal(s); $('#ctaF').value = f; $('#ctaNota').value = n; return; }
+  if(a==='ctasigok'){ if(!ui.ctAsig){ toast('Elegí quién lo arma'); return; } const ant = s.asignadoA; s.asignadoA = ui.ctAsig; s.asignadoPor = S.user; s.asignadoEn = new Date().toISOString(); s.fechaObjetivo = $('#ctaF').value || ''; const nota = $('#ctaNota').value.trim();
+    if(s.estado==='Recibida') s.estado = 'Asignada';
+    ctEvento(s, ant ? `reasignó el pedido de ${userName(ant)} a ${userName(s.asignadoA)}.` : `le asignó el pedido a ${userName(s.asignadoA)}.`);
+    if(nota){ s.hilo.push({id:'h'+randId(6), fecha:new Date().toISOString(), user:S.user, tipo:'mensaje', texto:nota, interno:true}); }
+    if(s.asignadoA!==S.user) notificar(s.asignadoA, `${userName(S.user)} te asignó ${s.numero}: ${ctTipo(s.tipo).l.toLowerCase()} con ${s.contraparte.nombre}${s.fechaObjetivo?` (objetivo: ${fmt(s.fechaObjetivo)})`:''}.${nota?' Indicaciones: '+nota:''}`, 'contrato-'+s.id, 'tarea');
+    if(ant && ant!==s.asignadoA && ant!==S.user) notificar(ant, `${userName(S.user)} reasignó ${s.numero} a ${userName(s.asignadoA)}.`, 'contrato-'+s.id);
+    if(!ant) notificar(s.solicitante, `Tu pedido ${s.numero} (${s.contraparte.nombre}) ya lo tiene ${userName(s.asignadoA)} en Contratos.`, 'contrato-'+s.id, 'ok');
+    save(); audit(ant?'Reasignó una solicitud de Contratos':'Asignó una solicitud de Contratos', s.numero, userName(s.asignadoA)); ui.ctAsig = null; closeModal(); render(); toast(`Asignado a ${userName(s.asignadoA).split(' ')[0]}`); return; }
+  if(a==='ctest'){ const ant = s.estado; s.estado = d.v; ctEvento(s, `pasó el pedido a "${d.v}".`);
+    if(d.v==='En revisión') ctJefes().forEach(j=>{ if(j.id!==S.user) notificar(j.id, `${userName(S.user)} te pide revisar ${s.numero} (${s.contraparte.nombre}).`, 'contrato-'+s.id, 'validar'); });
+    if(d.v==='En elaboración' && ant==='Asignada') notificar(s.solicitante, `${userName(S.user)} empezó a trabajar en tu pedido ${s.numero}.`, 'contrato-'+s.id);
+    save(); audit('Cambió el estado de una solicitud de Contratos', s.numero, `${ant} → ${d.v}`); render(); toast('Listo'); return; }
+  if(a==='ctaprobar'){ s.estado = 'En elaboración'; ctEvento(s, 'aprobó la revisión.'); if(s.asignadoA && s.asignadoA!==S.user) notificar(s.asignadoA, `${userName(S.user)} aprobó la revisión de ${s.numero}. Ya podés enviarlo al solicitante.`, 'contrato-'+s.id, 'ok'); save(); audit('Aprobó la revisión de un contrato', s.numero, ''); render(); toast('Revisión aprobada'); return; }
+  if(a==='ctversion'){ ctVersionModal(); return; }
+  if(a==='ctversionok'){ const f = $('#cvF').files[0]; if(!f){ toast('Elegí el archivo'); return; } const [x] = await ctGuardarArchivos([f]); s.versiones = s.versiones||[]; const v = {...x, n:s.versiones.length+1, nota:$('#cvN').value.trim(), final:$('#cvFinal').checked}; s.versiones.push(v);
+    ctEvento(s, `subió la versión ${v.n}${v.final?' (final)':''}: ${v.nombre}.`); save(); audit('Subió una versión de contrato', s.numero, `v${v.n} ${v.nombre}`); closeModal(); render(); toast(`Versión ${v.n} subida`); return; }
+  if(a==='ctenviar'){ const v = s.versiones[s.versiones.length-1]; v.enviada = true; s.estado = 'Enviada al solicitante'; s.hilo.push({id:'h'+randId(6), fecha:new Date().toISOString(), user:S.user, tipo:'mensaje', texto:`Te envío la versión ${v.n}${v.final?' (final)':''} del documento.${v.nota?' '+v.nota:''} Revisala y avisame si está bien o qué hay que cambiar.`, adjuntos:[{fid:v.fid, nombre:v.nombre, size:v.size, tipo:v.tipo, fecha:v.fecha, user:v.user}]});
+    notificar(s.solicitante, `${userName(S.user)} te envió el documento de ${s.numero} (${s.contraparte.nombre}). Revisalo y confirmá.`, 'contrato-'+s.id, 'ok'); save(); audit('Envió un contrato al solicitante', s.numero, `v${v.n}`); render(); toast('Enviado al solicitante'); return; }
+  if(a==='ctcerrar' || a==='ctconforme'){ s.estado = 'Cerrada'; s.cerrada = new Date().toISOString(); ctEvento(s, a==='ctconforme' ? 'confirmó que está todo bien y cerró el pedido.' : 'cerró el pedido.'); ctNotificarOtros(s, `${userName(S.user)} cerró ${s.numero} (${s.contraparte.nombre}).`, 'ok'); save(); audit('Cerró una solicitud de Contratos', s.numero, ''); render(); toast('Pedido cerrado'); return; }
+  if(a==='ctcancelar'){ const antC = s.estado; s.estado = 'Cancelada'; ctEvento(s, 'canceló la solicitud.'); ctNotificarOtros(s, `${userName(S.user)} canceló ${s.numero} (${s.contraparte.nombre}).`, 'alerta'); save(); audit('Canceló una solicitud de Contratos', s.numero, ''); render(); toast('Solicitud cancelada', ()=>{ s.estado = antC; ctEvento(s, 'deshizo la cancelación.'); save(); render(); }); return; }
+  if(a==='ctmsg'){ const txt = $('#ctMsg').value.trim(); const adj = ui.ctMsgArch||[]; if(!txt && !adj.length){ toast('Escribí un mensaje'); return; } const modo = ui.ctModo, interno = !!($('#ctInterno')&&$('#ctInterno').checked);
+    s.hilo.push({id:'h'+randId(6), fecha:new Date().toISOString(), user:S.user, tipo:modo==='pedido'?'pedido':modo==='cambios'?'cambios':'mensaje', texto:txt, adjuntos:adj, interno});
+    if(modo==='pedido'){ s.estado = 'Esperando información'; notificar(s.solicitante, `Contratos necesita información para ${s.numero} (${s.contraparte.nombre}): ${txt.slice(0,140)}`, 'contrato-'+s.id, 'alerta'); }
+    else if(modo==='cambios'){ s.estado = 'En elaboración'; if(s.asignadoA) notificar(s.asignadoA, `${userName(S.user)} pidió cambios en ${s.numero}: ${txt.slice(0,140)}`, 'contrato-'+s.id, 'alerta'); }
+    else if(!interno){ if(s.estado==='Esperando información' && S.user===s.solicitante){ s.estado = 'En elaboración'; ctEvento(s, 'respondió el pedido de información.'); } ctNotificarOtros(s, `${userName(S.user)} escribió en ${s.numero}: ${(txt||'adjuntó archivos').slice(0,140)}`, 'info'); }
+    else if(s.asignadoA && s.asignadoA!==S.user) notificar(s.asignadoA, `${userName(S.user)} dejó una nota interna en ${s.numero}.`, 'contrato-'+s.id);
+    ui.ctModo = null; ui.ctMsgArch = []; save(); audit(modo==='pedido'?'Pidió información en Contratos':modo==='cambios'?'Pidió cambios en Contratos':'Escribió en una solicitud de Contratos', s.numero, txt.slice(0,80)); render(); toast('Enviado'); return; }
+});
+document.addEventListener('change', async ev => { const t = ev.target; if(!S || !S.user) return;
+  if(t.id==='cnFiles' && t.files.length){ await cnAgregar(t.files); return; }
+  if(t.id==='cnUrg'){ ctnRead(); render(); return; }
+  const r = route(), s = r.name==='contrato' ? solById(r.id) : null;
+  if(t.id==='ctMsgArch' && t.files.length && s){ const txt = $('#ctMsg').value; ui.ctMsgArch = [...(ui.ctMsgArch||[]), ...await ctGuardarArchivos([...t.files])]; render(); $('#ctMsg').value = txt; return; }
+  if(t.id==='ctMasArch' && t.files.length && s){ const n = await ctGuardarArchivos([...t.files]); s.adjuntos.push(...n); ctEvento(s, `sumó ${n.length===1?'un archivo':n.length+' archivos'}: ${n.map(x=>x.nombre).join(', ')}.`); ctNotificarOtros(s, `${userName(S.user)} sumó archivos a ${s.numero}.`); save(); render(); toast('Archivos agregados'); return; }
+  if(t.dataset && t.dataset.ctchk!==undefined && s){ s.checklist[+t.dataset.ctchk].estado = t.value; save(); return; }
+});
+document.addEventListener('input', ev => { if(ev.target.id==='ctQ'){ ui.ctQ = ev.target.value; const pos = ev.target.selectionStart; render(); const n = $('#ctQ'); if(n){ n.focus(); try{ n.setSelectionRange(pos,pos); }catch(e){} } } });
+document.addEventListener('dragover', ev => { const z = ev.target.closest && ev.target.closest('#ctdrop,#ctdrop2'); if(z){ ev.preventDefault(); z.classList.add('over'); } });
+document.addEventListener('dragleave', ev => { const z = ev.target.closest && ev.target.closest('#ctdrop,#ctdrop2'); if(z) z.classList.remove('over'); });
+document.addEventListener('drop', async ev => { const z = ev.target.closest && ev.target.closest('#ctdrop,#ctdrop2'); if(!z) return; ev.preventDefault(); z.classList.remove('over'); const fs = ev.dataTransfer.files; if(!fs.length) return;
+  if(z.id==='ctdrop'){ await cnAgregar(fs); return; } const r = route(), s = r.name==='contrato' ? solById(r.id) : null; if(!s) return; const n = await ctGuardarArchivos([...fs]); s.adjuntos.push(...n); ctEvento(s, `sumó ${n.length===1?'un archivo':n.length+' archivos'}: ${n.map(x=>x.nombre).join(', ')}.`); ctNotificarOtros(s, `${userName(S.user)} sumó archivos a ${s.numero}.`); save(); render(); toast('Archivos agregados'); });
+function ejemplosContratos(d){
+  const nu = [{id:'jpaz', nombre:'Julieta Paz', rol:'Jefa de Contratos', area:'Legales', ctPerfil:'jefe', modulos:['contratos']},
+    {id:'cortiz', nombre:'Camila Ortiz', rol:'Analista de Contratos', area:'Legales', ctPerfil:'analista', modulos:['contratos']},
+    {id:'mgimenez', nombre:'Marcos Giménez', rol:'Compras', area:'Compras', ctPerfil:'solicitante', modulos:['contratos']},
+    {id:'sruiz', nombre:'Sofía Ruiz', rol:'Marketing', area:'Marketing', ctPerfil:'solicitante', modulos:['contratos']}];
+  return nu; }
+function solicitudesEjemplo(){ const ts = n => { const x = new Date(); x.setDate(x.getDate()+n); return x.toISOString(); };
+  return [
+    {id:'cej1', numero:'CT-2026-0001', solicitante:'mgimenez', area:'Compras', unidad:'Medifé', tipo:'servicios', contraparte:{nombre:'Limpiezas del Sur S.R.L.', cuit:'30-71555444-2', domicilio:'San Martín 1450, Mendoza', contacto:'Raúl Ibarra', email:'ribarra@limpiezasdelsur.com.ar'}, objeto:'Limpieza de la sucursal Mendoza, de lunes a viernes de 7 a 10 hs, insumos a cargo del proveedor.', monto:'$ 850.000 mensuales', pago:'A 30 días de factura', vigencia:'12 meses, renovable', inicio:dPlus(10), necesitaPara:dPlus(4), urgente:false, modeloCp:false, obs:'Ya negociamos el precio; firma el gerente regional.',
+      checklist:ctTipo('servicios').docs.map((doc,i)=>({doc, estado:['si','si','luego','luego','na'][i]||''})), adjuntos:[], versiones:[], estado:'Recibida', creada:ts(-1), hilo:[{id:'h1', fecha:ts(-1), user:'mgimenez', tipo:'evento', texto:'Envió la solicitud.'}], visto:{}},
+    {id:'cej2', numero:'CT-2026-0002', solicitante:'sruiz', area:'Marketing', unidad:'Medifé', tipo:'marketing', contraparte:{nombre:'Juana Benítez (creadora de contenido)', cuit:'27-35111222-4', domicilio:'', contacto:'Agencia Brillo', email:'contacto@brillo.com.ar'}, objeto:'3 publicaciones y 6 historias en Instagram sobre el plan joven, durante diciembre.', monto:'$ 1.200.000', pago:'50% al firmar y 50% al terminar', vigencia:'Diciembre 2026', inicio:dPlus(8), necesitaPara:dPlus(2), urgente:true, motivoUrg:'La campaña sale el 1 de diciembre.', modeloCp:false, obs:'',
+      checklist:ctTipo('marketing').docs.map((doc,i)=>({doc, estado:['si','luego','na','si'][i]||''})), adjuntos:[], versiones:[], estado:'Esperando información', asignadoA:'cortiz', asignadoPor:'jpaz', asignadoEn:ts(-2), fechaObjetivo:dPlus(1), creada:ts(-3),
+      hilo:[{id:'h2', fecha:ts(-3), user:'sruiz', tipo:'evento', texto:'Envió la solicitud.'},{id:'h3', fecha:ts(-2), user:'jpaz', tipo:'evento', texto:'le asignó el pedido a Camila Ortiz.'},{id:'h4', fecha:ts(-1), user:'cortiz', tipo:'pedido', texto:'¿Nos pasás la cesión de derechos de imagen firmada por la creadora? Y confirmame si las piezas las aprueba Marketing antes de publicar.'}], visto:{cortiz:ts(-1)}},
+    {id:'cej3', numero:'CT-2026-0003', solicitante:'mgimenez', area:'Compras', unidad:'Sanatorio Finochietto', tipo:'nda', contraparte:{nombre:'Datasalud Analytics S.A.', cuit:'30-71888999-1', domicilio:'Av. del Libertador 5000, CABA', contacto:'Ana Torres', email:'atorres@datasalud.com'}, objeto:'Compartir información de prestaciones para que coticen un tablero de indicadores.', monto:'', pago:'', vigencia:'2 años', inicio:'', necesitaPara:dPlus(6), urgente:false, modeloCp:false, obs:'',
+      checklist:ctTipo('nda').docs.map(doc=>({doc, estado:'si'})), adjuntos:[], versiones:[], estado:'En elaboración', asignadoA:'lbrunelli', asignadoPor:'jpaz', asignadoEn:ts(-1), fechaObjetivo:dPlus(3), creada:ts(-2),
+      hilo:[{id:'h5', fecha:ts(-2), user:'mgimenez', tipo:'evento', texto:'Envió la solicitud.'},{id:'h6', fecha:ts(-1), user:'jpaz', tipo:'evento', texto:'le asignó el pedido a Lucas Emmanuel Brunelli.'},{id:'h7', fecha:ts(-1), user:'jpaz', tipo:'mensaje', interno:true, texto:'Usá nuestro modelo de NDA bilateral y agregá la cláusula de datos de salud.'}], visto:{}}
+  ]; }
 
 // ---------- actualización automática: si hay una versión nueva publicada, se carga sola ----------
 const APP_VERSION = (document.querySelector('meta[name=fojas-version]')||{}).content || '';
