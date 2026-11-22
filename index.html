@@ -2189,6 +2189,27 @@ async function ueSave(){
   ui.userMsg = {ok:true, html: `Listo, se guardaron los cambios de <b>${esc(u.nombre)}</b>${nid!==UE.id?` (ahora entra como <span class="mono">${esc(nid)}</span>)`:''}.` + (UE.pw==='ini' ? ` Su contraseña es <span class="mono">${esc(nid)}</span> (igual al usuario) y la tiene que cambiar al entrar.` : UE.pw==='nueva' ? ` La contraseña nueva ya funciona${u.mustChange?'; la va a tener que cambiar al entrar':''}.` : '')};
   UE = null; closeModal(); await chain; render();
 }
+function eliminarUsuario(u){
+  if(!isAdmin() || u.id===S.user) return;
+  if(u.rol==='Administrador' && !S.users.some(x=>x.id!==u.id && x.activo && x.rol==='Administrador')){ ui.userMsg = {ok:false, t:'No se puede eliminar al único administrador. Nombrá a otra persona administradora primero.'}; render(); return; }
+  const exps = S.exps.filter(e=>e.abogado===u.id), lidera = (S.teams||[]).filter(t=>t.jefe===u.id);
+  const otros = S.users.filter(x=>x.id!==u.id && x.activo && x.rol!=='Administrador');
+  const def = (lidera[0] && lidera[0].miembros.find(m=>m!==u.id)) || ((S.teams||[]).find(t=>t.miembros.includes(u.id))||{}).jefe || (otros[0]||{}).id || '';
+  const necesita = exps.length || lidera.length;
+  if(necesita && !otros.length){ ui.userMsg = {ok:false, t:`${u.nombre} tiene expedientes o un equipo a cargo y no hay otra persona a quien pasárselos. Agregá a alguien primero.`}; render(); return; }
+  askConfirm({titulo:`¿Eliminar a ${u.nombre}?`, boton:'Sí, eliminar usuario',
+    texto:`Ya no va a poder entrar a Fojas. Lo que hizo queda en el historial.${necesita?`<br><br>${exps.length?`Tiene <b>${exps.length} expediente${exps.length>1?'s':''}</b> a cargo`:''}${exps.length&&lidera.length?' y ':''}${lidera.length?`es jefa/e del equipo <b>${lidera.map(t=>esc(t.nombre)).join(', ')}</b>`:''}. ¿A quién ${exps.length+lidera.length>1?'se los':'se lo'} pasamos?<select id="delA" style="margin-top:8px">${otros.map(x=>`<option value="${x.id}" ${x.id===def?'selected':''}>${esc(x.nombre)}</option>`).join('')}</select>`:''}`,
+    antes:()=>{ const s = $('#delA'); return s ? s.value : null; },
+    run:(a)=>{
+      const snap = {user:JSON.parse(JSON.stringify(u)), idx:S.users.indexOf(u), teams:JSON.parse(JSON.stringify(S.teams||[])), exps:exps.map(e=>e.id), lock:(S.lock||{})[u.id]};
+      exps.forEach(e=>{ e.abogado = a; });
+      (S.teams||[]).forEach(t=>{ if(t.jefe===u.id){ t.jefe = a; t.miembros = t.miembros.filter(m=>m!==a); } t.miembros = t.miembros.filter(m=>m!==u.id); });
+      S.users = S.users.filter(x=>x.id!==u.id); if(S.lock) delete S.lock[u.id];
+      save(); audit('Eliminó un usuario','Usuarios', `${u.id} (${u.nombre})${a&&necesita?` · sus expedientes${lidera.length?' y su equipo':''} pasan a ${userName(a)}`:''}`);
+      ui.userMsg = null; render();
+      toast(`Se eliminó a ${u.nombre}.`, ()=>{ S.users.splice(Math.min(snap.idx, S.users.length), 0, snap.user); S.teams = snap.teams; S.exps.forEach(e=>{ if(snap.exps.includes(e.id)) e.abogado = snap.user.id; }); if(snap.lock) S.lock[snap.user.id] = snap.lock; save(); audit('Restauró un usuario','Usuarios', snap.user.id); render(); });
+    }});
+}
 function vUsuarios(){
   if(!isAdmin()) return `<div class="card empty"><b>Esta sección es solo para el administrador.</b></div>`;
   const m = ui.userMsg;
@@ -2199,7 +2220,7 @@ function vUsuarios(){
     <section class="card"><div class="row"><div class="avatar">${initials(u.nombre)}</div><div style="flex:1"><b>${esc(u.nombre)}</b><div class="small muted">${esc(u.rol)} · <span class="mono">${esc(u.id)}</span></div></div></div>
       <div class="row">${u.activo?(locked?'<span class="pill yel">Bloqueado</span>':'<span class="pill grn">Puede entrar</span>'):'<span class="pill">Desactivado</span>'}${u.mustChange?'<span class="pill">Debe cambiar su contraseña</span>':''}</div>
       <div class="row"><button class="btn sm pri" data-act="uedit" data-u="${u.id}">${ic('pen','sm')} Editar</button></div>
-      ${u.id===S.user?'<span class="small muted">Sos vos</span>':`<div class="row"><button class="btn sm" data-act="ureset" data-u="${u.id}">${ic('key','sm')} Restablecer contraseña</button><button class="btn sm" data-act="utoggle" data-u="${u.id}">${u.activo?'Desactivar':'Activar'}</button>${locked?`<button class="btn sm" data-act="uunlock" data-u="${u.id}">Desbloquear</button>`:''}</div>`}
+      ${u.id===S.user?'<span class="small muted">Sos vos</span>':`<div class="row"><button class="btn sm" data-act="ureset" data-u="${u.id}">${ic('key','sm')} Restablecer contraseña</button><button class="btn sm" data-act="utoggle" data-u="${u.id}">${u.activo?'Desactivar':'Activar'}</button>${locked?`<button class="btn sm" data-act="uunlock" data-u="${u.id}">Desbloquear</button>`:''}<button class="btn sm ghost danger" data-act="udel" data-u="${u.id}">${ic('trash','sm')} Eliminar</button></div>`}
     </section>`;}).join('')}</div>
   <section class="card"><h2>Agregar una persona</h2>
     <form class="form" id="userForm">
@@ -2229,11 +2250,7 @@ function vIngreso(){
       <label class="fld" for="lgPass">Contraseña<input type="password" id="lgPass" required autocomplete="current-password"></label>
       <button class="btn pri big" type="submit" id="lgBtn">Ingresar</button>
       <p class="small muted">¿Olvidaste tu contraseña? Pedile al administrador que te la restablezca: vuelve a ser igual a tu usuario y la cambiás al entrar.</p>
-      <div class="notice small" style="margin:0"><b>¿Es tu primer ingreso?</b> Tu contraseña es igual a tu usuario. Apenas entres, Fojas te pide que elijas una nueva.</div>
-      <details class="small muted"><summary style="cursor:pointer">Datos para probar</summary>
-        <div style="margin-top:6px">Organización: <span class="mono">saludintegral-demo</span><br>
-        Usuarios: <span class="mono">lbrunelli</span>, <span class="mono">dfraerman</span> (jefa), <span class="mono">fzaurdo</span>, <span class="mono">rperez</span> y <span class="mono">admin</span>.<br>
-        La primera vez, la contraseña es igual al usuario (por ejemplo <span class="mono">lbrunelli</span> / <span class="mono">lbrunelli</span>).</div></details>
+      <div class="notice small" style="margin:0;display:block"><b>¿Es tu primer ingreso?</b> Tu contraseña es igual a tu usuario. Apenas entres, Fojas te pide que elijas una nueva.</div>
     </form></div>
   </div>`;
 }
@@ -3037,6 +3054,7 @@ document.addEventListener('click', async ev => {
   if(a==='upcancel'){ UP = null; closeModal(); }
   if(a==='mcerrar'){ ui.miembro = null; render(); }
   if(a==='uedit' && isAdmin()) openUserEdit(d.u);
+  if(a==='udel' && isAdmin()){ const u = S.users.find(x=>x.id===d.u); if(u) eliminarUsuario(u); }
   if(a==='uesave' && UE && isAdmin()) await ueSave();
   if(a==='orden'){ ui.orden = d.v; try{ localStorage.setItem('fojasOrden', d.v); }catch(err){} render(); }
   if(a==='upnewcat' && UP){ upRead(); const n = ($('#upNewCat')||{}).value||''; if(!n.trim()){ toast('Escribí el nombre de la categoría'); const f=$('#upNewCat'); if(f) f.focus(); return; } const id = nuevaCategoria(n, ($('#upNewBase')||{}).value); UP.tipo = id; if(!UP.descEditada) UP.desc = ''; upSugerir(); drawUp(); toast(`Categoría «${upTipo(id).l}» creada`); }
@@ -3072,7 +3090,7 @@ document.addEventListener('click', async ev => {
   if(a==='deldoc'){ const x = expById(d.e); const doc = x && x.docs[+d.di]; if(!doc || !canDelete(x)) return;
     askConfirm({titulo:'¿Eliminar este documento?', texto:`Vas a eliminar <b>${esc(doc.nombre)}</b> del expediente de ${esc(x.afiliado)}. Va a quedar en la papelera y lo podés restaurar desde ahí.`, boton:'Sí, eliminar documento', run:()=>eliminarDocumento(x, +d.di)}); }
   if(a==='cfok' && CONF){ if(CONF.requiere){ const v = ($('#cfTyped')||{}).value||''; if(v.trim().toLowerCase()!==CONF.requiere.trim().toLowerCase()){ $('#cfErr').innerHTML = `<div class="notice bad">Escribí exactamente <b>${esc(CONF.requiere)}</b> para confirmar.</div>`; return; } }
-    const run = CONF.run; CONF = null; closeModal(); run(); }
+    const run = CONF.run, pre = CONF.antes ? CONF.antes() : undefined; CONF = null; closeModal(); run(pre); }
   if(a==='prest') restaurarItem(d.id);
   if(a==='ppurge'){ const it = (S.papelera||[]).find(x=>x.id===d.id); if(!it) return;
     askConfirm({titulo:'¿Eliminar definitivamente?', texto:`${it.tipo==='expediente'?`El expediente de <b>${esc(it.data.afiliado)}</b> y todos sus documentos`:`El documento <b>${esc(it.data.nombre)}</b>`} se va a borrar para siempre. Esta acción no se puede deshacer.`, boton:'Eliminar para siempre', run:()=>purgarItem(it.id)}); }
