@@ -191,6 +191,8 @@ tr:last-child td{border-bottom:0}
 .savebadge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:6px 12px;border-radius:20px;text-decoration:none;white-space:nowrap}
 .savebadge.ok{background:var(--ok-soft);color:var(--ok)} .savebadge.warn{background:var(--warn-soft);color:var(--warn)} .savebadge.bad{background:var(--danger-soft);color:var(--danger)}
 .sgroup{display:flex;flex-direction:column;gap:10px}
+.linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--ink);cursor:pointer;text-align:left;word-break:break-all}
+.linkbtn:hover{text-decoration:underline;color:var(--accent)}
 details.sug{padding:0;gap:0}
 details.sug summary{list-style:none;display:flex;gap:10px;align-items:center;padding:14px 16px;cursor:pointer;flex-wrap:wrap}
 details.sug summary::-webkit-details-marker{display:none}
@@ -212,6 +214,11 @@ details.sug ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap
 /* modal y asistente de carga */
 .overlay{position:fixed;inset:0;background:rgba(8,20,24,.5);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow:auto;z-index:10}
 .overlay.show{display:flex}
+.modal.wide{width:min(1000px,100%)}
+.viewer{display:flex;flex-direction:column;gap:10px;max-height:72vh;overflow:auto;background:var(--sunken);border-radius:12px;padding:14px}
+.vpage{width:100%;height:auto;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.15);border-radius:4px}
+.vtext{white-space:pre-wrap;font-family:var(--f-mono);font-size:13px;line-height:1.55;margin:0;background:var(--surface);padding:16px;border-radius:8px}
+.docview{background:#fff;color:#222;padding:28px;border-radius:6px;line-height:1.6}
 .modal{background:var(--surface);border-radius:18px;width:min(640px,100%);padding:26px;display:flex;flex-direction:column;gap:18px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
 .wsteps{display:flex;gap:8px}
 .wsteps span{flex:1;height:6px;border-radius:4px;background:var(--line)}
@@ -309,6 +316,7 @@ const IC = {
   clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   file:'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/>',
   upload:'<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>',
+  down:'<path d="M12 4v12M7 11l5 5 5-5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>',
   back:'<path d="M15 18l-6-6 6-6"/>',
   next:'<path d="M9 18l6-6-6-6"/>',
   alert:'<path d="M12 3l10 18H2z"/><path d="M12 10v4M12 17.5v.01"/>',
@@ -550,15 +558,17 @@ async function fresh(){ const users = []; for(const u of DEFAULT_USERS) users.pu
 // ---------- guardado: navegador (2 lugares), versiones automáticas y archivo en la computadora ----------
 const IDB = {
   db:null,
-  open(){ if(this.db) return Promise.resolve(this.db); return new Promise((res,rej)=>{ let r; try{ r = indexedDB.open('fojas', 1); }catch(e){ return rej(e); }
-    r.onupgradeneeded = () => { const db = r.result; if(!db.objectStoreNames.contains('kv')) db.createObjectStore('kv'); if(!db.objectStoreNames.contains('snaps')) db.createObjectStore('snaps', {keyPath:'id', autoIncrement:true}); };
+  open(){ if(this.db) return Promise.resolve(this.db); return new Promise((res,rej)=>{ let r; try{ r = indexedDB.open('fojas', 2); }catch(e){ return rej(e); }
+    r.onupgradeneeded = () => { const db = r.result; if(!db.objectStoreNames.contains('kv')) db.createObjectStore('kv'); if(!db.objectStoreNames.contains('snaps')) db.createObjectStore('snaps', {keyPath:'id', autoIncrement:true}); if(!db.objectStoreNames.contains('files')) db.createObjectStore('files'); };
     r.onsuccess = () => { this.db = r.result; res(this.db); }; r.onerror = () => rej(r.error); }); },
   async tx(store, mode, fn){ const db = await this.open(); return new Promise((res,rej)=>{ const t = db.transaction(store, mode); const st = t.objectStore(store); const out = fn(st); t.oncomplete = () => res(out instanceof IDBRequest ? out.result : out); t.onerror = () => rej(t.error); }); },
   get(k){ return this.tx('kv','readonly', st=>st.get(k)); },
   put(k,v){ return this.tx('kv','readwrite', st=>st.put(v,k)); },
   async snaps(){ const db = await this.open(); return new Promise((res,rej)=>{ const r = db.transaction('snaps','readonly').objectStore('snaps').getAll(); r.onsuccess = () => res(r.result||[]); r.onerror = () => rej(r.error); }); },
   addSnap(s){ return this.tx('snaps','readwrite', st=>st.add(s)); },
-  delSnap(id){ return this.tx('snaps','readwrite', st=>st.delete(id)); }
+  delSnap(id){ return this.tx('snaps','readwrite', st=>st.delete(id)); },
+  getFile(k){ return this.tx('files','readonly', st=>st.get(k)); },
+  putFile(k,v){ return this.tx('files','readwrite', st=>st.put(v,k)); }
 };
 const PERSIST = {idb:null, idbAt:0, persistent:null, file:null, fileName:'', fileAt:0, fileNeeds:false, lastSnap:0, err:false};
 let idbTimer = null, fileTimer = null;
@@ -629,6 +639,55 @@ async function importBackupFile(file){
   catch(e){ toast('Ese archivo no es un respaldo de Fojas.'); }
 }
 async function vGuardado(){ return ''; }
+
+// ---------- visor de documentos ----------
+const PREVIEW = {};   // archivos del asistente que todavía no se guardaron
+async function saveFileBlob(file, text){ const fid = randId(8); try{ await IDB.putFile(fid, {blob:file, name:file.name, type:file.type||'', text:text||'', fecha:new Date().toISOString()}); return fid; }catch(e){ return null; } }
+function fileKind(name, type){ name = (name||'').toLowerCase(); type = type||''; if(type==='application/pdf' || name.endsWith('.pdf')) return 'pdf'; if(type.startsWith('image/') || /\.(png|jpe?g|gif|webp|bmp)$/.test(name)) return 'img'; if(name.endsWith('.docx')) return 'docx'; if(type.startsWith('text/') || name.endsWith('.txt')) return 'txt'; return 'otro'; }
+let VIEW = null;
+async function openViewer(src){
+  // src: {fid} de un documento guardado, o {preview:i} de un archivo del asistente
+  let rec = null, meta = src.meta || {};
+  if(src.preview!==undefined){ const p = PREVIEW[src.preview]; if(p) rec = {blob:p.file, name:p.file.name, type:p.file.type, text:p.text||''}; }
+  else if(src.fid){ try{ rec = await IDB.getFile(src.fid); }catch(e){} }
+  VIEW = {rec, meta, modo:'doc', url:null};
+  drawViewer();
+}
+function closeViewer(){ if(VIEW && VIEW.url) URL.revokeObjectURL(VIEW.url); VIEW = null; $('#modal').classList.remove('wide'); }
+async function drawViewer(){
+  const v = VIEW; if(!v) return;
+  const name = (v.rec && v.rec.name) || v.meta.nombre || 'Documento';
+  $('#modal').classList.add('wide');
+  showModal(`
+    <div class="row" style="justify-content:space-between;gap:10px"><div style="min-width:0"><h2 style="font-size:20px;word-break:break-all">${esc(name)}</h2><div class="small muted">${esc(v.meta.tipo||'')}${v.meta.paginas?` · ${v.meta.paginas} página${v.meta.paginas>1?'s':''}`:''}</div></div>
+      <div class="row">${v.rec?`<div class="chips"><button class="chipbtn ${v.modo==='doc'?'on':''}" data-vmode="doc">Documento</button><button class="chipbtn ${v.modo==='txt'?'on':''}" data-vmode="txt">Texto leído</button></div><button class="btn sm" data-act="vdown">${ic('down','sm')} Descargar</button>`:''}<button class="btn sm" data-act="vclose">Cerrar</button></div></div>
+    <div id="vbody" class="viewer">${v.rec?'<div class="small muted">Abriendo el documento…</div>':`<div class="empty"><div class="ico y">${ic('file','lg')}</div><b>No hay archivo para mostrar</b><span>${v.meta.ejemplo?'Es un documento de ejemplo: no tiene archivo cargado.':'Este documento se cargó antes de que Fojas guardara los archivos. Volvé a subirlo y vas a poder verlo.'}</span></div>`}</div>`);
+  if(!v.rec) return;
+  const box = $('#vbody');
+  if(v.modo==='txt'){ box.innerHTML = v.rec.text ? `<pre class="vtext">${esc(v.rec.text.replace(/\[P[aá]gina (\d+)\]/g,'\n——— Página $1 ———'))}</pre>` : '<div class="empty small">No hay texto leído para este documento.</div>'; return; }
+  const kind = fileKind(v.rec.name, v.rec.type || (v.rec.blob && v.rec.blob.type));
+  try{
+    if(kind==='img'){ v.url = v.url || URL.createObjectURL(v.rec.blob); box.innerHTML = `<img src="${v.url}" alt="${esc(name)}" style="max-width:100%;display:block;margin:0 auto;border:1px solid var(--line);border-radius:8px">`; }
+    else if(kind==='pdf'){
+      await loadScript(LIB.pdf); pdfjsLib.GlobalWorkerOptions.workerSrc = LIB.pdfWorker;
+      const doc = await pdfjsLib.getDocument({data: await v.rec.blob.arrayBuffer()}).promise;
+      box.innerHTML = `<div class="small muted" id="vprog">${doc.numPages} página${doc.numPages>1?'s':''}</div>`;
+      const w = Math.min(box.clientWidth || 860, 900);
+      for(let i=1;i<=doc.numPages;i++){
+        if(VIEW!==v || v.modo!=='doc') return;
+        const pg = await doc.getPage(i); const vp1 = pg.getViewport({scale:1}); const scale = (w / vp1.width) * (window.devicePixelRatio||1);
+        const vp = pg.getViewport({scale}); const cv = document.createElement('canvas'); cv.width = vp.width; cv.height = vp.height; cv.className = 'vpage';
+        const lbl = document.createElement('div'); lbl.className = 'small muted'; lbl.textContent = `Página ${i} de ${doc.numPages}`;
+        box.appendChild(lbl); box.appendChild(cv);
+        await pg.render({canvasContext:cv.getContext('2d'), viewport:vp}).promise;
+      }
+    }
+    else if(kind==='docx'){ await loadScript(LIB.mammoth); const r = await mammoth.convertToHtml({arrayBuffer: await v.rec.blob.arrayBuffer()}); box.innerHTML = `<div class="docview">${r.value.replace(/<script[\s\S]*?<\/script>/gi,'')}</div>`; }
+    else if(kind==='txt'){ box.innerHTML = `<pre class="vtext">${esc(await v.rec.blob.text())}</pre>`; }
+    else box.innerHTML = `<div class="empty small">Este tipo de archivo no se puede mostrar acá. Descargalo para abrirlo.</div>`;
+  }catch(e){ box.innerHTML = `<div class="empty small">No pudimos mostrar el documento (revisá tu conexión a internet). Podés descargarlo o ver el texto leído.</div>`; }
+}
+function downloadViewed(){ const v = VIEW; if(!v || !v.rec) return; const url = URL.createObjectURL(v.rec.blob); const a = document.createElement('a'); a.href = url; a.download = v.rec.name || 'documento'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url), 4000); }
 
 let saveError = false;
 function save(){ S.savedAt = Date.now(); afterSave(); try{ S.schema = SCHEMA; localStorage.setItem(KEY, JSON.stringify(S)); if(saveError){ saveError = false; } }catch(e){ if(!saveError){ saveError = true; setTimeout(()=>toast('No se pudo guardar en este navegador: revisá que no esté en modo incógnito y que haya espacio libre.'), 50); } } }
@@ -971,9 +1030,9 @@ function vExpediente(id){
     <div class="timeline">${[...e.movimientos].sort((a,b)=>b.fecha.localeCompare(a.fecha)).map(m=>`
       <div class="tl"><div><b>${fmt(m.fecha)}</b></div><div><span class="pill">${esc(m.tipo)}</span> ${esc(m.desc)}<div class="small muted">Lo cargó ${esc(userName(m.user))}</div></div></div>`).join('')}</div>`;
   if(t==='documentos') body = `
-    <label class="drop" id="drop" for="fileIn">${ic('upload','lg')}<b>Arrastrá archivos acá o tocá para elegirlos</b><span class="small">PDF, Word o imágenes. En esta versión de prueba se guarda solo el nombre.</span></label>
+    <label class="drop" id="drop" for="fileIn">${ic('upload','lg')}<b>Arrastrá archivos acá o tocá para elegirlos</b><span class="small">PDF, Word o imágenes. Se guarda el archivo completo y lo podés ver cuando quieras.</span></label>
     <input type="file" id="fileIn" multiple hidden>
-    <div>${e.docs.map(d=>`<div class="doc"><div class="ico a" style="width:40px;height:40px">${ic('file')}</div><div style="flex:1"><b>${esc(d.nombre)}</b><div class="small muted">${esc(d.tipo)} · ${fmt(d.fecha)} · ${esc(d.size)}${d.paginas?` · ${d.paginas} página${d.paginas>1?'s':''} leída${d.paginas>1?'s':''}`:''}</div></div></div>`).join('') || '<div class="empty small">Todavía no hay documentos.</div>'}</div>`;
+    <div>${e.docs.map((d,di)=>`<div class="doc"><div class="ico a" style="width:40px;height:40px">${ic('file')}</div><div style="flex:1;min-width:0"><button class="linkbtn" data-act="vdoc" data-e="${e.id}" data-di="${di}"><b>${esc(d.nombre)}</b></button><div class="small muted">${esc(d.tipo)} · ${fmt(d.fecha)} · ${esc(d.size)}${d.paginas?` · ${d.paginas} página${d.paginas>1?'s':''} leída${d.paginas>1?'s':''}`:''}</div></div><button class="btn sm" data-act="vdoc" data-e="${e.id}" data-di="${di}">${ic('search','sm')} Ver</button></div>`).join('') || '<div class="empty small">Todavía no hay documentos.</div>'}</div>`;
   if(t==='plazos') body = `
     ${ui.addPlazo?`<form class="form card" id="plForm" style="box-shadow:none;background:var(--sunken)">
       <label class="full">¿Qué hay que hacer?<input type="text" id="plD" required placeholder="Ej.: Contestar traslado"></label>
@@ -1337,7 +1396,8 @@ function vIngreso(){
 
 // ---------- modales ----------
 function showModal(html, forced){ $('#modal').innerHTML = html; $('#overlay').dataset.forced = forced?'1':''; $('#overlay').classList.add('show'); }
-const closeModal = () => { $('#overlay').classList.remove('show'); $('#overlay').dataset.forced=''; };
+let VIEW_BACK = false;
+const closeModal = () => { if(VIEW) closeViewer(); $('#overlay').classList.remove('show'); $('#overlay').dataset.forced=''; };
 
 const TOUR = [
   ['home','a','Bienvenido a Fojas','Acá vas a tener todos los amparos de tu equipo en un solo lugar. Te mostramos lo básico en cuatro pasos.'],
@@ -1881,7 +1941,7 @@ function drawWizard(){
     body = `
     ${W.files.length?(nFound?`<div class="notice good">${ic('check')}<div>Leímos ${W.files.length===1?'el documento':`${W.files.length} documentos`} y completamos <b>${nFound} dato${nFound===1?'':'s'}</b>. Revisá que estén bien y completá lo que falta.</div></div>`:`<div class="notice bad">${ic('alert')}<div>${W.readErr?esc(W.readErr):'No pudimos encontrar datos en el documento (puede ser una foto poco nítida).'} Completalos a mano; el archivo igual queda guardado en el amparo.</div></div>`):''}
     ${W.files.length?`<div class="fld">Documentos que subiste <span class="hint">Si alguno está mal clasificado, cambialo.</span>
-      ${W.files.map((f,i)=>`<div class="docrow"><div class="ico a" style="width:36px;height:36px">${ic('file','sm')}</div><div style="flex:1;min-width:0;color:var(--ink)"><b style="word-break:break-all">${esc(f.name)}</b></div><select data-wdoc="${i}" aria-label="Tipo de documento">${DOC_TYPES.map(t=>`<option ${t===f.tipo?'selected':''}>${t}</option>`).join('')}</select></div>`).join('')}
+      ${W.files.map((f,i)=>`<div class="docrow"><div class="ico a" style="width:36px;height:36px">${ic('file','sm')}</div><div style="flex:1;min-width:0;color:var(--ink)"><b style="word-break:break-all">${esc(f.name)}</b></div><button type="button" class="btn sm" data-act="vprev" data-pv="${f.pv}">${ic('search','sm')} Ver</button><select data-wdoc="${i}" aria-label="Tipo de documento">${DOC_TYPES.map(t=>`<option ${t===f.tipo?'selected':''}>${t}</option>`).join('')}</select></div>`).join('')}
       <label class="btn sm" for="wmore" style="align-self:flex-start;color:var(--ink)">${ic('plus','sm')} Agregar otro documento</label><input type="file" id="wmore" multiple hidden accept=".pdf,.docx,.txt,image/*"></div>`:''}
     <label class="fld">Asociado que presentó el amparo ${fb('afiliado')}${W.found.afiliado&&W.found.autos?'<span class="hint">Sacado de los autos.</span>':''}<input type="text" id="wAf" value="${esc(W.afiliado)}" placeholder="Apellido, Nombre"></label>
     <label class="fld">DNI del afiliado ${fb('dni')}<input type="text" id="wDni" value="${esc(W.dni)}" placeholder="Ej.: 30.123.456" inputmode="numeric"></label>
@@ -1939,11 +1999,11 @@ function drawWizard(){
 async function wProcess(fileList, append){
   const files = [...fileList]; if(!files.length) return;
   const base = append ? W.files.length : 0;
-  W.files = (append ? W.files : []).concat(files.map(f=>({name:f.name, size:f.size, tipo:'', text:''}))); W.processing = true; W.readErr=''; drawWizard();
+  W.files = (append ? W.files : []).concat(files.map(f=>({name:f.name, size:f.size, tipo:'', text:'', pv:randId(6)}))); files.forEach((f,j)=>{ PREVIEW[W.files[base+j].pv] = {file:f, text:''}; }); W.processing = true; W.readErr=''; drawWizard();
   for(let j=0;j<files.length;j++){
     const i = base + j;
     const set = (t,p) => { const a=$('#wpt'+i), b=$('#wpb'+i); if(a) a.textContent = t; if(b) b.style.width = Math.round((p||0)*100)+'%'; };
-    try{ const r = await readFile(files[j], set); const tx = r.text; W.files[i].text = tx; W.files[i].paginas = r.paginas; W.files[i].tipo = classifyDoc(tx, files[j].name); set(tx.trim()?`Listo · ${r.paginas?`${r.paginas} página${r.paginas>1?'s':''} leída${r.paginas>1?'s':''}${r.conImagen?` (${r.conImagen} como imagen)`:''} · `:''}lo reconocimos como: ${W.files[i].tipo}`:'No tiene texto que se pueda leer', 1); }
+    try{ const r = await readFile(files[j], set); const tx = r.text; W.files[i].text = tx; if(PREVIEW[W.files[i].pv]) PREVIEW[W.files[i].pv].text = tx; W.files[i].paginas = r.paginas; W.files[i].tipo = classifyDoc(tx, files[j].name); set(tx.trim()?`Listo · ${r.paginas?`${r.paginas} página${r.paginas>1?'s':''} leída${r.paginas>1?'s':''}${r.conImagen?` (${r.conImagen} como imagen)`:''} · `:''}lo reconocimos como: ${W.files[i].tipo}`:'No tiene texto que se pueda leer', 1); }
     catch(err){ W.files[i].tipo = classifyDoc('', files[j].name); set('No pudimos leer este archivo', 1); W.readErr = 'No pudimos leer algún archivo automáticamente (revisá tu conexión a internet).'; }
   }
   // primero lo que notifica el juzgado, después la demanda y al final la prueba
@@ -2023,6 +2083,7 @@ document.addEventListener('click', async ev => {
   if(om){ ui.open[om.dataset.openmember] = true; if(route().name!=='equipo'){ ui.scrollTo = om.dataset.openmember; return; } render(); const d = document.querySelector(`[data-member="${om.dataset.openmember}"]`); if(d) d.scrollIntoView({behavior:'smooth', block:'start'}); return; }
   const pe = ev.target.closest('[data-pe]');
   if(pe && PE){ peRead(); PE[pe.dataset.pe] = pe.dataset.pe==='cant' ? +pe.dataset.v : pe.dataset.v; drawPlazoEditor(); return; }
+  const vm = ev.target.closest('[data-vmode]'); if(vm && VIEW){ VIEW.modo = vm.dataset.vmode; drawViewer(); return; }
   const t = ev.target.closest('[data-enfoque],[data-mvar],[data-act],[data-tab],[data-go],[data-ia],[data-filtro],[data-riesgo],[data-estado],[data-tour],[data-tpl],[data-tplexp],[data-w],[data-wnav],[data-quick]');
   if(!t) return;
   const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
@@ -2044,6 +2105,10 @@ document.addEventListener('click', async ev => {
   if(d.wnav){ wRead(); if(+d.wnav>0){ const err = wCheck(); if(err){ $('#wErr').innerHTML = `<div class="notice bad">${esc(err)}</div>`; return; } } W.step += +d.wnav; drawWizard(); return; }
   const a = d.act;
   if(a==='close') closeModal();
+  if(a==='vdoc'){ const x = expById(d.e); const doc = x && x.docs[+d.di]; if(doc){ const ejemplo = !doc.fid && x.id<=7 && !/sistema/.test(doc.nombre); openViewer({fid:doc.fid, meta:{nombre:doc.nombre, tipo:doc.tipo, paginas:doc.paginas, ejemplo}}); audit('Vio un documento', x.numero, doc.nombre); } }
+  if(a==='vprev'){ VIEW_BACK = true; openViewer({preview:d.pv, meta:{}}); }
+  if(a==='vclose'){ const back = VIEW_BACK; VIEW_BACK = false; closeViewer(); if(back && W) drawWizard(); else closeModal(); }
+  if(a==='vdown') downloadViewed();
   if(a==='linkfile') linkBackupFile();
   if(a==='reconnect'){ ev.preventDefault(); reconnectBackupFile(); }
   if(a==='restoresnap') restoreSnap(+d.id);
@@ -2073,7 +2138,8 @@ document.addEventListener('click', async ev => {
     const x = {id:S.nextId++, numero:W.numero, afiliado:W.afiliado, dni:W.dni||'—', prestacion:W.prestacion, juzgado:W.juzgado, secretaria:W.secretaria, sumario:W.sumario, estado:W.estado, riesgo:/oncol|Discapacidad|domiciliaria/.test(W.prestacion)||W.cautelar?'alto':'medio', abogado:S.user, inicio:iso(today()), monto:0, cautelar:W.cautelar, plazos:[], movimientos:[], docs:[]};
     x.caratula = W.autos || `${x.afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`;
     const tipoDoc = /c[ée]dula/i.test(W.text) ? 'Cédula de notificación' : /oficio/i.test(W.text) ? 'Oficio' : 'Documento recibido';
-    W.files.forEach(f=>x.docs.push({nombre:f.name, paginas:f.paginas||null, tipo:f.tipo||tipoDoc, fecha:iso(today()), size: f.size>1e6?(f.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(f.size/1000))+' KB'}));
+    for(const f of W.files){ const p = PREVIEW[f.pv]; f.fid = p ? await saveFileBlob(p.file, p.text) : null; }
+    W.files.forEach(f=>x.docs.push({nombre:f.name, fid:f.fid||null, paginas:f.paginas||null, tipo:f.tipo||tipoDoc, fecha:iso(today()), size: f.size>1e6?(f.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(f.size/1000))+' KB'}));
     x.movimientos.push({fecha:iso(today()), tipo:'Notificación', desc: W.files.length ? `Se recibe ${tipoDoc.toLowerCase()}: ${W.files.map(f=>f.name).join(', ')}.` : 'Se cargó el amparo en Fojas.', user:S.user});
     if(W.plazoDesc) x.plazos.push({desc:W.plazoDesc, vence:W.plazoFecha, hecho:false, ...(W.plazoRegla && calcPlazo(W.plazoRegla).vence===W.plazoFecha ? {regla:W.plazoRegla} : {})});
     x.detalle = W.detalle || '';
@@ -2098,7 +2164,8 @@ document.addEventListener('click', async ev => {
   if(a==='tplregen'){ ui.tplText=''; render(); }
   if(a==='tplcopy'){ copy($('#tplText').value); audit('Copió un escrito', expById(ui.tplExp).numero, tplName(ui.tpl)); }
   if(a==='tplsave'){ const x = expById(ui.tplExp); const tpl = {nombre:tplName(ui.tpl)};
-    x.docs.push({nombre:`${tpl.nombre}.docx`, tipo:'Escrito propio', fecha:iso(today()), size:`${Math.max(1,Math.round($('#tplText').value.length/1000))} KB`});
+    const txt = $('#tplText').value; const fid = await saveFileBlob(new File([txt], `${tpl.nombre}.txt`, {type:'text/plain'}), txt);
+    x.docs.push({nombre:`${tpl.nombre}.txt`, fid, tipo:'Escrito propio', fecha:iso(today()), size:`${Math.max(1,Math.round($('#tplText').value.length/1000))} KB`});
     x.movimientos.push({fecha:iso(today()), tipo:'Escrito propio', desc:`Se preparó el escrito: ${tpl.nombre}.`, user:S.user}); save();
     audit('Preparó un escrito', x.numero, tpl.nombre); toast('Guardado en los documentos del amparo'); }
   if(a==='csv'){ const rows = [['numero','afiliado','prestacion','juzgado','etapa','riesgo','a_cargo','proximo_plazo','vence']].concat(S.exps.map(x=>{const p=nextPlazo(x);return [x.numero,x.afiliado,x.prestacion,x.juzgado,x.estado,x.riesgo,userName(x.abogado),p?p.desc:'',p?fmt(p.vence):''];}));
@@ -2141,7 +2208,7 @@ document.addEventListener('keydown', ev => {
   }
   if(ev.key==='Enter' && $('#overlay').classList.contains('show') && W && ev.target.matches('#modal input[type=text]')){ ev.preventDefault(); const b = $('[data-wnav="1"]') || $('[data-act=wcreate]'); if(b) b.click(); }
 });
-$('#overlay').addEventListener('click', ev => { if(ev.target.id==='overlay' && !$('#overlay').dataset.forced) closeModal(); });
+$('#overlay').addEventListener('click', ev => { if(ev.target.id==='overlay' && !$('#overlay').dataset.forced){ if(VIEW_BACK){ VIEW_BACK = false; closeViewer(); if(W) drawWizard(); } else closeModal(); } });
 
 document.addEventListener('change', async ev => {
   const t = ev.target; const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
@@ -2166,7 +2233,8 @@ async function addFiles(e, files){
     let r = {text:''}; try{ r = await readFile(f, (t)=>{ const el = $('#toast'); if(el){ el.querySelector('span') && (el.querySelector('span').textContent = `${f.name}: ${t}`); el.classList.add('show'); clearTimeout(toast.t); } }); }catch(err){}
     const tx = r.text || '';
     const tipo = classifyDoc(tx, f.name); tipos.push(tipo);
-    e.docs.push({nombre:f.name, tipo, fecha:iso(today()), paginas:r.paginas||null, size: f.size>1e6?(f.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(f.size/1000))+' KB'});
+    const fid = await saveFileBlob(f, tx);
+    e.docs.push({nombre:f.name, fid, tipo, fecha:iso(today()), paginas:r.paginas||null, size: f.size>1e6?(f.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(f.size/1000))+' KB'});
     audit('Subió un documento', e.numero, `${f.name} (${tipo}${r.paginas?`, ${r.paginas} páginas leídas`:''})`);
     if(!tx) continue;
     const nf = flagsFromText(tx); e.flags = e.flags || {}; for(const k in nf) if(nf[k]) e.flags[k] = true;
