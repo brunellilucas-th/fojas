@@ -2133,15 +2133,69 @@ function teamEditor(){
   </section>`;
 }
 
+const ROLES = ['Abogada/o a cargo','Analista legal','Procurador','Administrador'];
+let UE = null;
+function openUserEdit(uid){ const u = S.users.find(x=>x.id===uid); if(!u) return; UE = {id:uid, nombre:u.nombre, nuevoId:u.id, rol:u.rol, pw:'no', p1:'', p2:'', cambiar:true, err:''}; drawUserEdit(); }
+function drawUserEdit(){
+  const u = S.users.find(x=>x.id===UE.id), yo = u.id===S.user;
+  const roles = ROLES.includes(UE.rol) ? ROLES : [UE.rol, ...ROLES];
+  showModal(`
+    <div class="row" style="gap:12px"><div class="avatar">${initials(UE.nombre||u.nombre)}</div><div><h2 style="font-size:22px">Editar usuario</h2><div class="small muted">${esc(u.nombre)} · <span class="mono">${esc(u.id)}</span></div></div></div>
+    ${UE.err?`<div class="notice bad">${esc(UE.err)}</div>`:''}
+    <div class="form">
+      <label>Nombre y apellido<input type="text" id="ueNom" value="${esc(UE.nombre)}"></label>
+      <label>Usuario para entrar <span class="hint">${yo?'no podés cambiar tu propio usuario mientras estás adentro':'minúsculas, sin espacios'}</span><input type="text" id="ueId" value="${esc(UE.nuevoId)}" ${yo?'disabled':''} autocomplete="off"></label>
+      <label>Rol<select id="ueRol">${roles.map(r=>`<option ${r===UE.rol?'selected':''}>${esc(r)}</option>`).join('')}</select></label>
+    </div>
+    <div class="fld">Contraseña
+      <div class="opts" style="grid-template-columns:repeat(3,1fr)">
+        <button type="button" class="opt ${UE.pw==='no'?'on':''}" data-uepw="no">No cambiarla</button>
+        <button type="button" class="opt ${UE.pw==='nueva'?'on':''}" data-uepw="nueva">Escribir una nueva</button>
+        <button type="button" class="opt ${UE.pw==='gen'?'on':''}" data-uepw="gen">Generar una provisoria</button>
+      </div></div>
+    ${UE.pw==='nueva'?`<div class="form">
+      <label>Nueva contraseña<input type="password" id="ueP1" value="${esc(UE.p1)}" autocomplete="new-password"></label>
+      <label>Repetila<input type="password" id="ueP2" value="${esc(UE.p2)}" autocomplete="new-password"></label>
+      <div class="full hint">Mínimo 8 caracteres, con letras y números.</div>
+      ${yo?'':`<label class="full" style="display:flex;flex-direction:row;gap:10px;align-items:center;font-weight:500;cursor:pointer"><input type="checkbox" id="ueCambiar" ${UE.cambiar?'checked':''} style="width:18px;height:18px;accent-color:var(--accent);flex:none"> Pedirle que la cambie la primera vez que entre</label>`}</div>`:''}
+    ${UE.pw==='gen'?`<div class="notice">Fojas va a crear una contraseña provisoria y te la muestra una sola vez. ${esc(u.nombre.split(' ')[0])} la cambia al entrar.</div>`:''}
+    <div class="row" style="justify-content:flex-end"><button class="btn" data-act="close">Cancelar</button><button class="btn ok big" data-act="uesave">${ic('check')} Guardar cambios</button></div>`);
+}
+function ueRead(){ if(!UE) return; const g = id => $(id); if(g('#ueNom')) UE.nombre = g('#ueNom').value; if(g('#ueId') && !g('#ueId').disabled) UE.nuevoId = g('#ueId').value; if(g('#ueRol')) UE.rol = g('#ueRol').value; if(g('#ueP1')) UE.p1 = g('#ueP1').value; if(g('#ueP2')) UE.p2 = g('#ueP2').value; if(g('#ueCambiar')) UE.cambiar = g('#ueCambiar').checked; }
+async function ueSave(){
+  ueRead(); const u = S.users.find(x=>x.id===UE.id); const yo = u.id===S.user; const err = t => { UE.err = t; drawUserEdit(); };
+  const nombre = UE.nombre.trim().replace(/\s+/g,' '), nid = UE.nuevoId.trim().toLowerCase();
+  if(nombre.length < 3) return err('Escribí el nombre y apellido.');
+  if(!/^[a-z0-9._-]{3,30}$/.test(nid)) return err('El usuario tiene que tener entre 3 y 30 caracteres: letras minúsculas, números, punto, guion o guion bajo, sin espacios.');
+  if(nid !== u.id && S.users.some(x=>x.id===nid)) return err('Ya hay alguien con ese usuario. Probá con otro.');
+  if(u.rol==='Administrador' && UE.rol!=='Administrador' && !S.users.some(x=>x.id!==u.id && x.activo && x.rol==='Administrador')) return err('Tiene que quedar al menos un administrador activo. Nombrá a otra persona administradora antes de cambiarle el rol.');
+  let nuevaPass = null;
+  if(UE.pw==='nueva'){ if(!passOk(UE.p1)) return err('La contraseña tiene que tener al menos 8 caracteres, con letras y números.'); if(UE.p1 !== UE.p2) return err('Las dos contraseñas no son iguales.'); nuevaPass = UE.p1; }
+  if(UE.pw==='gen') nuevaPass = tempPass();
+  const cambios = [];
+  if(nombre !== u.nombre){ cambios.push(`nombre: ${u.nombre} → ${nombre}`); u.nombre = nombre; }
+  if(UE.rol !== u.rol){ cambios.push(`rol: ${u.rol} → ${UE.rol}`); u.rol = UE.rol; }
+  if(nid !== u.id){ const old = u.id; cambios.push(`usuario: ${old} → ${nid}`); u.id = nid;
+    S.exps.forEach(e=>{ if(e.abogado===old) e.abogado = nid; (e.movimientos||[]).forEach(m=>{ if(m.user===old) m.user = nid; }); });
+    (S.teams||[]).forEach(t=>{ if(t.jefe===old) t.jefe = nid; t.miembros = t.miembros.map(m=>m===old?nid:m); });
+    (S.modelos||[]).forEach(m=>{ if(m.autor===old) m.autor = nid; }); (S.docCats||[]).forEach(c=>{ if(c.autor===old) c.autor = nid; });
+    if(S.lock && S.lock[old]){ S.lock[nid] = S.lock[old]; delete S.lock[old]; } if(S.toured && S.toured[old]){ S.toured[nid] = S.toured[old]; delete S.toured[old]; } }
+  if(nuevaPass){ u.salt = randId(16); u.hash = await hashPass(nuevaPass, u.salt); u.mustChange = UE.pw==='gen' || (!yo && UE.cambiar); if(S.lock) delete S.lock[u.id]; cambios.push(UE.pw==='gen'?'contraseña provisoria nueva':'contraseña nueva'); }
+  if(!cambios.length){ UE = null; closeModal(); toast('No hubo cambios'); return; }
+  save(); audit('Modificó un usuario','Usuarios', `${u.id} · ${cambios.join(' · ')}`);
+  ui.userMsg = {ok:true, html: `Listo, se guardaron los cambios de <b>${esc(u.nombre)}</b>${nid!==UE.id?` (ahora entra como <span class="mono">${esc(nid)}</span>)`:''}.` + (UE.pw==='gen' ? ` Contraseña provisoria: <span class="mono">${esc(nuevaPass)}</span>. Pasásela en persona o por un canal seguro; no se vuelve a mostrar.` : UE.pw==='nueva' ? ` La contraseña nueva ya funciona${u.mustChange?'; la va a tener que cambiar al entrar':''}.` : '')};
+  UE = null; closeModal(); await chain; render();
+}
 function vUsuarios(){
   if(!isAdmin()) return `<div class="card empty"><b>Esta sección es solo para el administrador.</b></div>`;
   const m = ui.userMsg;
   return `
-  <div><h1>Usuarios</h1><p class="sub">Quién puede entrar a Fojas. Las contraseñas se guardan cifradas: nadie puede verlas, ni el administrador.</p></div>
+  <div><h1>Usuarios</h1><p class="sub">Quién puede entrar a Fojas. Desde acá podés cambiar el nombre, el usuario, el rol y la contraseña de cada persona. Las contraseñas se guardan cifradas: nadie puede verlas, ni el administrador, pero sí ponerles una nueva.</p></div>
   ${m?`<div class="notice ${m.ok?'good':'bad'}">${m.html||esc(m.t)}</div>`:''}
   <div class="grid g3">${S.users.map(u=>{ const l = (S.lock||{})[u.id]; const locked = l && l.until > Date.now(); return `
     <section class="card"><div class="row"><div class="avatar">${initials(u.nombre)}</div><div style="flex:1"><b>${esc(u.nombre)}</b><div class="small muted">${esc(u.rol)} · <span class="mono">${esc(u.id)}</span></div></div></div>
       <div class="row">${u.activo?(locked?'<span class="pill yel">Bloqueado</span>':'<span class="pill grn">Puede entrar</span>'):'<span class="pill">Desactivado</span>'}${u.mustChange?'<span class="pill">Debe cambiar su contraseña</span>':''}</div>
+      <div class="row"><button class="btn sm pri" data-act="uedit" data-u="${u.id}">${ic('pen','sm')} Editar</button></div>
       ${u.id===S.user?'<span class="small muted">Sos vos</span>':`<div class="row"><button class="btn sm" data-act="ureset" data-u="${u.id}">${ic('key','sm')} Nueva contraseña</button><button class="btn sm" data-act="utoggle" data-u="${u.id}">${u.activo?'Desactivar':'Activar'}</button>${locked?`<button class="btn sm" data-act="uunlock" data-u="${u.id}">Desbloquear</button>`:''}</div>`}
     </section>`;}).join('')}</div>
   <section class="card"><h2>Agregar una persona</h2>
@@ -2947,6 +3001,7 @@ document.addEventListener('click', async ev => {
   if(pe && PE){ peRead(); PE[pe.dataset.pe] = pe.dataset.pe==='cant' ? +pe.dataset.v : pe.dataset.v; drawPlazoEditor(); return; }
   const vm = ev.target.closest('[data-vmode]'); if(vm && VIEW){ VIEW.modo = vm.dataset.vmode; drawViewer(); return; }
   const aa = ev.target.closest('[data-autoalt]'); if(aa && W){ wRead(); const x = W.autosAlt[+aa.dataset.autoalt]; const prev = {autos:W.autos, actor:W.afiliado}; W.autos = x.autos; W.afiliado = x.actor; W.autosAlt[+aa.dataset.autoalt] = prev; W.autosDudoso = false; W.sumarioEditado = false; drawWizard(); return; }
+  const uep = ev.target.closest('[data-uepw]'); if(uep && UE){ ueRead(); UE.pw = uep.dataset.uepw; UE.err = ''; drawUserEdit(); return; }
   const upp = ev.target.closest('[data-upparte]'); if(upp && UP){ upRead(); UP.parte = upp.dataset.upparte; UP.parteEditada = true; drawUp(); return; }
   const ut = ev.target.closest('[data-uptipo]'); if(ut && UP){ upRead(); UP.tipo = ut.dataset.uptipo; if(!UP.descEditada) UP.desc = ''; upSugerir(); drawUp(); return; }
   if(ev.target.closest('select,option') && ev.target.closest('[data-go]')) return;
@@ -2979,6 +3034,8 @@ document.addEventListener('click', async ev => {
   if(a==='close') closeModal();
   if(a==='upcancel'){ UP = null; closeModal(); }
   if(a==='mcerrar'){ ui.miembro = null; render(); }
+  if(a==='uedit' && isAdmin()) openUserEdit(d.u);
+  if(a==='uesave' && UE && isAdmin()) await ueSave();
   if(a==='orden'){ ui.orden = d.v; try{ localStorage.setItem('fojasOrden', d.v); }catch(err){} render(); }
   if(a==='upnewcat' && UP){ upRead(); const n = ($('#upNewCat')||{}).value||''; if(!n.trim()){ toast('Escribí el nombre de la categoría'); const f=$('#upNewCat'); if(f) f.focus(); return; } const id = nuevaCategoria(n, ($('#upNewBase')||{}).value); UP.tipo = id; if(!UP.descEditada) UP.desc = ''; upSugerir(); drawUp(); toast(`Categoría «${upTipo(id).l}» creada`); }
   if(a==='upcats'){ if(UP) upRead(); catsOpen(); }
