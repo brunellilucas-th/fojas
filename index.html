@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.4">
+<meta name="fojas-version" content="2026-11-22.5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -1559,7 +1559,8 @@ async function hashPass(pass, salt){
   const bits = await crypto.subtle.deriveBits({name:'PBKDF2', salt:new TextEncoder().encode(salt), iterations:150000, hash:'SHA-256'}, k, 256);
   return [...new Uint8Array(bits)].map(x=>x.toString(16).padStart(2,'0')).join('');
 }
-const passOk = p => p.length>=8 && /[A-Za-z]/.test(p) && /\d/.test(p);
+const passOk = p => p.length>=8 && /[A-ZÁÉÍÓÚÑ]/.test(p) && /\d/.test(p) && /[^A-Za-z0-9ÁÉÍÓÚÜÑáéíóúüñ\s]/.test(p);
+const PASS_REGLA = 'Mínimo 8 caracteres, con al menos una mayúscula, un número y un carácter especial (por ejemplo ! @ # $ % & * ? -).';
 const IDLE_MIN = 15;
 let lastActivity = Date.now();
 function getSession(){ try{ const s = JSON.parse(sessionStorage.getItem('fojas-session')||'null'); if(s) return s; }catch(e){} return getSession.mem || null; }
@@ -2188,7 +2189,7 @@ function drawUserEdit(){
     ${UE.pw==='nueva'?`<div class="form">
       <label>Nueva contraseña<input type="password" id="ueP1" value="${esc(UE.p1)}" autocomplete="new-password"></label>
       <label>Repetila<input type="password" id="ueP2" value="${esc(UE.p2)}" autocomplete="new-password"></label>
-      <div class="full hint">Mínimo 8 caracteres, con letras y números.</div>
+      <div class="full hint">${PASS_REGLA}</div>
       ${yo?'':`<div class="full notice small">Al entrar con esta contraseña, ${esc(u.nombre.split(' ')[0])} la va a tener que cambiar sí o sí.</div>`}</div>`:''}
     ${UE.pw==='ini'?`<div class="notice">La contraseña vuelve a ser igual a su usuario (<span class="mono">${esc((UE.nuevoId||u.id).trim().toLowerCase())}</span>) y la tiene que cambiar al entrar.</div>`:''}
     <div class="row" style="justify-content:flex-end"><button class="btn" data-act="close">Cancelar</button><button class="btn ok big" data-act="uesave">${ic('check')} Guardar cambios</button></div>`);
@@ -2202,7 +2203,7 @@ async function ueSave(){
   if(nid !== u.id && S.users.some(x=>x.id===nid)) return err('Ya hay alguien con ese usuario. Probá con otro.');
   if(u.rol==='Administrador' && UE.rol!=='Administrador' && !S.users.some(x=>x.id!==u.id && x.activo && x.rol==='Administrador')) return err('Tiene que quedar al menos un administrador activo. Nombrá a otra persona administradora antes de cambiarle el rol.');
   let nuevaPass = null;
-  if(UE.pw==='nueva'){ if(!passOk(UE.p1)) return err('La contraseña tiene que tener al menos 8 caracteres, con letras y números.'); if(UE.p1 !== UE.p2) return err('Las dos contraseñas no son iguales.'); nuevaPass = UE.p1; }
+  if(UE.pw==='nueva'){ if(!passOk(UE.p1)) return err('La contraseña no cumple los requisitos. ' + PASS_REGLA); if(UE.p1 !== UE.p2) return err('Las dos contraseñas no son iguales.'); nuevaPass = UE.p1; }
   if(UE.pw==='ini') nuevaPass = nid;
   if(UE.pw==='no' && nid !== u.id && u.mustChange && !yo){ nuevaPass = nid; UE.pw = 'ini'; }
   const cambios = [];
@@ -3010,7 +3011,7 @@ function openPwd(forced){
       ${forced?'':'<label class="full">Contraseña actual<input type="password" id="pwOld" required autocomplete="current-password"></label>'}
       <label>Nueva contraseña<input type="password" id="pwNew" required autocomplete="new-password"></label>
       <label>Repetila<input type="password" id="pwRep" required autocomplete="new-password"></label>
-      <div class="full hint">Mínimo 8 caracteres, con letras y números. No puede ser igual a tu usuario.</div>
+      <div class="full hint">${PASS_REGLA} No puede ser igual a tu usuario.</div>
       <div class="full" id="pwMsg"></div>
       <div class="full row"><button class="btn pri" type="submit">Guardar</button>${forced?'<button class="btn ghost" type="button" data-act="logout">Salir</button>':'<button class="btn ghost" type="button" data-act="close">Cancelar</button>'}</div>
     </form>`, forced);
@@ -3299,7 +3300,7 @@ document.addEventListener('submit', async ev => {
     const o = forzado ? u.id : $('#pwOld').value, n = $('#pwNew').value, r2 = $('#pwRep').value;
     if(!forzado && (await hashPass(o, u.salt)) !== u.hash) return msg('La contraseña actual no es correcta.');
     if(n.trim().toLowerCase() === u.id) return msg('La contraseña nueva no puede ser igual a tu usuario.');
-    if(!passOk(n)) return msg('La nueva contraseña tiene que tener al menos 8 caracteres, con letras y números.');
+    if(!passOk(n)) return msg('La contraseña no cumple los requisitos. ' + PASS_REGLA);
     if(n !== r2) return msg('Las dos contraseñas nuevas no son iguales.');
     if(n === o) return msg('Elegí una contraseña distinta de la actual.');
     const wasForced = u.mustChange;
