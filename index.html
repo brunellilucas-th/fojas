@@ -2258,7 +2258,7 @@ document.addEventListener('click', async ev => {
     Object.assign(x, nuevo); if(cambios.some(k=>k!=='caratula')) x.sumario = x.sumario && !cambios.includes('afiliado') ? x.sumario : '';
     save(); audit('Editó los datos del expediente', x.numero, detalle); closeModal(); render(); toast('Datos actualizados'); }
   if(a==='delexp'){ const x = expById(d.e); if(!x || !canDelete(x)) return;
-    askConfirm({titulo:'¿Eliminar este expediente?', texto:`Vas a eliminar el expediente de <b>${esc(x.afiliado)}</b> (${esc(x.numero)}), con sus ${x.docs.length} documento(s), ${x.plazos.length} plazo(s) y novedades. Va a quedar en la papelera y lo podés restaurar desde ahí.`, requiere:x.numero, boton:'Sí, eliminar expediente', run:()=>eliminarExpediente(x)}); }
+    askConfirm({titulo:'¿Eliminar este expediente?', texto:`Vas a eliminar el expediente de <b>${esc(x.afiliado)}</b> (${esc(x.numero)}), con sus ${x.docs.length} documento(s), ${x.plazos.length} plazo(s) y novedades. Va a quedar en la papelera y lo podés restaurar desde ahí.`, boton:'Sí, eliminar expediente', run:()=>eliminarExpediente(x)}); }
   if(a==='deldoc'){ const x = expById(d.e); const doc = x && x.docs[+d.di]; if(!doc || !canDelete(x)) return;
     askConfirm({titulo:'¿Eliminar este documento?', texto:`Vas a eliminar <b>${esc(doc.nombre)}</b> del expediente de ${esc(x.afiliado)}. Va a quedar en la papelera y lo podés restaurar desde ahí.`, boton:'Sí, eliminar documento', run:()=>eliminarDocumento(x, +d.di)}); }
   if(a==='cfok' && CONF){ if(CONF.requiere){ const v = ($('#cfTyped')||{}).value||''; if(v.trim().toLowerCase()!==CONF.requiere.trim().toLowerCase()){ $('#cfErr').innerHTML = `<div class="notice bad">Escribí exactamente <b>${esc(CONF.requiere)}</b> para confirmar.</div>`; return; } }
