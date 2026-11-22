@@ -646,6 +646,121 @@ async function importBackupFile(file){
 }
 async function vGuardado(){ return ''; }
 
+// ---------- importar expedientes desde Excel ----------
+const XLSX_URL = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+const XCAMPOS = [
+  ['numero','Número de expediente', /(n[uú]mero|nro|n°|expte|expediente)/, true],
+  ['afiliado','Asociado', /(asociad|afiliad|actor|amparista|beneficiari|paciente|nombre)/, true],
+  ['dni','DNI', /(dni|documento|d\.n\.i)/],
+  ['autos','Autos', /(autos|car[aá]tula)/],
+  ['juzgado','Juzgado', /(juzgado|tribunal)/],
+  ['secretaria','Secretaría', /(secretar)/],
+  ['prestacion','Qué reclama', /(prestaci|reclam|objeto|cobertura|tema|motivo)/],
+  ['estado','Etapa', /(estado|etapa|situaci)/],
+  ['cautelar','Medida cautelar', /(cautelar)/],
+  ['plazo','Próximo plazo (qué hay que hacer)', /(pr[oó]ximo|acto|tarea|pendiente|plazo(?!.*(fecha|vence)))/],
+  ['vence','Vencimiento', /(vence|vencimiento|fecha.*plazo|fecha l[ií]mite)/],
+  ['abogado','Responsable', /(responsable|abogad|letrad|a cargo|analista)/],
+  ['inicio','Fecha de inicio', /(inicio|fecha de ingreso|ingreso|alta)/],
+  ['monto','Monto', /(monto|importe|valor)/],
+  ['riesgo','Riesgo', /(riesgo)/]
+];
+let XL = null;
+function openImportExcel(){ XL = {step:1, rows:null, head:[], map:{}, sheets:[], sheet:null, wb:null, nombre:''}; drawImport(); }
+function xNorm(s){ return String(s==null?'':s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim(); }
+function xDetectHeader(rows){
+  let best = 0, bestScore = -1;
+  rows.slice(0,12).forEach((r,i)=>{ const sc = (r||[]).filter(c=>XCAMPOS.some(([,,re])=>re.test(xNorm(c)))).length; if(sc>bestScore){ bestScore = sc; best = i; } });
+  return best;
+}
+function xAutoMap(head){
+  const map = {}, usados = new Set();
+  XCAMPOS.forEach(([k,,re])=>{ const i = head.findIndex((h,j)=>!usados.has(j) && re.test(xNorm(h))); if(i>=0){ map[k] = i; usados.add(i); } });
+  return map;
+}
+function xDate(v){
+  if(v==null || v==='') return null;
+  if(v instanceof Date && !isNaN(v)) return iso(v);
+  if(typeof v==='number' && v>20000 && v<80000){ const d = new Date(Math.round((v - 25569) * 86400000)); return iso(new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())); }
+  const m = String(v).trim().match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/); if(m){ const y = +m[3] < 100 ? 2000 + +m[3] : +m[3]; return `${y}-${String(m[2]).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`; }
+  const m2 = String(v).trim().match(/^(\d{4})-(\d{2})-(\d{2})/); if(m2) return `${m2[1]}-${m2[2]}-${m2[3]}`;
+  return null;
+}
+function xEstado(v){ const s = xNorm(v); if(!s) return null; if(/archiv/.test(s)) return 'Archivado'; if(/sentencia/.test(s) && /para|autos/.test(s)) return 'Para sentencia'; if(/sentencia/.test(s)) return 'Sentencia'; if(/prueba/.test(s)) return 'En prueba'; if(/informe/.test(s)) return 'Informe art. 8 pendiente'; if(/cautelar/.test(s)) return 'Cautelar otorgada'; if(/intim|inicio|nuevo|traslado/.test(s)) return 'Intimación recibida'; return null; }
+function xRow(r){
+  const g = k => XL.map[k]!=null ? r[XL.map[k]] : '';
+  const str = k => String(g(k)==null?'':g(k)).trim();
+  const numero = str('numero'), afRaw = str('afiliado');
+  const afiliado = afRaw ? titleCase(afRaw) : '';
+  const dniD = str('dni').replace(/\D/g,''); const dni = dniD.length>=7 ? dniD.replace(/(\d{1,2})(\d{3})(\d{3})$/,'$1.$2.$3') : (str('dni')||'—');
+  const prestTxt = str('prestacion'); const sc = scorePrestaciones(prestTxt); const prestacion = PRESTACIONES.find(p=>xNorm(p)===xNorm(prestTxt)) || (sc[0]&&sc[0][0]) || (prestTxt ? 'Otra' : 'Otra');
+  const cautelar = /^(si|sí|s|x|1|true|verdadero|otorgada|vigente)$/i.test(str('cautelar'));
+  let estado = xEstado(str('estado')) || (cautelar ? 'Cautelar otorgada' : 'Intimación recibida');
+  const jzTxt = str('juzgado'); const jz = jzTxt ? (matchJuzgado(/juzgado/i.test(jzTxt) ? jzTxt : 'Juzgado '+jzTxt) || matchJuzgado('Juzgado Nacional en lo '+jzTxt.replace(/^juzgado\s*/i,'')) || jzTxt) : '';
+  const vence = xDate(g('vence')); const plazoDesc = str('plazo');
+  const respTxt = xNorm(str('abogado')); const resp = respTxt ? (S.users.find(u=>xNorm(u.nombre)===respTxt || xNorm(u.id)===respTxt || xNorm(u.nombre).includes(respTxt) || respTxt.includes(xNorm(u.nombre.split(' ').slice(-1)[0]))) || null) : null;
+  const monto = +String(g('monto')||'').replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.') || 0;
+  const riesgo = /alto/i.test(str('riesgo')) ? 'alto' : /bajo/i.test(str('riesgo')) ? 'bajo' : 'medio';
+  const problemas = [];
+  if(!numero) problemas.push('sin número de expediente');
+  if(!afiliado) problemas.push('sin asociado');
+  if(numero && (S.exps.some(e=>e.numero.toLowerCase()===numero.toLowerCase()))) problemas.push('ya está cargado');
+  return {numero, afiliado, dni, autos:str('autos'), juzgado:jz, secretaria:str('secretaria'), prestacion, prestTxt, estado, cautelar, vence, plazoDesc, resp, respTxt:str('abogado'), inicio:xDate(g('inicio')), monto, riesgo, problemas};
+}
+async function xLoadFile(file){
+  try{
+    await loadScript(XLSX_URL);
+    const wb = XLSX.read(await file.arrayBuffer(), {type:'array', cellDates:true});
+    XL.wb = wb; XL.sheets = wb.SheetNames; XL.nombre = file.name; xUseSheet(wb.SheetNames[0]);
+  }catch(e){ XL.err = 'No pudimos leer el archivo. Revisá que sea un Excel (.xlsx o .xls) o un .csv, y que tengas conexión a internet.'; drawImport(); }
+}
+function xUseSheet(name){
+  const ws = XL.wb.Sheets[name]; const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:''}).filter(r=>r.some(c=>String(c).trim()!==''));
+  const hi = xDetectHeader(rows); XL.sheet = name; XL.head = (rows[hi]||[]).map(c=>String(c).trim()); XL.rows = rows.slice(hi+1); XL.map = xAutoMap(XL.head); XL.step = 2; XL.err = ''; drawImport();
+}
+function drawImport(){
+  const x = XL; let body = '';
+  if(x.step===1) body = `
+    <label class="drop" id="xdrop" for="xfile" style="padding:34px 20px">${ic('upload','lg')}<b style="font-size:18px">Arrastrá acá tu planilla de Excel</b><span>.xlsx, .xls o .csv. La primera fila con títulos se toma como encabezado.</span><span class="btn pri" style="margin-top:6px">Elegir planilla</span></label>
+    <input type="file" id="xfile" hidden accept=".xlsx,.xls,.csv,.ods">
+    ${x.err?`<div class="notice bad">${esc(x.err)}</div>`:''}
+    <div class="row"><button class="btn sm" data-act="xmodelo">${ic('down','sm')} Descargar planilla modelo</button><span class="small muted">Tiene las columnas que Fojas reconoce. Si tu planilla usa otros nombres, igual podés elegir cuál es cuál.</span></div>`;
+  if(x.step===2){
+    const parsed = x.rows.map(xRow); const ok = parsed.filter(p=>!p.problemas.length);
+    body = `
+    <div class="small muted">${esc(x.nombre)}${x.sheets.length>1?` · Hoja: <select id="xsheet" style="width:auto;display:inline-block;padding:4px 8px">${x.sheets.map(s=>`<option ${s===x.sheet?'selected':''}>${esc(s)}</option>`).join('')}</select>`:''} · ${x.rows.length} fila${x.rows.length===1?'':'s'}</div>
+    <div class="fld">Vista previa <span class="hint">${ok.length} listo${ok.length===1?'':'s'} para importar${parsed.length-ok.length?` · ${parsed.length-ok.length} con problemas (no se importan)`:''}</span>
+      <div class="tablewrap"><table style="min-width:640px"><thead><tr><th>Expediente</th><th>Asociado</th><th>Reclama</th><th>Etapa</th><th>Vence</th><th>Estado</th></tr></thead><tbody>
+      ${parsed.slice(0,8).map(p=>`<tr><td class="mono small">${esc(p.numero||'—')}</td><td>${esc(p.afiliado||'—')}${p.dni&&p.dni!=='—'?`<div class="small muted">DNI ${esc(p.dni)}</div>`:''}</td><td class="small">${esc(p.prestacion)}</td><td class="small">${esc(p.estado)}${p.cautelar?' · con cautelar':''}</td><td class="small">${p.vence?fmt(p.vence):'—'}</td><td>${p.problemas.length?`<span class="pill red">${esc(p.problemas.join(', '))}</span>`:'<span class="pill grn">OK</span>'}</td></tr>`).join('')}
+      </tbody></table></div>${parsed.length>8?`<span class="hint">Y ${parsed.length-8} fila(s) más.</span>`:''}</div>
+    <details class="card" style="box-shadow:none;padding:14px" ${x.map.numero==null||x.map.afiliado==null?'open':''}><summary style="cursor:pointer;font-weight:700">Qué columna es cada dato <span class="hint">(${Object.keys(x.map).length} reconocidas por el título; tocá para revisar o cambiar)</span></summary><div class="fld" style="margin-top:10px">
+      <div class="form" style="grid-template-columns:1fr 1fr">${XCAMPOS.map(([k,l,,req])=>`<label>${l}${req?' *':''}<select data-xmap="${k}"><option value="">— No está en la planilla —</option>${x.head.map((h,i)=>`<option value="${i}" ${x.map[k]===i?'selected':''}>${esc(h||`Columna ${i+1}`)}</option>`).join('')}</select></label>`).join('')}</div></div></details>
+    <div class="row" style="justify-content:space-between"><button class="btn" data-act="xback">${ic('back','sm')} Elegir otra planilla</button><button class="btn ok big" data-act="ximport" ${ok.length?'':'disabled'}>${ic('check')} Importar ${ok.length} expediente${ok.length===1?'':'s'}</button></div>`;
+  }
+  showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:22px">Importar expedientes desde Excel</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div>${body}`);
+  $('#modal').classList.add('wide');
+}
+function xImport(){
+  const parsed = XL.rows.map(xRow).filter(p=>!p.problemas.length);
+  const vistos = new Set(); let n = 0;
+  parsed.forEach(p=>{
+    if(vistos.has(p.numero.toLowerCase())) return; vistos.add(p.numero.toLowerCase());
+    const x = {id:S.nextId++, numero:p.numero, afiliado:p.afiliado, dni:p.dni, prestacion:p.prestacion, detalle:p.prestTxt && p.prestTxt!==p.prestacion ? p.prestTxt : '', juzgado:p.juzgado, secretaria:p.secretaria, estado:p.estado, riesgo:p.riesgo, abogado:(p.resp||me()).id, inicio:p.inicio||iso(today()), monto:p.monto, cautelar:p.cautelar, plazos:[], movimientos:[{fecha:iso(today()), tipo:'Interno', desc:`Expediente importado desde la planilla ${XL.nombre}.`, user:S.user}], docs:[], flags:{}};
+    x.caratula = p.autos || `${x.afiliado} c/ ${titleCase(cfg().empresa).replace(/\bS\.?\s?a\.?(?=\s|$)/g,'S.A.')} s/ amparo de salud`;
+    if(p.vence) x.plazos.push({desc:p.plazoDesc || 'Vencimiento cargado desde la planilla', vence:p.vence, hecho:false});
+    S.exps.push(x); n++;
+  });
+  save(); audit('Importó expedientes desde Excel','Migración',`${n} expediente(s) desde ${XL.nombre}`);
+  closeModal(); XL = null; location.hash = 'amparos'; render(); toast(`Se importaron ${n} expediente${n===1?'':'s'}.`);
+}
+async function xModelo(){
+  try{ await loadScript(XLSX_URL);
+    const aoa = [['Número de expediente','Asociado','DNI','Autos','Juzgado','Secretaría','Qué reclama','Etapa','Medida cautelar','Próximo plazo','Vencimiento','Responsable','Fecha de inicio','Monto','Riesgo'],
+      ['CCF 1234/2026','Pérez, María','30.123.456','Pérez, María c/ Salud Integral Demo S.A. s/ amparo de salud','Juzgado Nacional de Primera Instancia en lo Civil y Comercial Federal Nº 3','N° 5','Medicación oncológica','Cautelar otorgada','Sí','Presentar informe art. 8','15/12/2026','Lucas Emmanuel Brunelli','01/11/2026','1500000','Alto']];
+    const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(aoa), 'Expedientes'); XLSX.writeFile(wb, 'fojas-planilla-modelo.xlsx');
+  }catch(e){ toast('No se pudo descargar la planilla modelo desde acá.'); }
+}
+
 // ---------- eliminar con confirmación y papelera ----------
 const canDelete = e => isAdmin() || e.abogado===S.user || myPeople().includes(e.abogado);
 const isBorrado = num => (S.borrados||[]).includes(String(num||'').trim().toLowerCase());
@@ -1037,7 +1152,7 @@ function vAmparos(){
   const list = all.filter(F[ui.filtro].f).sort((a,b)=>{ const pa=nextPlazo(a), pb=nextPlazo(b); return (pa?pa.vence:'9999').localeCompare(pb?pb.vence:'9999'); });
   return `
   <div class="head"><div><h1>Amparos</h1><p class="sub">Tocá cualquier amparo para ver todo lo que tiene. Los más urgentes aparecen primero.</p></div>
-    <button class="btn pri big" data-act="nuevo">${ic('plus')} Cargar amparo</button></div>
+    <div class="row"><button class="btn big" data-act="ximportar">${ic('upload')} Importar desde Excel</button><button class="btn pri big" data-act="nuevo">${ic('plus')} Cargar amparo</button></div></div>
   <div class="chips">${Object.entries(F).map(([k,v])=>`<button class="chipbtn ${ui.filtro===k?'on':''}" data-filtro="${k}">${v.l} <span class="badge">${all.filter(v.f).length}</span></button>`).join('')}</div>
   <div class="cases">${list.map(e=>{ const p=nextPlazo(e); const n=p?daysTo(p.vence):null; const u=p?urg(n):''; return `
     <div class="case" data-go="expediente-${e.id}" tabindex="0" role="link">
@@ -1346,7 +1461,8 @@ function vRespaldo(){
       <div><button class="btn sm" data-act="copybk">${ic('copy','sm')} Copiar la copia</button></div>
     </section>
     <section class="card"><div class="row"><div class="ico v">${ic('upload')}</div><h2>Traer expedientes de otro sistema</h2></div>
-      <p class="muted small">Exportá tus expedientes desde Lex Doctor o Excel como planilla, y pegala acá. Columnas: número, afiliado, prestación, juzgado y estado, separadas por punto y coma.</p>
+      <div class="row"><button class="btn pri" data-act="ximportar">${ic('upload','sm')} Importar desde Excel</button><span class="small muted">La forma más simple: subís la planilla y Fojas reconoce las columnas.</span></div>
+      <p class="muted small">También podés pegar una planilla como texto. Columnas: número, afiliado, prestación, juzgado y estado, separadas por punto y coma.</p>
       <textarea id="csvIn" rows="6" class="small" style="font-family:var(--f-mono)" placeholder="numero;afiliado;prestacion;juzgado;estado"></textarea>
       <div class="row"><button class="btn" data-act="csvsample">Ver un ejemplo</button><button class="btn pri" data-act="csvimport">Traer expedientes</button></div>
       ${cm?`<div class="notice ${cm.ok?'good':'bad'}">${esc(cm.t)}</div>`:''}
@@ -1486,7 +1602,7 @@ function openEditDatos(e){
     <div id="edErr"></div>
     <div class="row"><button class="btn pri big" data-act="savedatos" data-e="${e.id}">${ic('check')} Guardar cambios</button></div>`);
 }
-const closeModal = () => { if(VIEW) closeViewer(); $('#overlay').classList.remove('show'); $('#overlay').dataset.forced=''; };
+const closeModal = () => { if(VIEW) closeViewer(); $('#modal').classList.remove('wide'); $('#overlay').classList.remove('show'); $('#overlay').dataset.forced=''; };
 
 const TOUR = [
   ['home','a','Bienvenido a Fojas','Acá vas a tener todos los amparos de tu equipo en un solo lugar. Te mostramos lo básico en cuatro pasos.'],
@@ -2246,6 +2362,10 @@ document.addEventListener('click', async ev => {
   if(d.wnav){ wRead(); if(+d.wnav>0){ const err = wCheck(); if(err){ $('#wErr').innerHTML = `<div class="notice bad">${esc(err)}</div>`; return; } } W.step += +d.wnav; drawWizard(); return; }
   const a = d.act;
   if(a==='close') closeModal();
+  if(a==='ximportar') openImportExcel();
+  if(a==='xback' && XL){ XL.step = 1; drawImport(); }
+  if(a==='ximport' && XL) xImport();
+  if(a==='xmodelo') xModelo();
   if(a==='editdatos'){ const x = expById(d.e); if(x) openEditDatos(x); }
   if(a==='savedatos'){ const x = expById(d.e); if(!x) return; const v = id => $('#'+id).value.trim();
     const nuevo = {caratula:v('edAutos'), afiliado:v('edAf'), dni:v('edDni')||'—', numero:v('edNum'), prestacion:v('edPr'), juzgado:v('edJz'), secretaria:v('edSec')};
@@ -2375,6 +2495,9 @@ document.addEventListener('change', async ev => {
   const t = ev.target; const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
   if(t.id==='fileIn' && e) addFiles(e, t.files);
   if(t.id==='mfile') addModels(t.files);
+  if(t.id==='xfile' && XL && t.files[0]) xLoadFile(t.files[0]);
+  if(t.id==='xsheet' && XL) xUseSheet(t.value);
+  if(t.dataset && t.dataset.xmap && XL){ const v = t.value; if(v==='') delete XL.map[t.dataset.xmap]; else XL.map[t.dataset.xmap] = +v; drawImport(); }
   if(t.id==='bkfile' && t.files[0]) importBackupFile(t.files[0]);
   if(PE && /^pe(Cant|Desde|Fecha|Feria)$/.test(t.id)){ peRead(); drawPlazoEditor(); }
   if(t.id==='wfile' && W) wProcess(t.files);
@@ -2416,9 +2539,9 @@ async function addFiles(e, files){
   toast(`Listo: ${tipos.join(', ')}.${novedades.length?' Además, '+novedades.join('; ')+'.':''} Las sugerencias se actualizaron.`);
 }
 document.addEventListener('toggle', ev => { const d = ev.target; if(d.matches && d.matches('details[data-sugkey]')){ if(d.open) ui.openSug = d.dataset.sugkey; else if(ui.openSug===d.dataset.sugkey) ui.openSug = null; } if(d.matches && d.matches('details[data-member]')) ui.open[d.dataset.member] = d.open; }, true);
-document.addEventListener('dragover', ev => { const md = ev.target.closest('#mdrop'); if(md){ ev.preventDefault(); md.classList.add('over'); return; } const wz = ev.target.closest('#wdrop'); if(wz){ ev.preventDefault(); wz.classList.add('over'); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); dz.classList.add('over'); } });
+document.addEventListener('dragover', ev => { const xd = ev.target.closest('#xdrop'); if(xd){ ev.preventDefault(); xd.classList.add('over'); return; } const md = ev.target.closest('#mdrop'); if(md){ ev.preventDefault(); md.classList.add('over'); return; } const wz = ev.target.closest('#wdrop'); if(wz){ ev.preventDefault(); wz.classList.add('over'); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); dz.classList.add('over'); } });
 document.addEventListener('dragleave', ev => { const wz = ev.target.closest('#wdrop'); if(wz) wz.classList.remove('over'); const dz = ev.target.closest('#drop'); if(dz) dz.classList.remove('over'); });
-document.addEventListener('drop', ev => { const md = ev.target.closest('#mdrop'); if(md){ ev.preventDefault(); md.classList.remove('over'); addModels(ev.dataTransfer.files); return; } const wz = ev.target.closest('#wdrop'); if(wz && W){ ev.preventDefault(); wProcess(ev.dataTransfer.files); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); const e = expById(route().id); if(e) addFiles(e, ev.dataTransfer.files); } });
+document.addEventListener('drop', ev => { const xd = ev.target.closest('#xdrop'); if(xd && XL){ ev.preventDefault(); if(ev.dataTransfer.files[0]) xLoadFile(ev.dataTransfer.files[0]); return; } const md = ev.target.closest('#mdrop'); if(md){ ev.preventDefault(); md.classList.remove('over'); addModels(ev.dataTransfer.files); return; } const wz = ev.target.closest('#wdrop'); if(wz && W){ ev.preventDefault(); wProcess(ev.dataTransfer.files); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); const e = expById(route().id); if(e) addFiles(e, ev.dataTransfer.files); } });
 
 document.addEventListener('input', ev => {
   const t = ev.target;
