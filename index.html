@@ -78,6 +78,8 @@ textarea{resize:vertical}
 .btn.sm{padding:6px 11px;font-size:14px}
 .btn.ghost{border-color:transparent;background:none}
 .btn.danger{color:var(--danger)}
+.btn.danger-solid{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn.danger-solid:hover{filter:brightness(1.08);color:#fff}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap}
@@ -316,6 +318,7 @@ const IC = {
   clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   file:'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/>',
   upload:'<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>',
+  trash:'<path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/><path d="M9 7V4h6v3"/>',
   down:'<path d="M12 4v12M7 11l5 5 5-5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>',
   back:'<path d="M15 18l-6-6 6-6"/>',
   next:'<path d="M9 18l6-6-6-6"/>',
@@ -568,7 +571,8 @@ const IDB = {
   addSnap(s){ return this.tx('snaps','readwrite', st=>st.add(s)); },
   delSnap(id){ return this.tx('snaps','readwrite', st=>st.delete(id)); },
   getFile(k){ return this.tx('files','readonly', st=>st.get(k)); },
-  putFile(k,v){ return this.tx('files','readwrite', st=>st.put(v,k)); }
+  putFile(k,v){ return this.tx('files','readwrite', st=>st.put(v,k)); },
+  delFile(k){ return this.tx('files','readwrite', st=>st.delete(k)); }
 };
 const PERSIST = {idb:null, idbAt:0, persistent:null, file:null, fileName:'', fileAt:0, fileNeeds:false, lastSnap:0, err:false};
 let idbTimer = null, fileTimer = null;
@@ -611,7 +615,9 @@ async function writeBackupFile(){
 // Une dos estados sin perder amparos: se parte del más nuevo y se suman los amparos que solo estén en el otro.
 function unir(base, otro){
   if(!otro || !Array.isArray(otro.exps)) return base;
-  const known = new Set(base.exps.map(e=>String(e.numero||'').trim().toLowerCase()));
+  const enBase = new Set(base.exps.map(e=>String(e.numero||'').trim().toLowerCase()));
+  base.borrados = [...new Set([...(base.borrados||[]), ...(otro.borrados||[])])].filter(n=>!enBase.has(n));
+  const known = new Set(base.exps.map(e=>String(e.numero||'').trim().toLowerCase()).concat(base.borrados));
   let next = Math.max(base.nextId||1, ...base.exps.map(e=>+e.id||0)) + 1; const sum = [];
   otro.exps.forEach(e=>{ const n = String(e.numero||'').trim().toLowerCase(); if(n && !known.has(n)){ base.exps.push({...e, id:next++}); known.add(n); sum.push(e.afiliado); } });
   base.nextId = next;
@@ -639,6 +645,72 @@ async function importBackupFile(file){
   catch(e){ toast('Ese archivo no es un respaldo de Fojas.'); }
 }
 async function vGuardado(){ return ''; }
+
+// ---------- eliminar con confirmación y papelera ----------
+const canDelete = e => isAdmin() || e.abogado===S.user || myPeople().includes(e.abogado);
+const isBorrado = num => (S.borrados||[]).includes(String(num||'').trim().toLowerCase());
+let CONF = null;
+function askConfirm(o){
+  CONF = o;
+  showModal(`
+    <div class="row" style="gap:14px;align-items:flex-start"><div class="ico r">${ic('alert','lg')}</div><div style="flex:1"><h2 style="font-size:22px">${esc(o.titulo)}</h2><p class="muted" style="margin-top:6px">${o.texto}</p></div></div>
+    ${o.requiere?`<label class="fld">Para confirmar, escribí <span class="mono" style="color:var(--ink)">${esc(o.requiere)}</span><input type="text" id="cfTyped" autocomplete="off" placeholder="${esc(o.requiere)}"></label>`:''}
+    <div id="cfErr"></div>
+    <div class="row" style="justify-content:flex-end"><button class="btn" data-act="close">Cancelar</button><button class="btn danger-solid" data-act="cfok">${ic('alert','sm')} ${esc(o.boton||'Sí, eliminar')}</button></div>`);
+  setTimeout(()=>{ const f = $('#cfTyped'); if(f) f.focus(); }, 30);
+}
+function eliminarExpediente(e){
+  const i = S.exps.indexOf(e); if(i<0) return;
+  S.exps.splice(i,1);
+  const item = {id:randId(6), tipo:'expediente', fecha:new Date().toISOString(), user:S.user, data:e};
+  S.papelera = S.papelera || []; S.papelera.unshift(item);
+  S.borrados = S.borrados || []; S.borrados.push(String(e.numero).trim().toLowerCase());
+  save(); audit('Eliminó un expediente', e.numero, `${e.afiliado} (enviado a la papelera)`);
+  location.hash = 'amparos';
+  toast(`Se eliminó el expediente de ${e.afiliado}. Está en la papelera.`, ()=>restaurarItem(item.id));
+}
+function eliminarDocumento(e, di){
+  const doc = e.docs[di]; if(!doc) return;
+  e.docs.splice(di,1);
+  const item = {id:randId(6), tipo:'documento', fecha:new Date().toISOString(), user:S.user, expNumero:e.numero, expAfiliado:e.afiliado, data:doc};
+  S.papelera = S.papelera || []; S.papelera.unshift(item);
+  save(); audit('Eliminó un documento', e.numero, `${doc.nombre} (enviado a la papelera)`); render();
+  toast(`Se eliminó "${doc.nombre}". Está en la papelera.`, ()=>restaurarItem(item.id));
+}
+function restaurarItem(id){
+  const i = (S.papelera||[]).findIndex(x=>x.id===id); if(i<0) return;
+  const it = S.papelera[i];
+  if(it.tipo==='expediente'){
+    if(S.exps.some(x=>x.numero===it.data.numero)){ toast('Ya hay un expediente con ese número cargado.'); return; }
+    const e = it.data; if(S.exps.some(x=>x.id===e.id)) e.id = S.nextId++;
+    S.exps.push(e); S.borrados = (S.borrados||[]).filter(n=>n!==String(e.numero).trim().toLowerCase());
+    S.papelera.splice(i,1); save(); audit('Restauró un expediente', e.numero, e.afiliado); render(); toast(`Expediente de ${e.afiliado} restaurado.`);
+  } else {
+    const e = S.exps.find(x=>x.numero===it.expNumero);
+    if(!e){ toast('Primero restaurá el expediente al que pertenecía este documento.'); return; }
+    e.docs.push(it.data); S.papelera.splice(i,1); save(); audit('Restauró un documento', e.numero, it.data.nombre); render(); toast(`Documento "${it.data.nombre}" restaurado.`);
+  }
+}
+async function purgarItem(id){
+  const i = (S.papelera||[]).findIndex(x=>x.id===id); if(i<0) return;
+  const it = S.papelera[i];
+  const fids = it.tipo==='expediente' ? (it.data.docs||[]).map(d=>d.fid).filter(Boolean) : [it.data.fid].filter(Boolean);
+  for(const f of fids){ try{ await IDB.delFile(f); }catch(e){} }
+  S.papelera.splice(i,1); save();
+  audit('Eliminó definitivamente', it.tipo==='expediente'?it.data.numero:it.expNumero, it.tipo==='expediente'?`Expediente de ${it.data.afiliado}`:`Documento ${it.data.nombre}`);
+  render(); toast('Eliminado definitivamente.');
+}
+function vPapelera(){
+  const items = S.papelera||[];
+  return `
+  <div><h1>Papelera</h1><p class="sub">Lo que se elimina queda acá hasta que lo restaures o lo elimines definitivamente.</p></div>
+  <section class="card">${items.length ? `<div class="list">${items.map(it=>`
+    <div class="li"><div style="display:flex;gap:12px;min-width:0"><div class="ico ${it.tipo==='expediente'?'r':'y'}" style="width:40px;height:40px">${ic(it.tipo==='expediente'?'folder':'file')}</div>
+      <div style="min-width:0"><b>${it.tipo==='expediente'?`Expediente: ${esc(it.data.afiliado)}`:`Documento: ${esc(it.data.nombre)}`}</b>
+      <div class="small muted">${it.tipo==='expediente'?`${esc(it.data.numero)} · ${(it.data.docs||[]).length} documento(s)`:`Del expediente ${esc(it.expNumero)} (${esc(it.expAfiliado||'')})`} · eliminado por ${esc(userName(it.user))} el ${fmtTs(it.fecha)}</div></div></div>
+      <div class="row" style="flex-wrap:nowrap"><button class="btn sm" data-act="prest" data-id="${it.id}">${ic('history','sm')} Restaurar</button><button class="btn sm ghost danger" data-act="ppurge" data-id="${it.id}">Eliminar definitivamente</button></div></div>`).join('')}</div>`
+    : `<div class="empty"><div class="ico g">${ic('check','lg')}</div><b>La papelera está vacía</b></div>`}</section>`;
+}
 
 // ---------- visor de documentos ----------
 const PREVIEW = {};   // archivos del asistente que todavía no se guardaron
@@ -714,7 +786,7 @@ function rescatar(){
     const d = readKey(k); if(!d || !Array.isArray(d.exps)) continue;
     for(const e of d.exps){
       const num = String(e.numero||'').trim().toLowerCase();
-      if(!num || known.has(num)) continue;
+      if(!num || known.has(num) || isBorrado(num)) continue;
       const x = migExp({...e, id:S.nextId++}, S.users); S.exps.push(x); known.add(num); found.push(x);
       (d.audit||[]).length; // el historial viejo no se mezcla para no romper la cadena de huellas
     }
@@ -727,7 +799,7 @@ async function migrate(d){
   d.users = Array.isArray(d.users) && d.users.length ? d.users : base.users;
   base.users.forEach(u=>{ if(!d.users.some(x=>x.id===u.id)) d.users.push(u); });
   d.teams = Array.isArray(d.teams) ? d.teams : base.teams;
-  d.lock = d.lock || {}; d.toured = d.toured || {}; d.modelos = Array.isArray(d.modelos) ? d.modelos : []; d.config = d.config || {}; d.audit = Array.isArray(d.audit) ? d.audit : [];
+  d.lock = d.lock || {}; d.toured = d.toured || {}; d.modelos = Array.isArray(d.modelos) ? d.modelos : []; d.papelera = Array.isArray(d.papelera) ? d.papelera : []; d.borrados = Array.isArray(d.borrados) ? d.borrados : []; d.config = d.config || {}; d.audit = Array.isArray(d.audit) ? d.audit : [];
   d.modules = {...base.modules, ...(d.modules||{})};
   d.exps = (d.exps||[]).map(e=>migExp(e, d.users));
   d.nextId = Math.max(d.nextId||0, ...d.exps.map(e=>+e.id||0)) + 1;
@@ -869,6 +941,7 @@ function shell(content){
         ${link('historial','history','Historial de cambios')}
         ${link('respaldo','cloud','Copias y migración')}
         ${link('modulos','grid','Módulos')}
+        ${link('papelera','trash','Papelera', (S.papelera||[]).length?`<span class="badge">${S.papelera.length}</span>`:'')}
         ${isAdmin()?link('usuarios','key','Usuarios'):''}
       </nav>
       <div class="foot nav">
@@ -1032,7 +1105,7 @@ function vExpediente(id){
   if(t==='documentos') body = `
     <label class="drop" id="drop" for="fileIn">${ic('upload','lg')}<b>Arrastrá archivos acá o tocá para elegirlos</b><span class="small">PDF, Word o imágenes. Se guarda el archivo completo y lo podés ver cuando quieras.</span></label>
     <input type="file" id="fileIn" multiple hidden>
-    <div>${e.docs.map((d,di)=>`<div class="doc"><div class="ico a" style="width:40px;height:40px">${ic('file')}</div><div style="flex:1;min-width:0"><button class="linkbtn" data-act="vdoc" data-e="${e.id}" data-di="${di}"><b>${esc(d.nombre)}</b></button><div class="small muted">${esc(d.tipo)} · ${fmt(d.fecha)} · ${esc(d.size)}${d.paginas?` · ${d.paginas} página${d.paginas>1?'s':''} leída${d.paginas>1?'s':''}`:''}</div></div><button class="btn sm" data-act="vdoc" data-e="${e.id}" data-di="${di}">${ic('search','sm')} Ver</button></div>`).join('') || '<div class="empty small">Todavía no hay documentos.</div>'}</div>`;
+    <div>${e.docs.map((d,di)=>`<div class="doc"><div class="ico a" style="width:40px;height:40px">${ic('file')}</div><div style="flex:1;min-width:0"><button class="linkbtn" data-act="vdoc" data-e="${e.id}" data-di="${di}"><b>${esc(d.nombre)}</b></button><div class="small muted">${esc(d.tipo)} · ${fmt(d.fecha)} · ${esc(d.size)}${d.paginas?` · ${d.paginas} página${d.paginas>1?'s':''} leída${d.paginas>1?'s':''}`:''}</div></div><button class="btn sm" data-act="vdoc" data-e="${e.id}" data-di="${di}">${ic('search','sm')} Ver</button>${canDelete(e)?`<button class="btn sm ghost danger" data-act="deldoc" data-e="${e.id}" data-di="${di}" title="Eliminar documento" aria-label="Eliminar ${esc(d.nombre)}">${ic('trash','sm')} Eliminar</button>`:''}</div>`).join('') || '<div class="empty small">Todavía no hay documentos.</div>'}</div>`;
   if(t==='plazos') body = `
     ${ui.addPlazo?`<form class="form card" id="plForm" style="box-shadow:none;background:var(--sunken)">
       <label class="full">¿Qué hay que hacer?<input type="text" id="plD" required placeholder="Ej.: Contestar traslado"></label>
@@ -1063,7 +1136,7 @@ function vExpediente(id){
   return `
   <div><a href="#amparos" class="btn ghost sm" style="padding-left:0">${ic('back','sm')} Volver a Amparos</a></div>
   <div class="head"><div><div class="muted mono">${esc(e.numero)}</div><h1>${esc(e.afiliado)}</h1><p class="sub">${esc(e.prestacion)} · ${esc(e.juzgado)}</p></div>
-    <div class="row">${e.cautelar?'<span class="pill acc">Con cautelar</span>':''}<span class="pill ${e.riesgo==='alto'?'red':e.riesgo==='medio'?'yel':'grn'}">Riesgo ${e.riesgo}</span></div></div>
+    <div class="row">${canDelete(e)?`<button class="btn sm ghost danger" data-act="delexp" data-e="${e.id}">${ic('trash','sm')} Eliminar expediente</button>`:''}${e.cautelar?'<span class="pill acc">Con cautelar</span>':''}<span class="pill ${e.riesgo==='alto'?'red':e.riesgo==='medio'?'yel':'grn'}">Riesgo ${e.riesgo}</span></div></div>
 
   ${p?`<section class="next ${n<0?'late':''}">
     <div class="ico ${n<0?'r':n<=3?'y':'a'}">${ic(n<0?'alert':'clock','lg')}</div>
@@ -2061,7 +2134,7 @@ function render(){
   if(!logged()){ $('#root').innerHTML = vIngreso(); document.title='Fojas · Ingresar'; return; }
   document.title='Fojas';
   const r = route();
-  const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, modelos:vModelos, informes:vInformes, historial:vHistorial, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios};
+  const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, modelos:vModelos, informes:vInformes, historial:vHistorial, papelera:vPapelera, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios};
   const html = r.name==='expediente' ? vExpediente(r.id) : (views[r.name]||vInicio)();
   const scroll = $('#view') ? $('#view').scrollTop : 0;
   $('#root').innerHTML = shell(html);
@@ -2105,6 +2178,15 @@ document.addEventListener('click', async ev => {
   if(d.wnav){ wRead(); if(+d.wnav>0){ const err = wCheck(); if(err){ $('#wErr').innerHTML = `<div class="notice bad">${esc(err)}</div>`; return; } } W.step += +d.wnav; drawWizard(); return; }
   const a = d.act;
   if(a==='close') closeModal();
+  if(a==='delexp'){ const x = expById(d.e); if(!x || !canDelete(x)) return;
+    askConfirm({titulo:'¿Eliminar este expediente?', texto:`Vas a eliminar el expediente de <b>${esc(x.afiliado)}</b> (${esc(x.numero)}), con sus ${x.docs.length} documento(s), ${x.plazos.length} plazo(s) y novedades. Va a quedar en la papelera y lo podés restaurar desde ahí.`, requiere:x.numero, boton:'Sí, eliminar expediente', run:()=>eliminarExpediente(x)}); }
+  if(a==='deldoc'){ const x = expById(d.e); const doc = x && x.docs[+d.di]; if(!doc || !canDelete(x)) return;
+    askConfirm({titulo:'¿Eliminar este documento?', texto:`Vas a eliminar <b>${esc(doc.nombre)}</b> del expediente de ${esc(x.afiliado)}. Va a quedar en la papelera y lo podés restaurar desde ahí.`, boton:'Sí, eliminar documento', run:()=>eliminarDocumento(x, +d.di)}); }
+  if(a==='cfok' && CONF){ if(CONF.requiere){ const v = ($('#cfTyped')||{}).value||''; if(v.trim().toLowerCase()!==CONF.requiere.trim().toLowerCase()){ $('#cfErr').innerHTML = `<div class="notice bad">Escribí exactamente <b>${esc(CONF.requiere)}</b> para confirmar.</div>`; return; } }
+    const run = CONF.run; CONF = null; closeModal(); run(); }
+  if(a==='prest') restaurarItem(d.id);
+  if(a==='ppurge'){ const it = (S.papelera||[]).find(x=>x.id===d.id); if(!it) return;
+    askConfirm({titulo:'¿Eliminar definitivamente?', texto:`${it.tipo==='expediente'?`El expediente de <b>${esc(it.data.afiliado)}</b> y todos sus documentos`:`El documento <b>${esc(it.data.nombre)}</b>`} se va a borrar para siempre. Esta acción no se puede deshacer.`, boton:'Eliminar para siempre', run:()=>purgarItem(it.id)}); }
   if(a==='vdoc'){ const x = expById(d.e); const doc = x && x.docs[+d.di]; if(doc){ const ejemplo = !doc.fid && x.id<=7 && !/sistema/.test(doc.nombre); openViewer({fid:doc.fid, meta:{nombre:doc.nombre, tipo:doc.tipo, paginas:doc.paginas, ejemplo}}); audit('Vio un documento', x.numero, doc.nombre); } }
   if(a==='vprev'){ VIEW_BACK = true; openViewer({preview:d.pv, meta:{}}); }
   if(a==='vclose'){ const back = VIEW_BACK; VIEW_BACK = false; closeViewer(); if(back && W) drawWizard(); else closeModal(); }
