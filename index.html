@@ -1113,7 +1113,7 @@ function vInicio(){
 
   <section><h2 style="margin-bottom:12px">¿Qué querés hacer?</h2>
   <div class="grid g4">
-    <button class="action" data-act="nuevo"><div class="ico a">${ic('plus','lg')}</div><b>Cargar un amparo nuevo</b><span>Te guiamos paso a paso.</span></button>
+    <button class="action" data-act="nuevo"><div class="ico a">${ic('plus','lg')}</div><b>Nuevo expediente</b><span>Te guiamos paso a paso.</span></button>
     <a class="action" href="#vencimientos"><div class="ico r">${ic('cal','lg')}</div><b>Ver qué vence</b><span>Lo urgente, ordenado por fecha.</span></a>
     <a class="action" href="#escritos"><div class="ico v">${ic('pen','lg')}</div><b>Hacer un escrito</b><span>Se completa solo con los datos.</span></a>
     <a class="action" href="#amparos"><div class="ico g">${ic('folder','lg')}</div><b>Ver todos los amparos</b><span>${active().length} en curso.</span></a>
@@ -1152,7 +1152,7 @@ function vAmparos(){
   const list = all.filter(F[ui.filtro].f).sort((a,b)=>{ const pa=nextPlazo(a), pb=nextPlazo(b); return (pa?pa.vence:'9999').localeCompare(pb?pb.vence:'9999'); });
   return `
   <div class="head"><div><h1>Amparos</h1><p class="sub">Tocá cualquier amparo para ver todo lo que tiene. Los más urgentes aparecen primero.</p></div>
-    <div class="row"><button class="btn big" data-act="ximportar">${ic('upload')} Importar desde Excel</button><button class="btn pri big" data-act="nuevo">${ic('plus')} Cargar amparo</button></div></div>
+    <div class="row"><button class="btn big" data-act="ximportar">${ic('upload')} Importar desde Excel</button><button class="btn pri big" data-act="nuevo">${ic('plus')} Nuevo expediente</button></div></div>
   <div class="chips">${Object.entries(F).map(([k,v])=>`<button class="chipbtn ${ui.filtro===k?'on':''}" data-filtro="${k}">${v.l} <span class="badge">${all.filter(v.f).length}</span></button>`).join('')}</div>
   <div class="cases">${list.map(e=>{ const p=nextPlazo(e); const n=p?daysTo(p.vence):null; const u=p?urg(n):''; return `
     <div class="case" data-go="expediente-${e.id}" tabindex="0" role="link">
@@ -2248,7 +2248,7 @@ function drawWizard(){
     <div id="wErr"></div>
     <div style="display:flex;flex-direction:column;gap:16px">${body}</div>
     ${s>1?`<div class="row" style="justify-content:space-between"><button class="btn" data-wnav="-1">${ic('back','sm')} Atrás</button>
-      ${s<3?`<button class="btn pri big" data-wnav="1">Siguiente ${ic('next','sm')}</button>`:`<button class="btn ok big" data-act="wcreate">${ic('check')} Crear amparo</button>`}</div>`:''}`, W.processing);
+      ${s<3?`<button class="btn pri big" data-wnav="1">Siguiente ${ic('next','sm')}</button>`:`<button class="btn ok big" data-act="wcreate">${ic('check')} Crear expediente</button>`}</div>`:''}`, W.processing);
   if(s===2){ const f = $('#wAf'); if(f && !W.afiliado) setTimeout(()=>f.focus(), 30); }
 }
 async function wProcess(fileList, append){
@@ -2426,7 +2426,7 @@ document.addEventListener('click', async ev => {
     x.detalle = W.detalle || '';
     (W.extra||[]).forEach(p=>{ const {nota, ...q} = p; x.plazos.push(q); });
     x.flags = W.flags || {};
-    S.exps.push(x); save(); closeModal(); audit('Cargó un amparo nuevo', x.numero, `${x.prestacion}${W.files.length?` · leído automáticamente de ${W.files.length} documento(s)`:''}`); ui.nextTab = 'sugerencias'; location.hash = 'expediente-'+x.id; toast('¡Amparo cargado! Mirá las sugerencias de qué hacer.');
+    S.exps.push(x); save(); closeModal(); audit('Creó un expediente nuevo', x.numero, `${x.prestacion}${W.files.length?` · leído automáticamente de ${W.files.length} documento(s)`:''}`); ui.nextTab = 'sugerencias'; location.hash = 'expediente-'+x.id; toast('¡Expediente creado! Mirá las sugerencias de qué hacer.');
   }
   if(a==='done'){ const x = expById(d.e); if(x) markDone(x, +d.i); }
   if(a==='writefor'){ ui.tpl = d.wt || null; ui.tplExp = +d.e; ui.tplText=''; location.hash='escritos'; }
