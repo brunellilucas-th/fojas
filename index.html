@@ -185,6 +185,17 @@ tr:last-child td{border-bottom:0}
 .hint{font-weight:400;font-size:13px;color:var(--faint)}
 .fld > .pill{align-self:flex-start}
 .sgroup{display:flex;flex-direction:column;gap:10px}
+details.sug{padding:0;gap:0}
+details.sug summary{list-style:none;display:flex;gap:10px;align-items:center;padding:14px 16px;cursor:pointer;flex-wrap:wrap}
+details.sug summary::-webkit-details-marker{display:none}
+details.sug summary:hover{background:var(--sunken)}
+details.sug .stitle{flex:1;min-width:200px;font-weight:700;font-size:16px}
+details.sug .chev{color:var(--muted);transition:transform .15s}
+details.sug[open] .chev{transform:rotate(90deg)}
+details.sug .sbody{padding:4px 18px 18px;display:flex;flex-direction:column;gap:14px;border-top:1px solid var(--line)}
+details.sug .slbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:10px 0 4px}
+details.sug ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;line-height:1.5}
+.splazo{display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:var(--accent-soft);border-radius:12px;padding:12px 14px}
 .sug{border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;background:var(--surface)}
 .sug.alta{border-left-color:var(--danger)} .sug.media{border-left-color:var(--warn)} .sug.baja{border-left-color:var(--ok)}
 .sug p{color:var(--ink);line-height:1.55}
@@ -339,35 +350,36 @@ const ESTADOS = ['Intimación recibida','Cautelar otorgada','Informe art. 8 pend
 const ESTADO_CORTO = ['Intimación','Cautelar','Informe','Prueba','Para sentencia','Sentencia','Archivado'];
 const PRESTACIONES = ['Medicación oncológica','Medicamentos','Discapacidad (Ley 24.901)','Fertilización (Ley 26.862)','Internación domiciliaria','Internación','Cirugía','Prótesis / ortesis','Salud mental','Diabetes e insumos','Estudios y diagnóstico','Rehabilitación','Trasplante','Diálisis','Odontología','Cobertura integral','Otra'];
 
+const hab = n => n<=0 ? dPlus(n) : addBusinessDays(n);
 function seed(){
   const E = (id, numero, afiliado, dni, prestacion, juzgado, estado, riesgo, abogado, inicio, monto, cautelar, plazos, movs, docs) =>
     ({id, numero, caratula:`${afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`, afiliado, dni, prestacion, juzgado, estado, riesgo, abogado, inicio, monto, cautelar, plazos, movimientos:movs, docs});
   return [
     E(1,'CCF 4512/2026','Romero, Ana Lía','27.845.112','Medicación oncológica','Juzg. Nac. Civ. y Com. Fed. N° 3 · Sec. 5','Cautelar otorgada','alto','fzaurdo',dPlus(-24),4850000,true,
-      [{desc:'Acreditar cumplimiento de cautelar',vence:dPlus(1),hecho:false},{desc:'Presentar informe art. 8 Ley 16.986',vence:dPlus(4),hecho:false}],
+      [{desc:'Acreditar cumplimiento de cautelar',vence:hab(1),hecho:false},{desc:'Presentar informe art. 8 Ley 16.986',vence:hab(4),hecho:false}],
       [{fecha:dPlus(-24),tipo:'Notificación',desc:'Se notifica traslado de la demanda y pedido de medida cautelar.',user:'rperez'},
        {fecha:dPlus(-20),tipo:'Resolución',desc:'Se hace lugar a la medida cautelar: cobertura del 100 % de pembrolizumab.',user:'dfraerman'},
        {fecha:dPlus(-19),tipo:'Interno',desc:'Se envía pedido de autorización a Auditoría Médica.',user:'lbrunelli'}],
       [{nombre:'Demanda y cautelar.pdf',tipo:'Escrito de la actora',fecha:dPlus(-24),size:'1,2 MB'},{nombre:'Resolución cautelar.pdf',tipo:'Resolución',fecha:dPlus(-20),size:'340 KB'},{nombre:'Dictamen auditoría médica.pdf',tipo:'Interno',fecha:dPlus(-18),size:'210 KB'}]),
     E(2,'CCF 3977/2026','Benítez, Tomás (por su hijo L.B.)','35.902.447','Discapacidad (Ley 24.901)','Juzg. Nac. Civ. y Com. Fed. N° 8 · Sec. 15','Informe art. 8 pendiente','medio','lbrunelli',dPlus(-12),1320000,false,
-      [{desc:'Presentar informe art. 8 Ley 16.986',vence:dPlus(2),hecho:false}],
+      [{desc:'Presentar informe art. 8 Ley 16.986',vence:hab(2),hecho:false}],
       [{fecha:dPlus(-12),tipo:'Notificación',desc:'Se requiere informe circunstanciado en el plazo de 5 días.',user:'rperez'},
        {fecha:dPlus(-10),tipo:'Interno',desc:'Se solicita a Discapacidad el legajo de prestaciones.',user:'lbrunelli'}],
       [{nombre:'Demanda.pdf',tipo:'Escrito de la actora',fecha:dPlus(-12),size:'860 KB'},{nombre:'CUD y prescripción.pdf',tipo:'Prueba documental',fecha:dPlus(-12),size:'1,9 MB'}]),
     E(3,'CCF 2210/2026','Sosa, Marcela','31.220.958','Fertilización (Ley 26.862)','Juzg. Nac. Civ. y Com. Fed. N° 1 · Sec. 2','En prueba','medio','fzaurdo',dPlus(-95),2600000,true,
-      [{desc:'Control de pericia médica',vence:dPlus(9),hecho:false}],
+      [{desc:'Control de pericia médica',vence:hab(9),hecho:false}],
       [{fecha:dPlus(-95),tipo:'Notificación',desc:'Traslado de demanda.',user:'rperez'},{fecha:dPlus(-60),tipo:'Escrito propio',desc:'Se contesta informe y se ofrece prueba.',user:'fzaurdo'},{fecha:dPlus(-15),tipo:'Resolución',desc:'Se abre a prueba. Se designa perito médico.',user:'rperez'}],
       [{nombre:'Contestación informe.docx',tipo:'Escrito propio',fecha:dPlus(-60),size:'95 KB'}]),
     E(4,'CCF 5021/2026','Herrera, Julio César','14.733.601','Internación domiciliaria','Juzg. Nac. Civ. y Com. Fed. N° 11 · Sec. 21','Intimación recibida','alto','lbrunelli',dPlus(-2),980000,false,
-      [{desc:'Cumplir intimación (48 hs)',vence:dPlus(-1),hecho:false}],
+      [{desc:'Cumplir intimación (48 hs)',vence:hab(-1),hecho:false}],
       [{fecha:dPlus(-2),tipo:'Notificación',desc:'Intimación a otorgar internación domiciliaria bajo apercibimiento de astreintes.',user:'rperez'}],
       [{nombre:'Cédula de intimación.pdf',tipo:'Notificación',fecha:dPlus(-2),size:'120 KB'}]),
     E(5,'CCF 1188/2026','Ibarra, Rosa','22.519.374','Cirugía','Juzg. Nac. Civ. y Com. Fed. N° 4 · Sec. 7','Para sentencia','bajo','fzaurdo',dPlus(-180),3100000,false,
-      [{desc:'Seguimiento: sentencia',vence:dPlus(21),hecho:false}],
+      [{desc:'Seguimiento: sentencia',vence:hab(21),hecho:false}],
       [{fecha:dPlus(-180),tipo:'Notificación',desc:'Traslado de demanda.',user:'rperez'},{fecha:dPlus(-30),tipo:'Resolución',desc:'Autos para sentencia.',user:'rperez'}],
       []),
     E(6,'CCF 0954/2025','Maidana, Ezequiel','29.661.083','Prótesis / ortesis','Juzg. Nac. Civ. y Com. Fed. N° 6 · Sec. 11','Sentencia','bajo','fzaurdo',dPlus(-320),750000,false,
-      [{desc:'Evaluar apelación',vence:dPlus(6),hecho:false}],
+      [{desc:'Evaluar apelación',vence:hab(6),hecho:false}],
       [{fecha:dPlus(-8),tipo:'Resolución',desc:'Sentencia: se hace lugar parcialmente. Costas por su orden.',user:'rperez'}],
       [{nombre:'Sentencia.pdf',tipo:'Resolución',fecha:dPlus(-8),size:'410 KB'}]),
     E(7,'CCF 3305/2025','Quiroga, Pablo','33.418.276','Salud mental','Juzg. Nac. Civ. y Com. Fed. N° 2 · Sec. 3','Archivado','bajo','lbrunelli',dPlus(-400),0,false,
@@ -433,7 +445,7 @@ SERÁ JUSTICIA.`}
 ];
 
 // ---------- estado ----------
-const KEY = 'fojas-demo-v6';
+const KEY = 'fojas-demo-v8';
 let S;
 async function makeUser(u, pass, mustChange){ const salt = randId(16); return {id:u.id, nombre:u.nombre, rol:u.rol, activo:true, salt, hash: await hashPass(pass, salt), mustChange:!!mustChange}; }
 async function fresh(){ const users = []; for(const u of DEFAULT_USERS) users.push(await makeUser(u, u.pass, false));
@@ -610,6 +622,7 @@ function taskRow(p, showExp=true){
   return `<div class="task ${u}">
     <div class="txt"><a href="#expediente-${p.exp.id}">${esc(p.desc)}</a>${showExp?`<div class="small muted">${esc(p.exp.afiliado)} · ${esc(p.exp.numero)}</div>`:''}</div>
     <div style="text-align:right"><div class="when ${u}">${whenText(n)}</div><div class="small muted">${fmt(p.vence)}</div></div>
+    ${showExp?'':`<button class="btn sm ghost" data-act="plazoedit" data-e="${p.exp.id}" data-i="${p.idx}" title="Modificar plazo">${ic('pen','sm')} Modificar</button>`}
     <button class="btn sm" data-act="done" data-e="${p.exp.id}" data-i="${p.idx}" title="Marcar como hecho">${ic('check','sm')} Hecho</button>
   </div>`;
 }
@@ -690,6 +703,9 @@ function vVencimientos(){
   ];
   return `
   <div><h1>Vencimientos</h1><p class="sub">Todo lo que hay que presentar o cumplir, ordenado por fecha. Cuando lo hagas, tocá "Hecho".</p></div>
+  <details class="card" style="gap:8px"><summary style="cursor:pointer;font-weight:700">${ic('cal','sm')} Próximos feriados y días inhábiles que tenemos en cuenta</summary>
+    <div class="list">${upcomingHolidays(10).map(([d,m])=>`<div class="li"><span>${esc(m)}</span><span class="small muted">${fmtLargo(d)}</span></div>`).join('')}</div>
+    <p class="small muted">Feriados nacionales según la Ley 27.399 y el Decreto 614/2025; días no laborables con fines turísticos de 2026 según la Resolución 164/2025. Los de 2027 todavía no fueron publicados. La feria judicial de enero se descuenta solo si la elegís al cargar el plazo.</p></details>
   ${groups.map(([t,c,f])=>{ const l = plazos.filter(f); if(!l.length) return ''; return `
     <section class="card"><div class="row"><h2>${t}</h2><span class="badge ${c==='late'?'red':''}">${l.length}</span></div>
       <div class="cases">${l.map(p=>taskRow(p)).join('')}</div></section>`; }).join('') || `<div class="card empty"><div class="ico g">${ic('check','lg')}</div><b>No hay vencimientos pendientes</b></div>`}`;
@@ -770,7 +786,8 @@ function vExpediente(id){
     <div class="txt"><div class="lbl">Lo próximo que hay que hacer</div><h2>${esc(p.desc)}</h2><div class="when ${urg(n)}">${whenText(n)} · ${fmtLong(p.vence)}</div></div>
     <div class="row"><button class="btn ok big" data-act="done" data-e="${e.id}" data-i="${e.plazos.indexOf(p)}">${ic('check')} Ya lo hice</button>
       <button class="btn big" data-act="writefor" data-e="${e.id}">${ic('pen')} Hacer el escrito</button>
-      <button class="btn big" data-tab="sugerencias">${ic('spark')} Qué hacer</button></div>
+      <button class="btn big" data-tab="sugerencias">${ic('spark')} Qué hacer</button>
+      <button class="btn ghost" data-act="plazoedit" data-e="${e.id}" data-i="${e.plazos.indexOf(p)}">${ic('cal','sm')} Modificar plazo</button></div>
   </section>`:`<section class="next"><div class="ico g">${ic('check','lg')}</div><div class="txt"><div class="lbl">Lo próximo</div><h2>No hay nada pendiente</h2><div class="muted">Cuando llegue una novedad, cargala para no perder el hilo.</div></div><button class="btn big" data-act="addplazo" data-tabgo="plazos">${ic('plus')} Agregar plazo</button></section>`}
 
   <section class="card"><div class="row" style="justify-content:space-between"><h3>¿En qué etapa está?</h3><span class="small muted">Tocá una etapa para cambiarla</span></div>
@@ -1161,9 +1178,95 @@ function buildSumario(o){
   return partes.join(' ');
 }
 
+// ---------- calendario judicial argentino ----------
+// Feriados nacionales: Ley 27.399 y Decreto 614/2025. Días no laborables con fines turísticos 2026: Resolución 164/2025.
+// 2027: feriados por ley; los días turísticos 2027 todavía no fueron publicados en el Boletín Oficial.
+const FERIADOS = {
+  '2026-01-01':'Año Nuevo','2026-02-16':'Carnaval','2026-02-17':'Carnaval','2026-03-24':'Día de la Memoria por la Verdad y la Justicia',
+  '2026-04-02':'Día del Veterano y de los Caídos en Malvinas','2026-04-03':'Viernes Santo','2026-05-01':'Día del Trabajador','2026-05-25':'Revolución de Mayo',
+  '2026-06-15':'Paso a la Inmortalidad de Güemes (trasladado del 17/6)','2026-06-20':'Paso a la Inmortalidad de Belgrano','2026-07-09':'Día de la Independencia',
+  '2026-08-17':'Paso a la Inmortalidad de San Martín','2026-10-12':'Día del Respeto a la Diversidad Cultural','2026-11-23':'Día de la Soberanía Nacional (trasladado del 20/11)',
+  '2026-12-08':'Inmaculada Concepción de María','2026-12-25':'Navidad',
+  '2027-01-01':'Año Nuevo','2027-02-08':'Carnaval','2027-02-09':'Carnaval','2027-03-24':'Día de la Memoria por la Verdad y la Justicia','2027-03-26':'Viernes Santo',
+  '2027-04-02':'Día del Veterano y de los Caídos en Malvinas','2027-05-01':'Día del Trabajador','2027-05-25':'Revolución de Mayo',
+  '2027-06-21':'Paso a la Inmortalidad de Güemes (trasladado del 17/6)','2027-06-20':'Paso a la Inmortalidad de Belgrano','2027-07-09':'Día de la Independencia',
+  '2027-08-16':'Paso a la Inmortalidad de San Martín (trasladado del 17/8)','2027-10-11':'Día del Respeto a la Diversidad Cultural (trasladado del 12/10)',
+  '2027-11-20':'Día de la Soberanía Nacional (cae sábado; traslado a confirmar)','2027-12-08':'Inmaculada Concepción de María','2027-12-25':'Navidad'
+};
+const NO_LABORABLES = {
+  '2026-03-23':'Día no laborable con fines turísticos','2026-04-02':'Jueves Santo (no laborable)','2026-07-10':'Día no laborable con fines turísticos','2026-12-07':'Día no laborable con fines turísticos',
+  '2027-03-25':'Jueves Santo (no laborable)'
+};
+const FERIA_ENERO = y => ({desde:`${y}-01-01`, hasta:`${y}-01-31`});
+const DOW = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const isoOf = d => iso(d);
+function motivoInhabil(isoDate, opts={}){
+  const d = new Date(isoDate+'T12:00:00'), w = d.getDay();
+  if(w===0 || w===6) return w===0 ? 'domingo' : 'sábado';
+  if(FERIADOS[isoDate]) return 'feriado: ' + FERIADOS[isoDate];
+  if(opts.noLaborables!==false && NO_LABORABLES[isoDate]) return NO_LABORABLES[isoDate];
+  if(opts.feria){ const f = FERIA_ENERO(d.getFullYear()); if(isoDate>=f.desde && isoDate<=f.hasta) return 'feria judicial de enero'; }
+  return '';
+}
+// Calcula el vencimiento. modo: 'habiles' | 'corridos' | 'horas' | 'fecha'
+function calcPlazo(r){
+  const desde = r.desde || iso(today());
+  const opts = {feria:!!r.feria, noLaborables:r.noLaborables!==false};
+  const skipped = []; let d = new Date(desde+'T12:00:00'); let aviso = '';
+  if(r.modo==='fecha') { const m = motivoInhabil(r.fecha, opts); return {vence:r.fecha, skipped, aviso: m ? `Esa fecha es inhábil (${m}).` : ''}; }
+  if(r.modo==='habiles'){
+    let k = 0; const n = Math.max(1, +r.cant||1);
+    while(k<n){ d.setDate(d.getDate()+1); const id = isoOf(d), m = motivoInhabil(id, opts); if(m){ if(!/^(sábado|domingo)$/.test(m)) skipped.push({fecha:id, motivo:m}); } else k++; }
+    return {vence:isoOf(d), skipped, aviso:''};
+  }
+  const dias = r.modo==='horas' ? Math.max(1, Math.ceil((+r.cant||24)/24)) : Math.max(1, +r.cant||1);
+  d.setDate(d.getDate()+dias);
+  let id = isoOf(d), m = motivoInhabil(id, opts);
+  if(m){ const orig = id; while(motivoInhabil(id, opts)){ d.setDate(d.getDate()+1); id = isoOf(d); } aviso = `El ${fmt(orig)} es inhábil (${m}): lo pasamos al primer día hábil siguiente. Verificá el criterio del juzgado.`; }
+  return {vence:id, skipped, aviso};
+}
+function addBusinessDays(n){ return calcPlazo({modo:'habiles', cant:n}).vence; }
+const fmtLargo = s => { const d = new Date(s+'T12:00:00'); return `${DOW[d.getDay()]} ${d.getDate()} de ${d.toLocaleDateString('es-AR',{month:'long'})} de ${d.getFullYear()}`; };
+function reglaTexto(r){ if(!r) return ''; if(r.modo==='fecha') return 'Fecha fijada a mano'; const u = r.modo==='habiles'?'días hábiles':r.modo==='corridos'?'días corridos':'horas'; return `${r.cant} ${u} desde el ${fmt(r.desde)}${r.feria?' · descontando feria de enero':''}`; }
+
+// ---------- editor de plazos ----------
+let PE = null;
+function openPlazoEditor(expId, idx, preset){
+  const e = expById(expId); const p = idx!=null ? e.plazos[idx] : null;
+  const r = (p && p.regla) || (preset && preset.regla) || {modo:'habiles', cant:5};
+  PE = {expId, idx, desc:(p && p.desc) || (preset && preset.desc) || '', modo:p && !p.regla ? 'fecha' : r.modo, cant:r.cant||5, desde:r.desde||iso(today()), fecha:(p && p.vence) || dPlus(5), feria:!!r.feria, noLaborables:r.noLaborables!==false, viejo:p?p.vence:null};
+  drawPlazoEditor();
+}
+function drawPlazoEditor(){
+  const c = calcPlazo(PE);
+  const modos = [['habiles','Días hábiles'],['corridos','Días corridos'],['horas','Horas'],['fecha','Elegir fecha']];
+  showModal(`
+    <div class="row" style="justify-content:space-between"><h2 style="font-size:22px">${PE.idx!=null?'Modificar plazo':'Agendar plazo'}</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div>
+    <label class="fld">¿Qué hay que hacer?<input type="text" id="peDesc" value="${esc(PE.desc)}" placeholder="Ej.: Presentar informe art. 8"></label>
+    <div class="fld">¿Cómo se cuenta el plazo?<div class="opts">${modos.map(([k,l])=>`<button type="button" class="opt ${PE.modo===k?'on':''}" data-pe="modo" data-v="${k}">${l}</button>`).join('')}</div></div>
+    ${PE.modo==='fecha' ? `<label class="fld">Fecha de vencimiento<input type="date" id="peFecha" value="${PE.fecha}" style="max-width:220px"></label>` : `
+    <div class="form" style="grid-template-columns:1fr 1fr">
+      <label>${PE.modo==='horas'?'Cantidad de horas':'Cantidad de días'}<input type="text" inputmode="numeric" id="peCant" value="${esc(PE.cant)}"></label>
+      <label>Desde (fecha de notificación)<input type="date" id="peDesde" value="${PE.desde}"></label>
+    </div>
+    <div class="opts">${(PE.modo==='horas'?[[24,'24 hs'],[48,'48 hs'],[72,'72 hs']]:[[2,'2 días'],[3,'3 días'],[5,'5 días'],[10,'10 días'],[15,'15 días']]).map(([n,l])=>`<button type="button" class="opt ${+PE.cant===n?'on':''}" data-pe="cant" data-v="${n}">${l}</button>`).join('')}</div>
+    <label class="switch"><input type="checkbox" id="peFeria" ${PE.feria?'checked':''}> Descontar la feria judicial de enero <span class="hint">(solo si el juzgado no habilitó la feria)</span></label>`}
+    <div class="notice ${c.aviso?'bad':'good'}">${ic('cal')}<div><b>Vence el ${fmtLargo(c.vence)}</b>
+      ${PE.modo==='habiles'?`<div class="small">Se cuenta desde el día hábil siguiente a la notificación, salteando sábados, domingos y feriados nacionales.</div>`:''}
+      ${(()=>{ const fer = c.skipped.filter(s=>s.motivo==='feria judicial de enero'); const resto = c.skipped.filter(s=>s.motivo!=='feria judicial de enero'); const items = resto.map(s=>`${DOW[new Date(s.fecha+'T12:00:00').getDay()]} ${fmt(s.fecha)} (${esc(s.motivo)})`); if(fer.length) items.push(`del ${fmt(fer[0].fecha)} al ${fmt(fer[fer.length-1].fecha)} (feria judicial de enero)`); return items.length?`<div class="small" style="margin-top:6px">No se cuentan: ${items.join('; ')}.</div>`:''; })()}
+      ${c.aviso?`<div class="small" style="margin-top:6px">${esc(c.aviso)}</div>`:''}
+      ${PE.modo==='habiles'?`<div class="small muted" style="margin-top:6px">Recordá el plazo de gracia: el escrito también se puede presentar dentro de las dos primeras horas del día hábil siguiente (art. 124 CPCCN).</div>`:''}</div></div>
+    ${PE.viejo?`<p class="small muted">Antes vencía el ${fmt(PE.viejo)}.</p>`:''}
+    <div class="row"><button class="btn pri big" data-act="pesave">${ic('check')} Guardar plazo</button></div>`);
+}
+function peRead(){ const v = id => { const el = $('#'+id); return el ? el.value : null; };
+  if(v('peDesc')!==null) PE.desc = v('peDesc').trim(); if(v('peCant')!==null) PE.cant = (v('peCant').match(/\d+/)||[PE.cant])[0];
+  if(v('peDesde')!==null && v('peDesde')) PE.desde = v('peDesde'); if(v('peFecha')!==null && v('peFecha')) PE.fecha = v('peFecha');
+  const f = $('#peFeria'); if(f) PE.feria = f.checked; }
+function upcomingHolidays(n=8){ const t = iso(today()); return Object.entries({...FERIADOS, ...NO_LABORABLES}).filter(([d])=>d>=t).sort().slice(0,n); }
+
 // ---------- extracción de datos del texto ----------
 const titleCase = s => String(s||'').replace(/[A-ZÁÉÍÓÚÑÜ]{2,}/g, w => w[0] + w.slice(1).toLowerCase());
-function addBusinessDays(n){ const d = today(); let k = 0; while(k<n){ d.setDate(d.getDate()+1); const w = d.getDay(); if(w!==0 && w!==6) k++; } return iso(d); }
 const NUM_WORDS = {un:1,uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,quince:15,veinte:20,'veinticuatro':24,'cuarenta y ocho':48,'setenta y dos':72};
 function extractFields(raw){
   const t = raw.replace(/[ \t\r\f]+/g,' ').replace(/\n+/g,'\n');
@@ -1204,7 +1307,7 @@ function extractFields(raw){
   const ordena = /(hacer|hace|h[aá]gase|h[aá]cese)\s+lugar|ord[eé]n(ase|a|ar)|decr[eé]tase|int[ií]m(ase|ar|a)/i.test(one);
   if(/medida cautelar/i.test(one) && ordena) f.cautelar = true;
   const informe = /art(?:[ií]culo|\.)?\s*8|informe circunstanciado|informe previsto/i.test(one);
-  if(informe && f.cautelar){ f.estado = 'Cautelar otorgada'; f.plazoDesc = 'Cumplir medida cautelar'; f.extra = [{desc:'Presentar informe art. 8 Ley 16.986', vence:addBusinessDays(5), hecho:false}]; }
+  if(informe && f.cautelar){ f.estado = 'Cautelar otorgada'; f.plazoDesc = 'Cumplir medida cautelar'; f.extra = [{desc:'Presentar informe art. 8 Ley 16.986', vence:addBusinessDays(5), hecho:false, regla:{modo:'habiles', cant:5, desde:iso(today())}}]; }
   else if(informe){ f.estado = 'Informe art. 8 pendiente'; f.plazoDesc = 'Presentar informe art. 8 Ley 16.986'; }
   else if(f.cautelar){ f.estado = 'Cautelar otorgada'; f.plazoDesc = 'Cumplir medida cautelar'; }
   else if(/int[ií]m/i.test(one)){ f.estado = 'Intimación recibida'; f.plazoDesc = 'Cumplir intimación'; }
@@ -1213,8 +1316,8 @@ function extractFields(raw){
   if(m){
     let num = m[2] ? +m[2] : NUM_WORDS[(m[1]||'').trim().toLowerCase()];
     if(num){
-      if(/hora|hs/i.test(m[3])){ f.plazoFecha = dPlus(Math.max(1, Math.ceil(num/24))); f.plazoNota = `El documento dice ${num} horas (corridas).`; }
-      else { f.plazoFecha = addBusinessDays(num); f.plazoNota = `El documento dice ${num} días: los contamos como hábiles, sin feriados. Revisá la fecha.`; }
+      if(/hora|hs/i.test(m[3])){ { const c = calcPlazo({modo:'horas', cant:num}); f.plazoFecha = c.vence; f.plazoNota = `El documento dice ${num} horas (corridas).${c.aviso?' '+c.aviso:''}`; f.plazoRegla = {modo:'horas', cant:num, desde:iso(today())}; } }
+      else { f.plazoFecha = addBusinessDays(num); f.plazoNota = `El documento dice ${num} días: los contamos como hábiles judiciales desde mañana, salteando fines de semana y feriados nacionales. Revisá la fecha.`; f.plazoRegla = {modo:'habiles', cant:num, desde:iso(today())}; }
     }
   }
   return f;
@@ -1269,81 +1372,158 @@ function sugerencias(e){
   const f = caseFlags(e), out = {urgente:[], fondo:[], prueba:[], estrategia:[]};
   const pend = (e.plazos||[]).filter(p=>!p.hecho);
   const informePend = e.estado==='Informe art. 8 pendiente' || pend.some(p=>/informe/i.test(p.desc));
-  const add = (g, titulo, texto, normas, nivel) => out[g].push({titulo, texto, normas, nivel});
+  const P = e.prestacion||'';
+  const quien = e.afiliado ? e.afiliado.split(',').reverse().join(' ').trim() : 'el asociado';
+  const pide = e.detalle ? `la cobertura de ${e.detalle}` : `cobertura de ${P.toLowerCase()||'la prestación'}`;
+  const docs = [...new Set((e.docs||[]).map(d=>d.tipo).filter(Boolean))];
+  const docsTxt = docs.length ? `Con lo presentado (${docs.join(', ').toLowerCase()})` : 'Con lo que hay cargado';
+  const add = (g, o) => out[g].push(o);
 
   if(e.cautelar){
-    add('urgente','Cumplir la medida cautelar en el plazo','Aunque se decida apelar, la apelación de una cautelar no suspende su cumplimiento. Pedile a Auditoría Médica la autorización y la constancia de entrega, y acreditá el cumplimiento en el expediente. Si no se cumple, el juzgado puede fijar multas diarias y, en casos graves, dar intervención penal.',
-      ['CPCCN art. 198 (efecto devolutivo)','CCyCN art. 804 y CPCCN art. 37 (astreintes)','Código Penal art. 239 (desobediencia)'],'alta');
-    add('urgente','Evaluar si conviene apelar la cautelar','Revisá si la orden excede lo pedido, si fija un prestador fuera de cartilla o si no hay prescripción que la respalde. Si el juzgado tramita el amparo por la Ley 16.986, el recurso se presenta fundado dentro de las 48 horas de notificado; si lo tramita como proceso sumarísimo, rige el CPCCN. Confirmá el régimen en la providencia.',
-      ['Ley 16.986 art. 15','CPCCN arts. 198 y 498'],'alta');
+    add('urgente',{titulo:'Cumplir la medida cautelar', nivel:'alta',
+      porque:`El juzgado ordenó que se otorgue ${pide} a ${quien} mientras dure el juicio. La orden se cumple aunque se decida apelar: la apelación de una cautelar no suspende su cumplimiento.`,
+      pasos:['Pedile hoy a Auditoría Médica que autorice la prestación y te confirme la fecha de entrega o de inicio.',
+        'Si la orden menciona un prestador que no es de cartilla, ofrecé por escrito uno propio equivalente, pero sin demorar el cumplimiento.',
+        'Juntá la constancia (autorización, remito, factura o certificado del prestador).',
+        'Presentá el escrito "Acreditar cumplimiento de cautelar" con esa constancia.',
+        'Cargá la novedad en Fojas para que todo el equipo vea que se cumplió.'],
+      riesgo:'Si no se cumple, el juzgado puede fijar multas diarias (astreintes) y, en casos graves, dar intervención a la justicia penal.',
+      normas:['CPCCN art. 198 (la apelación no suspende la cautelar)','CCyCN art. 804 y CPCCN art. 37 (astreintes)','Código Penal art. 239 (desobediencia)'],
+      plazo:{match:/cautelar/i, desc:'Cumplir medida cautelar', regla:{modo:'habiles', cant:5}}, escrito:'cumplimiento'});
+    add('urgente',{titulo:'Evaluar si conviene apelar la cautelar', nivel:'alta',
+      porque:'Apelar tiene sentido solo si la orden tiene un problema concreto. Si se ajusta a lo que el asociado necesita y está prescripto, apelar suele terminar en costas.',
+      pasos:['Compará lo que ordenó el juez con lo que pidió el asociado y con la prescripción médica.',
+        'Revisá si fija un prestador fuera de cartilla, un monto sin tope o una prestación sin indicación médica actual.',
+        'Confirmá en la providencia qué régimen aplica el juzgado: si tramita por la Ley 16.986, el recurso se presenta fundado dentro de las 48 horas de notificado; si tramita como proceso sumarísimo, rige el CPCCN.',
+        'Si decidís apelar, cumplí igual la medida mientras se resuelve el recurso.'],
+      normas:['Ley 16.986 art. 15','CPCCN arts. 198 y 498'],
+      plazo:{match:/apela/i, desc:'Evaluar y, si corresponde, apelar la cautelar', regla:{modo:'horas', cant:48}}});
   }
   if(informePend){
-    add('urgente','Presentar el informe circunstanciado','Explicá los antecedentes: cuándo pidió la prestación el afiliado, qué se le respondió y por qué. Acompañá la documental (solicitud, dictamen de Auditoría Médica, respuesta enviada) y ofrecé la prueba en el mismo escrito. Respetá el plazo que fijó el juez.',
-      ['Ley 16.986 art. 8','CN art. 43'],'alta');
-    add('urgente','Analizar si la vía del amparo es admisible','Podés plantear que existen otras vías o que la demanda se presentó fuera del plazo de 15 días hábiles. En amparos de salud los tribunales suelen admitir igual la vía por la urgencia, así que usalo como argumento complementario, no como defensa principal.',
-      ['Ley 16.986 art. 2 (incs. a y e)','CN art. 43'],'media');
+    add('urgente',{titulo:'Presentar el informe circunstanciado (art. 8)', nivel:'alta',
+      porque:`El juzgado pidió a la empresa que explique los antecedentes y el fundamento de no haber otorgado ${pide}. Es la oportunidad principal para defenderse y ofrecer prueba.`,
+      pasos:['Pedí el legajo de '+quien+': solicitudes presentadas, respuestas enviadas, dictamen de Auditoría Médica y cartilla ofrecida.',
+        `Armá una cronología clara: cuándo pidió ${P.toLowerCase()||'la prestación'}, qué se le respondió y por qué.`,
+        'Explicá el fundamento de la respuesta (PMO, normativa aplicable, falta de prescripción, oferta de prestador de cartilla, etc.).',
+        'Acompañá la documental y ofrecé la prueba en el mismo escrito (informativa, pericial médica si hace falta).',
+        'Usá la plantilla "Informe del art. 8" desde Escritos: ya viene con los datos del amparo.'],
+      riesgo:'El plazo lo fija el juez en la providencia. Si no se presenta a tiempo, el amparo avanza sin la versión de la empresa.',
+      normas:['Ley 16.986 art. 8','CN art. 43'],
+      plazo:{match:/informe/i, desc:'Presentar informe art. 8 Ley 16.986', regla:{modo:'habiles', cant:5}}, escrito:'informe'});
+    add('urgente',{titulo:'Analizar si la vía del amparo es admisible', nivel:'media',
+      porque:'El amparo es una vía excepcional. Si hay otras vías o se presentó tarde, se puede plantear, aunque en salud los tribunales suelen admitirlo igual por la urgencia.',
+      pasos:['Verificá cuándo se notificó la negativa al asociado: la ley prevé 15 días hábiles para presentar el amparo.',
+        'Evaluá si existían otras vías (reclamo ante la Superintendencia de Servicios de Salud, juicio ordinario).',
+        'Usalo como argumento complementario dentro del informe, no como defensa principal.'],
+      normas:['Ley 16.986 art. 2 (incs. a y e)','CN art. 43']});
   }
-  // fondo según la prestación
-  const P = e.prestacion||'';
-  if(/oncol/i.test(P)) add('fondo','Medicación oncológica: cobertura del 100 % según protocolo','Las prepagas deben cubrir al menos el PMO, que incluye el 100 % de la medicación oncológica según protocolos. La discusión útil no es la cobertura en sí, sino el producto: si está aprobado por ANMAT para esa indicación, si hay alternativa equivalente y si corresponde la marca pedida.',
+  // sobre lo que se reclama (solo la prestación del amparo)
+  const fondo = (titulo, porque, pasos, normas, nivel='media') => add('fondo',{titulo, porque, pasos, normas, nivel});
+  if(/oncol/i.test(P)) fondo('Medicación oncológica: cobertura del 100 % según protocolo',
+    `${quien} reclama ${pide}. Las prepagas deben cubrir al menos el PMO, que incluye el 100 % de la medicación oncológica según protocolos, así que discutir la cobertura en sí tiene pocas chances.`,
+    ['Pedí a Auditoría Médica que confirme si el medicamento está aprobado por ANMAT para esa indicación y ese estadio.',
+     'Si se pide una marca determinada, verificá si hay un equivalente con el mismo principio activo y ofrecelo.',
+     'Si el tratamiento está aprobado y prescripto, la estrategia razonable es cumplir y discutir solo el prestador o la forma de provisión.'],
     ['Ley 26.682 art. 7','PMO (Res. MS 201/2002 y modif.)','Ley 23.661'],'alta');
-  if(/Discapacidad/i.test(P)) add('fondo','Discapacidad: cobertura integral de prestaciones básicas','Con CUD vigente, la cobertura de las prestaciones de la Ley 24.901 es obligatoria también para las prepagas. Lo discutible suele ser el prestador (si está inscripto y si es de cartilla) y el valor: se puede ofrecer cobertura según el Nomenclador de Prestaciones Básicas o con prestadores propios.',
+  if(/Discapacidad/i.test(P)) fondo('Discapacidad: cobertura integral de prestaciones básicas',
+    `${quien} reclama ${pide}. Con CUD vigente, las prestaciones de la Ley 24.901 son obligatorias también para las prepagas.`,
+    ['Verificá que el CUD esté vigente y que la prestación pedida figure en el certificado o en la indicación del equipo tratante.',
+     'Revisá si el prestador está inscripto en el Registro Nacional de Prestadores y si es de cartilla.',
+     'Si es un prestador externo, podés ofrecer cobertura hasta los valores del Nomenclador de Prestaciones Básicas o un prestador propio.',
+     'Para transporte, acompañante o maestra de apoyo, pedí el plan de tratamiento con cantidad de horas o sesiones.'],
     ['Ley 24.901','Ley 24.754','Ley 26.682 art. 7','Ley 22.431 (CUD)'],'alta');
-  if(/Fertiliz/i.test(P)) add('fondo','Fertilización: límites de la cobertura','La ley garantiza la cobertura, pero el decreto reglamentario fija límites: hasta 4 tratamientos de baja complejidad por año y hasta 3 de alta complejidad, con intervalos mínimos de 3 meses. Verificá cuántos tratamientos ya se cubrieron y si la técnica pedida está incluida.',
-    ['Ley 26.862','Decreto 956/2013 art. 8'],'media');
-  if(/domiciliaria/i.test(P)) add('fondo','Internación domiciliaria: revisar la indicación médica','Distinguí si lo que se pide es internación domiciliaria (prestación médica) o un cuidador o asistente. Si hay CUD, el reclamo suele encuadrarse en la ley de discapacidad. Pedí a Auditoría Médica una evaluación de la necesidad y de las horas indicadas.',
-    ['PMO (Res. MS 201/2002 y modif.)','Ley 24.901 (si hay CUD)','Ley 26.682 art. 7'],'media');
-  if(/Salud mental/i.test(P)) add('fondo','Salud mental: abordaje y cobertura','La ley de salud mental exige un abordaje interdisciplinario y que la internación sea el último recurso. Revisá si la prestación pedida (internación, tratamiento, institución) es la indicada por el equipo tratante y si hay prestador de cartilla adecuado.',
-    ['Ley 26.657','Ley 26.682 art. 7','PMO'],'media');
-  if(/Prótesis/i.test(P)) add('fondo','Prótesis y órtesis: alcance del PMO','El PMO cubre al 100 % las prótesis e implantes de colocación interna permanente y al 50 % las órtesis y prótesis externas, en principio de origen nacional. Si se pide una importada, verificá si existe alternativa nacional equivalente.',
-    ['PMO (Res. MS 201/2002 y modif.)','Ley 26.682 art. 7'],'media');
-  if(/^Medicamentos$/.test(P)) add('fondo','Medicamentos: qué cubre el PMO','Revisá si el medicamento está en el PMO y con qué porcentaje de cobertura (ambulatorio en general 40 %, crónicos y algunos grupos 70 % o 100 %). Si no está, la discusión pasa por la necesidad acreditada y la existencia de alternativas incluidas.',
-    ['PMO (Res. MS 201/2002 y modif.)','Ley 26.682 art. 7','Ley 25.649 (genéricos)'],'media');
-  if(/Diabetes/i.test(P)) add('fondo','Diabetes e insumos: cobertura del 100 %','La ley de diabetes garantiza la cobertura del 100 % de los medicamentos e insumos para el tratamiento. La discusión útil suele ser la tecnología pedida (por ejemplo, sensor o bomba) frente a lo que fija la normativa vigente.',
-    ['Ley 23.753 (mod. Ley 26.914)','Ley 26.682 art. 7'],'media');
-  if(/Trasplante/i.test(P)) add('fondo','Trasplante: cobertura obligatoria','La cobertura de trasplantes, estudios previos y tratamiento posterior está prevista en la ley de trasplante de órganos. Revisá la inscripción en el INCUCAI y el centro habilitado.',
-    ['Ley 27.447','PMO'],'alta');
-  if(/Diálisis/i.test(P)) add('fondo','Diálisis: prestación incluida','La diálisis está incluida en el PMO. Verificá el centro de diálisis de cartilla más cercano al domicilio del afiliado y el traslado.',
-    ['PMO (Res. MS 201/2002 y modif.)','Ley 26.682 art. 7'],'alta');
-  if(/Estudios/i.test(P)) add('fondo','Estudios: indicación y prestador','Verificá si el estudio está en el PMO y si hay indicación médica fundada. Ofrecer el estudio con un prestador de cartilla suele resolver el reclamo.',
-    ['PMO (Res. MS 201/2002 y modif.)','Ley 26.682 art. 7'],'media');
-  if(/Rehabilitación/i.test(P)) add('fondo','Rehabilitación: límites de sesiones','El PMO fija topes anuales de sesiones de rehabilitación, salvo en discapacidad (con CUD rige la Ley 24.901, sin esos topes). Verificá si hay CUD y cuántas sesiones se cubrieron.',
-    ['PMO (Res. MS 201/2002 y modif.)','Ley 24.901 (si hay CUD)'],'media');
-  if(/Odontolog/i.test(P)) add('fondo','Odontología: alcance limitado','El PMO cubre prácticas odontológicas básicas; ortodoncia e implantes suelen quedar fuera salvo indicación especial. Revisá el plan del afiliado.',
-    ['PMO (Res. MS 201/2002 y modif.)','Contrato del afiliado'],'baja');
-  if(/^Internación$/.test(P)) add('fondo','Internación: tipo y prestador','Distinguí si se pide internación aguda (PMO) o institucionalización de larga estadía (geriátrico, hogar), que suele encuadrarse en discapacidad si hay CUD. Revisá prestadores de cartilla.',
-    ['PMO (Res. MS 201/2002 y modif.)','Ley 24.901 (si hay CUD)','Ley 26.682 art. 7'],'media');
-  if(/Cirug/i.test(P)) add('fondo','Cirugía: prestador y técnica','Verificá si la cirugía está dentro del PMO, si la técnica pedida es la única indicada y si se puede realizar con un prestador de cartilla. Ofrecer la cirugía en cartilla suele ser la mejor defensa.',
-    ['Ley 26.682 art. 7','PMO (Res. MS 201/2002 y modif.)'],'media');
-  if(f.menor) add('fondo','Hay un menor involucrado','Cuando el afiliado es un niño o niña, los tribunales aplican el interés superior del niño y suelen ser más estrictos con la cobertura. Tenelo en cuenta para evaluar si conviene resistir o cumplir.',
-    ['Convención sobre los Derechos del Niño (CN art. 75 inc. 22)','Ley 26.061'],'media');
-  // prueba
-  if(!f.prescripcion) add('prueba','No encontramos prescripción médica','Si la demanda no acompaña una prescripción o indicación médica actual, señalalo en el informe: sin ella no está acreditada la necesidad de la prestación.',
-    ['CPCCN art. 377 (carga de la prueba)'],'media');
-  if(/Discapacidad/i.test(P) && !f.cud) add('prueba','No encontramos el CUD','Para reclamar por la ley de discapacidad hace falta el Certificado Único de Discapacidad vigente. Verificá si lo acompañaron y su fecha de vencimiento.',
-    ['Ley 22.431 art. 3','Ley 24.901'],'alta');
-  if(!f.reclamoPrevio) add('prueba','No surge un reclamo previo a la prepaga','Si el afiliado no pidió la prestación antes de demandar, no hubo negativa. Podés argumentar que no existe un acto con arbitrariedad o ilegalidad manifiesta, que es requisito del amparo. Buscá en los sistemas internos si hubo algún pedido.',
-    ['CN art. 43','Ley 16.986 art. 1'],'media');
-  if(f.offlabel) add('prueba','La prestación podría estar fuera de lo aprobado','El documento menciona un uso fuera de prospecto, experimental o no aprobado por ANMAT. Pedí a Auditoría Médica un dictamen sobre evidencia científica y aprobación regulatoria: es uno de los argumentos más sólidos.',
-    ['Ley 16.463 (medicamentos)','Disposiciones ANMAT'],'alta');
-  if(f.importado || f.marca) add('prueba','Se pide un producto importado o de una marca determinada','Verificá si existe un equivalente nacional o genérico con la misma eficacia y ofrecelo. La ley de prescripción por nombre genérico permite sostener esta alternativa.',
-    ['Ley 25.649 (prescripción por nombre genérico)','PMO'],'media');
-  if(f.fueraCartilla) add('prueba','Se pide un prestador fuera de cartilla','Ofrecé la prestación con un prestador propio o contratado equivalente. Si el juez igual lo ordena fuera de cartilla, se puede pedir que la cobertura sea hasta el valor que se paga a los prestadores propios.',
-    ['Ley 26.682 art. 7','Contrato de adhesión del afiliado'],'media');
-  // estrategia
-  add('estrategia','Opciones para decidir con el abogado a cargo', '1) Cumplir y discutir solo el alcance (prestador, valor, cantidad). 2) Allanarse parcialmente ofreciendo la prestación en cartilla. 3) Resistir, cuando hay argumentos fuertes (sin prescripción, fuera de lo aprobado, límites legales cumplidos). En salud, resistir sin esos argumentos suele terminar en condena en costas.',
-    ['CPCCN art. 68 (costas)','CPCCN art. 70 (allanamiento)'],'media');
+  if(/Fertiliz/i.test(P)) fondo('Fertilización: límites de la cobertura',
+    `${quien} reclama ${pide}. La ley garantiza la cobertura, pero el decreto reglamentario fija límites en cantidad y frecuencia.`,
+    ['Revisá cuántos tratamientos ya se cubrieron: hasta 4 de baja complejidad por año y hasta 3 de alta complejidad.',
+     'Verificá que se respeten los intervalos mínimos de 3 meses entre tratamientos de alta complejidad.',
+     'Confirmá que la técnica pedida esté incluida y que el centro esté habilitado.'],
+    ['Ley 26.862','Decreto 956/2013 art. 8']);
+  if(/domiciliaria/i.test(P)) fondo('Internación domiciliaria: revisar la indicación médica',
+    `${quien} reclama ${pide}. Hay que distinguir si se pide una internación domiciliaria (prestación médica) o un cuidador o asistente.`,
+    ['Pedí a Auditoría Médica una evaluación de la necesidad y de las horas indicadas.',
+     'Si hay CUD, el reclamo de cuidador suele encuadrarse en la ley de discapacidad.',
+     'Ofrecé la prestación con un prestador de cartilla y por las horas que el auditor considere necesarias.'],
+    ['PMO (Res. MS 201/2002 y modif.)','Ley 24.901 (si hay CUD)','Ley 26.682 art. 7']);
+  if(/^Internación$/.test(P)) fondo('Internación: tipo y prestador',
+    `${quien} reclama ${pide}. Conviene distinguir internación aguda (PMO) de institucionalización de larga estadía (geriátrico, hogar).`,
+    ['Si es larga estadía y hay CUD, encuadrala en la ley de discapacidad.','Ofrecé instituciones de cartilla adecuadas a la indicación médica.'],
+    ['PMO (Res. MS 201/2002 y modif.)','Ley 24.901 (si hay CUD)','Ley 26.682 art. 7']);
+  if(/Salud mental/i.test(P)) fondo('Salud mental: abordaje y cobertura',
+    `${quien} reclama ${pide}. La ley de salud mental exige abordaje interdisciplinario y que la internación sea el último recurso.`,
+    ['Verificá que la prestación pedida sea la indicada por el equipo tratante.','Ofrecé un prestador de cartilla con el abordaje adecuado.'],
+    ['Ley 26.657','Ley 26.682 art. 7','PMO']);
+  if(/Prótesis/i.test(P)) fondo('Prótesis y órtesis: alcance del PMO',
+    `${quien} reclama ${pide}. El PMO cubre al 100 % las prótesis e implantes de colocación interna permanente y al 50 % las órtesis y prótesis externas, en principio de origen nacional.`,
+    ['Verificá si se pide un producto importado y si existe alternativa nacional equivalente.','Pedí a Auditoría Médica tres presupuestos comparables si el producto es de alto costo.'],
+    ['PMO (Res. MS 201/2002 y modif.)','Ley 26.682 art. 7']);
+  if(/Cirug/i.test(P)) fondo('Cirugía: prestador y técnica',
+    `${quien} reclama ${pide}. Lo habitual es discutir el prestador o la técnica, no la cirugía en sí.`,
+    ['Verificá si la técnica pedida es la única indicada.','Ofrecé la cirugía con un prestador de cartilla.'],
+    ['Ley 26.682 art. 7','PMO (Res. MS 201/2002 y modif.)']);
+  if(/^Medicamentos$/.test(P)) fondo('Medicamentos: qué cubre el PMO',
+    `${quien} reclama ${pide}. El porcentaje de cobertura depende de si el medicamento está en el PMO y de la patología.`,
+    ['Verificá si el medicamento está en el PMO y con qué porcentaje (ambulatorio en general 40 %, crónicos y algunos grupos 70 % o 100 %).','Si no está, evaluá la necesidad acreditada y si hay alternativas incluidas.'],
+    ['PMO (Res. MS 201/2002 y modif.)','Ley 26.682 art. 7','Ley 25.649 (genéricos)']);
+  if(/Diabetes/i.test(P)) fondo('Diabetes e insumos: cobertura del 100 %',
+    `${quien} reclama ${pide}. La ley de diabetes garantiza la cobertura del 100 % de medicamentos e insumos.`,
+    ['La discusión útil suele ser la tecnología pedida (sensor, bomba) frente a lo que fija la normativa vigente.','Pedí la indicación médica que justifique esa tecnología.'],
+    ['Ley 23.753 (mod. Ley 26.914)','Ley 26.682 art. 7']);
+  if(/Trasplante/i.test(P)) fondo('Trasplante: cobertura obligatoria', `${quien} reclama ${pide}. La cobertura de trasplantes, estudios previos y tratamiento posterior es obligatoria.`,
+    ['Revisá la inscripción en el INCUCAI y que el centro esté habilitado.'], ['Ley 27.447','PMO'],'alta');
+  if(/Diálisis/i.test(P)) fondo('Diálisis: prestación incluida', `${quien} reclama ${pide}. La diálisis está incluida en el PMO.`,
+    ['Ofrecé el centro de cartilla más cercano al domicilio del asociado y el traslado.'], ['PMO (Res. MS 201/2002 y modif.)','Ley 26.682 art. 7'],'alta');
+  if(/Estudios/i.test(P)) fondo('Estudios: indicación y prestador', `${quien} reclama ${pide}.`,
+    ['Verificá si el estudio está en el PMO y si hay indicación médica fundada.','Ofrecerlo con un prestador de cartilla suele resolver el reclamo.'], ['PMO (Res. MS 201/2002 y modif.)','Ley 26.682 art. 7']);
+  if(/Rehabilitación/i.test(P)) fondo('Rehabilitación: límites de sesiones', `${quien} reclama ${pide}. El PMO fija topes anuales de sesiones, salvo en discapacidad.`,
+    ['Verificá si hay CUD: con CUD rige la Ley 24.901, sin esos topes.','Revisá cuántas sesiones ya se cubrieron en el año.'], ['PMO (Res. MS 201/2002 y modif.)','Ley 24.901 (si hay CUD)']);
+  if(/Odontolog/i.test(P)) fondo('Odontología: alcance limitado', `${quien} reclama ${pide}. El PMO cubre prácticas odontológicas básicas.`,
+    ['Ortodoncia e implantes suelen quedar fuera salvo indicación especial: revisá el plan del asociado.'], ['PMO (Res. MS 201/2002 y modif.)','Contrato del asociado'],'baja');
+  if(f.menor) fondo('Hay un menor involucrado', 'Cuando el beneficiario es un niño o niña, los tribunales aplican el interés superior del niño y suelen ser más estrictos con la cobertura.',
+    ['Tenelo en cuenta al decidir si resistir o cumplir.','Evitá demoras en el cumplimiento: suelen ser mal vistas por el juzgado.'], ['Convención sobre los Derechos del Niño (CN art. 75 inc. 22)','Ley 26.061']);
+  // prueba: lo que surge o falta en lo presentado
+  const prueba = (titulo, porque, pasos, normas, nivel='media') => add('prueba',{titulo, porque, pasos, normas, nivel});
+  if(!f.prescripcion) prueba('No encontramos prescripción médica', `${docsTxt} no aparece una prescripción o indicación médica actual.`,
+    ['Revisá la demanda y sus anexos por si la prescripción está y no se leyó bien.','Si no está, señalalo en el informe: sin ella no está acreditada la necesidad de la prestación.'], ['CPCCN art. 377 (carga de la prueba)']);
+  if(/Discapacidad/i.test(P) && !f.cud) prueba('No encontramos el CUD', `${docsTxt} no aparece el Certificado Único de Discapacidad.`,
+    ['Verificá si lo acompañaron y su fecha de vencimiento.','Sin CUD vigente, el reclamo no puede encuadrarse en la Ley 24.901.'], ['Ley 22.431 art. 3','Ley 24.901'],'alta');
+  if(!f.reclamoPrevio) prueba('No surge un reclamo previo a la empresa', `${docsTxt} no aparece una solicitud, carta documento o negativa previa.`,
+    ['Buscá en los sistemas internos si hubo algún pedido de '+quien+'.','Si no hubo, podés argumentar que no existe un acto con arbitrariedad o ilegalidad manifiesta, requisito del amparo.'], ['CN art. 43','Ley 16.986 art. 1']);
+  if(f.offlabel) prueba('La prestación podría estar fuera de lo aprobado', 'Los documentos mencionan un uso fuera de prospecto, experimental o no aprobado por ANMAT.',
+    ['Pedí a Auditoría Médica un dictamen sobre evidencia científica y aprobación regulatoria.','Es uno de los argumentos más sólidos: incluilo en el informe.'], ['Ley 16.463 (medicamentos)','Disposiciones ANMAT'],'alta');
+  if(f.importado || f.marca) prueba('Se pide un producto importado o de una marca determinada', 'Los documentos piden un producto importado o de una marca específica.',
+    ['Verificá si existe un equivalente nacional o genérico con la misma eficacia.','Ofrecelo por escrito: la ley de prescripción por nombre genérico respalda esta alternativa.'], ['Ley 25.649 (prescripción por nombre genérico)','PMO']);
+  if(f.fueraCartilla) prueba('Se pide un prestador fuera de cartilla', 'Los documentos piden un prestador que no es propio ni contratado.',
+    ['Ofrecé la prestación con un prestador propio equivalente.','Si el juez igual lo ordena fuera de cartilla, pedí que la cobertura sea hasta el valor que se paga a los prestadores propios.'], ['Ley 26.682 art. 7','Contrato de adhesión del asociado']);
+  add('estrategia',{titulo:'Opciones para decidir con quien lleva el caso', nivel:'media',
+    porque:`Según ${pide} y lo presentado, hay tres caminos posibles.`,
+    pasos:['Cumplir y discutir solo el alcance: prestador, valor o cantidad.','Allanarse parcialmente ofreciendo la prestación en cartilla.','Resistir, solo si hay argumentos fuertes: sin prescripción, fuera de lo aprobado o límites legales ya cubiertos.'],
+    riesgo:'En salud, resistir sin esos argumentos suele terminar en condena en costas.',
+    normas:['CPCCN art. 68 (costas)','CPCCN art. 70 (allanamiento)']});
   return out;
 }
+function findPlazo(e, s){ if(!e || !s.plazo || !e.plazos) return -1; return e.plazos.findIndex(p=>!p.hecho && s.plazo.match.test(p.desc)); }
 function renderSug(e, compact){
-  const s = sugerencias(e);
-  const groups = [['urgente','alert','r','Lo urgente'],['fondo','shield','a','Sobre lo que se reclama'],['prueba','file','v','Revisá la prueba'],['estrategia','next','g','Cómo seguir']];
-  const item = x => `<div class="sug ${x.nivel}"><b>${esc(x.titulo)}</b><p class="small">${esc(x.texto)}</p><div class="row" style="gap:6px">${x.normas.map(n=>`<span class="pill law">${ic('file','sm')} ${esc(n)}</span>`).join('')}</div></div>`;
-  if(compact){ const top = [...s.urgente, ...s.fondo, ...s.prueba].slice(0,4); return top.map(item).join(''); }
-  return groups.filter(([k])=>s[k].length).map(([k,i,c,t])=>`<div class="sgroup"><div class="row"><div class="ico ${c}" style="width:36px;height:36px">${ic(i,'sm')}</div><h3>${t}</h3><span class="badge">${s[k].length}</span></div>${s[k].map(item).join('')}</div>`).join('')
-    + `<p class="small muted">Sugerencias orientativas armadas a partir de los datos y documentos del amparo. Verificá la normativa vigente y el criterio del juzgado antes de decidir.</p>`;
+  const s = sugerencias(e), real = e && e.id ? e : null;
+  const groups = [['urgente','alert','r','Lo urgente'],['fondo','shield','a','Sobre lo que se reclama'],['prueba','file','v','Lo que surge de lo presentado'],['estrategia','next','g','Cómo seguir']];
+  const nivelTxt = {alta:'Prioridad alta', media:'Revisar', baja:'Informativo'};
+  const item = (x, g, i) => {
+    const pi = real ? findPlazo(real, x) : -1, p = pi>=0 ? real.plazos[pi] : null;
+    return `<details class="sug ${x.nivel}" ${ui.openSug===g+i?'open':''} data-sugkey="${g+i}">
+      <summary><span class="stitle">${esc(x.titulo)}</span><span class="pill ${x.nivel==='alta'?'red':x.nivel==='media'?'yel':'grn'}">${nivelTxt[x.nivel]}</span>${p?`<span class="when ${urg(daysTo(p.vence))}" style="font-size:13px">${whenText(daysTo(p.vence))}</span>`:''}<span class="chev">${ic('next','sm')}</span></summary>
+      <div class="sbody">
+        <div><div class="slbl">Por qué te lo sugerimos</div><p>${esc(x.porque)}</p></div>
+        <div><div class="slbl">Qué te proponemos</div><ol>${x.pasos.map(t=>`<li>${esc(t)}</li>`).join('')}</ol></div>
+        ${x.riesgo?`<div class="notice bad small">${ic('alert','sm')}<div>${esc(x.riesgo)}</div></div>`:''}
+        <div><div class="slbl">Normativa</div><div class="row" style="gap:6px">${x.normas.map(n=>`<span class="pill law">${ic('file','sm')} ${esc(n)}</span>`).join('')}</div></div>
+        ${real && x.plazo ? `<div class="splazo">${ic('cal')}<div style="flex:1">${p?`<b>Vence el ${fmtLargo(p.vence)}</b><div class="small muted">${esc(p.desc)}${p.regla?` · ${esc(reglaTexto(p.regla))}`:''}</div>`:`<b>Todavía no hay un plazo agendado para esto</b><div class="small muted">Te proponemos: ${esc(x.plazo.desc)} (${x.plazo.regla.cant} ${x.plazo.regla.modo==='horas'?'horas':'días hábiles'}).</div>`}</div>
+          <button class="btn sm ${p?'':'pri'}" data-act="plazoedit" data-e="${real.id}" ${p?`data-i="${pi}"`:`data-sg="${g}" data-si="${i}"`}>${ic('pen','sm')} ${p?'Modificar plazo':'Agendar plazo'}</button></div>`:''}
+        ${real && x.escrito ? `<div><button class="btn sm" data-act="writefor" data-e="${real.id}">${ic('pen','sm')} Preparar el escrito</button></div>`:''}
+      </div></details>`; };
+  if(compact){ const top = [...s.urgente.map((x,i)=>['urgente',x,i]), ...s.fondo.map((x,i)=>['fondo',x,i]), ...s.prueba.map((x,i)=>['prueba',x,i])].slice(0,4); return top.map(([g,x,i])=>item(x,g,i)).join(''); }
+  return groups.filter(([k])=>s[k].length).map(([k,i,c,t])=>`<div class="sgroup"><div class="row"><div class="ico ${c}" style="width:36px;height:36px">${ic(i,'sm')}</div><h3>${t}</h3><span class="badge">${s[k].length}</span></div>${s[k].map((x,j)=>item(x,k,j)).join('')}</div>`).join('')
+    + `<p class="small muted">Sugerencias orientativas, armadas a partir de lo que se reclama y de los documentos del amparo. Verificá la normativa vigente y el criterio del juzgado antes de decidir.</p>`;
 }
-function sugText(e){ const s = sugerencias(e); return Object.values(s).flat().map(x=>`• ${x.titulo}\n${x.texto}\nNormativa: ${x.normas.join('; ')}`).join('\n\n'); }
+function sugText(e){ const s = sugerencias(e); return Object.values(s).flat().map(x=>`■ ${x.titulo}\nPor qué: ${x.porque}\nQué hacer:\n${x.pasos.map((p,i)=>`  ${i+1}. ${p}`).join('\n')}${x.riesgo?`\nAtención: ${x.riesgo}`:''}\nNormativa: ${x.normas.join('; ')}`).join('\n\n'); }
 
 // ---------- carga de amparo nuevo ----------
 let W = null;
@@ -1443,11 +1623,11 @@ async function wProcess(fileList, append){
   delete W.found.detalle;
   if(f.cautelar){ W.cautelar = true; W.found.cautelar = true; }
   if(f.secretariaDudosa && !append) W.found.secretariaDudosa = true;
-  if(!append || !W.plazoNota) W.plazoNota = f.plazoNota || '';  if(!append || !(W.extra||[]).length) W.extra = f.extra || [];
+  if(!append || !W.plazoNota) W.plazoNota = f.plazoNota || ''; W.plazoRegla = f.plazoRegla || null;  if(!append || !(W.extra||[]).length) W.extra = f.extra || [];
   W.flags = flagsFromText(text);
   W.step = 2; drawWizard();
 }
-const wCase = () => ({prestacion:W.prestacion, cautelar:W.cautelar, estado:W.estado, afiliado:W.afiliado, plazos:[...(W.plazoDesc?[{desc:W.plazoDesc, hecho:false}]:[]), ...(W.extra||[])], flags:W.flags||{}, docs:W.files.map(f=>({nombre:f.name, tipo:f.tipo}))});
+const wCase = () => ({detalle:W.detalle, prestacion:W.prestacion, cautelar:W.cautelar, estado:W.estado, afiliado:W.afiliado, plazos:[...(W.plazoDesc?[{desc:W.plazoDesc, hecho:false}]:[]), ...(W.extra||[])], flags:W.flags||{}, docs:W.files.map(f=>({nombre:f.name, tipo:f.tipo}))});
 function wRead(){
   const v = id => { const el = $('#'+id); return el ? el.value.trim() : null; };
   if(v('wAf')!==null) W.afiliado = v('wAf'); if(v('wDni')!==null) W.dni = v('wDni');
@@ -1505,6 +1685,8 @@ document.addEventListener('click', async ev => {
   if(!ev.target.closest('.search')) { if(ui.results){ ui.results=false; const r=$('.results'); if(r) r.remove(); } }
   const om = ev.target.closest('[data-openmember]');
   if(om){ ui.open[om.dataset.openmember] = true; if(route().name!=='equipo'){ ui.scrollTo = om.dataset.openmember; return; } render(); const d = document.querySelector(`[data-member="${om.dataset.openmember}"]`); if(d) d.scrollIntoView({behavior:'smooth', block:'start'}); return; }
+  const pe = ev.target.closest('[data-pe]');
+  if(pe && PE){ peRead(); PE[pe.dataset.pe] = pe.dataset.pe==='cant' ? +pe.dataset.v : pe.dataset.v; drawPlazoEditor(); return; }
   const t = ev.target.closest('[data-act],[data-tab],[data-go],[data-ia],[data-filtro],[data-riesgo],[data-estado],[data-tour],[data-tpl],[data-tplexp],[data-w],[data-wnav],[data-quick]');
   if(!t) return;
   const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
@@ -1520,10 +1702,17 @@ document.addEventListener('click', async ev => {
   if(d.tpl){ ui.tpl = d.tpl; ui.tplText=''; render(); return; }
   if(d.tplexp){ ui.tplExp = +d.tplexp; ui.tplText=''; render(); return; }
   if(d.quick){ $('#plV').value = dPlus(+d.quick); document.querySelectorAll('[data-quick]').forEach(b=>b.classList.toggle('on', b===t)); return; }
-  if(d.w){ wRead(); const k = d.w; if(k==='cautelar') W.cautelar = d.v==='1'; else if(k==='prestacion' && W.verTodas){ W.prestacion = d.v; W.verTodas = false; if(W.found.prestacion && !(W.otrasPrestaciones||[]).includes(d.v) && d.v!==W.prestacion) {} W.otrasPrestaciones = [...new Set([...(W.otrasPrestaciones||[])])]; W.found.prestacion = true; W.prestElegida = d.v; } else if(k==='plazoQuick'){ W.plazoFecha = +d.v<=2 ? dPlus(+d.v) : addBusinessDays(+d.v); W.plazoNota=''; } else W[k] = d.v; drawWizard(); return; }
+  if(d.w){ wRead(); const k = d.w; if(k==='cautelar') W.cautelar = d.v==='1'; else if(k==='prestacion' && W.verTodas){ W.prestacion = d.v; W.verTodas = false; if(W.found.prestacion && !(W.otrasPrestaciones||[]).includes(d.v) && d.v!==W.prestacion) {} W.otrasPrestaciones = [...new Set([...(W.otrasPrestaciones||[])])]; W.found.prestacion = true; W.prestElegida = d.v; } else if(k==='plazoQuick'){ const r = +d.v<=2 ? {modo:'horas', cant:+d.v*24, desde:iso(today())} : {modo:'habiles', cant:+d.v, desde:iso(today())}; const c = calcPlazo(r); W.plazoFecha = c.vence; W.plazoRegla = r; W.plazoNota = (r.modo==='habiles' ? `${r.cant} días hábiles desde mañana, salteando fines de semana y feriados nacionales.` : `${r.cant} horas corridas.`) + (c.aviso?' '+c.aviso:''); } else W[k] = d.v; drawWizard(); return; }
   if(d.wnav){ wRead(); if(+d.wnav>0){ const err = wCheck(); if(err){ $('#wErr').innerHTML = `<div class="notice bad">${esc(err)}</div>`; return; } } W.step += +d.wnav; drawWizard(); return; }
   const a = d.act;
   if(a==='close') closeModal();
+  if(a==='plazoedit'){ const ex = expById(d.e); if(!ex) return; if(d.i!==undefined) openPlazoEditor(ex.id, +d.i); else { const sg = sugerencias(ex)[d.sg][+d.si]; openPlazoEditor(ex.id, null, sg.plazo); } }
+  if(a==='pesave' && PE){ peRead(); if(!PE.desc){ toast('Escribí qué hay que hacer'); return; } const ex = expById(PE.expId); const c = calcPlazo(PE);
+    const regla = PE.modo==='fecha' ? null : {modo:PE.modo, cant:+PE.cant, desde:PE.desde, feria:PE.feria};
+    const vence = PE.modo==='fecha' ? PE.fecha : c.vence;
+    if(PE.idx!=null){ const p = ex.plazos[PE.idx]; const old = p.vence; p.desc = PE.desc; p.vence = vence; if(regla) p.regla = regla; else delete p.regla; save(); audit('Modificó un plazo', ex.numero, `${p.desc}: ${fmt(old)} → ${fmt(vence)}`); }
+    else { ex.plazos.push({desc:PE.desc, vence, hecho:false, ...(regla?{regla}:{})}); save(); audit('Agendó un plazo', ex.numero, `${PE.desc} (${fmt(vence)})`); }
+    PE = null; closeModal(); render(); toast(`Plazo guardado: vence el ${fmtLargo(vence)}`); }
   if(a==='newteam' && isAdmin()){ S.teams.push({id:'t'+Date.now(), nombre:'Nuevo equipo', jefe:staff()[0].id, miembros:[]}); save(); audit('Creó un equipo','Equipos','Nuevo equipo'); await chain; render(); }
   if(a==='delteam' && isAdmin()){ const tm = S.teams.find(x=>x.id===d.team); const i = S.teams.indexOf(tm); S.teams.splice(i,1); save(); audit('Eliminó un equipo','Equipos',tm.nombre); render();
     toast(`Equipo "${tm.nombre}" eliminado.`, ()=>{ S.teams.splice(i,0,tm); save(); audit('Restauró un equipo','Equipos',tm.nombre); render(); }); }
@@ -1541,7 +1730,8 @@ document.addEventListener('click', async ev => {
     const tipoDoc = /c[ée]dula/i.test(W.text) ? 'Cédula de notificación' : /oficio/i.test(W.text) ? 'Oficio' : 'Documento recibido';
     W.files.forEach(f=>x.docs.push({nombre:f.name, tipo:f.tipo||tipoDoc, fecha:iso(today()), size: f.size>1e6?(f.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(f.size/1000))+' KB'}));
     x.movimientos.push({fecha:iso(today()), tipo:'Notificación', desc: W.files.length ? `Se recibe ${tipoDoc.toLowerCase()}: ${W.files.map(f=>f.name).join(', ')}.` : 'Se cargó el amparo en Fojas.', user:S.user});
-    if(W.plazoDesc) x.plazos.push({desc:W.plazoDesc, vence:W.plazoFecha, hecho:false});
+    if(W.plazoDesc) x.plazos.push({desc:W.plazoDesc, vence:W.plazoFecha, hecho:false, ...(W.plazoRegla && calcPlazo(W.plazoRegla).vence===W.plazoFecha ? {regla:W.plazoRegla} : {})});
+    x.detalle = W.detalle || '';
     (W.extra||[]).forEach(p=>x.plazos.push({...p}));
     x.flags = W.flags || {};
     S.exps.push(x); save(); closeModal(); audit('Cargó un amparo nuevo', x.numero, `${x.prestacion}${W.files.length?` · leído automáticamente de ${W.files.length} documento(s)`:''}`); ui.nextTab = 'sugerencias'; location.hash = 'expediente-'+x.id; toast('¡Amparo cargado! Mirá las sugerencias de qué hacer.');
@@ -1550,7 +1740,7 @@ document.addEventListener('click', async ev => {
   if(a==='writefor'){ ui.tpl = null; ui.tplExp = +d.e; ui.tplText=''; location.hash='escritos'; }
   if(a==='addmov'){ ui.addMov = true; render(); setTimeout(()=>$('#mvD').focus(),20); }
   if(a==='cancelmov'){ ui.addMov = false; render(); }
-  if(a==='addplazo'){ ui.addPlazo = true; ui.tab='plazos'; render(); setTimeout(()=>{ const f=$('#plD'); if(f) f.focus(); },20); }
+  if(a==='addplazo'){ ui.tab='plazos'; render(); const ex = expById(route().id); if(ex) openPlazoEditor(ex.id, null, null); }
   if(a==='cancelplazo'){ ui.addPlazo = false; render(); }
   if(a==='copyia') copy(ui.ia);
   if(a==='editsum'){ ui.editSum = true; render(); }
@@ -1610,6 +1800,7 @@ $('#overlay').addEventListener('click', ev => { if(ev.target.id==='overlay' && !
 document.addEventListener('change', async ev => {
   const t = ev.target; const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
   if(t.id==='fileIn' && e) addFiles(e, t.files);
+  if(PE && /^pe(Cant|Desde|Fecha|Feria)$/.test(t.id)){ peRead(); drawPlazoEditor(); }
   if(t.id==='wfile' && W) wProcess(t.files);
   if(t.id==='wmore' && W){ wRead(); await wProcess(t.files, true); }
   if(t.dataset && t.dataset.wdoc!==undefined && W){ wRead(); W.files[+t.dataset.wdoc].tipo = t.value; drawWizard(); }
@@ -1632,7 +1823,7 @@ async function addFiles(e, files){
   }
   save(); render(); toast(`Listo: ${tipos.join(', ')}. Las sugerencias de "Qué hacer" se actualizaron.`);
 }
-document.addEventListener('toggle', ev => { const d = ev.target; if(d.matches && d.matches('details[data-member]')) ui.open[d.dataset.member] = d.open; }, true);
+document.addEventListener('toggle', ev => { const d = ev.target; if(d.matches && d.matches('details[data-sugkey]')){ if(d.open) ui.openSug = d.dataset.sugkey; else if(ui.openSug===d.dataset.sugkey) ui.openSug = null; } if(d.matches && d.matches('details[data-member]')) ui.open[d.dataset.member] = d.open; }, true);
 document.addEventListener('dragover', ev => { const wz = ev.target.closest('#wdrop'); if(wz){ ev.preventDefault(); wz.classList.add('over'); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); dz.classList.add('over'); } });
 document.addEventListener('dragleave', ev => { const wz = ev.target.closest('#wdrop'); if(wz) wz.classList.remove('over'); const dz = ev.target.closest('#drop'); if(dz) dz.classList.remove('over'); });
 document.addEventListener('drop', ev => { const wz = ev.target.closest('#wdrop'); if(wz && W){ ev.preventDefault(); wProcess(ev.dataTransfer.files); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); const e = expById(route().id); if(e) addFiles(e, ev.dataTransfer.files); } });
