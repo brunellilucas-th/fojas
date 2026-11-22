@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.14">
+<meta name="fojas-version" content="2026-11-22.15">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -1703,7 +1703,7 @@ function shell(content){
         ${amp?link('escritos','pen','Escritos'):''}
         ${amp?link('modelos','file','Modelos', (S.modelos||[]).length?`<span class="badge">${S.modelos.length}</span>`:''):''}
         ${amp?link('informes','chart','Informes'):''}
-        ${amp && (teamOf()||isAdmin())?link('equipo','users',isLeader()?'Mi equipo':'Equipo', isLeader()&&myPeople().some(u=>statsOf(u).vencidos)?`<span class="badge red">${myPeople().reduce((a,u)=>a+statsOf(u).vencidos,0)}</span>`:''):''}
+        ${(isAdmin() || (amp && teamOf()))?link('equipo','users',isLeader()?'Mi equipo':'Equipo', isLeader()&&myPeople().some(u=>statsOf(u).vencidos)?`<span class="badge red">${myPeople().reduce((a,u)=>a+statsOf(u).vencidos,0)}</span>`:''):''}
         ${extra}
       </nav>
       ${puedeMas()?`<div class="navlabel">Más opciones</div>
@@ -2272,17 +2272,49 @@ function vEquipo(){
 }
 function teamEditor(){
   const people = S.users.filter(u=>u.activo && u.rol!=='Administrador');
-  return `<section class="card"><h2>Armar equipos</h2><p class="muted small">Elegí quién lo dirige y quiénes son sus analistas. Una persona puede estar en un solo equipo como analista.</p>
+  return `<section class="card"><div class="row" style="justify-content:space-between;gap:10px;flex-wrap:wrap"><h2>Armar equipos</h2><button class="btn pri" data-act="eqnuevo">${ic('plus','sm')} Crear usuario</button></div><p class="muted small">Creá a las personas y armá los equipos: elegí quién lo dirige y quiénes son sus analistas. Una persona puede estar en un solo equipo como analista.</p>
     ${S.teams.map(t=>`<form class="form teamform" data-team="${t.id}" style="padding:16px;border:1px solid var(--line);border-radius:12px">
       <label>Nombre del equipo<input type="text" name="nombre" value="${esc(t.nombre)}" required></label>
       <label>Jefa/e<select name="jefe">${people.map(u=>`<option value="${u.id}" ${u.id===t.jefe?'selected':''}>${esc(u.nombre)}</option>`).join('')}</select></label>
       <div class="fld full">Analistas<div class="chips">${people.map(u=>`<label class="chipbtn" style="font-weight:600"><input type="checkbox" name="m" value="${u.id}" ${t.miembros.includes(u.id)?'checked':''} style="accent-color:var(--accent)"> ${esc(u.nombre)}</label>`).join('')}</div></div>
-      <div class="full row"><button class="btn pri" type="submit">Guardar equipo</button><button class="btn ghost danger" type="button" data-act="delteam" data-team="${t.id}">Eliminar equipo</button></div>
+      <div class="full row" style="flex-wrap:wrap"><button class="btn pri" type="submit">Guardar equipo</button><button class="btn" type="button" data-act="eqnuevo" data-team="${t.id}">${ic('plus','sm')} Crear usuario para este equipo</button><button class="btn ghost danger" type="button" data-act="delteam" data-team="${t.id}">Eliminar equipo</button></div>
     </form>`).join('')}
     <div><button class="btn" data-act="newteam">${ic('plus','sm')} Crear otro equipo</button></div>
   </section>`;
 }
 
+function eqUserModal(teamId){ ui.eqCt = ui.eqCt || 'solicitante';
+  showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:22px">Crear usuario</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div>
+    <div id="eqErr"></div>
+    <div class="form">
+      <label>Nombre y apellido<input type="text" id="eqNom" autocomplete="off"></label>
+      <label>Usuario para entrar <span class="hint">minúsculas, sin espacios</span><input type="text" id="eqId" placeholder="ej.: mlopez" autocomplete="off"></label>
+      <label>Rol<select id="eqRol">${ROLES.map(r=>`<option>${esc(r)}</option>`).join('')}</select></label>
+      <label>Área<input type="text" id="eqArea" list="eqAreas" placeholder="Ej.: Legales, Compras"><datalist id="eqAreas">${CT_AREAS.map(a=>`<option value="${esc(a)}">`).join('')}</datalist></label>
+    </div>
+    <div class="fld">Módulos que puede usar${modChecks('eqMod', null, false)}</div>
+    <div id="eqCtWrap">${ctPerfilBloque('eq', ui.eqCt)}</div>
+    <div class="form">
+      <label>Sumar al equipo<select id="eqTeam"><option value="">Sin equipo por ahora</option>${S.teams.map(t=>`<option value="${t.id}" ${t.id===teamId?'selected':''}>${esc(t.nombre)}</option>`).join('')}</select></label>
+      <label>Como<select id="eqComo"><option value="miembro">Analista del equipo</option><option value="jefe">Jefa/e del equipo</option></select></label>
+    </div>
+    <p class="small muted">La primera vez entra con su usuario como contraseña y Fojas le pide cambiarla.</p>
+    <div class="row"><button class="btn pri big" data-act="eqcrear">${ic('check')} Crear usuario</button></div>`); }
+async function eqCrear(){
+  const err = t => { $('#eqErr').innerHTML = `<div class="notice bad">${esc(t)}</div>`; };
+  const nombre = $('#eqNom').value.trim(), uid = $('#eqId').value.trim().toLowerCase(), area = $('#eqArea').value.trim();
+  if(!nombre) return err('Completá el nombre y apellido.');
+  if(!/^[a-z0-9._-]{3,30}$/.test(uid)) return err('El usuario tiene que tener entre 3 y 30 caracteres: minúsculas, números, punto, guion o guion bajo, sin espacios.');
+  if(S.users.some(x=>x.id===uid)) return err('Ya hay alguien con ese usuario. Probá con otro.');
+  const modulos = modLeer('eqMod'), ctp = modulos.includes('contratos') ? (ui.eqCt||'solicitante') : null;
+  if(ctp==='solicitante' && !area) return err('Para un solicitante de Contratos, completá su área (Compras, Marketing…).');
+  const nu = await makeUser({id:uid, nombre, rol:$('#eqRol').value}, uid, true); nu.modulos = modulos; if(area) nu.area = area; if(ctp) nu.ctPerfil = ctp;
+  S.users.push(nu);
+  const tm = S.teams.find(t=>t.id===$('#eqTeam').value), como = $('#eqComo').value; let txtEq = '';
+  if(tm){ if(como==='jefe'){ const ant = tm.jefe; tm.jefe = uid; tm.miembros = tm.miembros.filter(m=>m!==uid); txtEq = ` · jefa/e de ${tm.nombre}${ant&&ant!==uid?` (antes: ${userName(ant)})`:''}`; } else { tm.miembros.push(uid); txtEq = ` · analista de ${tm.nombre}`; } }
+  save(); audit('Agregó un usuario','Usuarios', `${uid} (${nu.rol}) · módulos: ${modulos.join(', ')||'ninguno'}${txtEq}`);
+  ui.eqCt = null; closeModal(); render(); toast(`${nombre.split(' ')[0]} ya puede entrar con usuario y contraseña "${uid}"${tm?`. Quedó en ${tm.nombre}.`:''}`);
+}
 function ctPerfilBloque(pref, perfil){ const leg = perfil==='analista' || perfil==='jefe';
   return `<div class="fld ctperfil">En el módulo Contratos, esta persona es… <span class="hint">lo elige solo el administrador</span>
     <div class="opts" style="grid-template-columns:repeat(2,minmax(0,1fr))">
@@ -3247,6 +3279,9 @@ document.addEventListener('click', async ev => {
   if(a==='close') closeModal();
   if(a==='upcancel'){ UP = null; closeModal(); }
   if(a==='mcerrar'){ ui.miembro = null; render(); }
+  if(a==='eqnuevo' && isAdmin()){ ui.eqCt = 'solicitante'; eqUserModal(d.team||''); return; }
+  if(a==='eqcrear' && isAdmin()){ await eqCrear(); return; }
+  if(d.ctp==='eq' && isAdmin()){ ui.eqCt = d.v; const w = $('#eqCtWrap'); if(w) w.innerHTML = ctPerfilBloque('eq', d.v); return; }
   if(d.ctp && isAdmin()){ if(d.ctp==='ue' && UE){ ueRead(); UE.ctPerfil = d.v; drawUserEdit(); } else if(d.ctp==='nu'){ ui.nuCt = d.v; const w = $('#nuCtWrap'); if(w) w.innerHTML = ctPerfilBloque('nu', d.v); } return; }
   if(a==='ufil' && isAdmin()){ ui.uFil = d.v; render(); return; }
   if(a==='uedit' && isAdmin()) openUserEdit(d.u);
@@ -4327,7 +4362,7 @@ document.addEventListener('click', async ev => {
   if(a==='guiadel'){ const i = (S.guiaPropia||[]).findIndex(x=>x.id===d.g); if(i<0) return; const g = S.guiaPropia.splice(i,1)[0]; S.trBorrados = [...new Set([...(S.trBorrados||[]), g.id])]; save(); audit('Quitó un trámite de la guía', g.t, ''); render(); toast('Quitado de la guía', ()=>{ S.guiaPropia.splice(i,0,g); S.trBorrados = S.trBorrados.filter(x=>x!==g.id); save(); render(); }); return; }
 });
 document.addEventListener('input', ev => { if(ev.target.id==='guiaQ'){ ui.guiaQ = ev.target.value; const pos = ev.target.selectionStart; render(); const n = $('#guiaQ'); if(n){ n.focus(); try{ n.setSelectionRange(pos,pos); }catch(e){} } } });
-document.addEventListener('change', ev => { if((ev.target.id==='ueRol' || /^ueMod/.test(ev.target.id)) && UE){ ueRead(); drawUserEdit(); return; } if(ev.target.id==='nuModcontratos'){ const w = $('#nuCtWrap'); if(w) w.style.display = ev.target.checked ? '' : 'none'; } if(ev.target.id==='trOrg' && TRF){ const o = orgById(ev.target.value), r = o.plazo||{}; const n = $('#trNota'); if(n) n.textContent = o.plazoNota||''; const lab = $('#trVence') && $('#trVence').closest('label'); if(lab) lab.firstChild.textContent = o.plazoDesc||'Próximo vencimiento'; if(r.modo && r.modo!=='fecha'){ const ini = ($('#trIni')||{}).value || iso(today()); $('#trVence').value = calcPlazo({...r, desde:ini}).vence; } } });
+document.addEventListener('change', ev => { if((ev.target.id==='ueRol' || /^ueMod/.test(ev.target.id)) && UE){ ueRead(); drawUserEdit(); return; } if(ev.target.id==='eqModcontratos'){ const w = $('#eqCtWrap'); if(w) w.style.display = ev.target.checked ? '' : 'none'; } if(ev.target.id==='nuModcontratos'){ const w = $('#nuCtWrap'); if(w) w.style.display = ev.target.checked ? '' : 'none'; } if(ev.target.id==='trOrg' && TRF){ const o = orgById(ev.target.value), r = o.plazo||{}; const n = $('#trNota'); if(n) n.textContent = o.plazoNota||''; const lab = $('#trVence') && $('#trVence').closest('label'); if(lab) lab.firstChild.textContent = o.plazoDesc||'Próximo vencimiento'; if(r.modo && r.modo!=='fecha'){ const ini = ($('#trIni')||{}).value || iso(today()); $('#trVence').value = calcPlazo({...r, desde:ini}).vence; } } });
 
 // ---------- Tareas diarias: las propone cada persona, las valida su superior; el superior también asigna ----------
 const DIAS_SEM = [['1','Lun'],['2','Mar'],['3','Mié'],['4','Jue'],['5','Vie']];
