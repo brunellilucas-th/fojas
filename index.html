@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.3">
+<meta name="fojas-version" content="2026-11-22.4">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -190,6 +190,34 @@ textarea{resize:vertical}
 .fact{background:var(--sunken);border-radius:12px;padding:12px 14px}
 .fact span{display:block;font-size:13px;color:var(--muted);font-weight:600}
 .fact b{font-weight:600}
+.ag-fab{position:fixed;right:22px;bottom:22px;z-index:9;width:62px;height:62px;border-radius:50%;border:0;background:linear-gradient(135deg,#3E8352,#1D4529);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 8px 24px rgba(29,69,41,.4);transition:transform .15s}
+.ag-fab:hover{transform:scale(1.06)} .ag-fab svg{width:28px;height:28px}
+.ag-fab:not(.on)::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(62,131,82,.5);animation:agPulse 2.4s infinite}
+@keyframes agPulse{0%{transform:scale(.95);opacity:1}70%{transform:scale(1.25);opacity:0}100%{opacity:0}}
+.ag-fab-badge{position:absolute;top:-2px;right:-4px;background:#C9963F;color:#fff;font-size:11px;font-weight:800;padding:2px 6px;border-radius:99px;border:2px solid #fff}
+.ag-panel{position:fixed;right:22px;bottom:96px;z-index:9;width:410px;max-width:calc(100vw - 32px);height:620px;max-height:calc(100vh - 130px);background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 18px 50px rgba(46,37,32,.25);display:flex;flex-direction:column;overflow:hidden;animation:agIn .18s ease-out}
+@keyframes agIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.ag-head{display:flex;gap:10px;align-items:center;padding:14px 14px 14px 16px;background:linear-gradient(135deg,#2F6B3F,#1D4529);color:#fff}
+.ag-av{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.16);display:grid;place-items:center} .ag-av svg{width:22px;height:22px}
+.ag-sub{font-size:12px;opacity:.85}
+.ag-ib{background:rgba(255,255,255,.12);border:0;color:#fff;width:32px;height:32px;border-radius:9px;display:grid;place-items:center;cursor:pointer} .ag-ib:hover{background:rgba(255,255,255,.25)}
+.ag-cfg{padding:12px 16px;background:var(--sunken);border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px;font-size:13px} .ag-cfg p{margin:0;color:var(--muted)}
+.ag-msgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:#FBF9F5}
+.ag-m{display:flex;background:none;padding:0;border:0} .ag-m.ag-yo{justify-content:flex-end}
+.ag-b{max-width:88%;padding:10px 13px;border-radius:16px;font-size:14.5px;line-height:1.45;background:#fff;border:1px solid var(--line);color:var(--ink);overflow-wrap:anywhere}
+.ag-m.ag-yo .ag-b{background:var(--accent);color:#fff;border-color:var(--accent);border-bottom-right-radius:6px}
+.ag-m.ag-ia .ag-b{border-bottom-left-radius:6px}
+.ag-li{display:block;padding-left:14px;position:relative;margin-top:3px} .ag-li::before{content:'•';position:absolute;left:2px;color:var(--accent);font-weight:800}
+.ag-acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ag-chips{display:flex;gap:6px;overflow-x:auto;padding:8px 12px 0;background:#fff;border-top:1px solid var(--line)}
+.ag-chip{flex:none;border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 11px;font:inherit;font-size:13px;cursor:pointer;color:var(--ink);white-space:nowrap} .ag-chip:hover{border-color:var(--accent);background:var(--accent-soft)}
+.ag-in{display:flex;gap:8px;padding:10px 12px 12px;background:#fff}
+.ag-in input{flex:1;border-radius:99px;padding:11px 16px}
+.ag-send{width:44px;height:44px;flex:none;border-radius:50%;border:0;background:var(--accent);color:#fff;display:grid;place-items:center;cursor:pointer} .ag-send:disabled{opacity:.5}
+.ag-dots{display:flex;gap:4px;padding:14px} .ag-dots span{width:7px;height:7px;border-radius:50%;background:var(--faint);animation:agDot 1s infinite} .ag-dots span:nth-child(2){animation-delay:.15s} .ag-dots span:nth-child(3){animation-delay:.3s}
+@keyframes agDot{0%,100%{opacity:.3}50%{opacity:1}}
+.inf-wrap{border:1px solid var(--line);border-radius:12px;padding:22px;max-height:70vh;overflow:auto;background:#fff}
+@media (max-width:700px){ .ag-panel{right:8px;left:8px;width:auto;bottom:86px;height:calc(100vh - 110px)} .ag-fab{right:14px;bottom:14px} }
 #nuevaVersion{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:400;background:var(--ink);color:#fff;padding:10px 12px 10px 18px;border-radius:14px;display:flex;gap:12px;align-items:center;box-shadow:var(--shadow);font-size:15px}
 .timeline{display:flex;flex-direction:column}
 .dropband{display:flex;gap:12px;align-items:center;border:2px dashed var(--accent);background:var(--accent-soft);color:var(--ink);border-radius:var(--r);padding:12px 16px;cursor:pointer}
@@ -1537,7 +1565,7 @@ let lastActivity = Date.now();
 function getSession(){ try{ const s = JSON.parse(sessionStorage.getItem('fojas-session')||'null'); if(s) return s; }catch(e){} return getSession.mem || null; }
 function setSession(s){ getSession.mem = s; try{ s ? sessionStorage.setItem('fojas-session', JSON.stringify(s)) : sessionStorage.removeItem('fojas-session'); }catch(e){} }
 function logged(){ const s = getSession(); if(!s) return false; const u = S.users.find(x=>x.id===s.user && x.activo); if(!u) return false; S.user = u.id; return true; }
-function logout(msg){ if(getSession()) audit('Cerró sesión','Sistema', msg||'Salida manual'); setSession(null); S.user=null; save(); ui.loginMsg = msg ? {ok:false, t:msg} : null; closeModal(); render(); }
+function logout(msg){ if(getSession()) audit('Cerró sesión','Sistema', msg||'Salida manual'); setSession(null); S.user=null; ui.chat = null; AG.open = false; AG.cfg = false; save(); ui.loginMsg = msg ? {ok:false, t:msg} : null; closeModal(); render(); }
 ['click','keydown','input'].forEach(ev=>document.addEventListener(ev, ()=>{ lastActivity = Date.now(); }, true));
 setInterval(()=>{ if(getSession() && Date.now()-lastActivity > IDLE_MIN*60000) logout(`Por seguridad cerramos tu sesión después de ${IDLE_MIN} minutos sin uso. Volvé a ingresar.`); }, 30000);
 
@@ -2992,7 +3020,7 @@ function openPwd(forced){
 // ---------- render ----------
 function render(){
   try{ (S.exps||[]).forEach(fixExp); }catch(err){}
-  if(!logged()){ $('#root').innerHTML = vIngreso(); document.title='Fojas · Ingresar'; return; }
+  if(!logged()){ $('#root').innerHTML = vIngreso(); document.title='Fojas · Ingresar'; try{ drawAgente(); }catch(err){} return; }
   document.title='Fojas';
   const r = route();
   const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, modelos:vModelos, informes:vInformes, historial:vHistorial, papelera:vPapelera, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios};
@@ -3000,6 +3028,7 @@ function render(){
   const scroll = $('#view') ? $('#view').scrollTop : 0;
   $('#root').innerHTML = shell(html);
   $('#view').scrollTop = scroll;
+  try{ drawAgente(); }catch(err){ console.warn(err); }
   if(r.name==='respaldo') IDB.snaps().then(list=>{ const box = $('#snapList'); if(!box) return; list.sort((a,b)=>b.id-a.id); box.innerHTML = list.length ? list.slice(0,40).map(s=>`<div class="li"><div><b>${fmtTs(s.fecha)}</b><div class="small muted">${s.amparos} amparo${s.amparos===1?'':'s'}${s.nota?` · ${esc(s.nota)}`:''}${s.autor?` · ${esc(userName(s.autor))}`:''}</div></div><button class="btn sm" data-act="restoresnap" data-id="${s.id}">Restaurar</button></div>`).join('') : '<div class="small muted">Todavía no hay versiones guardadas: se crean solas mientras trabajás.</div>'; }).catch(()=>{ const box = $('#snapList'); if(box) box.innerHTML = '<div class="small muted">Este navegador no permite guardar versiones.</div>'; });
 }
 async function rerenderAfterAudit(){ await chain; render(); }
@@ -3304,6 +3333,264 @@ window.addEventListener('storage', async ev => {
   try{ const d = JSON.parse(ev.newValue); const user = S && S.user; S = d; S.user = user; render(); }catch(e){}
 });
 window.addEventListener('beforeunload', ()=>{ try{ if(S) localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} });
+// ---------- Agente IA interno: ayuda de la app, consultas de expedientes e informes ----------
+IC.send = '<path d="M4 12l16-8-6 16-2.5-6.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>';
+IC.x = '<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>';
+IC.bot = '<rect x="4" y="7" width="16" height="12" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7V4M9 13h.01M15 13h.01" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M2 12v3M22 12v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+const AYUDA = [
+  {k:['cargar','nuevo expediente','crear expediente','alta','amparo nuevo','ingresar un amparo'], t:'Cargar un expediente nuevo', ir:'amparos',
+   r:'En **Amparos** tocá **Nuevo expediente**. Arrastrá la demanda, el oficio y la prueba (PDF, Word, fotos o mails): Fojas los lee completos y completa solo los autos, el DNI, el juzgado, qué reclama, la cautelar y los plazos. Revisás lo que propone y guardás.'},
+  {k:['subir documento','subir un documento','arrastrar','cedula','mail','correo','outlook','adjunto','avance','actualizar el expediente','eml','msg'], t:'Subir un documento a un expediente', ir:null,
+   r:'Abrí el expediente y **arrastrá el archivo en cualquier parte de la pantalla** (o tocá la franja verde "¿Llegó algo nuevo?"). Sirven PDF, Word, fotos, zip y mails de Outlook (.msg) o .eml con sus adjuntos. Fojas te pregunta **a qué corresponde** y **de qué parte es**, y te propone actualizar la etapa, la cautelar y los plazos.'},
+  {k:['categoria','categorias','otro'], t:'Categorías de documentos', ir:null,
+   r:'Al subir un documento, si elegís **Otro** podés crear una categoría nueva y decir **cómo la trata** Fojas (como cédula, resolución, etc.). Las modificás o eliminás con **Editar categorías**, desde la ventana de subida o desde la pestaña Documentos.'},
+  {k:['linea de tiempo','linea','actora','demandada','ida y vuelta','parte'], t:'Línea de tiempo', ir:null,
+   r:'En cada expediente, la pestaña **Línea de tiempo** muestra a la **Actora** a la izquierda, el **Juzgado** al medio y a **Medifé** a la derecha. Cada documento o novedad va del lado de la parte que indicaste. Si algo quedó mal, lo cambiás con el selector de cada tarjeta.'},
+  {k:['etapa','etapas','cautelar','sin cautelar','con cautelar'], t:'Etapas y cautelar', ir:null,
+   r:'En **¿En qué etapa está?** tocás una etapa para cambiarla. **Un click sobre la cautelar** marca si tiene o no (verde ✓ o rojo ✕). Las etapas son: Demanda, Cautelar, Contestación de demanda, Prueba, Para sentencia, Sentencia, Apelación y Archivado.'},
+  {k:['plazo','plazos','feriado','feriados','dias habiles','calendario','modificar plazo','vencimiento'], t:'Plazos', ir:'vencimientos',
+   r:'Los plazos se cuentan en **días hábiles con los feriados nacionales oficiales** (y la feria judicial de enero si la activás). En cada expediente podés **Modificar plazo**, y en **Vencimientos** ves todo lo que vence, ordenado por fecha. Cuando lo cumplís, tocás **Ya lo hice**.'},
+  {k:['escrito','escritos','informe art','contestacion','apelacion','prorroga','redactar'], t:'Escritos', ir:'escritos',
+   r:'En **Escritos** elegís el tipo (informe del art. 8, acreditar cumplimiento, apelación, prórroga o uno de tus modelos) y el expediente: Fojas lo redacta completo con antecedentes, fundamentos y petitorio para que solo lo revises.'},
+  {k:['modelo','modelos','plantilla'], t:'Modelos', ir:'modelos',
+   r:'En **Modelos** subís tus escritos modelo (Word, PDF o texto). Fojas los completa con los datos de cada expediente. Ahí también se cargan los datos del encabezado (letrado, domicilio, etc.).'},
+  {k:['equipo','reasignar','pasar a','asignar expediente','jefa','analista'], t:'Equipo y asignaciones', ir:'equipo',
+   r:'En **Equipo** tocás a una persona para ver sus expedientes. La jefa o el admin pueden **Pasar a…** otra persona desde ahí, o desde el campo **A cargo de** dentro del expediente.'},
+  {k:['usuario','usuarios','contrasena','password','clave','restablecer','eliminar usuario','rol'], t:'Usuarios y contraseñas', ir:'usuarios',
+   r:'El administrador, en **Usuarios**, agrega personas, **edita** nombre, usuario, rol y contraseña, **restablece** contraseñas y **elimina** usuarios. La primera vez cada persona entra con su usuario como contraseña y tiene que cambiarla.'},
+  {k:['buscar','busqueda','dni','varios reclamos','arbol'], t:'Buscar', ir:null,
+   r:'Usá el **buscador de arriba**: por afiliado, DNI (con o sin puntos) o número de expediente. Si un DNI tiene varios reclamos, aparece como **árbol** que se despliega con cada expediente.'},
+  {k:['eliminar','borrar','papelera','recuperar','restaurar'], t:'Eliminar y recuperar', ir:'papelera',
+   r:'Dentro del expediente está **Eliminar expediente** (te pregunta "¿Eliminar?"). Lo eliminado va a la **Papelera**, desde donde se puede **restaurar**.'},
+  {k:['copia','copias','respaldo','backup','migrar','migracion','importar','excel','planilla'], t:'Copias y migración', ir:'respaldo',
+   r:'En **Copias y migración** hacés copias de seguridad cifradas y traés expedientes desde otras apps: Excel, CSV, Word, PDF, zip y casi cualquier archivo. También podés importar desde **Amparos › Importar / migrar**.'},
+  {k:['historial','auditoria','huella','quien hizo','registro'], t:'Historial de cambios', ir:'historial',
+   r:'En **Historial de cambios** queda cada acción de cada usuario (quién, qué y cuándo), encadenada con una huella digital para que no se pueda alterar.'},
+  {k:['orden','alfabetico','ordenar'], t:'Orden de los expedientes', ir:'amparos',
+   r:'Los expedientes aparecen en **orden alfabético** por afiliado. En Amparos podés cambiar a **Más urgente** con el botón "Ordenar".'}
+];
+const AG = {open:false, cargando:false, cfg:false};
+const agKey = () => { try{ return JSON.parse(localStorage.getItem('fojasIA')||'null'); }catch(e){ return null; } };
+const agStoreKey = () => 'fojasChat:' + (S && S.user || '');
+function agMsgs(){ if(!ui.chat){ try{ ui.chat = JSON.parse(sessionStorage.getItem(agStoreKey())||'[]'); }catch(e){ ui.chat = []; } } return ui.chat; }
+function agGuardar(){ try{ sessionStorage.setItem(agStoreKey(), JSON.stringify(ui.chat.slice(-40))); }catch(e){} }
+function agMd(t){ const L = esc(t).split('\n'); let o = ''; L.forEach((l,i)=>{ const m = l.match(/^(?:•|-|\*) (.*)$/); const sig = L[i+1]; const sigLi = sig!=null && /^(?:•|-|\*) /.test(sig); if(m) o += `<span class="ag-li">${m[1]}</span>`; else o += l + (i<L.length-1 && !sigLi ? '<br>' : ''); }); return o.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/_\((.+?)\)_/g,'<i>($1)</i>'); }
+const agVence = p => { const n = daysTo(p.vence); return `${whenText(n)} (${fmt(p.vence)})`; };
+function agExpCorto(e){ const p = nextPlazo(e); return `**${e.afiliado}** · ${e.numero} · ${e.prestacion} · ${e.estado}${e.cautelar?' · con cautelar':''}${p?` · ${p.desc}: ${agVence(p).toLowerCase()}`:''}`; }
+function agPersona(t){
+  if(/\b(mis|mios|mias|tengo yo|a mi cargo|yo tengo)\b/.test(t)) return S.user;
+  for(const u of S.users){ const parts = normTxt(u.nombre).split(/\s+/).filter(x=>x.length>=4); if(parts.some(p=>new RegExp('\\b'+p+'\\b').test(t)) || new RegExp('\\b'+normTxt(u.id)+'\\b').test(t)) return u.id; }
+  return null;
+}
+function agExps(q){
+  const t = normTxt(q), dig = q.replace(/\D/g,''), out = new Set();
+  const m = q.match(/(\d{2,6})\s*\/\s*(\d{2,4})/); if(m) S.exps.forEach(e=>{ if(String(e.numero).includes(m[1]+'/')) out.add(e); });
+  if(dig.length>=7 && dig.length<=8) S.exps.forEach(e=>{ if(dniKey(e.dni)===dig) out.add(e); });
+  if(!out.size) S.exps.forEach(e=>{ const ap = normTxt(String(e.afiliado).split(',')[0]).trim(); if(ap.length>=3 && new RegExp('\\b'+ap.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b').test(t)) out.add(e); });
+  if(!out.size){ const r = route(); if(r.name==='expediente' && /\b(este|esta|el expediente|del expediente|este caso|el caso|aca|resum|que hago|que hacer|riesgo|plazo|vence|documento|cautelar|linea|quien|juzgado|informe)\b/.test(t)){ const e = expById(r.id); if(e) out.add(e); } }
+  return [...out];
+}
+// ----- informes -----
+function agInfHtml(titulo, sub, cuerpo){ return `<div class="inf"><div class="inf-h"><div class="inf-logo">${fojasMark('inf'+Math.random().toString(36).slice(2,7))}</div><div><h1>${esc(titulo)}</h1><div class="inf-sub">${esc(sub)} · Generado el ${fmt(iso(today()))} por ${esc(userName(S.user))}</div></div></div>${cuerpo}</div>`; }
+const agTabla = (cols, filas) => `<table class="inf-t"><thead><tr>${cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${filas.map(f=>`<tr>${f.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('') || `<tr><td colspan="${cols.length}">Sin datos.</td></tr>`}</tbody></table>`;
+function informeExp(e){
+  const p = pending(e), movs = lineaItems(e), sg = sugerencias(e);
+  const recs = ['urgente','fondo','prueba','estrategia'].flatMap(k=>sg[k]||[]).slice(0,5);
+  const cuerpo = `
+    <h2>Datos del expediente</h2>
+    ${agTabla(['Dato','Detalle'], [['Autos',esc(e.caratula)],['Número',esc(e.numero)],['Afiliado',`${esc(e.afiliado)} · DNI ${esc(e.dni||'—')}`],['Qué reclama',esc(e.prestacion)],['Juzgado',esc(e.juzgado||'—')],['Etapa',esc(e.estado)],['Medida cautelar',e.cautelar?'Sí':'No'],['Riesgo',esc(e.riesgo||'—')],['A cargo de',esc(userName(e.abogado))],['Inicio',fmt(e.inicio)],['Monto estimado',money(e.monto)]])}
+    <h2>Sumario</h2><p>${esc(e.sumario || buildSumario({...e, plazoDesc:(nextPlazo(e)||{}).desc, plazoFecha:(nextPlazo(e)||{}).vence, flags:caseFlags(e)}))}</p>
+    <h2>Plazos pendientes</h2>${agTabla(['Qué','Vence','Estado'], p.map(x=>[esc(x.desc), fmt(x.vence), esc(whenText(daysTo(x.vence)))]))}
+    <h2>Línea de tiempo</h2>${agTabla(['Fecha','Parte','Qué','Detalle'], movs.map(x=>[fmt(x.fecha), esc(parteNom(x.parte)), esc(movTitulo(x)), esc(x.desc||'')]))}
+    <h2>Documentos</h2>${agTabla(['Documento','Tipo','Fecha'], (e.docs||[]).map(d=>[esc(d.nombre), esc(d.tipo||''), fmt(d.fecha)]))}
+    <h2>Recomendaciones</h2><ol>${recs.map(r=>`<li><b>${esc(r.titulo)}.</b> ${esc(r.porque||'')}</li>`).join('') || '<li>Seguimiento normal.</li>'}</ol>`;
+  return {titulo:`Informe del expediente ${e.numero}`, sub:e.afiliado, html:agInfHtml(`Informe del expediente ${e.numero}`, e.afiliado, cuerpo),
+    resumen:`Informe de **${e.afiliado}** (${e.numero}): etapa ${e.estado}, ${e.cautelar?'con':'sin'} cautelar, ${p.length} plazo${p.length===1?'':'s'} pendiente${p.length===1?'':'s'}${p[0]?`; lo próximo es "${p[0].desc}": ${agVence(p[0]).toLowerCase()}`:''}.`};
+}
+function informeLista(titulo, sub, lista){
+  const act = lista.filter(e=>e.estado!=='Archivado'), pl = act.flatMap(e=>pending(e).map(p=>({...p, e}))).sort((a,b)=>a.vence.localeCompare(b.vence));
+  const venc = pl.filter(p=>daysTo(p.vence)<0), sem = pl.filter(p=>{ const n = daysTo(p.vence); return n>=0 && n<=7; });
+  const cnt = k => { const o = {}; act.forEach(e=>{ o[e[k]] = (o[e[k]]||0)+1; }); return Object.entries(o).sort((a,b)=>b[1]-a[1]); };
+  const cuerpo = `
+    <div class="inf-kpi"><div><b>${act.length}</b><span>en curso</span></div><div><b>${act.filter(e=>e.cautelar).length}</b><span>con cautelar</span></div><div><b>${venc.length}</b><span>plazos vencidos</span></div><div><b>${sem.length}</b><span>vencen en 7 días</span></div><div><b>${money(act.reduce((a,e)=>a+(+e.monto||0),0))}</b><span>monto en juego</span></div></div>
+    <h2>Lo más urgente</h2>${agTabla(['Vence','Qué','Expediente','A cargo'], pl.slice(0,12).map(p=>[`${fmt(p.vence)}<br><small>${esc(whenText(daysTo(p.vence)))}</small>`, esc(p.desc), `${esc(p.e.afiliado)}<br><small>${esc(p.e.numero)}</small>`, esc(userName(p.e.abogado))]))}
+    <h2>Por etapa</h2>${agTabla(['Etapa','Cantidad'], cnt('estado').map(([k,v])=>[esc(k), v]))}
+    <h2>Por tipo de reclamo</h2>${agTabla(['Reclamo','Cantidad'], cnt('prestacion').map(([k,v])=>[esc(k), v]))}
+    <h2>Expedientes</h2>${agTabla(['Afiliado','Número','Reclamo','Etapa','Cautelar','A cargo','Próximo plazo'], [...lista].sort(alfa).map(e=>{ const p = nextPlazo(e); return [esc(e.afiliado), esc(e.numero), esc(e.prestacion), esc(e.estado), e.cautelar?'Sí':'No', esc(userName(e.abogado)), p?`${esc(p.desc)}<br><small>${fmt(p.vence)}</small>`:'—']; }))}`;
+  return {titulo, sub, html:agInfHtml(titulo, sub, cuerpo),
+    resumen:`**${titulo}**: ${act.length} expediente${act.length===1?'':'s'} en curso, ${act.filter(e=>e.cautelar).length} con cautelar, ${venc.length} plazo${venc.length===1?'':'s'} vencido${venc.length===1?'':'s'} y ${sem.length} que vence${sem.length===1?'':'n'} en los próximos 7 días.`};
+}
+// ----- motor local -----
+function agResponder(q){
+  const t = normTxt(q).replace(/[¿?¡!.,;:]/g,' ').replace(/\s+/g,' ').trim();
+  const R = (texto, extra={}) => ({texto, ...extra});
+  if(!t) return R('Escribí tu pregunta.');
+  if(/^(hola|buen dia|buenas|buenos dias|buenas tardes|buenas noches|que tal|hey)\b/.test(t) && t.split(' ').length<=4)
+    return R(`¡Hola, ${userName(S.user).split(' ')[0]}! Soy el asistente de Fojas. Puedo explicarte cómo usar la app, contarte lo que quieras de un expediente (resumen, plazos, qué hacer, riesgo, documentos) y armarte informes listos para imprimir.`);
+  const exps = agExps(q), per = agPersona(t);
+  const pideInforme = /\b(informe|reporte|report|resumen general|estado general|armame un|generame)\b/.test(t) && !/informe art|informe del art|informe circunstanciado|art 8/.test(t);
+  // informes
+  if(pideInforme){
+    if(exps.length===1) return R(null, {inf:informeExp(exps[0])});
+    if(exps.length>1 && !per) return R('Ese DNI o apellido tiene varios expedientes. ¿De cuál querés el informe?', {elegir:exps.map(e=>({l:`${e.prestacion} · ${e.numero}`, q:`informe ${e.numero}`}))});
+    if(per) return R(null, {inf:informeLista(`Informe de ${userName(per)}`, 'Expedientes a su cargo', S.exps.filter(e=>e.abogado===per))});
+    if(/equipo/.test(t)){ const tm = teamOf(); const ids = tm ? [tm.jefe, ...tm.miembros] : S.users.map(u=>u.id); return R(null, {inf:informeLista(tm?`Informe del equipo ${tm.nombre}`:'Informe de equipos', 'Todos los expedientes del equipo', S.exps.filter(e=>ids.includes(e.abogado)))}); }
+    if(/cautelar/.test(t)) return R(null, {inf:informeLista('Informe de expedientes con cautelar', 'Medidas cautelares vigentes', S.exps.filter(e=>e.cautelar))});
+    const rz = t.split(' ').filter(w=>w.length>=5 && !/informe|armame|generame|reporte/.test(w)).map(w=>w.slice(0,6));
+    const prI = PRESTACIONES.filter(p=>p!=='Otra' && normTxt(p).split(/[ (/.]+/).some(w=>w.length>=5 && rz.some(r=>w.startsWith(r))));
+    if(prI.length) return R(null, {inf:informeLista(`Informe de reclamos: ${prI.join(' / ')}`, 'Por tipo de reclamo', S.exps.filter(e=>prI.includes(e.prestacion)))});
+    return R(null, {inf:informeLista('Informe general de amparos', 'Todos los expedientes', S.exps)});
+  }
+  // consultas sobre un expediente
+  if(exps.length>1 && !/\b(cuantos|cuantas|todos|lista)\b/.test(t)){
+    return R(`Encontré ${exps.length} expedientes${dniKey(exps[0].dni).length>=6 && exps.every(e=>dniKey(e.dni)===dniKey(exps[0].dni))?` del DNI ${exps[0].dni}`:''}:\n${exps.sort(alfa).map(e=>'• '+agExpCorto(e)).join('\n')}\n\n¿Sobre cuál querés saber más?`, {elegir:exps.map(e=>({l:`${e.prestacion} · ${e.numero}`, q:`resumen ${e.numero}`}))});
+  }
+  if(exps.length===1){
+    const e = exps[0], ir = {ir:'expediente-'+e.id, irL:'Abrir expediente'};
+    if(/\b(que hago|que hacer|que tengo que hacer|pasos|proximo paso|sugeren|recomend|como sigo|como respondo|estrategia)\b/.test(t)){
+      const sg = sugerencias(e); const it = ['urgente','fondo','prueba','estrategia'].flatMap(k=>sg[k]||[]).slice(0,4);
+      return R(`${iaText('paso', e)}\n\n**Sugerencias para este caso:**\n${it.map(x=>`• **${x.titulo}**${x.normas&&x.normas.length?` (${x.normas.slice(0,2).join('; ')})`:''}`).join('\n')}`, ir);
+    }
+    if(/\briesgo\b/.test(t)) return R(iaText('riesgo', e), ir);
+    if(/\b(plazo|plazos|vence|vencen|vencimiento|cuando)\b/.test(t)){ const p = pending(e); return R(p.length?`Plazos pendientes de **${e.afiliado}** (${e.numero}):\n${p.map(x=>`• ${x.desc}: ${agVence(x).toLowerCase()}`).join('\n')}`:`**${e.afiliado}** (${e.numero}) no tiene plazos pendientes.`, ir); }
+    if(/\b(documento|documentos|docs|archivo|archivos|pdf)\b/.test(t)) return R((e.docs||[]).length?`Documentos de **${e.afiliado}** (${e.numero}):\n${e.docs.map(d=>`• ${d.nombre} · ${d.tipo||''} · ${fmt(d.fecha)}`).join('\n')}`:'Todavía no tiene documentos cargados.', ir);
+    if(/\b(quien|a cargo|abogad|lleva|responsable)\b/.test(t)) return R(`**${e.afiliado}** (${e.numero}) está a cargo de **${userName(e.abogado)}**.`, ir);
+    if(/\b(juzgado|secretaria|tribunal|juez)\b/.test(t)) return R(`Tramita ante el **${e.juzgado||'juzgado sin cargar'}**${e.secretaria?`, Secretaría ${e.secretaria}`:''}.`, ir);
+    if(/\bcautelar\b/.test(t)) return R(e.cautelar?`**Sí**, ${e.afiliado} tiene medida cautelar. Si no se cumple puede haber multas (astreintes).`:`**No**, ${e.afiliado} no tiene medida cautelar.`, ir);
+    if(/\b(linea|historia|movimiento|movimientos|novedad|novedades|que paso|paso hasta|actuaciones)\b/.test(t)) return R(`Línea de tiempo de **${e.afiliado}** (${e.numero}):\n${lineaItems(e).map(x=>`• ${fmt(x.fecha)} · ${parteNom(x.parte)} · ${movTitulo(x)}${x.desc?': '+x.desc:''}`).join('\n')}`, ir);
+    if(/\b(dni|documento de identidad)\b/.test(t)) return R(`El DNI de **${e.afiliado}** es ${e.dni}.`, ir);
+    return R(iaText('resumen', e), {...ir, chips:[`¿Qué tengo que hacer en ${e.numero}?`, `Riesgo de ${e.numero}`, `Informe de ${e.numero}`]});
+  }
+  // consultas generales sobre los datos
+  const base = per ? S.exps.filter(e=>e.abogado===per) : S.exps; const quien = per ? (per===S.user?'tus expedientes':`los expedientes de ${userName(per).split(' ')[0]}`) : 'todos los expedientes';
+  if(/\b(vence|vencen|vencimiento|vencimientos|vencido|vencidos|urgente|urgentes|hoy|manana|semana|plazos)\b/.test(t)){
+    let pl = base.flatMap(e=>pending(e).map(p=>({...p, e}))).sort((a,b)=>a.vence.localeCompare(b.vence));
+    let tit = 'Lo que vence';
+    if(/vencido/.test(t)){ pl = pl.filter(p=>daysTo(p.vence)<0); tit = 'Plazos vencidos'; }
+    else if(/\bhoy\b/.test(t)){ pl = pl.filter(p=>daysTo(p.vence)===0); tit = 'Vence hoy'; }
+    else if(/manana/.test(t)){ pl = pl.filter(p=>daysTo(p.vence)===1); tit = 'Vence mañana'; }
+    else if(/semana|7 dias/.test(t)){ pl = pl.filter(p=>daysTo(p.vence)<=7); tit = 'Vence en los próximos 7 días (incluye vencidos)'; }
+    else pl = pl.slice(0,10);
+    return R(pl.length?`**${tit}** (${quien}):\n${pl.map(p=>`• ${agVence(p)} · ${p.desc} · ${p.e.afiliado} (${p.e.numero})`).join('\n')}`:`No hay nada en "${tit.toLowerCase()}" para ${quien}.`, {ir:'vencimientos', irL:'Ver vencimientos'});
+  }
+  const raices = t.split(' ').filter(w=>w.length>=5).map(w=>w.slice(0,6));
+  const prs = PRESTACIONES.filter(p=>p!=='Otra' && normTxt(p).split(/[ (/.]+/).some(w=>w.length>=5 && raices.some(r=>w.startsWith(r))));
+  const pr = prs.length ? prs : null;
+  const est = ESTADOS.find(s=>t.includes(normTxt(s))) || (/\barchivad/.test(t)?'Archivado':null);
+  const quiereLista = /\b(cuantos|cuantas|cantidad|lista|listame|mostrame|cuales|que expedientes|expedientes|casos|amparos)\b/.test(t);
+  if(quiereLista && (pr || est || per || /cautelar|riesgo alto|en curso|todos/.test(t))){
+    let l = base, d = [];
+    if(pr){ l = l.filter(e=>pr.includes(e.prestacion)); d.push(`de ${pr.map(x=>x.toLowerCase()).join(' o ')}`); }
+    if(est){ l = l.filter(e=>e.estado===est); d.push(`en etapa ${est.toLowerCase()}`); } else if(!/archiv|todos/.test(t)) l = l.filter(e=>e.estado!=='Archivado');
+    if(/cautelar/.test(t)){ l = l.filter(e=>e.cautelar); d.push('con cautelar'); }
+    if(/riesgo alto/.test(t)){ l = l.filter(e=>e.riesgo==='alto'); d.push('de riesgo alto'); }
+    l = [...l].sort(alfa);
+    const tit = per ? (per===S.user ? 'Tus expedientes' : `Expedientes de ${userName(per).split(' ')[0]}`) : 'Expedientes';
+    return R(l.length ? `**${tit}${d.length?' '+d.join(', '):''}${est||/archiv|todos/.test(t)?'':' en curso'}: ${l.length}**\n${l.map(e=>'• '+agExpCorto(e)).join('\n')}` : `No hay expedientes${d.length?' '+d.join(', '):''}${per?(per===S.user?' a tu cargo':` a cargo de ${userName(per).split(' ')[0]}`):''}.`, l.length===1?{ir:'expediente-'+l[0].id, irL:'Abrir expediente'}:{});
+  }
+  // ayuda de la app
+  const sc = AYUDA.map(a=>({a, s:a.k.reduce((n,k)=>n+(t.includes(normTxt(k))?k.split(' ').length:0),0) + (/\b(como|donde|que es|para que|se puede|puedo)\b/.test(t)?0.5:0)})).sort((x,y)=>y.s-x.s);
+  if(sc[0].s>=1) return R(`**${sc[0].a.t}**\n${sc[0].a.r}`, sc[0].a.ir?{ir:sc[0].a.ir, irL:'Ir ahí'}:{});
+  return null;
+}
+function agChips(){
+  const r = route(), e = r.name==='expediente' ? expById(r.id) : null;
+  if(e) return [`Resumime este expediente`, `¿Qué tengo que hacer?`, `Plazos de este expediente`, `Armame un informe de ${e.numero}`];
+  return ['¿Qué vence esta semana?', 'Mis expedientes', '¿Cómo subo un mail con un PDF?', 'Armame un informe general'];
+}
+// ----- IA avanzada (Claude), opcional -----
+function agContexto(){
+  const r = route(), cur = r.name==='expediente' ? expById(r.id) : null;
+  const exp = e => ({numero:e.numero, afiliado:e.afiliado, dni:e.dni, reclamo:e.prestacion, juzgado:e.juzgado, etapa:e.estado, cautelar:!!e.cautelar, riesgo:e.riesgo, aCargo:userName(e.abogado), inicio:e.inicio, plazosPendientes:pending(e).map(p=>({que:p.desc, vence:p.vence})), linea:lineaItems(e).slice(-8).map(x=>({fecha:x.fecha, parte:parteNom(x.parte), que:movTitulo(x), detalle:x.desc})), documentos:(e.docs||[]).map(d=>d.nombre+' ('+(d.tipo||'')+')')});
+  return `Sos el asistente interno de Fojas, una app de gestión de amparos de salud del equipo de Legales de ${cfg().parteNombre||'la empresa'} (Argentina). Respondé en español rioplatense (voseo), claro, breve y concreto. Si hablás de un expediente, nombrá el número. No inventes datos: si algo no está en los datos, decilo. Para dudas legales, dá orientación general con la normativa argentina aplicable (Ley 16.986, CPCCN, Ley 23.661, Ley 24.901, etc.) y recordá que la decisión es del abogado a cargo.
+Hoy es ${fmt(iso(today()))}. Usuario: ${userName(S.user)} (${(me()||{}).rol}). Pantalla actual: ${r.name}${cur?` (expediente ${cur.numero})`:''}.
+CÓMO SE USA LA APP:
+${AYUDA.map(a=>`- ${a.t}: ${a.r.replace(/\*\*/g,'')}`).join('\n')}
+DATOS (JSON):
+${JSON.stringify({usuarios:S.users.map(u=>({usuario:u.id, nombre:u.nombre, rol:u.rol})), equipos:S.teams, expedientes:S.exps.map(exp)})}`;
+}
+async function agClaude(q){
+  const k = agKey(); if(!k || !k.key) return null;
+  const hist = agMsgs().filter(m=>m.texto && !m.inf).slice(-10).map(m=>({role:m.de==='yo'?'user':'assistant', content:m.texto}));
+  if(!hist.length || hist[hist.length-1].content!==q) hist.push({role:'user', content:q});
+  while(hist.length && hist[0].role!=='user') hist.shift();
+  const r = await fetch('https://api.anthropic.com/v1/messages', {method:'POST', headers:{'content-type':'application/json','x-api-key':k.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:k.model||'claude-sonnet-5-5', max_tokens:1200, system:agContexto(), messages:hist})});
+  const j = await r.json(); if(!r.ok) throw new Error((j.error&&j.error.message)||('HTTP '+r.status));
+  return (j.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('\n').trim();
+}
+// ----- interfaz -----
+function drawAgente(){
+  let box = $('#agente'); if(!logged()){ if(box) box.remove(); return; }
+  if(!box){ box = document.createElement('div'); box.id = 'agente'; document.body.appendChild(box); }
+  const k = agKey(), msgs = agMsgs();
+  box.innerHTML = `${AG.open?`<section class="ag-panel" role="dialog" aria-label="Asistente de Fojas">
+    <header class="ag-head"><div class="ag-av">${ic('bot')}</div><div style="flex:1;min-width:0"><b>Asistente Fojas</b><div class="ag-sub">${k&&k.key?'IA avanzada conectada':'Ayuda, expedientes e informes'}</div></div>
+      ${isAdmin()?`<button class="ag-ib" data-ag="cfg" title="Configurar IA">${ic('key','sm')}</button>`:''}
+      <button class="ag-ib" data-ag="limpiar" title="Nueva conversación">${ic('trash','sm')}</button>
+      <button class="ag-ib" data-ag="cerrar" title="Cerrar">${ic('x','sm')}</button></header>
+    ${AG.cfg?`<div class="ag-cfg"><b>IA avanzada (opcional)</b><p>Con una clave de la API de Claude, el asistente responde cualquier pregunta usando los datos de los expedientes. La clave queda guardada solo en esta computadora y los datos se envían a Claude para responder.</p>
+      <input type="password" id="agKey" placeholder="sk-ant-…" value="${esc((k&&k.key)||'')}" autocomplete="off">
+      <select id="agModel">${['claude-sonnet-5-5','claude-opus-5-5','claude-haiku-5-5'].map(m=>`<option ${((k&&k.model)||'claude-sonnet-5-5')===m?'selected':''}>${m}</option>`).join('')}</select>
+      <div class="row" style="gap:8px"><button class="btn sm pri" data-ag="cfgok">Guardar</button>${k&&k.key?'<button class="btn sm ghost danger" data-ag="cfgdel">Desconectar</button>':''}<button class="btn sm ghost" data-ag="cfgno">Cerrar</button></div></div>`:''}
+    <div class="ag-msgs" id="agMsgs">
+      ${msgs.length?'':`<div class="ag-m ag-ia"><div class="ag-b">¡Hola, ${esc(userName(S.user).split(' ')[0])}! Preguntame lo que no entiendas de la app, lo que quieras de cualquier expediente, o pedime un informe.</div></div>`}
+      ${msgs.map((m,i)=>`<div class="ag-m ag-${m.de}"><div class="ag-b">${m.inf?`${agMd(m.inf.resumen)}<div class="ag-acts"><button class="btn sm pri" data-ag="verinf" data-i="${i}">${ic('file','sm')} Ver e imprimir</button><button class="btn sm" data-ag="copinf" data-i="${i}">${ic('copy','sm')} Copiar</button></div>`:agMd(m.texto||'')}
+        ${m.ir?`<div class="ag-acts"><a class="btn sm" href="#${m.ir}" data-ag="ir">${esc(m.irL||'Abrir')} ${ic('next','sm')}</a></div>`:''}
+        ${m.elegir?`<div class="ag-acts">${m.elegir.map(c=>`<button class="ag-chip" data-agq="${esc(c.q)}">${esc(c.l)}</button>`).join('')}</div>`:''}</div></div>`).join('')}
+      ${AG.cargando?'<div class="ag-m ag-ia"><div class="ag-b ag-dots"><span></span><span></span><span></span></div></div>':''}
+    </div>
+    <div class="ag-chips">${(msgs.length && msgs[msgs.length-1].chips ? msgs[msgs.length-1].chips : agChips()).map(c=>`<button class="ag-chip" data-agq="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+    <form class="ag-in" id="agForm"><input type="text" id="agTxt" placeholder="Escribí tu pregunta…" autocomplete="off" value="${esc(AG.borrador||'')}"><button class="ag-send" type="submit" title="Enviar" ${AG.cargando?'disabled':''}>${ic('send')}</button></form>
+  </section>`:''}
+  <button class="ag-fab ${AG.open?'on':''}" data-ag="toggle" title="${AG.open?'Cerrar el asistente':'Preguntale al asistente'}" aria-label="Asistente IA">${AG.open?ic('x'):ic('bot')}${!AG.open?'<span class="ag-fab-badge">IA</span>':''}</button>`;
+  const m = $('#agMsgs'); if(m) m.scrollTop = m.scrollHeight;
+  if(AG.focus && AG.open && !AG.cfg){ AG.focus = false; const i = $('#agTxt'); if(i) i.focus(); }
+}
+async function agPreguntar(q){
+  q = String(q||'').trim(); if(!q || AG.cargando) return;
+  const msgs = agMsgs(); msgs.push({de:'yo', texto:q}); AG.borrador = ''; AG.cargando = true; drawAgente();
+  let res = null;
+  const quiereInf = /\b(informe|reporte)\b/i.test(normTxt(q)) && !/art\.? ?8|circunstanciado/i.test(q);
+  const k = agKey();
+  if(k && k.key && !quiereInf){ try{ const txt = await agClaude(q); if(txt) res = {texto:txt}; }catch(err){ res = agResponder(q); if(res) res.texto = (res.texto||'') + `\n\n_(La IA avanzada no respondió: ${err.message}. Te contesté con la ayuda local.)_`; } }
+  if(!res) res = agResponder(q);
+  if(!res) res = {texto:'No estoy seguro de haber entendido. Probá preguntarme, por ejemplo:\n• "¿Qué vence esta semana?"\n• "Resumen de Romero" o "¿Qué hago en CCF 3977/2026?"\n• "Expedientes de Florencia con cautelar"\n• "¿Cómo subo un mail con un PDF?"\n• "Armame un informe del equipo"'};
+  await new Promise(r=>setTimeout(r, 250));
+  msgs.push({de:'ia', ...res}); AG.cargando = false; agGuardar(); AG.focus = true; drawAgente();
+  if(res.inf) audit('Generó un informe con el asistente', 'Asistente', res.inf.titulo);
+}
+function agVerInforme(inf){
+  showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:20px">${esc(inf.titulo)}</h2><div class="row" style="gap:8px"><button class="btn pri" data-ag="imprimir">${ic('file','sm')} Imprimir / guardar PDF</button><button class="btn ghost" data-act="close">Cerrar</button></div></div>
+    <div class="inf-wrap">${inf.html}</div>`);
+  AG.infActual = inf;
+}
+const INF_CSS = `.inf{font-family:Figtree,system-ui,sans-serif;color:#2E2520;font-size:14px;line-height:1.5}.inf-h{display:flex;gap:14px;align-items:center;border-bottom:3px solid #2F6B3F;padding-bottom:12px;margin-bottom:8px}.inf-logo{width:46px;height:46px;flex:none}.inf h1{font-size:22px;margin:0}.inf-sub{color:#6F6157;font-size:13px}.inf h2{font-size:16px;color:#2F6B3F;margin:18px 0 6px}.inf-t{width:100%;border-collapse:collapse;font-size:13px}.inf-t th{background:#E5F0E3;color:#2F6B3F;text-align:left;padding:6px 8px}.inf-t td{border-bottom:1px solid #E6DED3;padding:6px 8px;vertical-align:top}.inf-t small{color:#6F6157}.inf-kpi{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}.inf-kpi div{background:#F7F4EF;border-radius:10px;padding:10px;text-align:center}.inf-kpi b{display:block;font-size:20px;color:#2F6B3F}.inf-kpi span{font-size:12px;color:#6F6157}.inf ol{padding-left:20px}`;
+try{ document.head.insertAdjacentHTML('beforeend', '<style>'+INF_CSS+'</style>'); }catch(e){}
+function agImprimir(inf){
+  const w = window.open('', '_blank'); if(!w){ toast('Permití las ventanas emergentes para imprimir.'); return; }
+  w.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>${esc(inf.titulo)}</title><link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;800&display=swap" rel="stylesheet"><style>body{margin:28px}${INF_CSS}@media print{body{margin:0}}</style></head><body>${inf.html}<script>setTimeout(()=>window.print(),600)<\/script></body></html>`); w.document.close();
+}
+function agTextoPlano(inf){ const d = document.createElement('div'); d.innerHTML = inf.html.replace(/<\/(tr|h1|h2|p|li|div)>/g,'\n').replace(/<\/t[dh]>/g,' | '); return d.textContent.replace(/\n\s*\n+/g,'\n').trim(); }
+document.addEventListener('click', async ev => {
+  const g = ev.target.closest('[data-ag]'), qb = ev.target.closest('[data-agq]');
+  if(qb){ ev.preventDefault(); await agPreguntar(qb.dataset.agq); return; }
+  if(!g) return; const a = g.dataset.ag;
+  if(a==='toggle'){ AG.open = !AG.open; AG.cfg = false; AG.focus = AG.open; drawAgente(); }
+  if(a==='cerrar'){ AG.open = false; drawAgente(); }
+  if(a==='limpiar'){ ui.chat = []; agGuardar(); drawAgente(); }
+  if(a==='cfg'){ AG.cfg = !AG.cfg; drawAgente(); }
+  if(a==='cfgno'){ AG.cfg = false; drawAgente(); }
+  if(a==='cfgok'){ const key = $('#agKey').value.trim(); if(!key){ toast('Pegá la clave de la API'); return; } try{ localStorage.setItem('fojasIA', JSON.stringify({key, model:$('#agModel').value})); }catch(e){} AG.cfg = false; audit('Conectó la IA avanzada','Asistente', $('#agModel').value); drawAgente(); toast('IA avanzada conectada'); }
+  if(a==='cfgdel'){ try{ localStorage.removeItem('fojasIA'); }catch(e){} AG.cfg = false; audit('Desconectó la IA avanzada','Asistente','—'); drawAgente(); toast('IA avanzada desconectada'); }
+  if(a==='verinf'){ const m = agMsgs()[+g.dataset.i]; if(m && m.inf) agVerInforme(m.inf); }
+  if(a==='copinf'){ const m = agMsgs()[+g.dataset.i]; if(m && m.inf){ try{ await navigator.clipboard.writeText(agTextoPlano(m.inf)); toast('Informe copiado'); }catch(e){ toast('No se pudo copiar'); } } }
+  if(a==='imprimir' && AG.infActual) agImprimir(AG.infActual);
+  if(a==='ir' && window.innerWidth < 760){ AG.open = false; setTimeout(drawAgente, 50); }
+});
+document.addEventListener('submit', async ev => { if(ev.target.id!=='agForm') return; ev.preventDefault(); ev.stopPropagation(); await agPreguntar($('#agTxt').value); }, true);
+document.addEventListener('input', ev => { if(ev.target.id==='agTxt') AG.borrador = ev.target.value; });
+
 // ---------- actualización automática: si hay una versión nueva publicada, se carga sola ----------
 const APP_VERSION = (document.querySelector('meta[name=fojas-version]')||{}).content || '';
 async function buscarVersionNueva(){
@@ -3311,7 +3598,7 @@ async function buscarVersionNueva(){
     if(!/^https?:/.test(location.protocol)) return;
     const r = await fetch(location.pathname + '?v=' + Date.now(), {cache:'no-store'}); if(!r.ok) return;
     const m = (await r.text()).match(/name="fojas-version" content="([^"]+)"/); if(!m || !APP_VERSION || m[1]===APP_VERSION) return;
-    const ocupado = W || UP || XL || UE || ($('#overlay') && $('#overlay').classList.contains('show'));
+    const ocupado = W || UP || XL || UE || AG.cargando || (AG.open && AG.borrador) || ($('#overlay') && $('#overlay').classList.contains('show'));
     if(!ocupado){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} location.reload(); return; }
     if(!$('#nuevaVersion')){ const b = document.createElement('div'); b.id = 'nuevaVersion'; b.innerHTML = 'Hay una versión nueva de Fojas. <button class="btn sm pri" onclick="try{localStorage.setItem(KEY, JSON.stringify(S))}catch(e){} location.reload()">Actualizar ahora</button>'; document.body.appendChild(b); }
   }catch(e){}
