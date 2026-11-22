@@ -188,6 +188,8 @@ tr:last-child td{border-bottom:0}
 .form .full{grid-column:1/-1}
 .hint{font-weight:400;font-size:13px;color:var(--faint)}
 .fld > .pill{align-self:flex-start}
+.savebadge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:6px 12px;border-radius:20px;text-decoration:none;white-space:nowrap}
+.savebadge.ok{background:var(--ok-soft);color:var(--ok)} .savebadge.warn{background:var(--warn-soft);color:var(--warn)} .savebadge.bad{background:var(--danger-soft);color:var(--danger)}
 .sgroup{display:flex;flex-direction:column;gap:10px}
 details.sug{padding:0;gap:0}
 details.sug summary{list-style:none;display:flex;gap:10px;align-items:center;padding:14px 16px;cursor:pointer;flex-wrap:wrap}
@@ -545,8 +547,91 @@ let S;
 async function makeUser(u, pass, mustChange){ const salt = randId(16); return {id:u.id, nombre:u.nombre, rol:u.rol, activo:true, salt, hash: await hashPass(pass, salt), mustChange:!!mustChange}; }
 async function fresh(){ const users = []; for(const u of DEFAULT_USERS) users.push(await makeUser(u, u.pass, false));
   return {user:null, users, lock:{}, toured:{}, teams:JSON.parse(JSON.stringify(DEFAULT_TEAMS)), modules:{amparos:true, administrativos:false, contratos:false, cartas:false}, exps:seed(), audit:[], nextId:8}; }
+// ---------- guardado: navegador (2 lugares), versiones automáticas y archivo en la computadora ----------
+const IDB = {
+  db:null,
+  open(){ if(this.db) return Promise.resolve(this.db); return new Promise((res,rej)=>{ let r; try{ r = indexedDB.open('fojas', 1); }catch(e){ return rej(e); }
+    r.onupgradeneeded = () => { const db = r.result; if(!db.objectStoreNames.contains('kv')) db.createObjectStore('kv'); if(!db.objectStoreNames.contains('snaps')) db.createObjectStore('snaps', {keyPath:'id', autoIncrement:true}); };
+    r.onsuccess = () => { this.db = r.result; res(this.db); }; r.onerror = () => rej(r.error); }); },
+  async tx(store, mode, fn){ const db = await this.open(); return new Promise((res,rej)=>{ const t = db.transaction(store, mode); const st = t.objectStore(store); const out = fn(st); t.oncomplete = () => res(out instanceof IDBRequest ? out.result : out); t.onerror = () => rej(t.error); }); },
+  get(k){ return this.tx('kv','readonly', st=>st.get(k)); },
+  put(k,v){ return this.tx('kv','readwrite', st=>st.put(v,k)); },
+  async snaps(){ const db = await this.open(); return new Promise((res,rej)=>{ const r = db.transaction('snaps','readonly').objectStore('snaps').getAll(); r.onsuccess = () => res(r.result||[]); r.onerror = () => rej(r.error); }); },
+  addSnap(s){ return this.tx('snaps','readwrite', st=>st.add(s)); },
+  delSnap(id){ return this.tx('snaps','readwrite', st=>st.delete(id)); }
+};
+const PERSIST = {idb:null, idbAt:0, persistent:null, file:null, fileName:'', fileAt:0, fileNeeds:false, lastSnap:0, err:false};
+let idbTimer = null, fileTimer = null;
+function afterSave(){
+  clearTimeout(idbTimer);
+  idbTimer = setTimeout(async ()=>{
+    try{
+      const copy = JSON.parse(JSON.stringify(S)); copy.user = null;
+      await IDB.put('estado', copy); PERSIST.idbAt = Date.now(); PERSIST.err = false;
+      if(Date.now() - PERSIST.lastSnap > 5*60000){ PERSIST.lastSnap = Date.now(); await IDB.addSnap({fecha:new Date().toISOString(), amparos:copy.exps.length, autor:S.user, data:copy}); await pruneSnaps(); }
+    }catch(e){ PERSIST.err = true; }
+    updateSaveBadge();
+  }, 400);
+  if(PERSIST.file){ clearTimeout(fileTimer); fileTimer = setTimeout(writeBackupFile, 1500); }
+  updateSaveBadge();
+}
+async function pruneSnaps(){ const all = (await IDB.snaps()).sort((a,b)=>a.id-b.id); while(all.length > 40){ await IDB.delSnap(all.shift().id); } }
+const canFile = () => typeof window.showSaveFilePicker === 'function' && window.self === window.top;
+async function linkBackupFile(){
+  try{
+    const h = await window.showSaveFilePicker({suggestedName:'fojas-respaldo.json', types:[{description:'Respaldo de Fojas', accept:{'application/json':['.json']}}]});
+    PERSIST.file = h; PERSIST.fileName = h.name; PERSIST.fileNeeds = false; await IDB.put('fileHandle', h);
+    await writeBackupFile(); audit('Activó el guardado en la computadora','Copias', h.name); toast(`Listo: todo lo que cargues se guarda también en ${h.name}`); render();
+  }catch(e){ if(e && e.name!=='AbortError') toast('No se pudo vincular el archivo.'); }
+}
+async function reconnectBackupFile(){
+  if(!PERSIST.file) return;
+  try{ const p = await PERSIST.file.requestPermission({mode:'readwrite'}); if(p==='granted'){ PERSIST.fileNeeds = false; await writeBackupFile(); toast('Archivo de respaldo reconectado'); render(); } }catch(e){ toast('No se pudo reconectar el archivo.'); }
+}
+async function writeBackupFile(){
+  if(!PERSIST.file) return;
+  try{
+    const perm = await PERSIST.file.queryPermission({mode:'readwrite'});
+    if(perm !== 'granted'){ PERSIST.fileNeeds = true; updateSaveBadge(); return; }
+    const w = await PERSIST.file.createWritable(); const copy = {...S, user:null, exportado:new Date().toISOString()};
+    await w.write(JSON.stringify(copy)); await w.close(); PERSIST.fileAt = Date.now(); PERSIST.fileNeeds = false;
+  }catch(e){ PERSIST.fileNeeds = true; }
+  updateSaveBadge();
+}
+// Une dos estados sin perder amparos: se parte del más nuevo y se suman los amparos que solo estén en el otro.
+function unir(base, otro){
+  if(!otro || !Array.isArray(otro.exps)) return base;
+  const known = new Set(base.exps.map(e=>String(e.numero||'').trim().toLowerCase()));
+  let next = Math.max(base.nextId||1, ...base.exps.map(e=>+e.id||0)) + 1; const sum = [];
+  otro.exps.forEach(e=>{ const n = String(e.numero||'').trim().toLowerCase(); if(n && !known.has(n)){ base.exps.push({...e, id:next++}); known.add(n); sum.push(e.afiliado); } });
+  base.nextId = next;
+  (otro.modelos||[]).forEach(m=>{ base.modelos = base.modelos||[]; if(!base.modelos.some(x=>x.id===m.id)) base.modelos.push(m); });
+  base._sumados = (base._sumados||[]).concat(sum);
+  return base;
+}
+function updateSaveBadge(){
+  const el = $('#saveBadge'); if(!el) return;
+  const st = saveState(); el.className = 'savebadge ' + st.cls; el.innerHTML = `${ic(st.icon,'sm')} ${st.txt}`; el.title = st.tip;
+}
+function saveState(){
+  if(saveError) return {cls:'bad', icon:'alert', txt:'No se pudo guardar', tip:'El navegador no permitió guardar. Revisá que no esté en modo incógnito.'};
+  if(PERSIST.fileNeeds) return {cls:'warn', icon:'alert', txt:'Reconectar respaldo', tip:'Tocá para volver a autorizar el archivo de respaldo en tu computadora.'};
+  return {cls:'ok', icon:'check', txt: PERSIST.file ? 'Guardado · navegador y computadora' : 'Guardado', tip: PERSIST.file ? `Se guarda en este navegador y en el archivo ${PERSIST.fileName}.` : 'Se guarda automáticamente en este navegador, en dos lugares, con versiones anteriores.'};
+}
+async function restoreSnap(id){
+  const s = (await IDB.snaps()).find(x=>x.id===id); if(!s) return;
+  await IDB.addSnap({fecha:new Date().toISOString(), amparos:S.exps.length, autor:S.user, data:JSON.parse(JSON.stringify({...S, user:null})), nota:'Antes de restaurar'});
+  const user = S.user; const prev = S; S = unir(await migrate(JSON.parse(JSON.stringify(s.data))), prev); S.user = user; delete S._sumados; save();
+  audit('Restauró una versión guardada','Copias', `Versión del ${fmtTs(s.fecha)}`); render(); toast('Versión restaurada. No se perdió ningún amparo: los que no estaban en esa versión se mantuvieron.');
+}
+async function importBackupFile(file){
+  try{ const d = JSON.parse(await file.text()); if(!Array.isArray(d.exps)) throw 0; const antes = S.exps.length; S = unir(S, await migrate(d)); const n = S.exps.length - antes; delete S._sumados; save(); audit('Abrió un respaldo','Copias', `${file.name}: ${n} amparo(s) agregado(s)`); render(); toast(n?`Se agregaron ${n} amparo(s) del respaldo.`:'Ese respaldo no tenía amparos nuevos: ya estaban todos.'); }
+  catch(e){ toast('Ese archivo no es un respaldo de Fojas.'); }
+}
+async function vGuardado(){ return ''; }
+
 let saveError = false;
-function save(){ try{ S.schema = SCHEMA; localStorage.setItem(KEY, JSON.stringify(S)); if(saveError){ saveError = false; } }catch(e){ if(!saveError){ saveError = true; setTimeout(()=>toast('No se pudo guardar en este navegador: revisá que no esté en modo incógnito y que haya espacio libre.'), 50); } } }
+function save(){ S.savedAt = Date.now(); afterSave(); try{ S.schema = SCHEMA; localStorage.setItem(KEY, JSON.stringify(S)); if(saveError){ saveError = false; } }catch(e){ if(!saveError){ saveError = true; setTimeout(()=>toast('No se pudo guardar en este navegador: revisá que no esté en modo incógnito y que haya espacio libre.'), 50); } } }
 function readKey(k){ try{ const r = localStorage.getItem(k); if(r) return JSON.parse(r); }catch(e){} return null; }
 function load(){
   const cur = readKey(KEY); if(cur && cur.exps) return {data:cur, from:null};
@@ -739,6 +824,7 @@ function shell(content){
           <input type="search" id="gsearch" placeholder="Buscar por afiliado, DNI o número de expediente" value="${esc(ui.q)}" aria-label="Buscar" autocomplete="off">
           ${ui.results?searchResults():''}
         </div>
+        <a href="#respaldo" id="saveBadge" class="savebadge ${saveState().cls}" title="${esc(saveState().tip)}" ${PERSIST.fileNeeds?'data-act="reconnect"':''}>${ic(saveState().icon,'sm')} ${saveState().txt}</a>
         <div class="who"><div><b>${esc(u.nombre)}</b><br><span>${esc(u.rol)}</span></div>
           <button class="avatar" data-act="pwd" title="Cambiar contraseña" style="border:0;cursor:pointer">${initials(u.nombre)}</button></div>
       </header>
@@ -1106,7 +1192,17 @@ CCF 6188/2026;Vera, Gonzalo;Discapacidad (Ley 24.901);Juzg. Nac. Civ. y Com. Fed
 function vRespaldo(){
   const bm = ui.backupMsg, cm = ui.csvMsg;
   return `
-  <div><h1>Copias y migración</h1><p class="sub">Guardá una copia de seguridad o traé expedientes desde otro sistema.</p></div>
+  <div><h1>Copias y migración</h1><p class="sub">Dónde queda guardado lo que cargás, versiones anteriores, copias de seguridad y migración desde otros sistemas.</p></div>
+  <section class="card"><h2>Dónde se guarda lo que cargás</h2>
+    <div class="list">
+      <div class="li"><div style="display:flex;gap:12px"><div class="ico g" style="width:40px;height:40px">${ic('check')}</div><div><b>En este navegador, en dos lugares a la vez</b><div class="small muted">Cada cambio se guarda en el momento. ${PERSIST.persistent?'Chrome lo marcó como almacenamiento permanente: no lo borra solo.':'Si borrás los datos de navegación de Chrome, se pierde: por eso conviene el archivo en la computadora.'}</div></div></div><span class="pill grn">Activo</span></div>
+      <div class="li"><div style="display:flex;gap:12px"><div class="ico ${PERSIST.file?(PERSIST.fileNeeds?'y':'g'):'a'}" style="width:40px;height:40px">${ic('cloud')}</div><div><b>En un archivo de tu computadora</b><div class="small muted">${PERSIST.file?`Archivo: ${esc(PERSIST.fileName)}${PERSIST.fileAt?` · último guardado ${fmtTs(new Date(PERSIST.fileAt).toISOString())}`:''}. Se actualiza solo con cada cambio. Guardalo en una carpeta que se respalde (OneDrive, Google Drive o la red de la empresa).`:'Elegí un archivo una vez y Fojas lo mantiene actualizado solo. Aunque se borre el navegador, con ese archivo recuperás todo.'}</div></div></div>
+        ${!canFile()?'<span class="pill">Abrí Fojas desde Chrome para usarlo</span>':PERSIST.file?(PERSIST.fileNeeds?'<button class="btn sm pri" data-act="reconnect">Reconectar</button>':'<span class="pill grn">Activo</span>'):'<button class="btn sm pri" data-act="linkfile">Activar</button>'}</div>
+      <div class="li"><div style="display:flex;gap:12px"><div class="ico v" style="width:40px;height:40px">${ic('history')}</div><div><b>Versiones anteriores automáticas</b><div class="small muted">Cada 5 minutos de trabajo se guarda una versión completa. Se conservan las últimas 40.</div></div></div><span class="pill grn">Activo</span></div>
+    </div>
+    <div class="row"><label class="btn sm" for="bkfile">${ic('upload','sm')} Abrir un archivo de respaldo</label><input type="file" id="bkfile" accept=".json" hidden><span class="small muted">Suma los amparos del archivo que no estén cargados. No borra nada.</span></div>
+  </section>
+  <section class="card"><h2>Versiones anteriores</h2><div id="snapList" class="list"><div class="small muted">Cargando…</div></div></section>
   <div class="grid g2">
     <section class="card"><div class="row"><div class="ico a">${ic('lock')}</div><h2>Copia de seguridad</h2></div>
       <p class="muted small">Elegí una contraseña y generamos una copia cifrada de todo. Sin esa contraseña nadie la puede leer, así que no la pierdas.</p>
@@ -1910,6 +2006,7 @@ function render(){
   const scroll = $('#view') ? $('#view').scrollTop : 0;
   $('#root').innerHTML = shell(html);
   $('#view').scrollTop = scroll;
+  if(r.name==='respaldo') IDB.snaps().then(list=>{ const box = $('#snapList'); if(!box) return; list.sort((a,b)=>b.id-a.id); box.innerHTML = list.length ? list.slice(0,40).map(s=>`<div class="li"><div><b>${fmtTs(s.fecha)}</b><div class="small muted">${s.amparos} amparo${s.amparos===1?'':'s'}${s.nota?` · ${esc(s.nota)}`:''}${s.autor?` · ${esc(userName(s.autor))}`:''}</div></div><button class="btn sm" data-act="restoresnap" data-id="${s.id}">Restaurar</button></div>`).join('') : '<div class="small muted">Todavía no hay versiones guardadas: se crean solas mientras trabajás.</div>'; }).catch(()=>{ const box = $('#snapList'); if(box) box.innerHTML = '<div class="small muted">Este navegador no permite guardar versiones.</div>'; });
 }
 async function rerenderAfterAudit(){ await chain; render(); }
 
@@ -1947,6 +2044,9 @@ document.addEventListener('click', async ev => {
   if(d.wnav){ wRead(); if(+d.wnav>0){ const err = wCheck(); if(err){ $('#wErr').innerHTML = `<div class="notice bad">${esc(err)}</div>`; return; } } W.step += +d.wnav; drawWizard(); return; }
   const a = d.act;
   if(a==='close') closeModal();
+  if(a==='linkfile') linkBackupFile();
+  if(a==='reconnect'){ ev.preventDefault(); reconnectBackupFile(); }
+  if(a==='restoresnap') restoreSnap(+d.id);
   if(a==='muse'){ ui.tpl = 'm:'+d.m; ui.tplExp = null; ui.tplText=''; location.hash = 'escritos'; }
   if(a==='medit') openModelEditor(d.m);
   if(a==='msave'){ const m = S.modelos.find(x=>x.id===d.m); m.nombre = $('#meNom').value.trim()||m.nombre; m.categoria = $('#meCat').value; m.texto = $('#meTxt').value; save(); audit('Editó un modelo','Modelos',m.nombre); closeModal(); render(); toast('Modelo guardado'); }
@@ -2047,6 +2147,7 @@ document.addEventListener('change', async ev => {
   const t = ev.target; const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
   if(t.id==='fileIn' && e) addFiles(e, t.files);
   if(t.id==='mfile') addModels(t.files);
+  if(t.id==='bkfile' && t.files[0]) importBackupFile(t.files[0]);
   if(PE && /^pe(Cant|Desde|Fecha|Feria)$/.test(t.id)){ peRead(); drawPlazoEditor(); }
   if(t.id==='wfile' && W) wProcess(t.files);
   if(t.id==='wmore' && W){ wRead(); await wProcess(t.files, true); }
@@ -2159,12 +2260,20 @@ window.addEventListener('storage', async ev => {
   if(ev.key!==KEY || !ev.newValue) return;
   try{ const d = JSON.parse(ev.newValue); const user = S && S.user; S = d; S.user = user; render(); }catch(e){}
 });
+window.addEventListener('beforeunload', ()=>{ try{ if(S) localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} });
 // ---------- arranque ----------
 (async function init(){
   const got = load();
-  if(got){ S = await migrate(got.data); save(); if(got.from){ setTimeout(()=>toast('Recuperamos los datos que tenías cargados en la versión anterior.'), 400); } }
-  if(S){ const r = rescatar(); if(r.length) setTimeout(()=>toast(`Recuperamos ${r.length===1?'un amparo':r.length+' amparos'} que había quedado guardado por una versión anterior: ${r.map(x=>x.afiliado).join(', ')}.`), 900); }
-  else { S = await fresh(); save(); await seedAudit(); }
+  let fromIdb = null; try{ fromIdb = await IDB.get('estado'); }catch(e){}
+  if(fromIdb && Array.isArray(fromIdb.exps)){
+    if(!got) { S = await migrate(fromIdb); save(); }
+    else { const a = got.data, b = fromIdb; const nuevo = (b.savedAt||0) > (a.savedAt||0) ? b : a, otro = nuevo===a ? b : a; got.data = unir(nuevo, otro); }
+  }
+  try{ const h = await IDB.get('fileHandle'); if(h){ PERSIST.file = h; PERSIST.fileName = h.name; const p = await h.queryPermission({mode:'readwrite'}); PERSIST.fileNeeds = p!=='granted'; } }catch(e){}
+  try{ if(navigator.storage && navigator.storage.persist){ PERSIST.persistent = await navigator.storage.persisted() || await navigator.storage.persist(); } }catch(e){}
+  if(got){ S = await migrate(got.data); if(S._sumados && S._sumados.length) setTimeout(()=>toast(`Recuperamos: ${S._sumados.join(', ')}.`), 1200); delete S._sumados; save(); if(got.from){ setTimeout(()=>toast('Recuperamos los datos que tenías cargados en la versión anterior.'), 400); } }
+  if(S && S.exps){ const r = rescatar(); if(r.length) setTimeout(()=>toast(`Recuperamos ${r.length===1?'un amparo':r.length+' amparos'} que había quedado guardado por una versión anterior: ${r.map(x=>x.afiliado).join(', ')}.`), 900); }
+  else if(!S){ S = await fresh(); save(); await seedAudit(); }
   S.lock = S.lock || {}; S.toured = S.toured || {}; S.teams = S.teams || [];
   render();
   const u = getSession() && me(); if(u && u.mustChange) openPwd(true);
