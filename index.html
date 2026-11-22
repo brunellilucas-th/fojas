@@ -646,6 +646,103 @@ async function importBackupFile(file){
 }
 async function vGuardado(){ return ''; }
 
+// ---------- migración desde cualquier archivo ----------
+const JSZIP_URL = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
+const EXT_TABLA = /\.(xlsx|xlsm|xlsb|xls|xlt|xltx|ods|fods|csv|tsv|tab|dbf|sylk|slk|dif|prn|wk[1-4s]|wq[12]|qpw|wb[1-3]|numbers|et|eth)$/i;
+const extDe = n => (String(n||'').match(/\.([a-z0-9]+)$/i)||[])[1]?.toLowerCase() || '';
+function rtfATexto(s){ return s.replace(/\\par[d]?/g,'\n').replace(/\\'([0-9a-f]{2})/gi,(m,h)=>String.fromCharCode(parseInt(h,16))).replace(/\\[a-z]+-?\d* ?/gi,'').replace(/[{}]/g,'').replace(/\n{3,}/g,'\n\n'); }
+function htmlATexto(s){ const d = new DOMParser().parseFromString(s,'text/html'); return d.body ? d.body.innerText || d.body.textContent || '' : s; }
+function binarioATexto(buf){
+  // extrae los textos legibles de cualquier archivo (bases de datos, formatos propios de otros sistemas)
+  const u8 = new Uint8Array(buf); const out = []; let cur = '';
+  const flush = () => { if(cur.replace(/\s/g,'').length >= 4) out.push(cur.trim()); cur = ''; };
+  for(let i=0;i<u8.length;i++){ const c = u8[i]; if((c>=32 && c<127) || c===9 || (c>=160 && c<=255)) cur += String.fromCharCode(c); else if(c===10 || c===13){ cur += '\n'; } else flush(); }
+  flush();
+  // UTF-16 (muy común en bases de datos de Windows)
+  let w = ''; const out16 = [];
+  for(let i=0;i+1<u8.length;i+=2){ const c = u8[i] | (u8[i+1]<<8); if((c>=32 && c<0x2000) || c===9){ w += String.fromCharCode(c); } else { if(w.replace(/\s/g,'').length>=4) out16.push(w.trim()); w=''; } }
+  if(w.replace(/\s/g,'').length>=4) out16.push(w.trim());
+  return out.concat(out16).join('\n');
+}
+// Convierte texto libre (listados, reportes, PDF) en filas: una por expediente encontrado
+function textoATabla(text){
+  const lines = String(text||'').replace(/\r/g,'').split('\n').map(l=>l.trim()).filter(Boolean);
+  // ¿Es una tabla con separador?
+  for(const sep of ['\t',';','|']){ const conSep = lines.filter(l=>l.includes(sep)); if(conSep.length >= Math.max(2, lines.length*0.6)){ const rows = conSep.map(l=>l.split(sep).map(c=>c.trim())); return rows; } }
+  const multi = lines.filter(l=>/\S\s{2,}\S/.test(l)); if(multi.length >= Math.max(3, lines.length*0.6)) return multi.map(l=>l.split(/\s{2,}/));
+  // Si no, se buscan expedientes en el texto
+  const NUM = /\b(?:(CCF|CIV|COM|CAF|CNT|CSS|FSM|FLP|FRO|FCB|FMZ|FTU|FMP|FCR|FRE|FPO|FBB|FGR|FCT|FSA|FPA)\s*0*(\d{1,6})\s*\/\s*(\d{4})|(?:Expte?\.?|Expediente)\s*(?:N[°º.]*\s*)?:?\s*([\d.]{1,9}\s*\/\s*\d{2,4}))/gi;
+  const blob = lines.join('\n'); const idx = []; let m;
+  while((m = NUM.exec(blob))) idx.push({i:m.index, num: m[1] ? `${m[1].toUpperCase()} ${m[2]}/${m[3]}` : `Expte. ${m[4].replace(/\s/g,'')}`});
+  const rows = [['Número de expediente','Autos','Asociado','DNI','Juzgado','Qué reclama','Vencimiento','Texto encontrado']];
+  const vistos = new Set();
+  idx.forEach((x,k)=>{
+    if(vistos.has(x.num)) return; vistos.add(x.num);
+    const ini = Math.max(k>0 ? idx[k-1].i + 12 : 0, x.i - 250), fin = Math.min(blob.length, (idx[k+1] ? idx[k+1].i : x.i + 700));
+    const trozo = blob.slice(ini, fin); const despues = blob.slice(x.i, fin);
+    const a = despues.match(/([A-ZÁÉÍÓÚÑa-záéíóúñ][A-ZÁÉÍÓÚÑa-záéíóúñ.,'() ]{2,80}?)\s+c\s*\/\s*([^"”»\n]{3,120}?)\s+s\s*\/\s*([^"”»\n]{2,100})/) || trozo.match(/([A-ZÁÉÍÓÚÑa-záéíóúñ][A-ZÁÉÍÓÚÑa-záéíóúñ.,'() ]{2,80}?)\s+c\s*\/\s*([^"”»\n]{3,120}?)\s+s\s*\/\s*([^"”»\n]{2,100})/);
+    const d = trozo.match(/D\.?\s?N\.?\s?I\.?\s*(?:N[°º.]*\s*)?:?\s*(\d{1,2}\.?\d{3}\.?\d{3})/i);
+    const j = matchJuzgado(trozo);
+    const v = trozo.match(/(?:vence|vencimiento|plazo)[^\d]{0,20}(\d{1,2}\/\d{1,2}\/\d{2,4})/i);
+    const sc = scorePrestaciones(trozo);
+    rows.push([x.num, a ? a[0].trim() : '', a ? a[1].replace(/^.*[“"«]/,'').trim() : '', d ? d[1] : '', j || '', sc[0] ? sc[0][0] : '', v ? v[1] : '', trozo.replace(/\s+/g,' ').slice(0,300)]);
+  });
+  // Sin números de expediente: se intenta con los autos "X c/ Y s/ Z"
+  if(rows.length===1){
+    const RE = /([A-ZÁÉÍÓÚÑa-záéíóúñ][A-ZÁÉÍÓÚÑa-záéíóúñ.,'() ]{2,80}?)\s+c\s*\/\s*([^"”»\n]{3,120}?)\s+s\s*\/\s*([^"”»\n]{2,100})/g;
+    let n = 0; while((m = RE.exec(blob))){ const actor = m[1].replace(/^.*[“"«]/,'').trim(); if(vistos.has(actor)) continue; vistos.add(actor); n++;
+      rows.push(['', m[0].trim(), actor, '', matchJuzgado(blob.slice(m.index, m.index+400))||'', (scorePrestaciones(blob.slice(m.index, m.index+600))[0]||[''])[0], '', blob.slice(m.index, m.index+300).replace(/\s+/g,' ')]); }
+  }
+  return rows;
+}
+function jsonATablas(d, nombre){
+  if(d && Array.isArray(d.exps)) return {fojas:d, tablas:[]};
+  const arrs = []; const walk = (o, path) => { if(Array.isArray(o) && o.length && typeof o[0]==='object' && o[0] && !Array.isArray(o[0])) arrs.push({path, arr:o}); else if(o && typeof o==='object') Object.entries(o).forEach(([k,v])=>walk(v, path?path+'.'+k:k)); };
+  walk(d, ''); if(Array.isArray(d) && Array.isArray(d[0])) return {tablas:[{nombre, rows:d}]};
+  return {tablas: arrs.map(a=>{ const keys = [...new Set(a.arr.flatMap(o=>Object.keys(o)))]; return {nombre:`${nombre}${a.path?' › '+a.path:''}`, rows:[keys, ...a.arr.map(o=>keys.map(k=>{ const v = o[k]; return v && typeof v==='object' ? JSON.stringify(v) : v; }))]}; })};
+}
+function xmlATablas(txt, nombre){
+  const doc = new DOMParser().parseFromString(txt, 'application/xml'); if(doc.querySelector('parsererror')) return {tablas:[]};
+  const cuenta = {}; doc.querySelectorAll('*').forEach(el=>{ if(el.children.length && [...el.children].every(c=>!c.children.length)){ cuenta[el.tagName] = (cuenta[el.tagName]||0)+1; } });
+  const tag = Object.entries(cuenta).sort((a,b)=>b[1]-a[1])[0]; if(!tag) return {tablas:[]};
+  const els = [...doc.getElementsByTagName(tag[0])]; const keys = [...new Set(els.flatMap(e=>[...e.children].map(c=>c.tagName)).concat(els.flatMap(e=>[...e.attributes].map(a=>'@'+a.name))))];
+  return {tablas:[{nombre:`${nombre} › ${tag[0]}`, rows:[keys, ...els.map(e=>keys.map(k=>k.startsWith('@') ? e.getAttribute(k.slice(1)) : (e.getElementsByTagName(k)[0]||{}).textContent||''))]}]};
+}
+async function loadAnyFile(file, progress, depth=0){
+  const name = file.name || 'archivo', ext = extDe(name); const res = {tablas:[], fojas:null, avisos:[]};
+  const add = (t) => { res.tablas.push(...(t.tablas||[])); if(t.fojas) res.fojas = t.fojas; };
+  try{
+    if(ext==='zip' || file.type==='application/zip'){
+      if(depth>2) return res;
+      await loadScript(JSZIP_URL); const zip = await JSZip.loadAsync(await file.arrayBuffer());
+      const entries = Object.values(zip.files).filter(f=>!f.dir && !/(^|\/)(__MACOSX|\.)/.test(f.name));
+      for(const en of entries){ progress(`Abriendo ${en.name}…`); const blob = await en.async('blob'); const sub = await loadAnyFile(new File([blob], en.name.split('/').pop()), progress, depth+1); res.tablas.push(...sub.tablas.map(t=>({...t, nombre:`${name} › ${t.nombre}`}))); if(sub.fojas) res.fojas = sub.fojas; }
+      return res;
+    }
+    if(EXT_TABLA.test(name) || /spreadsheet|excel|csv/.test(file.type)){
+      await loadScript(XLSX_URL); const wb = XLSX.read(await file.arrayBuffer(), {type:'array', cellDates:true});
+      wb.SheetNames.forEach(s=>res.tablas.push({nombre: wb.SheetNames.length>1 ? `${name} › ${s}` : name, rows: XLSX.utils.sheet_to_json(wb.Sheets[s], {header:1, raw:true, defval:''})}));
+      return res;
+    }
+    if(ext==='json'){ add(jsonATablas(JSON.parse(await file.text()), name)); return res; }
+    if(ext==='xml'){ add(xmlATablas(await file.text(), name)); if(res.tablas.length) return res; }
+    if(ext==='html' || ext==='htm' || ext==='xhtml' || ext==='mht'){
+      await loadScript(XLSX_URL); const txt = await file.text();
+      try{ const wb = XLSX.read(txt, {type:'string', cellDates:true}); wb.SheetNames.forEach(s=>{ const rows = XLSX.utils.sheet_to_json(wb.Sheets[s], {header:1, raw:true, defval:''}); if(rows.length>1) res.tablas.push({nombre:`${name} › ${s}`, rows}); }); }catch(e){}
+      if(res.tablas.length) return res;
+      res.tablas.push({nombre:name, rows:textoATabla(htmlATexto(txt))}); return res;
+    }
+    let texto = '';
+    if(ext==='rtf') texto = rtfATexto(await file.text());
+    else if(['pdf','docx','txt','text','log','md','sql'].includes(ext) || /^image\//.test(file.type) || /^text\//.test(file.type)){ const r = await readFile(file, (t,p)=>progress(t)); texto = r.text; }
+    else { texto = binarioATexto(await file.arrayBuffer()); res.avisos.push(`${name}: es un formato propio de otro sistema; leímos los textos que contiene. Revisá bien la vista previa.`); }
+    const rows = textoATabla(texto);
+    if(rows.length>1) res.tablas.push({nombre:name, rows});
+    else res.avisos.push(`${name}: no encontramos expedientes adentro.`);
+  }catch(e){ res.avisos.push(`${name}: no se pudo abrir (${e && e.message ? e.message : 'formato no reconocido'}).`); }
+  return res;
+}
+
 // ---------- importar expedientes desde Excel ----------
 const XLSX_URL = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
 const XCAMPOS = [
@@ -663,6 +760,7 @@ const XCAMPOS = [
   ['abogado','Responsable', /(responsable|abogad|letrad|a cargo|analista)/],
   ['inicio','Fecha de inicio', /(inicio|fecha de ingreso|ingreso|alta)/],
   ['monto','Monto', /(monto|importe|valor)/],
+  ['texto','Texto encontrado (se guarda como novedad)', /(texto encontrado|observaci|notas?|comentario)/],
   ['riesgo','Riesgo', /(riesgo)/]
 ];
 let XL = null;
@@ -690,7 +788,8 @@ function xEstado(v){ const s = xNorm(v); if(!s) return null; if(/archiv/.test(s)
 function xRow(r){
   const g = k => XL.map[k]!=null ? r[XL.map[k]] : '';
   const str = k => String(g(k)==null?'':g(k)).trim();
-  const numero = str('numero'), afRaw = str('afiliado');
+  const numero = str('numero'); let afRaw = str('afiliado');
+  if(!afRaw && str('autos')){ const mm = str('autos').match(/^[“"«]?\s*(.+?)\s+c\s*\//i); if(mm) afRaw = mm[1].replace(/\s*\(.*\)\s*$/,''); }
   const afiliado = afRaw ? titleCase(afRaw) : '';
   const dniD = str('dni').replace(/\D/g,''); const dni = dniD.length>=7 ? dniD.replace(/(\d{1,2})(\d{3})(\d{3})$/,'$1.$2.$3') : (str('dni')||'—');
   const prestTxt = str('prestacion'); const sc = scorePrestaciones(prestTxt); const prestacion = PRESTACIONES.find(p=>xNorm(p)===xNorm(prestTxt)) || (sc[0]&&sc[0][0]) || (prestTxt ? 'Otra' : 'Otra');
@@ -702,50 +801,71 @@ function xRow(r){
   const monto = +String(g('monto')||'').replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.') || 0;
   const riesgo = /alto/i.test(str('riesgo')) ? 'alto' : /bajo/i.test(str('riesgo')) ? 'bajo' : 'medio';
   const problemas = [];
-  if(!numero) problemas.push('sin número de expediente');
-  if(!afiliado) problemas.push('sin asociado');
+  if(!numero && !str('autos')) problemas.push('sin número de expediente');
+  if(!afiliado && numero) problemas.push('sin asociado');
   if(numero && (S.exps.some(e=>e.numero.toLowerCase()===numero.toLowerCase()))) problemas.push('ya está cargado');
-  return {numero, afiliado, dni, autos:str('autos'), juzgado:jz, secretaria:str('secretaria'), prestacion, prestTxt, estado, cautelar, vence, plazoDesc, resp, respTxt:str('abogado'), inicio:xDate(g('inicio')), monto, riesgo, problemas};
+  return {texto:str('texto'), numero, afiliado, dni, autos:str('autos'), juzgado:jz, secretaria:str('secretaria'), prestacion, prestTxt, estado, cautelar, vence, plazoDesc, resp, respTxt:str('abogado'), inicio:xDate(g('inicio')), monto, riesgo, problemas};
 }
-async function xLoadFile(file){
-  try{
-    await loadScript(XLSX_URL);
-    const wb = XLSX.read(await file.arrayBuffer(), {type:'array', cellDates:true});
-    XL.wb = wb; XL.sheets = wb.SheetNames; XL.nombre = file.name; xUseSheet(wb.SheetNames[0]);
-  }catch(e){ XL.err = 'No pudimos leer el archivo. Revisá que sea un Excel (.xlsx o .xls) o un .csv, y que tengas conexión a internet.'; drawImport(); }
+async function xLoadFiles(files){
+  files = [...files]; if(!files.length) return;
+  XL.cargando = true; XL.err = ''; XL.avisos = []; drawImport();
+  const prog = t => { const el = $('#xprog'); if(el) el.textContent = t; };
+  const tablas = []; let fojas = null;
+  for(const f of files){ prog(`Leyendo ${f.name}…`); const r = await loadAnyFile(f, prog); tablas.push(...r.tablas.filter(t=>t.rows && t.rows.filter(rr=>rr.some(c=>String(c).trim()!=='')).length>1)); if(r.fojas) fojas = r.fojas; XL.avisos.push(...r.avisos); }
+  XL.cargando = false; XL.nombre = files.map(f=>f.name).join(', ');
+  if(fojas){ const antes = S.exps.length; S = unir(S, await migrate(fojas)); delete S._sumados; save(); const n = S.exps.length - antes; closeModal(); XL = null; render(); toast(n?`Se agregaron ${n} expediente(s) desde el respaldo de Fojas.`:'Ese respaldo no tenía expedientes nuevos.'); return; }
+  if(!tablas.length){ XL.err = 'No encontramos expedientes en ' + (files.length===1?'ese archivo':'esos archivos') + '.'; drawImport(); return; }
+  XL.tablas = tablas; XL.sheets = tablas.map(t=>t.nombre);
+  // se elige la tabla que más se parece a un listado de expedientes
+  const puntaje = t => { const hi = xDetectHeader(t.rows); return (t.rows[hi]||[]).filter(c=>XCAMPOS.some(([,,re])=>re.test(xNorm(c)))).length*10 + Math.min(t.rows.length, 50); };
+  const mejor = [...tablas].sort((a,b)=>puntaje(b)-puntaje(a))[0];
+  xUseSheet(mejor.nombre);
 }
+async function xLoadFile(file){ return xLoadFiles([file]); }
 function xUseSheet(name){
-  const ws = XL.wb.Sheets[name]; const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:''}).filter(r=>r.some(c=>String(c).trim()!==''));
-  const hi = xDetectHeader(rows); XL.sheet = name; XL.head = (rows[hi]||[]).map(c=>String(c).trim()); XL.rows = rows.slice(hi+1); XL.map = xAutoMap(XL.head); XL.step = 2; XL.err = ''; drawImport();
+  const t = XL.tablas.find(x=>x.nombre===name) || XL.tablas[0];
+  const rows = t.rows.map(r=>Array.isArray(r)?r:[r]).filter(r=>r.some(c=>String(c==null?'':c).trim()!==''));
+  const hi = xDetectHeader(rows); XL.sheet = t.nombre; XL.head = (rows[hi]||[]).map(c=>String(c==null?'':c).trim()); XL.rows = rows.slice(hi+1); XL.map = xAutoMap(XL.head); XL.step = 2; XL.err = ''; drawImport();
 }
 function drawImport(){
   const x = XL; let body = '';
   if(x.step===1) body = `
-    <label class="drop" id="xdrop" for="xfile" style="padding:34px 20px">${ic('upload','lg')}<b style="font-size:18px">Arrastrá acá tu planilla de Excel</b><span>.xlsx, .xls o .csv. La primera fila con títulos se toma como encabezado.</span><span class="btn pri" style="margin-top:6px">Elegir planilla</span></label>
-    <input type="file" id="xfile" hidden accept=".xlsx,.xls,.csv,.ods">
+    ${x.cargando?`<div class="notice">${ic('spark')}<div><b>Leyendo los archivos…</b><div class="small muted" id="xprog"></div></div></div>`:`
+    <label class="drop" id="xdrop" for="xfile" style="padding:34px 20px">${ic('upload','lg')}<b style="font-size:18px">Arrastrá acá lo que exportaste del otro sistema</b><span>Cualquier archivo: Excel (cualquier versión), OpenOffice, CSV, dBase, JSON, XML, HTML, PDF, Word, fotos, listados en texto o un ZIP con todo junto. Podés subir varios a la vez.</span><span class="btn pri" style="margin-top:6px">Elegir archivos</span></label>
+    <input type="file" id="xfile" hidden multiple>`}
     ${x.err?`<div class="notice bad">${esc(x.err)}</div>`:''}
+    ${(x.avisos||[]).length?`<div class="notice small">${ic('alert','sm')}<div>${x.avisos.map(esc).join('<br>')}</div></div>`:''}
     <div class="row"><button class="btn sm" data-act="xmodelo">${ic('down','sm')} Descargar planilla modelo</button><span class="small muted">Tiene las columnas que Fojas reconoce. Si tu planilla usa otros nombres, igual podés elegir cuál es cuál.</span></div>`;
   if(x.step===2){
     const parsed = x.rows.map(xRow); const ok = parsed.filter(p=>!p.problemas.length);
     body = `
-    <div class="small muted">${esc(x.nombre)}${x.sheets.length>1?` · Hoja: <select id="xsheet" style="width:auto;display:inline-block;padding:4px 8px">${x.sheets.map(s=>`<option ${s===x.sheet?'selected':''}>${esc(s)}</option>`).join('')}</select>`:''} · ${x.rows.length} fila${x.rows.length===1?'':'s'}</div>
+    <div class="small muted">${x.sheets.length>1?`Tabla: <select id="xsheet" style="width:auto;max-width:100%;display:inline-block;padding:4px 8px">${x.sheets.map(s=>`<option ${s===x.sheet?'selected':''}>${esc(s)}</option>`).join('')}</select>`:esc(x.sheet||x.nombre)} · ${x.rows.length} fila${x.rows.length===1?'':'s'}</div>
+    ${(x.avisos||[]).length?`<div class="notice small">${ic('alert','sm')}<div>${x.avisos.map(esc).join('<br>')}</div></div>`:''}
     <div class="fld">Vista previa <span class="hint">${ok.length} listo${ok.length===1?'':'s'} para importar${parsed.length-ok.length?` · ${parsed.length-ok.length} con problemas (no se importan)`:''}</span>
       <div class="tablewrap"><table style="min-width:640px"><thead><tr><th>Expediente</th><th>Asociado</th><th>Reclama</th><th>Etapa</th><th>Vence</th><th>Estado</th></tr></thead><tbody>
       ${parsed.slice(0,8).map(p=>`<tr><td class="mono small">${esc(p.numero||'—')}</td><td>${esc(p.afiliado||'—')}${p.dni&&p.dni!=='—'?`<div class="small muted">DNI ${esc(p.dni)}</div>`:''}</td><td class="small">${esc(p.prestacion)}</td><td class="small">${esc(p.estado)}${p.cautelar?' · con cautelar':''}</td><td class="small">${p.vence?fmt(p.vence):'—'}</td><td>${p.problemas.length?`<span class="pill red">${esc(p.problemas.join(', '))}</span>`:'<span class="pill grn">OK</span>'}</td></tr>`).join('')}
       </tbody></table></div>${parsed.length>8?`<span class="hint">Y ${parsed.length-8} fila(s) más.</span>`:''}</div>
     <details class="card" style="box-shadow:none;padding:14px" ${x.map.numero==null||x.map.afiliado==null?'open':''}><summary style="cursor:pointer;font-weight:700">Qué columna es cada dato <span class="hint">(${Object.keys(x.map).length} reconocidas por el título; tocá para revisar o cambiar)</span></summary><div class="fld" style="margin-top:10px">
       <div class="form" style="grid-template-columns:1fr 1fr">${XCAMPOS.map(([k,l,,req])=>`<label>${l}${req?' *':''}<select data-xmap="${k}"><option value="">— No está en la planilla —</option>${x.head.map((h,i)=>`<option value="${i}" ${x.map[k]===i?'selected':''}>${esc(h||`Columna ${i+1}`)}</option>`).join('')}</select></label>`).join('')}</div></div></details>
-    <div class="row" style="justify-content:space-between"><button class="btn" data-act="xback">${ic('back','sm')} Elegir otra planilla</button><button class="btn ok big" data-act="ximport" ${ok.length?'':'disabled'}>${ic('check')} Importar ${ok.length} expediente${ok.length===1?'':'s'}</button></div>`;
+    <div class="row" style="justify-content:space-between"><button class="btn" data-act="xback">${ic('back','sm')} Elegir otros archivos</button><div class="row">${x.tablas && x.tablas.length>1?(()=>{ const n = xTodas().length; return `<button class="btn big" data-act="ximportall" ${n?'':'disabled'}>${ic('check')} Importar todo: ${n} de ${x.tablas.length} tablas</button>`; })():''}<button class="btn ok big" data-act="ximport" ${ok.length?'':'disabled'}>${ic('check')} Importar ${ok.length} expediente${ok.length===1?'':'s'}${x.tablas && x.tablas.length>1?' de esta tabla':''}</button></div></div>`;
   }
-  showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:22px">Importar expedientes desde Excel</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div>${body}`);
+  showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:22px">Migrar expedientes desde otro sistema</h2><button class="btn ghost sm" data-act="close">Cancelar</button></div>${body}`);
   $('#modal').classList.add('wide');
 }
-function xImport(){
-  const parsed = XL.rows.map(xRow).filter(p=>!p.problemas.length);
+function xTodas(){
+  const save0 = {map:XL.map, head:XL.head, rows:XL.rows}; const out = [];
+  XL.tablas.forEach(t=>{ const rows = t.rows.map(r=>Array.isArray(r)?r:[r]).filter(r=>r.some(c=>String(c==null?'':c).trim()!=='')); const hi = xDetectHeader(rows);
+    XL.head = (rows[hi]||[]).map(c=>String(c==null?'':c).trim()); XL.rows = rows.slice(hi+1); XL.map = t.nombre===XL.sheet ? save0.map : xAutoMap(XL.head);
+    XL.rows.map(xRow).filter(p=>!p.problemas.length).forEach(p=>out.push(p)); });
+  Object.assign(XL, save0);
+  const vistos = new Set(); return out.filter(p=>{ const k = (p.numero||p.autos||p.afiliado).toLowerCase(); if(vistos.has(k)) return false; vistos.add(k); return true; });
+}
+function xImport(todas){
+  const parsed = todas ? xTodas() : XL.rows.map(xRow).filter(p=>!p.problemas.length);
   const vistos = new Set(); let n = 0;
   parsed.forEach(p=>{
-    if(vistos.has(p.numero.toLowerCase())) return; vistos.add(p.numero.toLowerCase());
-    const x = {id:S.nextId++, numero:p.numero, afiliado:p.afiliado, dni:p.dni, prestacion:p.prestacion, detalle:p.prestTxt && p.prestTxt!==p.prestacion ? p.prestTxt : '', juzgado:p.juzgado, secretaria:p.secretaria, estado:p.estado, riesgo:p.riesgo, abogado:(p.resp||me()).id, inicio:p.inicio||iso(today()), monto:p.monto, cautelar:p.cautelar, plazos:[], movimientos:[{fecha:iso(today()), tipo:'Interno', desc:`Expediente importado desde la planilla ${XL.nombre}.`, user:S.user}], docs:[], flags:{}};
+    const clave = (p.numero||p.autos||p.afiliado).toLowerCase(); if(vistos.has(clave)) return; vistos.add(clave);
+    const x = {id:S.nextId++, numero:p.numero || `S/N ${randId(3).toUpperCase()}`, afiliado:p.afiliado, dni:p.dni, prestacion:p.prestacion, detalle:p.prestTxt && p.prestTxt!==p.prestacion ? p.prestTxt : '', juzgado:p.juzgado, secretaria:p.secretaria, estado:p.estado, riesgo:p.riesgo, abogado:(p.resp||me()).id, inicio:p.inicio||iso(today()), monto:p.monto, cautelar:p.cautelar, plazos:[], movimientos:[{fecha:iso(today()), tipo:'Interno', desc:`Expediente migrado desde ${XL.nombre}.${p.texto?' Datos de origen: '+p.texto.slice(0,300):''}`, user:S.user}], docs:[], flags:{}};
     x.caratula = p.autos || `${x.afiliado} c/ ${titleCase(cfg().empresa).replace(/\bS\.?\s?a\.?(?=\s|$)/g,'S.A.')} s/ amparo de salud`;
     if(p.vence) x.plazos.push({desc:p.plazoDesc || 'Vencimiento cargado desde la planilla', vence:p.vence, hecho:false});
     S.exps.push(x); n++;
@@ -1152,7 +1272,7 @@ function vAmparos(){
   const list = all.filter(F[ui.filtro].f).sort((a,b)=>{ const pa=nextPlazo(a), pb=nextPlazo(b); return (pa?pa.vence:'9999').localeCompare(pb?pb.vence:'9999'); });
   return `
   <div class="head"><div><h1>Amparos</h1><p class="sub">Tocá cualquier amparo para ver todo lo que tiene. Los más urgentes aparecen primero.</p></div>
-    <div class="row"><button class="btn big" data-act="ximportar">${ic('upload')} Importar desde Excel</button><button class="btn pri big" data-act="nuevo">${ic('plus')} Nuevo expediente</button></div></div>
+    <div class="row"><button class="btn big" data-act="ximportar">${ic('upload')} Importar / migrar</button><button class="btn pri big" data-act="nuevo">${ic('plus')} Nuevo expediente</button></div></div>
   <div class="chips">${Object.entries(F).map(([k,v])=>`<button class="chipbtn ${ui.filtro===k?'on':''}" data-filtro="${k}">${v.l} <span class="badge">${all.filter(v.f).length}</span></button>`).join('')}</div>
   <div class="cases">${list.map(e=>{ const p=nextPlazo(e); const n=p?daysTo(p.vence):null; const u=p?urg(n):''; return `
     <div class="case" data-go="expediente-${e.id}" tabindex="0" role="link">
@@ -1461,7 +1581,7 @@ function vRespaldo(){
       <div><button class="btn sm" data-act="copybk">${ic('copy','sm')} Copiar la copia</button></div>
     </section>
     <section class="card"><div class="row"><div class="ico v">${ic('upload')}</div><h2>Traer expedientes de otro sistema</h2></div>
-      <div class="row"><button class="btn pri" data-act="ximportar">${ic('upload','sm')} Importar desde Excel</button><span class="small muted">La forma más simple: subís la planilla y Fojas reconoce las columnas.</span></div>
+      <div class="row"><button class="btn pri" data-act="ximportar">${ic('upload','sm')} Migrar desde otro sistema</button><span class="small muted">Subís lo que exportaste (cualquier archivo) y Fojas reconoce los expedientes.</span></div>
       <p class="muted small">También podés pegar una planilla como texto. Columnas: número, afiliado, prestación, juzgado y estado, separadas por punto y coma.</p>
       <textarea id="csvIn" rows="6" class="small" style="font-family:var(--f-mono)" placeholder="numero;afiliado;prestacion;juzgado;estado"></textarea>
       <div class="row"><button class="btn" data-act="csvsample">Ver un ejemplo</button><button class="btn pri" data-act="csvimport">Traer expedientes</button></div>
@@ -2364,7 +2484,8 @@ document.addEventListener('click', async ev => {
   if(a==='close') closeModal();
   if(a==='ximportar') openImportExcel();
   if(a==='xback' && XL){ XL.step = 1; drawImport(); }
-  if(a==='ximport' && XL) xImport();
+  if(a==='ximport' && XL) xImport(false);
+  if(a==='ximportall' && XL) xImport(true);
   if(a==='xmodelo') xModelo();
   if(a==='editdatos'){ const x = expById(d.e); if(x) openEditDatos(x); }
   if(a==='savedatos'){ const x = expById(d.e); if(!x) return; const v = id => $('#'+id).value.trim();
@@ -2495,7 +2616,7 @@ document.addEventListener('change', async ev => {
   const t = ev.target; const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
   if(t.id==='fileIn' && e) addFiles(e, t.files);
   if(t.id==='mfile') addModels(t.files);
-  if(t.id==='xfile' && XL && t.files[0]) xLoadFile(t.files[0]);
+  if(t.id==='xfile' && XL && t.files.length) xLoadFiles(t.files);
   if(t.id==='xsheet' && XL) xUseSheet(t.value);
   if(t.dataset && t.dataset.xmap && XL){ const v = t.value; if(v==='') delete XL.map[t.dataset.xmap]; else XL.map[t.dataset.xmap] = +v; drawImport(); }
   if(t.id==='bkfile' && t.files[0]) importBackupFile(t.files[0]);
@@ -2541,7 +2662,7 @@ async function addFiles(e, files){
 document.addEventListener('toggle', ev => { const d = ev.target; if(d.matches && d.matches('details[data-sugkey]')){ if(d.open) ui.openSug = d.dataset.sugkey; else if(ui.openSug===d.dataset.sugkey) ui.openSug = null; } if(d.matches && d.matches('details[data-member]')) ui.open[d.dataset.member] = d.open; }, true);
 document.addEventListener('dragover', ev => { const xd = ev.target.closest('#xdrop'); if(xd){ ev.preventDefault(); xd.classList.add('over'); return; } const md = ev.target.closest('#mdrop'); if(md){ ev.preventDefault(); md.classList.add('over'); return; } const wz = ev.target.closest('#wdrop'); if(wz){ ev.preventDefault(); wz.classList.add('over'); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); dz.classList.add('over'); } });
 document.addEventListener('dragleave', ev => { const wz = ev.target.closest('#wdrop'); if(wz) wz.classList.remove('over'); const dz = ev.target.closest('#drop'); if(dz) dz.classList.remove('over'); });
-document.addEventListener('drop', ev => { const xd = ev.target.closest('#xdrop'); if(xd && XL){ ev.preventDefault(); if(ev.dataTransfer.files[0]) xLoadFile(ev.dataTransfer.files[0]); return; } const md = ev.target.closest('#mdrop'); if(md){ ev.preventDefault(); md.classList.remove('over'); addModels(ev.dataTransfer.files); return; } const wz = ev.target.closest('#wdrop'); if(wz && W){ ev.preventDefault(); wProcess(ev.dataTransfer.files); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); const e = expById(route().id); if(e) addFiles(e, ev.dataTransfer.files); } });
+document.addEventListener('drop', ev => { const xd = ev.target.closest('#xdrop'); if(xd && XL){ ev.preventDefault(); if(ev.dataTransfer.files.length) xLoadFiles(ev.dataTransfer.files); return; } const md = ev.target.closest('#mdrop'); if(md){ ev.preventDefault(); md.classList.remove('over'); addModels(ev.dataTransfer.files); return; } const wz = ev.target.closest('#wdrop'); if(wz && W){ ev.preventDefault(); wProcess(ev.dataTransfer.files); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); const e = expById(route().id); if(e) addFiles(e, ev.dataTransfer.files); } });
 
 document.addEventListener('input', ev => {
   const t = ev.target;
