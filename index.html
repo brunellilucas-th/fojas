@@ -947,6 +947,138 @@ function vPapelera(){
     : `<div class="empty"><div class="ico g">${ic('check','lg')}</div><b>La papelera está vacía</b></div>`}</section>`;
 }
 
+// ---------- subir un documento al expediente e indicar a qué corresponde ----------
+const UP_TIPOS = [
+  {id:'cedula', l:'Cédula / notificación del juzgado', doc:'Cédula de notificación', mov:'Notificación'},
+  {id:'resolucion', l:'Resolución o providencia', doc:'Resolución', mov:'Resolución'},
+  {id:'cautelar', l:'Medida cautelar otorgada', doc:'Resolución', mov:'Resolución'},
+  {id:'sentencia', l:'Sentencia', doc:'Resolución', mov:'Resolución'},
+  {id:'propio', l:'Escrito que presentamos', doc:'Escrito propio', mov:'Escrito propio'},
+  {id:'actora', l:'Escrito de la otra parte', doc:'Escrito de la actora', mov:'Escrito de la actora'},
+  {id:'prueba', l:'Prueba / documental', doc:'Prueba documental', mov:'Interno'},
+  {id:'cumplimiento', l:'Constancia de cumplimiento', doc:'Constancia de cumplimiento', mov:'Interno'},
+  {id:'otro', l:'Otro', doc:'Otro documento', mov:'Interno'}
+];
+let UP = null;
+const MESES = {enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,setiembre:9,octubre:10,noviembre:11,diciembre:12};
+function fechaDelTexto(t){ const m = String(t||'').match(/\b(\d{1,2})\s+de\s+(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre)\s+(?:de|del)\s+(\d{4})/i); if(m) return `${m[3]}-${String(MESES[m[2].toLowerCase()]).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`; const m2 = String(t||'').match(/\b(\d{1,2})\/(\d{1,2})\/(20\d{2})\b/); if(m2) return `${m2[3]}-${m2[2].padStart(2,'0')}-${m2[1].padStart(2,'0')}`; return null; }
+function upTipoSugerido(text, name){
+  const t = String(text||'') + ' ' + name;
+  if(/\bFALLO\b|\bSENTENCIA\b(?!\s+del?\s)|RESUELVO[\s\S]{0,200}hacer lugar a la (acci[oó]n|demanda)/i.test(t) && /sentencia/i.test(t)) return 'sentencia';
+  if(/hacer lugar|h[aá]gase lugar|decr[eé]tase/i.test(t) && /cautelar|precautoria|innovar/i.test(t)) return 'cautelar';
+  if(/c[eé]dula\s+de\s+notificaci|oficio/i.test(t)) return 'cedula';
+  if(/constancia|remito|autorizaci[oó]n\s+n|entrega\s+de\s+la\s+prestaci/i.test(t)) return 'cumplimiento';
+  if(/(salud integral demo|en mi car[aá]cter de apoderad|por la demandada|mi mandante)/i.test(t)) return 'propio';
+  if(/(promuev|por derecho propio|la actora|parte actora)/i.test(t) && /(se[ñn]or\s+juez|petitorio)/i.test(t)) return 'actora';
+  if(/(prescrip|historia cl[ií]nica|certificado|estudio|presupuesto)/i.test(t)) return 'prueba';
+  if(/(prove[ií]do|providencia|t[eé]ngase|agr[eé]guese|resuelvo|autos y vistos|atento\s+(el|lo)|notif[ií]quese|h[aá]gase saber|c[oó]rrase|[aá]brase|l[ií]brese|req[uú]i[eé]rase)/i.test(t)) return 'resolucion';
+  return 'otro';
+}
+function upResumen(text, tipo){
+  if(tipo==='propio'){ const t1 = String(text||'').split('\n').map(s=>s.trim()).find(s=>s.length>8 && s===s.toUpperCase() && /[A-ZÁÉÍÓÚ]{4}/.test(s)); if(t1) return 'Se presentó el escrito: ' + t1.charAt(0) + t1.slice(1).toLowerCase(); }
+  const one = String(text||'').replace(/\[P[aá]gina \d+\]/g,' ').replace(/\s+/g,' ').trim();
+  const frases = one.split(/(?<=[.;])\s+/);
+  const clave = frases.find(f=>/(h[aá]gase lugar|hacer lugar|ord[eé]n|int[ií]m|requi[eé]rase|c[oó]rrase traslado|t[eé]ngase|[aá]br[ae]|autos para sentencia|archív|resuelvo|fallo|rechaz|acredita|apela|informe)/i.test(f) && f.length>25);
+  return (clave || frases.find(f=>f.length>30 && !/^[A-ZÁÉÍÓÚa-z ]+,\s*\d{1,2}\s+de\s+\w+\s+de\s+\d{4}\.?$/.test(f)) || '').replace(/^(?:Buenos Aires|[A-ZÁÉÍÓÚ][a-záéíóú]+(?:\s[A-ZÁÉÍÓÚ][a-záéíóú]+)*),\s*\d{1,2}\s+de\s+\w+\s+de\s+\d{4}\.?\s*/,'').replace(/^(?:[A-Z]{3}\s*\d+\/\d{4}\s*)/,'').slice(0,220);
+}
+function upSugerir(){
+  const u = UP, it = u.queue[u.i], e = expById(u.exp); const text = it.text||'';
+  const x = text ? extractFields(text, [{text, tipo:UP_TIPOS.find(t=>t.id===u.tipo).doc}]) : {};
+  const ac = {etapa:{on:false, val:e.estado}, cautelar:{on:false}, plazos:[], cumplir:[]};
+  const idx = s => ESTADOS.indexOf(s), cur = idx(e.estado);
+  const proponer = s => { if(idx(s) > cur || s==='Archivado'){ ac.etapa = {on:true, val:s}; } };
+  if(u.tipo==='cautelar' || (x.cautelar && /cedula|resolucion/.test(u.tipo))){ if(!e.cautelar) ac.cautelar.on = true; proponer('Cautelar otorgada'); }
+  if(u.tipo==='sentencia') proponer('Sentencia');
+  if(/abr[ae]\w*\s+a\s+prueba|[aá]brase\s+a\s+prueba|apertura\s+a\s+prueba/i.test(text)) proponer('En prueba');
+  if(/autos?\s+para\s+sentencia|pasen\s+los\s+autos\s+a\s+(dictar\s+)?sentencia|llamamiento\s+de\s+autos/i.test(text)) proponer('Para sentencia');
+  if(/arch[ií]vese|arch[ií]vense|archivo\s+de\s+las\s+actuaciones/i.test(text)) proponer('Archivado');
+  if(/informe\s+circunstanciado|art(?:[ií]culo|\.)?\s*8/i.test(text) && /cedula|resolucion/.test(u.tipo) && cur < idx('Informe art. 8 pendiente') && !e.cautelar) proponer('Informe art. 8 pendiente');
+  // plazos nuevos que da el juzgado
+  if(/cedula|resolucion|cautelar|sentencia/.test(u.tipo)){
+    const nuevos = [];
+    if(x.plazoDesc && x.plazoFecha) nuevos.push({desc:x.plazoDesc, vence:x.plazoFecha, regla:x.plazoRegla, nota:x.plazoNota});
+    (x.extra||[]).forEach(p=>nuevos.push(p));
+    if(u.tipo==='sentencia' && !nuevos.length){ const r = {modo:'habiles', cant:5, desde:iso(today())}; nuevos.push({desc:'Evaluar apelación de la sentencia', vence:calcPlazo(r).vence, regla:r, nota:'Te proponemos 5 días hábiles para evaluar la apelación. Verificá el plazo que corresponda.'}); }
+    const fd = fechaDelTexto(text); if(fd && fd > iso(today())) nuevos.forEach(p=>{ if(p.regla){ p.regla = {...p.regla, desde:fd}; p.vence = calcPlazo(p.regla).vence; p.nota = (p.nota||'').replace('desde hoy', `desde la fecha del documento (${fmt(fd)})`); } });
+    nuevos.forEach(p=>{ if(!e.plazos.some(q=>!q.hecho && q.desc===p.desc)) ac.plazos.push({on:true, ...p}); });
+  }
+  // plazos pendientes que este documento cumple
+  const pend = e.plazos.map((p,i)=>({p,i})).filter(o=>!o.p.hecho);
+  const marcar = re => pend.filter(o=>re.test(o.p.desc)).forEach(o=>{ if(!ac.cumplir.some(c=>c.idx===o.i)) ac.cumplir.push({on:true, idx:o.i, desc:o.p.desc}); });
+  if(u.tipo==='propio'){
+    if(/informe|circunstanciado/i.test(text)) marcar(/informe/i);
+    if(/acredit\w*\s+cumplimiento|cumplimiento\s+de\s+(la\s+)?medida/i.test(text)) marcar(/cautelar|intimaci/i);
+    if(/apela|recurso/i.test(text)) marcar(/apela/i);
+    if(/contesta|traslado/i.test(text)) marcar(/traslado/i);
+    if(/pr[oó]rroga|ampliaci[oó]n\s+de\s+plazo/i.test(text)) {}
+  }
+  if(u.tipo==='cumplimiento') marcar(/cautelar|intimaci|cumplir/i);
+  u.ac = ac;
+  if(!u.descEditada) u.desc = upResumen(text, u.tipo) || `Se incorpora ${UP_TIPOS.find(t=>t.id===u.tipo).l.toLowerCase()}: ${it.file.name}.`;
+  if(!u.fechaEditada) u.fecha = fechaDelTexto(text) || iso(today());
+}
+async function addFiles(e, files){
+  files = [...files]; if(!files.length) return;
+  toast(files.length===1?'Leyendo el documento completo…':`Leyendo ${files.length} documentos completos…`);
+  const queue = [];
+  for(const f of files){
+    let r = {text:'', paginas:null}; try{ r = await readFile(f, (t)=>{ const el = $('#toast'); if(el){ const s = el.querySelector('span'); if(s) s.textContent = `${f.name}: ${t}`; el.classList.add('show'); clearTimeout(toast.t); } }); }catch(err){}
+    const pv = randId(6); PREVIEW[pv] = {file:f, text:r.text||''};
+    queue.push({file:f, text:r.text||'', paginas:r.paginas||null, pv});
+  }
+  $('#toast').classList.remove('show');
+  UP = {exp:e.id, queue, i:0};
+  upStart();
+}
+function upStart(){ const it = UP.queue[UP.i]; UP.tipo = upTipoSugerido(it.text, it.file.name); UP.tipoSug = UP.tipo; UP.descEditada = false; UP.fechaEditada = false; upSugerir(); drawUp(); }
+function drawUp(){
+  const u = UP, it = u.queue[u.i], e = expById(u.exp), ac = u.ac;
+  const cambios = (ac.etapa.on && ac.etapa.val!==e.estado ? 1:0) + (ac.cautelar.on?1:0) + ac.plazos.filter(p=>p.on).length + ac.cumplir.filter(c=>c.on).length;
+  showModal(`
+    <div class="row" style="justify-content:space-between"><span class="small muted">${u.queue.length>1?`Documento ${u.i+1} de ${u.queue.length} · `:''}${esc(e.afiliado)} · ${esc(e.numero)}</span><button class="btn ghost sm" data-act="upcancel">Cancelar</button></div>
+    <div class="docrow"><div class="ico a" style="width:40px;height:40px">${ic('file')}</div><div style="flex:1;min-width:0"><b style="word-break:break-all">${esc(it.file.name)}</b><div class="small muted">${it.paginas?`${it.paginas} página${it.paginas>1?'s':''} leída${it.paginas>1?'s':''}`:(it.text?'Leído':'No se pudo leer el contenido')}</div></div><button type="button" class="btn sm" data-act="upver">${ic('search','sm')} Ver</button></div>
+    <h2 style="font-size:22px">¿A qué corresponde este documento?</h2>
+    <div class="opts">${UP_TIPOS.map(t=>`<button type="button" class="opt ${u.tipo===t.id?'on':''}" data-uptipo="${t.id}">${esc(t.l)}${u.tipoSug===t.id&&it.text?'<div class="small" style="font-weight:500;opacity:.75;margin-top:2px">Sugerido por el contenido</div>':''}</button>`).join('')}</div>
+    <div class="form">
+      <label>Fecha del documento<input type="date" id="upFecha" value="${u.fecha}"></label>
+      <label class="full">Qué dice, en una línea <span class="hint">queda como novedad del expediente</span><input type="text" id="upDesc" value="${esc(u.desc)}"></label>
+    </div>
+    <div class="fld">Qué se actualiza en el expediente <span class="hint">${cambios?'Lo propusimos según el tipo y lo que dice el documento. Destildá lo que no corresponda.':'Este documento no cambia nada más: queda guardado y como novedad.'}</span>
+      <div class="list">
+        <label class="li switch" style="font-weight:500"><span><input type="checkbox" checked disabled> Guardar el documento y agregar la novedad</span></label>
+        <label class="li switch" style="font-weight:500;align-items:center"><span><input type="checkbox" data-upac="etapa" ${ac.etapa.on?'checked':''}> Cambiar la etapa a</span><select id="upEtapa" style="max-width:260px">${ESTADOS.map(s=>`<option ${s===ac.etapa.val?'selected':''}>${s}</option>`).join('')}</select></label>
+        ${!e.cautelar?`<label class="li switch" style="font-weight:500"><span><input type="checkbox" data-upac="cautelar" ${ac.cautelar.on?'checked':''}> Registrar que hay medida cautelar <span class="hint">(la etapa se pone en verde)</span></span></label>`:''}
+        ${ac.plazos.map((p,k)=>`<div class="li" style="flex-direction:column;align-items:stretch;gap:6px"><label class="switch" style="font-weight:500"><input type="checkbox" data-upplazo="${k}" ${p.on?'checked':''}> Agendar plazo:</label>
+          <div class="row"><input type="text" data-upplazodesc="${k}" value="${esc(p.desc)}" style="flex:1;min-width:200px"><input type="date" data-upplazovence="${k}" value="${p.vence}" style="max-width:180px"></div>
+          ${p.nota?`<span class="hint">${esc(p.nota)}</span>`:''}</div>`).join('')}
+        ${ac.cumplir.map((c,k)=>`<label class="li switch" style="font-weight:500"><span><input type="checkbox" data-upcumplir="${k}" ${c.on?'checked':''}> Marcar como cumplido: «${esc(c.desc)}»</span></label>`).join('')}
+        <div class="li"><button type="button" class="btn sm ghost" data-act="upaddplazo">${ic('plus','sm')} Agendar otro plazo</button></div>
+      </div></div>
+    <div class="row" style="justify-content:space-between"><span></span><button class="btn ok big" data-act="upsave">${ic('check')} Guardar${u.queue.length>1 && u.i<u.queue.length-1?' y seguir':''}</button></div>`);
+}
+function upRead(){
+  const u = UP; const f = $('#upFecha'), d = $('#upDesc'), et = $('#upEtapa');
+  if(f && f.value !== u.fecha){ u.fecha = f.value; u.fechaEditada = true; } if(d && d.value !== u.desc){ u.desc = d.value; u.descEditada = true; }
+  if(et) u.ac.etapa.val = et.value;
+  document.querySelectorAll('[data-upplazodesc]').forEach(el=>u.ac.plazos[+el.dataset.upplazodesc].desc = el.value);
+  document.querySelectorAll('[data-upplazovence]').forEach(el=>{ const p = u.ac.plazos[+el.dataset.upplazovence]; if(el.value!==p.vence){ p.vence = el.value; p.regla = null; } });
+}
+async function upSave(){
+  upRead(); const u = UP, it = u.queue[u.i], e = expById(u.exp), ac = u.ac, tipo = UP_TIPOS.find(t=>t.id===u.tipo);
+  const fid = await saveFileBlob(it.file, it.text);
+  e.docs.push({nombre:it.file.name, fid, tipo:tipo.doc, fecha:u.fecha||iso(today()), paginas:it.paginas, size: it.file.size>1e6?(it.file.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(it.file.size/1000))+' KB'});
+  e.movimientos.push({fecha:u.fecha||iso(today()), tipo:tipo.mov, desc:u.desc || `Se incorpora ${tipo.l.toLowerCase()}.`, user:S.user});
+  if(it.text){ const nf = flagsFromText(it.text); e.flags = e.flags || {}; for(const k in nf) if(nf[k]) e.flags[k] = true; }
+  const hechos = [`documento guardado como ${tipo.l.toLowerCase()}`];
+  if(ac.cautelar.on && !e.cautelar){ e.cautelar = true; hechos.push('medida cautelar registrada'); }
+  if(ac.etapa.on && ac.etapa.val!==e.estado){ const old = e.estado; e.estado = ac.etapa.val; if(e.estado==='Cautelar otorgada') e.cautelar = true; audit('Cambió la etapa', e.numero, `${old} → ${e.estado} (por ${it.file.name})`); hechos.push(`etapa: ${e.estado}`); }
+  ac.cumplir.filter(c=>c.on).forEach(c=>{ const p = e.plazos[c.idx]; if(p && !p.hecho){ p.hecho = true; audit('Marcó como hecho', e.numero, `${p.desc} (por ${it.file.name})`); hechos.push(`cumplido: ${p.desc}`); } });
+  ac.plazos.filter(p=>p.on && p.desc && p.vence).forEach(p=>{ e.plazos.push({desc:p.desc, vence:p.vence, hecho:false, ...(p.regla?{regla:p.regla}:{})}); audit('Agendó un plazo', e.numero, `${p.desc} (${fmt(p.vence)}), por ${it.file.name}`); hechos.push(`plazo: ${p.desc} (${fmt(p.vence)})`); });
+  save(); audit('Subió un documento', e.numero, `${it.file.name} · ${hechos.join(' · ')}`);
+  if(u.i < u.queue.length-1){ u.i++; upStart(); toast('Guardado. Seguimos con el próximo documento.'); }
+  else { UP = null; closeModal(); ui.tab = 'documentos'; render(); toast(`Expediente actualizado: ${hechos.join(' · ')}.`); }
+}
+
 // ---------- visor de documentos ----------
 const PREVIEW = {};   // archivos del asistente que todavía no se guardaron
 async function saveFileBlob(file, text){ const fid = randId(8); try{ await IDB.putFile(fid, {blob:file, name:file.name, type:file.type||'', text:text||'', fecha:new Date().toISOString()}); return fid; }catch(e){ return null; } }
@@ -1339,7 +1471,7 @@ function vExpediente(id){
     <div class="timeline">${[...e.movimientos].sort((a,b)=>b.fecha.localeCompare(a.fecha)).map(m=>`
       <div class="tl"><div><b>${fmt(m.fecha)}</b></div><div><span class="pill">${esc(m.tipo)}</span> ${esc(m.desc)}<div class="small muted">Lo cargó ${esc(userName(m.user))}</div></div></div>`).join('')}</div>`;
   if(t==='documentos') body = `
-    <label class="drop" id="drop" for="fileIn">${ic('upload','lg')}<b>Arrastrá archivos acá o tocá para elegirlos</b><span class="small">PDF, Word o imágenes. Se guarda el archivo completo y lo podés ver cuando quieras.</span></label>
+    <label class="drop" id="drop" for="fileIn">${ic('upload','lg')}<b>Subí un documento nuevo del expediente</b><span class="small">Arrastralo acá o tocá para elegirlo. Después te preguntamos a qué corresponde (cédula, resolución, sentencia, escrito, prueba…) y actualizamos el expediente.</span></label>
     <input type="file" id="fileIn" multiple hidden>
     <div>${e.docs.map((d,di)=>`<div class="doc"><div class="ico a" style="width:40px;height:40px">${ic('file')}</div><div style="flex:1;min-width:0"><button class="linkbtn" data-act="vdoc" data-e="${e.id}" data-di="${di}"><b>${esc(d.nombre)}</b></button><div class="small muted">${esc(d.tipo)} · ${fmt(d.fecha)} · ${esc(d.size)}${d.paginas?` · ${d.paginas} página${d.paginas>1?'s':''} leída${d.paginas>1?'s':''}`:''}</div></div><button class="btn sm" data-act="vdoc" data-e="${e.id}" data-di="${di}">${ic('search','sm')} Ver</button>${canDelete(e)?`<button class="btn sm ghost danger" data-act="deldoc" data-e="${e.id}" data-di="${di}" title="Eliminar documento" aria-label="Eliminar ${esc(d.nombre)}">${ic('trash','sm')} Eliminar</button>`:''}</div>`).join('') || '<div class="empty small">Todavía no hay documentos.</div>'}</div>`;
   if(t==='plazos') body = `
@@ -2019,7 +2151,8 @@ function extractPlazos(text, hayCautelar){
     let m; RE.lastIndex = 0; while((m = RE.exec(fr))){ const n = toNum(m[1]) || toNum(m[2]); if(n) cands.push({n, unidad:m[3].toLowerCase(), txt:m[0]}); }
     REORD.lastIndex = 0; while((m = REORD.exec(fr))){ const n = ORD[m[1].toLowerCase()] || ORD[m[1].toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')]; if(n) cands.push({n, unidad:'días', txt:m[0]}); }
     if(!cands.length) continue;
-    let tipo = /informe|art(?:[ií]culo|\.)?\s*8\b|circunstanciado/i.test(fr) ? 'informe'
+    let tipo = /[aá]br\w*\s+a\s+prueba|per[ií]odo\s+de\s+prueba|apertura\s+a\s+prueba/i.test(fr) ? 'prueba'
+      : /informe|art(?:[ií]culo|\.)?\s*8\b|circunstanciado/i.test(fr) ? 'informe'
       : /cautelar|precautoria|innovar/i.test(fr) || (hayCautelar && /otorg|cobertura|provea|suministr|autoric|entreg/i.test(fr)) ? 'cautelar'
       : /int[ií]m/i.test(fr) ? 'intimacion' : /traslado|contest/i.test(fr) ? 'traslado' : 'otro';
     if(tipo==='cautelar' && !hayCautelar) tipo = 'intimacion';
@@ -2028,7 +2161,7 @@ function extractPlazos(text, hayCautelar){
     const modo = /hora|hs/.test(c0.unidad) ? 'horas' : /corrid/.test(c0.unidad) ? 'corridos' : 'habiles';
     const regla = {modo, cant:c0.n, desde:iso(today())};
     const calc = calcPlazo(regla);
-    const desc = {cautelar:'Cumplir medida cautelar', informe:'Presentar informe art. 8 Ley 16.986', intimacion:'Cumplir intimación', traslado:'Contestar traslado', otro:'Cumplir lo ordenado por el juzgado'}[tipo];
+    const desc = {cautelar:'Cumplir medida cautelar', informe:'Presentar informe art. 8 Ley 16.986', intimacion:'Cumplir intimación', traslado:'Contestar traslado', prueba:'Producir la prueba ofrecida (período de prueba)', otro:'Cumplir lo ordenado por el juzgado'}[tipo];
     const cita = fr.length > 170 ? '…' + fr.slice(Math.max(0, fr.indexOf(c0.txt) - 70), fr.indexOf(c0.txt) + c0.txt.length + 40).trim() + '…' : fr.trim();
     const como = modo==='horas' ? `${c0.n} horas corridas` : modo==='corridos' ? `${c0.n} días corridos` : `${c0.n} días hábiles judiciales, desde el día siguiente a la notificación y salteando fines de semana y feriados nacionales`;
     out.push({tipo, desc, regla, vence:calc.vence, nota:`El documento dice: «${cita}». Lo contamos como ${como}, desde hoy. Si te notificaron otro día, cambiá la fecha.${calc.aviso?' '+calc.aviso:''}`});
@@ -2083,7 +2216,7 @@ function extractFields(raw, docsInfo){
   if(f.cautelar) f.estado = 'Cautelar otorgada'; else if(informe) f.estado = 'Informe art. 8 pendiente'; else if(/int[ií]m|traslado/i.test(one)) f.estado = 'Intimación recibida';
   // plazos que da el juzgado
   const pl = extractPlazos(t, f.cautelar);
-  const orden = ['cautelar','informe','intimacion','traslado','otro'];
+  const orden = ['cautelar','informe','intimacion','traslado','prueba','otro'];
   pl.sort((a,b)=>orden.indexOf(a.tipo)-orden.indexOf(b.tipo));
   if(pl.length){ const p = pl[0]; f.plazoDesc = p.desc; f.plazoFecha = p.vence; f.plazoRegla = p.regla; f.plazoNota = p.nota; f.extra = pl.slice(1).map(x=>({desc:x.desc, vence:x.vence, hecho:false, regla:x.regla, nota:x.nota})); }
   else if(f.cautelar){ f.plazoDesc = 'Cumplir medida cautelar'; }
@@ -2461,6 +2594,7 @@ document.addEventListener('click', async ev => {
   if(pe && PE){ peRead(); PE[pe.dataset.pe] = pe.dataset.pe==='cant' ? +pe.dataset.v : pe.dataset.v; drawPlazoEditor(); return; }
   const vm = ev.target.closest('[data-vmode]'); if(vm && VIEW){ VIEW.modo = vm.dataset.vmode; drawViewer(); return; }
   const aa = ev.target.closest('[data-autoalt]'); if(aa && W){ wRead(); const x = W.autosAlt[+aa.dataset.autoalt]; const prev = {autos:W.autos, actor:W.afiliado}; W.autos = x.autos; W.afiliado = x.actor; W.autosAlt[+aa.dataset.autoalt] = prev; W.autosDudoso = false; W.sumarioEditado = false; drawWizard(); return; }
+  const ut = ev.target.closest('[data-uptipo]'); if(ut && UP){ upRead(); UP.tipo = ut.dataset.uptipo; if(!UP.descEditada) UP.desc = ''; upSugerir(); drawUp(); return; }
   const t = ev.target.closest('[data-enfoque],[data-mvar],[data-act],[data-tab],[data-go],[data-ia],[data-filtro],[data-riesgo],[data-estado],[data-tour],[data-tpl],[data-tplexp],[data-w],[data-wnav],[data-quick]');
   if(!t) return;
   const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
@@ -2482,6 +2616,10 @@ document.addEventListener('click', async ev => {
   if(d.wnav){ wRead(); if(+d.wnav>0){ const err = wCheck(); if(err){ $('#wErr').innerHTML = `<div class="notice bad">${esc(err)}</div>`; return; } } W.step += +d.wnav; drawWizard(); return; }
   const a = d.act;
   if(a==='close') closeModal();
+  if(a==='upcancel'){ UP = null; closeModal(); }
+  if(a==='upsave' && UP) await upSave();
+  if(a==='upver' && UP){ upRead(); VIEW_BACK = 'up'; openViewer({preview:UP.queue[UP.i].pv, meta:{}}); }
+  if(a==='upaddplazo' && UP){ upRead(); const r = {modo:'habiles', cant:5, desde:iso(today())}; UP.ac.plazos.push({on:true, desc:'', vence:calcPlazo(r).vence, regla:r}); drawUp(); }
   if(a==='ximportar') openImportExcel();
   if(a==='xback' && XL){ XL.step = 1; drawImport(); }
   if(a==='ximport' && XL) xImport(false);
@@ -2509,7 +2647,7 @@ document.addEventListener('click', async ev => {
     askConfirm({titulo:'¿Eliminar definitivamente?', texto:`${it.tipo==='expediente'?`El expediente de <b>${esc(it.data.afiliado)}</b> y todos sus documentos`:`El documento <b>${esc(it.data.nombre)}</b>`} se va a borrar para siempre. Esta acción no se puede deshacer.`, boton:'Eliminar para siempre', run:()=>purgarItem(it.id)}); }
   if(a==='vdoc'){ const x = expById(d.e); const doc = x && x.docs[+d.di]; if(doc){ const ejemplo = !doc.fid && x.id<=7 && !/sistema/.test(doc.nombre); openViewer({fid:doc.fid, meta:{nombre:doc.nombre, tipo:doc.tipo, paginas:doc.paginas, ejemplo}}); audit('Vio un documento', x.numero, doc.nombre); } }
   if(a==='vprev'){ VIEW_BACK = true; openViewer({preview:d.pv, meta:{}}); }
-  if(a==='vclose'){ const back = VIEW_BACK; VIEW_BACK = false; closeViewer(); if(back && W) drawWizard(); else closeModal(); }
+  if(a==='vclose'){ const back = VIEW_BACK; VIEW_BACK = false; closeViewer(); if(back==='up' && UP) drawUp(); else if(back && W) drawWizard(); else closeModal(); }
   if(a==='vdown') downloadViewed();
   if(a==='linkfile') linkBackupFile();
   if(a==='reconnect'){ ev.preventDefault(); reconnectBackupFile(); }
@@ -2610,12 +2748,13 @@ document.addEventListener('keydown', ev => {
   }
   if(ev.key==='Enter' && $('#overlay').classList.contains('show') && W && ev.target.matches('#modal input[type=text]')){ ev.preventDefault(); const b = $('[data-wnav="1"]') || $('[data-act=wcreate]'); if(b) b.click(); }
 });
-$('#overlay').addEventListener('click', ev => { if(ev.target.id==='overlay' && !$('#overlay').dataset.forced){ if(VIEW_BACK){ VIEW_BACK = false; closeViewer(); if(W) drawWizard(); } else closeModal(); } });
+$('#overlay').addEventListener('click', ev => { if(ev.target.id==='overlay' && !$('#overlay').dataset.forced){ if(VIEW_BACK){ const b = VIEW_BACK; VIEW_BACK = false; closeViewer(); if(b==='up' && UP) drawUp(); else if(W) drawWizard(); } else if(!UP) closeModal(); } });
 
 document.addEventListener('change', async ev => {
   const t = ev.target; const r = route(); const e = r.name==='expediente' ? expById(r.id) : null;
   if(t.id==='fileIn' && e) addFiles(e, t.files);
   if(t.id==='mfile') addModels(t.files);
+  if(UP && t.dataset){ if(t.dataset.upac){ upRead(); UP.ac[t.dataset.upac].on = t.checked; } if(t.dataset.upplazo!==undefined){ upRead(); UP.ac.plazos[+t.dataset.upplazo].on = t.checked; } if(t.dataset.upcumplir!==undefined){ upRead(); UP.ac.cumplir[+t.dataset.upcumplir].on = t.checked; } if(t.id==='upEtapa'){ UP.ac.etapa.val = t.value; UP.ac.etapa.on = t.value!==expById(UP.exp).estado; drawUp(); } }
   if(t.id==='xfile' && XL && t.files.length) xLoadFiles(t.files);
   if(t.id==='xsheet' && XL) xUseSheet(t.value);
   if(t.dataset && t.dataset.xmap && XL){ const v = t.value; if(v==='') delete XL.map[t.dataset.xmap]; else XL.map[t.dataset.xmap] = +v; drawImport(); }
@@ -2630,35 +2769,6 @@ document.addEventListener('change', async ev => {
     toast(`${x.afiliado} ahora está a cargo de ${userName(t.value)}.`, ()=>{ x.abogado = old; save(); audit('Deshizo reasignación', x.numero, `Vuelve a ${userName(old)}`); render(); }); }
   if(t.dataset && t.dataset.mod){ S.modules[t.dataset.mod] = t.checked; save(); const m = MODULES.find(x=>x.id===t.dataset.mod); audit(t.checked?'Activó un módulo':'Apagó un módulo', m.nombre, 'Configuración'); render(); toast(t.checked?`${m.nombre} activado: ya aparece en el menú`:`${m.nombre} apagado`); }
 });
-async function addFiles(e, files){
-  files = [...files]; if(!files.length) return;
-  toast(files.length===1?'Leyendo el documento completo…':`Leyendo ${files.length} documentos completos…`);
-  const tipos = [], novedades = [];
-  for(const f of files){
-    let r = {text:''}; try{ r = await readFile(f, (t)=>{ const el = $('#toast'); if(el){ el.querySelector('span') && (el.querySelector('span').textContent = `${f.name}: ${t}`); el.classList.add('show'); clearTimeout(toast.t); } }); }catch(err){}
-    const tx = r.text || '';
-    const tipo = classifyDoc(tx, f.name); tipos.push(tipo);
-    const fid = await saveFileBlob(f, tx);
-    e.docs.push({nombre:f.name, fid, tipo, fecha:iso(today()), paginas:r.paginas||null, size: f.size>1e6?(f.size/1e6).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(f.size/1000))+' KB'});
-    audit('Subió un documento', e.numero, `${f.name} (${tipo}${r.paginas?`, ${r.paginas} páginas leídas`:''})`);
-    if(!tx) continue;
-    const nf = flagsFromText(tx); e.flags = e.flags || {}; for(const k in nf) if(nf[k]) e.flags[k] = true;
-    const x = extractFields(tx);
-    if(x.cautelar && !e.cautelar){
-      e.cautelar = true;
-      if(ESTADOS.indexOf(e.estado) < ESTADOS.indexOf('Cautelar otorgada')) e.estado = 'Cautelar otorgada';
-      e.movimientos.push({fecha:iso(today()), tipo:'Resolución', desc:`Se registra medida cautelar a partir de ${f.name}.`, user:S.user});
-      audit('Registró medida cautelar', e.numero, `Detectada en ${f.name}`);
-      novedades.push('se detectó una medida cautelar (la etapa quedó en verde)');
-    }
-    const nuevos = [];
-    if(x.plazoDesc && x.plazoFecha) nuevos.push({desc:x.plazoDesc, vence:x.plazoFecha, regla:x.plazoRegla});
-    (x.extra||[]).forEach(p=>nuevos.push({desc:p.desc, vence:p.vence, regla:p.regla}));
-    nuevos.forEach(p=>{ if(e.plazos.some(q=>!q.hecho && q.desc===p.desc)) return; e.plazos.push({desc:p.desc, vence:p.vence, hecho:false, ...(p.regla?{regla:p.regla}:{})}); audit('Agendó un plazo', e.numero, `${p.desc} (${fmt(p.vence)}), leído de ${f.name}`); novedades.push(`se agendó "${p.desc}" para el ${fmt(p.vence)}`); });
-  }
-  save(); render();
-  toast(`Listo: ${tipos.join(', ')}.${novedades.length?' Además, '+novedades.join('; ')+'.':''} Las sugerencias se actualizaron.`);
-}
 document.addEventListener('toggle', ev => { const d = ev.target; if(d.matches && d.matches('details[data-sugkey]')){ if(d.open) ui.openSug = d.dataset.sugkey; else if(ui.openSug===d.dataset.sugkey) ui.openSug = null; } if(d.matches && d.matches('details[data-member]')) ui.open[d.dataset.member] = d.open; }, true);
 document.addEventListener('dragover', ev => { const xd = ev.target.closest('#xdrop'); if(xd){ ev.preventDefault(); xd.classList.add('over'); return; } const md = ev.target.closest('#mdrop'); if(md){ ev.preventDefault(); md.classList.add('over'); return; } const wz = ev.target.closest('#wdrop'); if(wz){ ev.preventDefault(); wz.classList.add('over'); return; } const dz = ev.target.closest('#drop'); if(dz){ ev.preventDefault(); dz.classList.add('over'); } });
 document.addEventListener('dragleave', ev => { const wz = ev.target.closest('#wdrop'); if(wz) wz.classList.remove('over'); const dz = ev.target.closest('#drop'); if(dz) dz.classList.remove('over'); });
