@@ -61,6 +61,16 @@ svg.i.lg{width:30px;height:30px}
 .results{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);z-index:5;overflow:hidden}
 .results a{display:block;padding:10px 14px;text-decoration:none;color:var(--ink);border-bottom:1px solid var(--line)}
 .results a:last-child{border-bottom:0}
+.results{max-height:70vh;overflow:auto}
+.dnibox{padding:0;overflow:hidden;border-color:var(--violet)} .dnibox .rleaf{display:block;padding:10px 14px;text-decoration:none;color:var(--ink)} .dnibox .rleaf:hover{background:var(--violet-soft)} .dnibox summary{padding:14px 18px}
+.rtree{border-bottom:1px solid var(--line)} .rtree:last-child{border-bottom:0}
+.rtree summary{list-style:none;display:flex;gap:10px;align-items:center;padding:10px 14px;cursor:pointer}
+.rtree summary::-webkit-details-marker{display:none}
+.rtree summary:hover{background:var(--sunken)}
+.rtree .chev{display:inline-flex;transition:transform .15s;color:var(--muted)} .rtree[open] .chev{transform:rotate(90deg)}
+.rtree .rleaf{position:relative;margin-left:30px;padding-left:22px!important;border-bottom:0!important;border-left:2px solid var(--violet)}
+.rtree .rleaf::before{content:'';position:absolute;left:0;top:50%;width:14px;height:2px;background:var(--violet)}
+.rtree .rleaf:last-child{border-left-color:transparent} .rtree .rleaf:last-child::after{content:'';position:absolute;left:-2px;top:0;height:50%;width:2px;background:var(--violet)}
 .results a:hover,.results a.sel{background:var(--accent-soft)}
 .view{flex:1;overflow:auto;padding:28px;display:flex;flex-direction:column;gap:24px}
 .demo{font-size:13px;background:var(--violet-soft);color:var(--violet);padding:6px 28px}
@@ -435,7 +445,22 @@ function seed(){
       [{fecha:dPlus(-8),tipo:'Resolución',desc:'Sentencia: se hace lugar parcialmente. Costas por su orden.',user:'rperez'}],
       [{nombre:'Sentencia.pdf',tipo:'Resolución',fecha:dPlus(-8),size:'410 KB'}]),
     E(7,'CCF 3305/2025','Quiroga, Pablo','33.418.276','Salud mental','Juzg. Nac. Civ. y Com. Fed. N° 2 · Sec. 3','Archivado','bajo','lbrunelli',dPlus(-400),0,false,
-      [], [{fecha:dPlus(-40),tipo:'Resolución',desc:'Se archivan las actuaciones.',user:'rperez'}], [])
+      [], [{fecha:dPlus(-40),tipo:'Resolución',desc:'Se archivan las actuaciones.',user:'rperez'}], []),
+    ...ejemplosDni(8)
+  ];
+}
+// Ejemplo: una misma afiliada (mismo DNI) con varios reclamos
+function ejemplosDni(id){
+  const base = {afiliado:'Romero, Ana Lía', dni:'27.845.112', caratula:'Romero, Ana Lía c/ Salud Integral Demo S.A. s/ amparo de salud', ejemploDni:true};
+  return [
+    {...base, id, numero:'CCF 6034/2026', prestacion:'Estudios y diagnóstico', juzgado:'Juzg. Nac. Civ. y Com. Fed. N° 10 · Sec. 19', estado:'Demanda', riesgo:'medio', abogado:'lbrunelli', inicio:dPlus(-3), monto:690000, cautelar:false,
+      plazos:[{desc:'Presentar informe art. 8 Ley 16.986', vence:hab(3), hecho:false}],
+      movimientos:[{fecha:dPlus(-3), tipo:'Escrito de la actora', parte:'actora', titulo:'Demanda', desc:'Reclama la cobertura de un PET-TC para control de su tratamiento oncológico.', user:'rperez'},
+        {fecha:dPlus(-3), tipo:'Notificación', parte:'juzgado', titulo:'Traslado / pedido de informe', desc:'Se requiere informe circunstanciado en el plazo de 5 días.', user:'rperez'}],
+      docs:[{nombre:'Demanda PET-TC.pdf', tipo:'Demanda', parte:'actora', fecha:dPlus(-3), size:'540 KB'}]},
+    {...base, id:id+1, numero:'CCF 7712/2025', prestacion:'Medicamentos', juzgado:'Juzg. Nac. Civ. y Com. Fed. N° 3 · Sec. 5', estado:'Archivado', riesgo:'bajo', abogado:'fzaurdo', inicio:dPlus(-410), monto:0, cautelar:true,
+      plazos:[], movimientos:[{fecha:dPlus(-410), tipo:'Escrito de la actora', parte:'actora', titulo:'Demanda', desc:'Reclamaba la cobertura de antieméticos.', user:'rperez'},
+        {fecha:dPlus(-200), tipo:'Resolución', parte:'juzgado', titulo:'Archivo del expediente', desc:'Cumplida la prestación, se archivan las actuaciones.', user:'rperez'}], docs:[]}
   ];
 }
 
@@ -592,7 +617,7 @@ const OLD_KEYS = ['fojas-demo-v9','fojas-demo-v8','fojas-demo-v7','fojas-demo-v6
 let S;
 async function makeUser(u, pass, mustChange){ const salt = randId(16); return {id:u.id, nombre:u.nombre, rol:u.rol, activo:true, salt, hash: await hashPass(pass, salt), mustChange:!!mustChange}; }
 async function fresh(){ const users = []; for(const u of DEFAULT_USERS) users.push(await makeUser(u, u.pass, false));
-  return {user:null, users, lock:{}, toured:{}, teams:JSON.parse(JSON.stringify(DEFAULT_TEAMS)), modules:{amparos:true, administrativos:false, contratos:false, cartas:false}, exps:seed(), audit:[], nextId:8}; }
+  return {user:null, users, lock:{}, toured:{}, teams:JSON.parse(JSON.stringify(DEFAULT_TEAMS)), modules:{amparos:true, administrativos:false, contratos:false, cartas:false}, exps:seed(), audit:[], nextId:10}; }
 // ---------- guardado: navegador (2 lugares), versiones automáticas y archivo en la computadora ----------
 const IDB = {
   db:null,
@@ -1393,6 +1418,7 @@ async function migrate(d){
   d.modules = {...base.modules, ...(d.modules||{})};
   d.exps = (d.exps||[]).map(e=>migExp(e, d.users));
   d.nextId = Math.max(d.nextId||0, ...d.exps.map(e=>+e.id||0)) + 1;
+  if(!d.ejemploDni){ d.ejemploDni = true; const bor = new Set(d.borrados||[]); ejemplosDni(d.nextId).forEach(x=>{ const n = x.numero.toLowerCase(); if(!bor.has(n) && !d.exps.some(e=>String(e.numero).toLowerCase()===n)){ d.exps.push(migExp(x, d.users)); } }); d.nextId = Math.max(...d.exps.map(e=>+e.id||0)) + 1; }
   d.schema = SCHEMA; d.user = null;
   return d;
 }
@@ -1501,7 +1527,7 @@ function route(){
   const m = h.match(/^expediente-(\d+)$/);
   return m ? {name:'expediente', id:+m[1]} : {name:h};
 }
-window.addEventListener('hashchange', ()=>{ ui.editSum = false; const nt = ui.nextTab; ui.nextTab = null; if(ui.scrollTo){ const u = ui.scrollTo; ui.scrollTo=null; setTimeout(()=>{ const d = u==='panel' ? $('#miembroPanel') : document.querySelector(`[data-member="${u}"]`); if(d) d.scrollIntoView({behavior:'smooth', block:'start'}); }, 60); } ui.q=''; ui.tab=nt||'resumen'; ui.ia=''; ui.addMov=false; ui.addPlazo=false; ui.results=false; render(); const v=$('#view'); if(v) v.scrollTop=0; });
+window.addEventListener('hashchange', ()=>{ ui.editSum = false; const nt = ui.nextTab; ui.nextTab = null; if(ui.scrollTo){ const u = ui.scrollTo; ui.scrollTo=null; setTimeout(()=>{ const d = u==='panel' ? $('#miembroPanel') : document.querySelector(`[data-member="${u}"]`); if(d) d.scrollIntoView({behavior:'smooth', block:'start'}); }, 60); } ui.q=''; ui.rOpen=null; ui.dniOpen=false; ui.tab=nt||'resumen'; ui.ia=''; ui.addMov=false; ui.addPlazo=false; ui.results=false; render(); const v=$('#view'); if(v) v.scrollTop=0; });
 const ui = {open:{}, scrollTo:null, tab:'resumen', ia:'', filtro:'todos', q:'', verify:null, tpl:null, tplExp:null, tplText:'', backupOut:'', backupMsg:null, csvMsg:null, results:false, addMov:false, addPlazo:false};
 
 // ---------- estructura ----------
@@ -1558,10 +1584,20 @@ function matches(q){
   q = q.trim().toLowerCase(); if(!q) return [];
   return S.exps.filter(e => [e.numero,e.afiliado,e.juzgado,e.prestacion,e.dni,(e.dni||'').replace(/\./g,'')].join(' ').toLowerCase().includes(q));
 }
+const dniKey = d => String(d||'').replace(/\D/g,'');
+const mismoDni = e => { const k = dniKey(e.dni); return k.length>=6 ? S.exps.filter(x=>dniKey(x.dni)===k) : [e]; };
 function searchResults(){
-  const list = matches(ui.q).slice(0,6);
   if(!ui.q.trim()) return '';
-  return `<div class="results">${list.map(e=>`<a href="#expediente-${e.id}"><b>${esc(e.afiliado)}</b><div class="small muted">${esc(e.numero)} · ${esc(e.prestacion)}</div></a>`).join('') || '<div class="empty small">No encontramos nada con esa búsqueda.</div>'}</div>`;
+  const found = matches(ui.q);
+  const grupos = [], vistos = new Set();
+  found.forEach(e=>{ if(vistos.has(e.id)) return; const g = mismoDni(e); g.forEach(x=>vistos.add(x.id)); grupos.push(g); });
+  const fila = e => `<a href="#expediente-${e.id}"><b>${esc(e.afiliado)}</b><div class="small muted">${esc(e.numero)} · ${esc(e.prestacion)}${e.dni&&e.dni!=='—'?` · DNI ${esc(e.dni)}`:''}</div></a>`;
+  const ord = g => [...g].sort((a,b)=>(a.estado==='Archivado')-(b.estado==='Archivado') || String(b.inicio||'').localeCompare(String(a.inicio||'')));
+  const rama = g => { const p = g[0]; const abiertos = g.filter(e=>e.estado!=='Archivado').length;
+    return `<details class="rtree" ${ui.rOpen===dniKey(p.dni)?'open':''} data-rdni="${dniKey(p.dni)}"><summary><span class="chev">${ic('next','sm')}</span><div style="flex:1;min-width:0"><b>${esc(p.afiliado)}</b><div class="small muted">DNI ${esc(p.dni)} · ${g.length} reclamos${abiertos!==g.length?` (${abiertos} en curso)`:''}</div></div><span class="badge">${g.length}</span></summary>
+      ${ord(g).map(e=>`<a href="#expediente-${e.id}" class="rleaf"><b>${esc(e.prestacion)}</b><div class="small muted"><span class="mono">${esc(e.numero)}</span> · ${esc(e.estado)}${e.cautelar?' · con cautelar':''} · ${esc(userName(e.abogado).split(' ')[0])}</div></a>`).join('')}</details>`; };
+  const html = grupos.slice(0,8).map(g=>g.length>1 ? rama(g) : fila(g[0])).join('');
+  return `<div class="results">${html || '<div class="empty small">No encontramos nada con esa búsqueda.</div>'}</div>`;
 }
 
 function taskRow(p, showExp=true){
@@ -1739,6 +1775,8 @@ function vExpediente(id){
       <button class="btn ghost" data-act="plazoedit" data-e="${e.id}" data-i="${e.plazos.indexOf(p)}">${ic('cal','sm')} Modificar plazo</button></div>
   </section>`:`<section class="next"><div class="ico g">${ic('check','lg')}</div><div class="txt"><div class="lbl">Lo próximo</div><h2>No hay nada pendiente</h2><div class="muted">Cuando llegue una novedad, cargala para no perder el hilo.</div></div><button class="btn big" data-act="addplazo" data-tabgo="plazos">${ic('plus')} Agregar plazo</button></section>`}
 
+  ${(()=>{ const o = mismoDni(e).filter(x=>x.id!==e.id); return o.length ? `<details class="card rtree dnibox" ${ui.dniOpen?'open':''}><summary><span class="chev">${ic('next','sm')}</span><div style="flex:1"><b>DNI ${esc(e.dni)}: ${o.length+1} reclamos de ${esc(e.afiliado)}</b><div class="small muted">Este es el de ${esc(e.prestacion.toLowerCase())}. Tocá para ver los otros ${o.length}.</div></div><span class="badge">${o.length+1}</span></summary>
+    ${o.sort((a,b)=>(a.estado==='Archivado')-(b.estado==='Archivado')).map(x=>`<a href="#expediente-${x.id}" class="rleaf"><b>${esc(x.prestacion)}</b><div class="small muted"><span class="mono">${esc(x.numero)}</span> · ${esc(x.estado)}${x.cautelar?' · con cautelar':''} · a cargo de ${esc(userName(x.abogado))}</div></a>`).join('')}</details>` : ''; })()}
   <label class="dropband" for="fileTop">${ic('upload')}<span><b>¿Llegó algo nuevo?</b> Arrastralo en cualquier parte de esta pantalla o tocá acá: un PDF, el mail con el PDF adentro (Outlook o .eml), un Word, una foto. Fojas lo lee y te propone cómo avanza el expediente.</span></label>
   <input type="file" id="fileTop" multiple hidden>
   <section class="card"><div class="row" style="justify-content:space-between"><h3>¿En qué etapa está?</h3><span class="small muted">Tocá una etapa para cambiarla · tocá la cautelar para marcar si tiene o no</span></div>
@@ -3045,7 +3083,7 @@ document.addEventListener('change', async ev => {
     toast(`${x.afiliado} ahora está a cargo de ${userName(t.value)}.`, ()=>{ x.abogado = old; save(); audit('Deshizo reasignación', x.numero, `Vuelve a ${userName(old)}`); render(); }); }
   if(t.dataset && t.dataset.mod){ S.modules[t.dataset.mod] = t.checked; save(); const m = MODULES.find(x=>x.id===t.dataset.mod); audit(t.checked?'Activó un módulo':'Apagó un módulo', m.nombre, 'Configuración'); render(); toast(t.checked?`${m.nombre} activado: ya aparece en el menú`:`${m.nombre} apagado`); }
 });
-document.addEventListener('toggle', ev => { const d = ev.target; if(d.matches && d.matches('details[data-sugkey]')){ if(d.open) ui.openSug = d.dataset.sugkey; else if(ui.openSug===d.dataset.sugkey) ui.openSug = null; } if(d.matches && d.matches('details[data-member]')) ui.open[d.dataset.member] = d.open; }, true);
+document.addEventListener('toggle', ev => { const d = ev.target; if(d.matches && d.matches('details[data-sugkey]')){ if(d.open) ui.openSug = d.dataset.sugkey; else if(ui.openSug===d.dataset.sugkey) ui.openSug = null; } if(d.matches && d.matches('details[data-member]')) ui.open[d.dataset.member] = d.open; if(d.matches && d.matches('details[data-rdni]')) ui.rOpen = d.open ? d.dataset.rdni : null; if(d.matches && d.matches('details.dnibox')) ui.dniOpen = d.open; }, true);
 const DRAGFILES = ev => ev.dataTransfer && [...(ev.dataTransfer.types||[])].includes('Files');
 let DRAGN = 0;
 function expDropOn(){ const r = route(); if(r.name!=='expediente' || W || XL || UP || !logged()) return false; const e = expById(r.id); if(!e) return false; let o = $('#expOver'); if(!o){ o = document.createElement('div'); o.id = 'expOver'; document.body.appendChild(o); } o.innerHTML = `<div>${ic('upload','lg')}<b>Soltá acá para que Fojas lea el avance</b><span>${esc(e.afiliado)} · ${esc(e.numero)}</span><span class="small">PDF, mails (Outlook .msg o .eml) con sus adjuntos, Word, fotos, zip…</span></div>`; o.classList.add('on'); return true; }
@@ -3136,7 +3174,7 @@ window.addEventListener('beforeunload', ()=>{ try{ if(S) localStorage.setItem(KE
   }
   try{ const h = await IDB.get('fileHandle'); if(h){ PERSIST.file = h; PERSIST.fileName = h.name; const p = await h.queryPermission({mode:'readwrite'}); PERSIST.fileNeeds = p!=='granted'; } }catch(e){}
   try{ if(navigator.storage && navigator.storage.persist){ PERSIST.persistent = await navigator.storage.persisted() || await navigator.storage.persist(); } }catch(e){}
-  if(got){ S = await migrate(got.data); if(S._sumados && S._sumados.length) setTimeout(()=>toast(`Recuperamos: ${S._sumados.join(', ')}.`), 1200); delete S._sumados; save(); if(got.from){ setTimeout(()=>toast('Recuperamos los datos que tenías cargados en la versión anterior.'), 400); } }
+  if(got){ S = await migrate(got.data); if(S._sumados && S._sumados.length){ const sm = S._sumados.slice(); setTimeout(()=>toast(`Recuperamos: ${sm.join(', ')}.`), 1200); } delete S._sumados; save(); if(got.from){ setTimeout(()=>toast('Recuperamos los datos que tenías cargados en la versión anterior.'), 400); } }
   if(S && S.exps){ const r = rescatar(); if(r.length) setTimeout(()=>toast(`Recuperamos ${r.length===1?'un amparo':r.length+' amparos'} que había quedado guardado por una versión anterior: ${r.map(x=>x.afiliado).join(', ')}.`), 900); }
   else if(!S){ S = await fresh(); save(); await seedAudit(); }
   S.lock = S.lock || {}; S.toured = S.toured || {}; S.teams = S.teams || [];
