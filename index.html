@@ -554,6 +554,30 @@ function load(){
   for(const k of OLD_KEYS){ const d = readKey(k); if(d && Array.isArray(d.exps)) return {data:d, from:k}; }
   return null;
 }
+function migExp(e, users){
+  const x = {dni:'—', docs:[], movimientos:[], plazos:[], flags:{}, riesgo:'medio', monto:0, cautelar:false, estado:'Intimación recibida', prestacion:'Otra', juzgado:'', ...e};
+  delete x.nroAf;
+  if(!x.caratula) x.caratula = `${x.afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`;
+  if(!(users||[]).some(u=>u.id===x.abogado)) x.abogado = 'lbrunelli';
+  return x;
+}
+// Busca amparos guardados por versiones anteriores u otras pestañas que no estén en los datos actuales y los suma.
+function rescatar(){
+  const known = new Set(S.exps.map(e=>String(e.numero||'').trim().toLowerCase()));
+  const found = [];
+  let keys = []; try{ keys = Object.keys(localStorage).filter(k=>k.startsWith('fojas-') && k!==KEY); }catch(e){}
+  for(const k of keys){
+    const d = readKey(k); if(!d || !Array.isArray(d.exps)) continue;
+    for(const e of d.exps){
+      const num = String(e.numero||'').trim().toLowerCase();
+      if(!num || known.has(num)) continue;
+      const x = migExp({...e, id:S.nextId++}, S.users); S.exps.push(x); known.add(num); found.push(x);
+      (d.audit||[]).length; // el historial viejo no se mezcla para no romper la cadena de huellas
+    }
+  }
+  if(found.length){ save(); found.forEach(x=>audit('Recuperó un amparo', x.numero, `${x.afiliado}: estaba guardado por una versión anterior de Fojas`, {user:'sistema'})); }
+  return found;
+}
 async function migrate(d){
   const base = await fresh();
   d.users = Array.isArray(d.users) && d.users.length ? d.users : base.users;
@@ -561,13 +585,7 @@ async function migrate(d){
   d.teams = Array.isArray(d.teams) ? d.teams : base.teams;
   d.lock = d.lock || {}; d.toured = d.toured || {}; d.modelos = Array.isArray(d.modelos) ? d.modelos : []; d.config = d.config || {}; d.audit = Array.isArray(d.audit) ? d.audit : [];
   d.modules = {...base.modules, ...(d.modules||{})};
-  d.exps = (d.exps||[]).map(e=>{
-    const x = {dni:'—', docs:[], movimientos:[], plazos:[], flags:{}, riesgo:'medio', monto:0, cautelar:false, estado:'Intimación recibida', prestacion:'Otra', juzgado:'', ...e};
-    if(!e.dni && e.nroAf) x.dni = '—'; delete x.nroAf;
-    if(!x.caratula) x.caratula = `${x.afiliado} c/ Salud Integral Demo S.A. s/ amparo de salud`;
-    if(!d.users.some(u=>u.id===x.abogado)) x.abogado = S && S.user || 'lbrunelli';
-    return x;
-  });
+  d.exps = (d.exps||[]).map(e=>migExp(e, d.users));
   d.nextId = Math.max(d.nextId||0, ...d.exps.map(e=>+e.id||0)) + 1;
   d.schema = SCHEMA; d.user = null;
   return d;
@@ -2136,10 +2154,16 @@ document.addEventListener('submit', async ev => {
   }
 });
 
+// Si Fojas está abierto en más de una pestaña, todas ven lo mismo y ninguna pisa lo que guardó otra.
+window.addEventListener('storage', async ev => {
+  if(ev.key!==KEY || !ev.newValue) return;
+  try{ const d = JSON.parse(ev.newValue); const user = S && S.user; S = d; S.user = user; render(); }catch(e){}
+});
 // ---------- arranque ----------
 (async function init(){
   const got = load();
   if(got){ S = await migrate(got.data); save(); if(got.from){ setTimeout(()=>toast('Recuperamos los datos que tenías cargados en la versión anterior.'), 400); } }
+  if(S){ const r = rescatar(); if(r.length) setTimeout(()=>toast(`Recuperamos ${r.length===1?'un amparo':r.length+' amparos'} que había quedado guardado por una versión anterior: ${r.map(x=>x.afiliado).join(', ')}.`), 900); }
   else { S = await fresh(); save(); await seedAudit(); }
   S.lock = S.lock || {}; S.toured = S.toured || {}; S.teams = S.teams || [];
   render();
