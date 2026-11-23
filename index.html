@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.27">
+<meta name="fojas-version" content="2026-11-22.28">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -863,7 +863,8 @@ function unir(base, otro){
   base.trBorrados = [...new Set([...(base.trBorrados||[]), ...(otro.trBorrados||[])])]; const trB = new Set(base.trBorrados);
   base.tramites = (base.tramites||[]).filter(x=>!trB.has(x.id)); (otro.tramites||[]).forEach(x=>{ if(!trB.has(x.id) && !base.tramites.some(y=>y.id===x.id)) base.tramites.push(x); });
   (otro.guiaPropia||[]).forEach(x=>{ base.guiaPropia = base.guiaPropia||[]; if(!base.guiaPropia.some(y=>y.id===x.id) && !trB.has(x.id)) base.guiaPropia.push(x); });
-  (otro.solicitudes||[]).forEach(x=>{ base.solicitudes = base.solicitudes||[]; const i = base.solicitudes.findIndex(y=>y.id===x.id); if(i<0) base.solicitudes.push(x); else if((x.hilo||[]).length > (base.solicitudes[i].hilo||[]).length) base.solicitudes[i] = x; });
+  base.solBorradas = [...new Set([...(base.solBorradas||[]), ...(otro.solBorradas||[])])];
+  (otro.solicitudes||[]).forEach(x=>{ base.solicitudes = base.solicitudes||[]; if(base.solBorradas.includes(x.id)) return; const i = base.solicitudes.findIndex(y=>y.id===x.id); if(i<0) base.solicitudes.push(x); else if((x.hilo||[]).length > (base.solicitudes[i].hilo||[]).length) base.solicitudes[i] = x; });
   ['tareasPlan','tareasDia','notifs'].forEach(k=>{ base[k] = base[k]||[]; (otro[k]||[]).forEach(x=>{ if(!base[k].some(y=>y.id===x.id)) base[k].push(x); }); });
   base._sumados = (base._sumados||[]).concat(sum);
   return base;
@@ -1607,19 +1608,20 @@ async function migrate(d){
   if(!d.modContratos){ d.modContratos = true; d.modules = d.modules||{}; d.modules.contratos = true;
     const lb = d.users.find(u=>u.id==='lbrunelli'); if(lb && !lb.ctPerfil){ lb.ctPerfil = 'analista'; lb.area = lb.area || 'Legales'; }
     if(!(d.teams||[]).some(t=>t.jefe==='jpaz')) (d.teams = d.teams||[]).push({id:'t2', nombre:'Contratos', jefe:'jpaz', miembros:['cortiz']});
-    d.solicitudes = Array.isArray(d.solicitudes) ? d.solicitudes : []; try{ solicitudesEjemplo().forEach(s=>{ if(!d.solicitudes.some(x=>x.id===s.id)) d.solicitudes.push(s); }); }catch(err){ console.warn(err); }
-    (d.notifs = d.notifs||[]).push({id:'nct1', para:'jpaz', de:'mgimenez', texto:'Marcos Giménez (Compras) pidió locación de servicios con Limpiezas del Sur S.R.L. CT-2026-0001.', link:'contrato-cej1', tipo:'tarea', ts:new Date().toISOString(), leida:false},
-      {id:'nct2', para:'sruiz', de:'cortiz', texto:'Contratos necesita información para CT-2026-0002 (Juana Benítez): ¿Nos pasás la cesión de derechos de imagen firmada por la creadora?', link:'contrato-cej2', tipo:'alerta', ts:new Date().toISOString(), leida:false},
-      {id:'nct3', para:'lbrunelli', de:'jpaz', texto:'Julieta Paz te asignó CT-2026-0003: acuerdo de confidencialidad (nda) con Datasalud Analytics S.A.', link:'contrato-cej3', tipo:'tarea', ts:new Date().toISOString(), leida:false}); }
+    d.solicitudes = Array.isArray(d.solicitudes) ? d.solicitudes : []; 
+  }
   if(!d.modContratos2){ d.modContratos2 = true;
     // quienes ya estaban no reciben Contratos de golpe como solicitantes: el administrador decide
     (d.users||[]).forEach(u=>{ if(u.rol==='Administrador') return; if(['dfraerman','lbrunelli','fzaurdo','rperez'].includes(u.id) && !u.area) u.area = 'Legales'; if(!Array.isArray(u.modulos) && !u.ctPerfil) u.modulos = ['amparos','administrativos']; }); }
   if(!d.rolesJefa){ d.rolesJefa = true; (d.users||[]).forEach(u=>{ if(/^Jefa\b/.test(u.rol||'') && u.rol!=='Jefa') u.rol = 'Jefa'; else if(/^Jefe\b/.test(u.rol||'') && u.rol!=='Jefe') u.rol = 'Jefe'; else if(u.rol==='Jefa/e de Contratos') u.rol = 'Jefa'; }); }
   if(!d.lucasMulti){ d.lucasMulti = true; const t2 = (d.teams||[]).find(t=>t.nombre==='Contratos'); if(t2 && t2.jefe!=='lbrunelli' && !t2.miembros.includes('lbrunelli') && (d.users||[]).some(u=>u.id==='lbrunelli')) t2.miembros.push('lbrunelli'); }
   if(!d.ctFlujo2){ d.ctFlujo2 = true; (d.solicitudes||[]).forEach(s=>{ if(s.estado==='Enviada al solicitante' && (s.versiones||[]).some(v=>v.enviada)) s.estado = 'Revisión del proveedor'; if(s.estado==='Esperando información') s.estado = 'Enviada al solicitante'; if(s.estado==='En revisión') s.estado = 'En elaboración'; });
-    if(Array.isArray(d.solicitudes) && !d.solicitudes.some(s=>s.id==='cej4')) try{ d.solicitudes.push(solicitudEjemploFirmas()); }catch(err){ console.warn(err); } }
+  }
   if(!d.rolesGen){ d.rolesGen = true; (d.users||[]).forEach(u=>{ if(/^Analista\b/.test(u.rol||'') && u.rol!=='Analista') u.rol = 'Analista'; if(/^Coordinador(a)?\b/.test(u.rol||'')) u.rol = /^Coordinadora/.test(u.rol) ? 'Coordinadora' : 'Coordinador'; }); }
   if(!d.gerArea){ d.gerArea = true; const mr = (d.users||[]).find(u=>u.id==='mrivas'); if(mr && mr.rol==='Gerente' && mr.ctPerfil==='jefe'){ delete mr.ctPerfil; mr.modulos = ['amparos','administrativos']; mr.area = 'Amparos'; } (d.teams||[]).forEach(t=>{ if(t.gerente===undefined) t.gerente = (t.nombre==='Amparos' && (d.users||[]).some(u=>u.id==='mrivas')) ? 'mrivas' : ''; }); }
+  if(!d.ctSinEjemplos){ d.ctSinEjemplos = true; const ej = s => /^cej\d+$/.test(String(s.id)) && !/negrito/i.test((s.contraparte||{}).nombre||'');
+    const fuera = (d.solicitudes||[]).filter(ej).map(s=>s.id); d.solBorradas = [...new Set([...(d.solBorradas||[]), ...fuera])];
+    d.solicitudes = (d.solicitudes||[]).filter(s=>!ej(s)); d.notifs = (d.notifs||[]).filter(n=>!fuera.some(id=>n.link==='contrato-'+id) && !['nct1','nct2','nct3'].includes(n.id)); }
   if(!d.ejemploTareas){ d.ejemploTareas = true; try{ ejemplosTareas(d); }catch(err){ console.warn(err); } }
   if(!d.ejemploAdm){ d.ejemploAdm = true; try{ ejemplosAdm(d); }catch(err){ console.warn(err); } d.nextId = Math.max(d.nextId||1, ...d.exps.map(e=>+e.id||0)) + 1; }
   d.schema = SCHEMA; d.user = null;
@@ -4702,7 +4704,7 @@ const esEquipoCt = () => ['analista','jefe'].includes(ctPerfil());
 const esJefeCt = () => ctPerfil()==='jefe';
 const ctVisibles = () => esEquipoCt() ? sols() : sols().filter(s=>s.solicitante===S.user);
 const ctAbierta = s => !['Cerrada','Cancelada'].includes(s.estado);
-function ctNumero(){ const y = new Date().getFullYear(); const n = sols().filter(s=>String(s.numero||'').includes('-'+y+'-')).length + 1; return `CT-${y}-${String(n).padStart(4,'0')}`; }
+function ctNumero(){ const y = new Date().getFullYear(); const n = Math.max(0, ...sols().map(s=>{ const m = String(s.numero||'').match(new RegExp('-'+y+'-(\\d+)$')); return m ? +m[1] : 0; })) + 1; return `CT-${y}-${String(n).padStart(4,'0')}`; }
 function ctEvento(s, texto, user){ s.hilo = s.hilo||[]; s.hilo.push({id:'h'+randId(6), fecha:new Date().toISOString(), user:user||S.user, tipo:'evento', texto}); }
 function ctNuevo(s){ const u = S.user; if(!s.hilo || !s.hilo.length) return false; const v = (s.visto||{})[u]||''; return s.hilo.some(h=>h.user!==u && h.fecha>v && (!h.interno || esEquipoCt())); }
 function ctSemaforo(s){ if(!s.necesitaPara || !ctAbierta(s)) return {c:'', t:''}; const n = daysTo(s.necesitaPara); return {c:urg(n), t:whenText(n)}; }
