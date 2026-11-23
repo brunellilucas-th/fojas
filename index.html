@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.29">
+<meta name="fojas-version" content="2026-11-23.30">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -280,6 +280,9 @@ textarea{resize:vertical}
 .gcard-h:hover{background:var(--sunken)} .gcard-h .chev{transition:transform .15s;display:inline-flex} .gcard.open .gcard-h .chev{transform:rotate(90deg)}
 .gcard-b{display:flex;flex-direction:column;gap:10px;padding:4px 16px 16px 44px;line-height:1.5} .gcard-b ol{margin:4px 0 0 18px;padding:0}
 .glbl{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:2px}
+.gdocs{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:6px} .gdocs li{padding-left:14px;position:relative} .gdocs li:before{content:'';position:absolute;left:0;top:.55em;width:6px;height:6px;border-radius:50%;background:var(--accent,#2F6B3F)} .gdocs li span{display:block;color:var(--muted);font-size:13px}
+.gmeta{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.gtips{background:var(--sunken);border-radius:10px;padding:10px 12px} .gtips ul{margin:4px 0 0 18px;padding:0}
 .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 .fact{background:var(--sunken);border-radius:12px;padding:12px 14px}
 .fact span{display:block;font-size:13px;color:var(--muted);font-weight:600}
@@ -3985,7 +3988,7 @@ const GLOSARIO = [
 ];
 function agSaber(){ return Array.isArray(S.agSaber) ? S.agSaber : (S.agSaber = []); }
 function agPend(){ return Array.isArray(S.agPend) ? S.agPend : (S.agPend = []); }
-function agCorpus(){ return [...AYUDA.map(a=>({tipo:'ayuda', t:a.t, k:a.k.join(' '), r:a.r, ir:a.ir})), ...GLOSARIO.map(g=>({tipo:'glosario', t:g.t, k:g.k, r:g.r})), ...agSaber().map(s=>({tipo:'saber', t:s.q, k:'', r:s.r, s})), ...guiaTodas().map(g=>({tipo:'guia', t:g.t, k:[g.cat, orgById(g.org).c, orgById(g.org).l, 'tramite organismo obligacion'].join(' '), r:`${g.que} A quién alcanza: ${g.quien} Cuándo: ${g.cuando}${(g.como||[]).length?' Cómo: '+g.como.join(' '):''} Norma: ${g.norma||'—'}.${g.link?' Link oficial: '+g.link:''}`, ir:'administrativos'})), ...ORGS.filter(o=>o.id!=='otro').map(o=>({tipo:'org', t:o.l, k:o.c+' organismo', r:o.que+(o.plazoNota?' '+o.plazoNota:''), ir:'administrativos'}))]; }
+function agCorpus(){ return [...AYUDA.map(a=>({tipo:'ayuda', t:a.t, k:a.k.join(' '), r:a.r, ir:a.ir})), ...GLOSARIO.map(g=>({tipo:'glosario', t:g.t, k:g.k, r:g.r})), ...agSaber().map(s=>({tipo:'saber', t:s.q, k:'', r:s.r, s})), ...guiaTodas().map(g=>({tipo:'guia', t:g.t, k:[g.cat, orgById(g.org).c, orgById(g.org).l, 'tramite organismo obligacion como se hace documentos requisitos'].join(' '), r:`${g.que} Para quién: ${g.quien} Cuándo: ${g.cuando}${g.lleva?' Quién lo lleva: '+g.lleva:''}${(g.como||[]).length?' Cómo: '+g.como.map((x,i)=>(i+1)+') '+x).join(' '):''}${(g.docs||[]).length?' Documentos: '+g.docs.map(([d,p])=>d+(p?' ('+p+')':'')).join('; ')+'.':''}${g.costo?' Costos: '+g.costo:''}${g.tiempo?' Tiempos: '+g.tiempo:''}${(g.tips||[]).length?' Ojo: '+g.tips.join(' '):''} Norma: ${g.norma||'—'}.${g.link?' Link oficial: '+g.link:''}`, ir:'administrativos'})), ...ORGS.filter(o=>o.id!=='otro').map(o=>({tipo:'org', t:o.l, k:o.c+' organismo', r:o.que+(o.plazoNota?' '+o.plazoNota:''), ir:'administrativos'}))]; }
 function agKB(q){
   const qt = [...new Set(agTok(q))]; if(!qt.length) return [];
   const docs = agCorpus().map(d=>({d, head:new Set(agTok(d.t+' '+d.k)), body:new Set(agTok(d.r))})); const N = docs.length, idf = {};
@@ -4183,6 +4186,473 @@ function sugerenciasAdm(e){
   return out;
 }
 
+// ---------- Guía ampliada: organismos nuevos ----------
+const ORGS_MAS = [
+  {id:'correo', l:'Correo Argentino (carta documento y telegramas)', c:'Correo', que:'Envía cartas documento y telegramas con valor de notificación fehaciente: deja prueba del texto, la fecha y la entrega. También hay otros correos privados que las ofrecen.', link:'https://sie.correoargentino.com.ar', plazo:{modo:'habiles', cant:5}, plazoDesc:'Plazo que diste en la carta', plazoNota:'Cargá el vencimiento del plazo que fijaste o que te fijaron en la carta.'},
+  {id:'mediacion', l:'Mediación prejudicial obligatoria (Justicia Nacional)', c:'Mediación', que:'Instancia previa obligatoria a la mayoría de los juicios civiles y comerciales en la Justicia Nacional de la Ciudad de Buenos Aires (Ley 26.589). Las provincias tienen sus propios sistemas, como la Ley 13.951 en Buenos Aires.', link:'https://www.argentina.gob.ar/normativa/nacional/ley-26589-166999/actualizacion', plazo:{modo:'fecha'}, plazoDesc:'Audiencia de mediación', plazoNota:'Cargá la fecha de la audiencia. Con el acta de cierre sin acuerdo tenés un año para iniciar el juicio.'},
+  {id:'pjn', l:'Poder Judicial de la Nación', c:'PJN', que:'Juzgados nacionales y federales. Se presentan demandas y escritos por el portal del PJN, con notificaciones electrónicas al domicilio electrónico del abogado.', link:'https://www.pjn.gov.ar', plazo:{modo:'habiles', cant:5}, plazoDesc:'Plazo procesal', plazoNota:'Los plazos procesales se cuentan en días hábiles judiciales. Verificá el que fija la resolución.'},
+  {id:'escribania', l:'Escribanías y Colegio de Escribanos', c:'Escribanía', que:'Escrituras públicas (compraventas, poderes, donaciones, testamentos), certificación de firmas, actas de constatación y notificación, y apostilla de documentos notariales.', link:'https://www.colegio-escribanos.org.ar', plazo:{modo:'fecha'}, plazoDesc:'Fecha de firma', plazoNota:'Cargá la fecha de la firma o del vencimiento acordado.'},
+  {id:'rpi', l:'Registro de la Propiedad Inmueble', c:'RPI', que:'Inscribe la titularidad de los inmuebles, hipotecas, embargos e inhibiciones, y emite informes y certificados. Cada provincia tiene el suyo; el de la Ciudad depende de la Nación.', link:'https://www.argentina.gob.ar/justicia/registro-propiedad-inmueble', plazo:{modo:'habiles', cant:45}, plazoDesc:'Presentar la escritura para inscribir', plazoNota:'La escritura presentada dentro de los 45 días de firmada se inscribe con efecto desde la fecha de la escritura (Ley 17.801, art. 5).'},
+  {id:'dnrpa', l:'Registros de la Propiedad Automotor (DNRPA)', c:'DNRPA', que:'Registro de autos y motos: transferencias, informes de dominio, denuncias de venta, prendas, cédulas y títulos.', link:'https://www.dnrpa.gov.ar', plazo:{modo:'habiles', cant:10}, plazoDesc:'Inscribir la transferencia', plazoNota:'Hacé la transferencia apenas se vende: hasta que se inscribe, el vendedor sigue siendo el titular.'},
+  {id:'rcivil', l:'Registro Civil', c:'Registro Civil', que:'Nacimientos, matrimonios, uniones convivenciales, defunciones, partidas y anotaciones marginales (por ejemplo, del divorcio). Cada provincia y la Ciudad tienen el suyo.', link:'https://buenosaires.gob.ar/registrocivil', plazo:{modo:'fecha'}, plazoDesc:'Turno o vencimiento', plazoNota:''},
+  {id:'reincidencia', l:'Registro Nacional de Reincidencia', c:'Reincidencia', que:'Emite el certificado de antecedentes penales.', link:'https://www.argentina.gob.ar/justicia/reincidencia', plazo:{modo:'fecha'}, plazoDesc:'Vencimiento del certificado', plazoNota:''},
+  {id:'seclo', l:'Trabajo: SECLO y autoridad laboral', c:'SECLO', que:'Servicio de Conciliación Laboral Obligatoria: instancia previa a los juicios laborales en la Ciudad de Buenos Aires (Ley 24.635). También homologa acuerdos y controla el cumplimiento de normas laborales.', link:'https://www.argentina.gob.ar/trabajo/seclo', plazo:{modo:'fecha'}, plazoDesc:'Audiencia en el SECLO', plazoNota:'Cargá la fecha de la audiencia que figura en la citación.'},
+  {id:'rentas', l:'Rentas locales (AGIP, ARBA y otras)', c:'Rentas', que:'Impuestos provinciales y de la Ciudad: Ingresos Brutos, sellos, inmobiliario o ABL, patentes. AGIP es la de la Ciudad y ARBA la de Buenos Aires.', link:'https://www.agip.gob.ar', plazo:{modo:'fecha'}, plazoDesc:'Vencimiento', plazoNota:'Cargá la fecha según el calendario del organismo.'},
+  {id:'gcba', l:'Gobierno de la Ciudad (habilitaciones y trámites)', c:'GCBA', que:'Habilitaciones de locales, permisos, ABL y trámites de la Ciudad. La Agencia Gubernamental de Control (AGC) fiscaliza los locales habilitados.', link:'https://buenosaires.gob.ar/tramites', plazo:{modo:'fecha'}, plazoDesc:'Vencimiento', plazoNota:''},
+  {id:'bcra', l:'Banco Central (BCRA)', c:'BCRA', que:'Central de Deudores y de Cheques Rechazados: muestra cómo figura una persona o empresa ante los bancos.', link:'https://www.bcra.gob.ar', plazo:{modo:'fecha'}, plazoDesc:'Vencimiento', plazoNota:''},
+  {id:'cancilleria', l:'Cancillería (legalizaciones y apostillas)', c:'Cancillería', que:'Apostilla y legaliza documentos públicos argentinos para usarlos en el exterior. Los documentos notariales también se apostillan en el Colegio de Escribanos.', link:'https://www.cancilleria.gob.ar', plazo:{modo:'fecha'}, plazoDesc:'Vencimiento', plazoNota:''},
+  {id:'mpf', l:'Ministerio Público Fiscal y comisarías (denuncias)', c:'Fiscalía', que:'Reciben denuncias penales. En la Ciudad, el Ministerio Público Fiscal porteño recibe denuncias también por internet para algunos delitos.', link:'https://mpfciudad.gob.ar', plazo:{modo:'fecha'}, plazoDesc:'Citación', plazoNota:''}
+];
+
+// ---------- Guía ampliada: más información para los trámites que ya estaban ----------
+const GUIA_MAS = {
+  rnemp:{lleva:'Lo arma el área legal o regulatoria de la prepaga, con un apoderado que tenga Clave Fiscal nivel 3. Suelen intervenir el contador (documentación económica) y el área prestacional.',
+    docs:[['Estatuto, inscripción societaria y autoridades vigentes','Acreditan quién es la empresa y quién la representa.'],['Estados contables y documentación económico-financiera','La SSS controla que la entidad sea solvente para cubrir a sus afiliados.'],['Cartilla de prestadores y planes con sus coberturas','Prueba que puede brindar al menos el PMO.'],['Modelos de contrato con los afiliados','La SSS revisa que respeten la Ley 26.682.']],
+    tiempo:'Varios meses según cómo esté la documentación.', tips:['Mantené el legajo actualizado: cada cambio de autoridades o de planes se informa.','Guardá el número de expediente TAD y el certificado de inscripción en un lugar compartido.']},
+  rnas:{lleva:'Área legal o regulatoria de la prepaga, con Clave Fiscal nivel 3.', docs:[['Constancia de inscripción vigente en el RNEMP','Es requisito previo.'],['Documentación que exige la Res. SSS 232/2024','Acredita capacidad para recibir aportes derivados.']], tips:['Sin RNAS no se pueden recibir afiliados que derivan aportes.']},
+  sssrecl:{lleva:'Legales o atención al usuario de la entidad, con quien tenga acceso a la plataforma de la SSS.',
+    docs:[['El reclamo y la notificación de la SSS','Fijan qué se reclama y el plazo.'],['Contrato, solicitud de ingreso y plan del afiliado','Muestran qué se pactó.'],['Historia de la prestación pedida: pedidos médicos, autorizaciones, rechazos','Prueban qué se hizo y cuándo.'],['Comunicaciones con el afiliado (mails, notas, cartas documento)','Acreditan respuestas previas.']],
+    tiempo:'El plazo suele ser muy corto: la Res. SSS 951/2025 fija hasta 5 días corridos para requerimientos formales.', tips:['Respondé siempre, aunque sea para pedir prórroga: el silencio se toma en contra.','Si la prestación corresponde, resolvela primero y después informalo: evita sanciones y un amparo.']},
+  cuotas:{lleva:'Área comercial y legal de la prepaga.', docs:[['Comunicación del aumento a los afiliados','Hay que poder probar que se avisó en tiempo y forma.'],['Detalle de los nuevos valores por plan','Es lo que se informa a la SSS y a los afiliados.']], tips:['Guardá la constancia de envío a cada afiliado (mail, factura, portal).','Revisá si hay sentencias colectivas vigentes sobre aumentos que alcancen a parte de la cartera.']},
+  rnp:{lleva:'El propio prestador o el área de prestadores de la entidad que contrata.', docs:[['Título y matrícula del profesional, o habilitación del establecimiento','Acreditan que puede prestar el servicio.'],['Constancia de CUIT y seguro de mala praxis','Se suelen pedir para contratar.']], tips:['Antes de firmar un convenio con un prestador, verificá que esté inscripto.']},
+  vfu:{lleva:'Legales o atención al cliente de la empresa. Si se llega a una audiencia, conviene ir con abogado y con poder para acordar.',
+    docs:[['El reclamo del consumidor y la notificación','Definen el objeto y el plazo.'],['Contrato, factura y comunicaciones con el cliente','Son la prueba de la empresa.'],['Poder del representante','Hace falta para firmar acuerdos.']], tips:['Constituí el domicilio electrónico apenas llega el primer reclamo: después todo se notifica ahí.','Un buen acuerdo temprano suele costar menos que una multa.']},
+  coprec:{lleva:'Un abogado con poder de la empresa para conciliar, o un representante con facultades. El consumidor puede ir sin abogado.',
+    docs:[['Citación a la audiencia','Fija fecha, hora y modalidad.'],['Poder con facultades para transar','Sin eso no se puede cerrar un acuerdo.'],['Documentación del caso','Para evaluar y ofrecer una solución.']],
+    costo:'Si la empresa no asiste sin justificar, se aplica una multa de un Salario Mínimo, Vital y Móvil.', tips:['Llevá definido de antemano hasta dónde se puede ofrecer.','Si hay acuerdo, se homologa: cumplilo en término porque el incumplimiento genera sanciones.']},
+  botones:{lleva:'Legales junto con el equipo que maneja el sitio web.', docs:[['Captura del sitio con los botones visibles','Sirve como prueba frente a un reclamo o inspección.']], tips:['Los botones tienen que estar en la página de inicio, fáciles de encontrar, y no se puede pedir registración previa para usarlos.']},
+  multasddc:{lleva:'Legales de la empresa.', docs:[['Resolución que impone la multa','Fija monto, plazo y vía de pago o recurso.']], tips:['Compará el descuento por pago voluntario con las chances reales de ganar el recurso.']},
+  aaipbases:{lleva:'El responsable de datos de la empresa o Legales, con Clave Fiscal.', docs:[['Detalle de cada base: finalidad, datos que contiene, quién accede','Es lo que se declara.'],['Medidas de seguridad aplicadas','La AAIP puede pedirlas.']], tips:['Las bases con datos de salud son sensibles: requieren más seguridad y cuidado con el consentimiento.']},
+  nollame:{lleva:'Marketing con Legales.', docs:[['Listado actualizado del Registro No Llame','Hay que consultarlo antes de cada campaña.']], tips:['La responsabilidad alcanza también a la empresa que terceriza el call center.']},
+  incidentes:{lleva:'Legales, Sistemas y Seguridad informática juntos.', docs:[['Registro del incidente: qué pasó, cuándo y qué datos se afectaron','Es la base del aviso y de la defensa.']], tips:['Tené armado de antemano un protocolo de incidentes con responsables y tiempos.']},
+  transfer:{lleva:'Legales junto con Sistemas y Compras.', docs:[['Contrato con el proveedor del exterior con cláusulas de protección de datos','Es lo que habilita la transferencia a países sin nivel adecuado.']], tips:['Revisá dónde están alojados los datos antes de contratar un servicio en la nube.']},
+  igjeecc:{lleva:'El contador junto con Legales societario o un gestor.', docs:[['Estados contables firmados y con informe del auditor','Es lo que se presenta.'],['Acta de asamblea que los aprueba','Acredita la aprobación.']], tips:['Presentarlos tarde puede generar multas y trabar otros trámites ante la IGJ.']},
+  igjaut:{lleva:'Legales societario, escribano o gestor.', docs:[['Acta de asamblea y de directorio','Acreditan la designación o la reforma.'],['Aceptación de cargos y declaraciones juradas de los directores','La IGJ las exige.'],['Publicación en el Boletín Oficial cuando corresponde','Hace oponible el acto.']], tips:['Mientras las autoridades nuevas no se inscriben, los bancos y organismos pueden no reconocerlas.']},
+  lsd:{cat:'Laboral', lleva:'Recursos Humanos o el estudio contable.', docs:[['Liquidación de sueldos del mes','Es la base del libro y del F.931.']], tips:['Revisá los cambios de la Ley 27.802 de Modernización Laboral en la liquidación.']},
+  art:{cat:'Laboral', lleva:'Recursos Humanos con el productor de seguros.', docs:[['Contrato con la ART y nómina de personal','Acreditan la cobertura.']], tips:['Sin ART, el empleador responde directamente por los accidentes.']},
+  marcas:{lleva:'Un agente de la propiedad industrial o un abogado; también puede presentarlo el titular con Clave Fiscal.', docs:[['Nombre o logo y las clases de productos o servicios','Definen qué se protege.'],['Búsqueda de antecedentes','Evita chocar con marcas anteriores.']], tiempo:'El registro suele tardar varios meses. La marca dura 10 años y se renueva.', tips:['Hacé la búsqueda de antecedentes antes de lanzar un nombre.','La declaración jurada de uso de medio término vence a los 5 años del registro.']},
+  software:{lleva:'El autor o la empresa titular, con Clave Fiscal, por TAD.', docs:[['Código fuente o un extracto','Es la obra que se deposita.'],['Descripción del programa y datos del autor y del titular','Identifican la obra y su autoría.']], tips:['El derecho de autor nace con la creación: el registro sirve como prueba de autoría y fecha.','Si contrataste a alguien para desarrollarlo, dejá por escrito la cesión de derechos.']},
+  integridad:{lleva:'Compliance o Legales.', docs:[['Código de ética, políticas y canal de denuncias','Son el núcleo del programa.']], tips:['Un programa adecuado puede atenuar la responsabilidad de la empresa (Ley 27.401).']},
+  defensoria:{lleva:'Legales o atención al usuario.', docs:[['El pedido de informes','Fija qué se pregunta y el plazo.']], tips:['Respondé con hechos y documentación; la respuesta puede terminar en una recomendación pública.']}
+};
+
+// ---------- Guía ampliada: trámites y operaciones nuevos ----------
+const GUIA_NUEVA = [
+  // ----- Cartas y notificaciones -----
+  {id:'cartadoc', cat:'Cartas y notificaciones', org:'correo', t:'Enviar una carta documento', quien:'Cualquier persona o empresa que necesite dejar prueba de que comunicó algo: intimar un pago, rescindir un contrato, reclamar, rechazar o responder.',
+    que:'Es una comunicación postal con valor de prueba: el correo guarda una copia, certifica el texto y registra la fecha de entrega. Por eso se usa cuando después puede haber un juicio.',
+    cuando:'Antes de iniciar acciones, para constituir en mora, para avisar decisiones con efectos legales (rescisión, no renovación, preaviso) o para responder otra carta.',
+    lleva:'La firma el remitente o su apoderado. Puede redactarla cualquiera, pero conviene que la escriba un abogado, porque lo que dice o calla después se usa como prueba.',
+    como:['Redactá el texto: quién intima, a quién, qué reclama, en qué plazo y qué vas a hacer si no cumple (el apercibimiento).','Verificá el domicilio del destinatario: el constituido en el contrato o, para una sociedad, la sede inscripta.','En sucursal: completá el formulario de carta documento (original y dos copias), firmalo y presentalo con tu DNI.','Online: registrate en el SIE de Correo Argentino, validá tu identidad, cargá el texto y pagá. El correo la imprime y la entrega en papel.','Guardá la copia sellada y seguí el envío con el número hasta tener la constancia de entrega.'],
+    docs:[['DNI del firmante','El correo identifica a quien envía.'],['Poder o estatuto que acredite la representación, si firmás por una empresa u otra persona','Sin eso, la otra parte puede desconocer la carta.'],['Datos exactos del destinatario y su domicilio','Una carta a un domicilio equivocado no notifica.']],
+    costo:'Se paga la tarifa del correo; hay adicionales si pedís aviso de recibo o copia certificada.', tiempo:'Se entrega en uno o dos días hábiles en zonas urbanas.',
+    tips:['Escribí solo lo necesario: lo que digas te puede obligar o se puede usar en tu contra.','Fijá un plazo concreto y razonable, y decí qué vas a hacer si no cumplen.','Si vuelve «rehusada», en general se tiene por recibida; si vuelve «se mudó» o «domicilio inexistente», no notificó: revisá el domicilio y reenviá.','Para conflictos laborales, el trabajador usa el telegrama gratuito; la empresa usa carta documento.'],
+    norma:'CCyC (arts. 886 y 1088 sobre mora y resolución, entre otros); reglamentación postal del ENACOM.', link:'https://sie.correoargentino.com.ar'},
+  {id:'telegrama', cat:'Cartas y notificaciones', org:'correo', t:'Telegrama laboral gratuito (Ley 23.789)', quien:'Trabajadores, jubilados y pensionados que se comunican con su empleador o con la seguridad social.',
+    que:'Es un telegrama sin costo para el trabajador, con el mismo valor que una carta documento, para comunicaciones del contrato de trabajo: intimar registración, pagos, aclarar situación laboral, renunciar.',
+    cuando:'En cualquier momento de la relación laboral. La renuncia tiene que hacerse por este medio o ante la autoridad laboral (art. 240 LCT).',
+    lleva:'El propio trabajador, en persona o por el SIE con validación de identidad. El abogado del trabajador puede redactarlo.',
+    como:['Redactá el texto con los datos del empleador (razón social y domicilio).','Presentalo en una sucursal con tu DNI, o envialo online por el SIE.','Guardá la copia y la constancia de entrega.'],
+    docs:[['DNI del trabajador','Es un servicio personal del trabajador.'],['Razón social, CUIT y domicilio del empleador','Para que la comunicación llegue a quien corresponde.']], costo:'Gratuito para el trabajador.',
+    tips:['La empresa no puede usar este telegrama: contesta con carta documento.','La renuncia hecha por otro medio puede ser cuestionada.'], norma:'Ley 23.789; LCT art. 240.', link:'https://sie.correoargentino.com.ar'},
+  {id:'respcd', cat:'Cartas y notificaciones', org:'correo', t:'Responder una carta documento que te llegó', quien:'Quien recibe una carta documento o un telegrama.',
+    que:'Responder fija tu posición y evita que el silencio se interprete en tu contra. En materia laboral, el silencio del empleador ante una intimación del trabajador puede valer como presunción en su contra (art. 57 LCT).',
+    cuando:'Dentro del plazo que fije la carta. En relaciones laborales, el empleador debe responder en un plazo máximo de dos días hábiles.',
+    lleva:'Conviene que la conteste un abogado.',
+    como:['Leé qué te reclaman, qué plazo te dan y qué pasa si no respondés.','Juntá la documentación que respalda tu posición.','Respondé por el mismo medio: negá lo que no es cierto, sin agregar hechos innecesarios, y fijá tu postura.','Cargá el vencimiento en Fojas para no pasarte del plazo.'],
+    docs:[['La carta recibida y su sobre o constancia','Muestran fecha de recepción y contenido.'],['Contrato, facturas, recibos y mails relacionados','Respaldan tu respuesta.']],
+    tips:['Negá en forma concreta: «niego adeudar suma alguna» es mejor que una explicación larga.','No reconozcas documentos o deudas sin revisarlos.'], norma:'LCT art. 57; CCyC art. 263 (silencio).', link:''},
+  {id:'actanot', cat:'Cartas y notificaciones', org:'escribania', t:'Notificación o constatación por acta notarial', quien:'Quien necesita notificar en mano con máxima prueba o dejar constancia de un hecho (el estado de un inmueble, el contenido de una página web, una entrega).',
+    que:'El escribano va al lugar y deja constancia en un acta de lo que ve o de que entregó una notificación. Hace plena fe de lo que el escribano percibió.',
+    cuando:'Cuando la carta documento no alcanza, hay que acreditar un hecho que puede desaparecer o hay que notificar un documento largo con anexos.',
+    lleva:'Un escribano público, a pedido del interesado o de su abogado.',
+    como:['Contactá a un escribano y explicale qué hay que constatar o notificar.','Coordinan fecha, lugar y el texto de la notificación.','El escribano labra el acta y te entrega una copia.'],
+    docs:[['Texto a notificar o detalle de lo que hay que constatar','Es el objeto del acta.'],['DNI del requirente y, si es una empresa, poder o estatuto','Acreditan quién pide el acta.']],
+    costo:'Honorarios del escribano; varían según el trabajo y la distancia.', tips:['Para contenido web, pedí que el escribano imprima o capture la página y la anexe al acta.'], norma:'CCyC arts. 289, 296 y 310 y siguientes.', link:'https://www.colegio-escribanos.org.ar'},
+
+  // ----- Proceso judicial -----
+  {id:'mediacionpre', cat:'Proceso judicial', org:'mediacion', t:'Mediación prejudicial obligatoria (Justicia Nacional)', quien:'Quien va a iniciar un juicio civil o comercial en la Justicia Nacional de la Ciudad de Buenos Aires, y quien es citado a mediar.',
+    que:'Es una instancia obligatoria antes de casi todos los juicios civiles y comerciales: un mediador reúne a las partes para intentar un acuerdo. Sin el acta de cierre, la demanda no se admite.',
+    cuando:'Antes de demandar. No es obligatoria en: acciones penales; divorcio, filiación y responsabilidad parental (salvo lo patrimonial); amparos, hábeas corpus, hábeas data e interdictos; medidas cautelares; diligencias preliminares y prueba anticipada; sucesiones; concursos y quiebras; procesos voluntarios; juicios contra el Estado; reclamos de consumo que van al COPREC. Es optativa para el reclamante en las ejecuciones y en los reclamos de salud contra obras sociales y prepagas (Decreto 379/2025).',
+    lleva:'Un abogado matriculado: la asistencia letrada es obligatoria. Las personas humanas tienen que ir en persona; las empresas, con un representante o apoderado con facultades para acordar.',
+    como:['El abogado del reclamante presenta el formulario de requerimiento: por sorteo de mediador o eligiendo un mediador registrado.','El mediador notifica a las partes y fija la audiencia.','En las audiencias se negocia. El plazo es de 60 días corridos, prorrogable por acuerdo.','Si hay acuerdo, se firma y puede ejecutarse. Si no hay, el mediador entrega el acta de cierre.','Con el acta de cierre, iniciá el juicio dentro del año.'],
+    docs:[['Datos de las partes y domicilios','Para notificar la audiencia.'],['Descripción breve del reclamo y monto','Define qué se va a mediar.'],['Poder con facultades para transar, si va un apoderado','Sin facultades no se puede cerrar un acuerdo.'],['Documentación del caso','Para negociar con fundamentos.']],
+    costo:'Honorarios del mediador según la escala oficial (UHOM); quién los paga depende de cómo termine la mediación.', tiempo:'Uno o dos meses en general.',
+    tips:['La mediación suspende la prescripción; se reanuda a los 20 días de que el acta de cierre esté a disposición de las partes.','Si la parte va sin abogado, se la tiene por no comparecida.','Todo lo que se dice en la mediación es confidencial.'], norma:'Ley 26.589 y modificatorias (Ley 26.993, Decreto 379/2025); Decreto 1467/2011 y reformas.', link:'https://www.argentina.gob.ar/normativa/nacional/ley-26589-166999/actualizacion'},
+  {id:'demanda', cat:'Proceso judicial', org:'pjn', t:'Iniciar una demanda civil o comercial (Justicia Nacional)', quien:'Quien reclama judicialmente: cobro de sumas, daños, cumplimiento o resolución de contrato, entre otros.',
+    que:'Es el escrito que inicia el juicio. Tiene que cumplir los requisitos del art. 330 del CPCCN y acompañar toda la prueba documental.',
+    cuando:'Después de la mediación (si corresponde) y antes de que prescriba la acción. El plazo de prescripción genérico es de 5 años y hay muchos especiales (CCyC arts. 2560 y siguientes).',
+    lleva:'Un abogado matriculado en el CPACF: el patrocinio letrado es obligatorio. Puede actuar como patrocinante (firma con el cliente) o como apoderado (con poder).',
+    como:['Definí el fuero (civil, comercial, contencioso, federal) y el tipo de proceso (ordinario, sumarísimo, ejecutivo).','Redactá la demanda: partes y domicilios, hechos, derecho, monto y petitorio. Ofrecé toda la prueba.','Pagá la tasa de justicia y el bono del Colegio.','Presentala por el portal del PJN; se sortea el juzgado.','Pedí el traslado y notificá la demanda al domicilio real del demandado por cédula en papel.'],
+    docs:[['Acta de cierre de la mediación','Sin ella la demanda no se admite (salvo excepciones).'],['Poder general judicial o especial, si actuás como apoderado','Acredita la representación.'],['Toda la prueba documental (contratos, facturas, cartas documento, mails)','Después de la demanda solo se admite documental nueva o desconocida.'],['Comprobantes de tasa de justicia y bono del CPACF','Sin ellos el juzgado intima su pago.']],
+    costo:'Tasa de justicia (en general, 3% del monto reclamado), bono de derecho fijo del CPACF, y luego honorarios y gastos de prueba. Quien pierde suele cargar con las costas.', tiempo:'Un juicio ordinario puede llevar años; uno sumarísimo, menos.',
+    tips:['Reclamá intereses y actualización desde la mora.','Si hay riesgo de que el demandado se insolvente, pedí una medida cautelar junto con la demanda.','Constituí domicilio electrónico (tu CUIT o CUIL de abogado).'], norma:'CPCCN arts. 330 a 337; Ley 23.898 (tasa de justicia); Ley 26.589.', link:'https://www.pjn.gov.ar'},
+  {id:'contestar', cat:'Proceso judicial', org:'pjn', t:'Contestar una demanda', quien:'Quien fue demandado.',
+    que:'Es el escrito donde el demandado da su versión, niega o reconoce los hechos y los documentos, opone excepciones y ofrece prueba. Puede incluir una reconvención (contrademanda).',
+    cuando:'En el juicio ordinario, 15 días hábiles desde la notificación, más la ampliación por distancia si corresponde. En el sumarísimo, 5 días.',
+    lleva:'Un abogado matriculado.',
+    como:['Revisá la cédula: fecha de notificación, plazo y tipo de proceso.','Cargá el vencimiento en Fojas.','Analizá excepciones (incompetencia, falta de legitimación, prescripción, defecto legal).','Contestá negando en forma específica cada hecho y cada documento que no reconozcas.','Ofrecé toda la prueba y acompañá la documental.'],
+    docs:[['Cédula de notificación y copias de la demanda','Definen qué hay que contestar.'],['Poder, si actuás como apoderado','Acredita la representación.'],['Documental propia','Hay que acompañarla con la contestación.']],
+    tips:['El silencio o las negativas genéricas pueden tomarse como reconocimiento (art. 356 CPCCN).','Si los documentos que te atribuyen no son tuyos, desconocelos expresamente.'], norma:'CPCCN arts. 338, 346, 354 a 357.', link:'https://www.pjn.gov.ar'},
+  {id:'notifjud', cat:'Proceso judicial', org:'pjn', t:'Notificaciones judiciales: cédulas y domicilio electrónico', quien:'Partes y abogados en un juicio.',
+    que:'En la Justicia Nacional casi todo se notifica en el domicilio electrónico del abogado. La demanda y las citaciones personales se notifican por cédula en papel al domicilio real, a través de la Oficina de Notificaciones.',
+    cuando:'Cada vez que una resolución debe notificarse por cédula o en el domicilio real. Lo demás queda notificado por ministerio de la ley los martes y viernes.',
+    lleva:'El abogado de la parte interesada confecciona y controla la cédula.',
+    como:['Confeccioná la cédula en el sistema con los datos y la resolución a notificar.','Si va al domicilio real, se diligencia en papel por la Oficina de Notificaciones o por oficial notificador.','Controlá el resultado: si se notificó, a quién y en qué fecha.'],
+    docs:[['Resolución que hay que notificar y sus copias','Es lo que se notifica.'],['Domicilio correcto del destinatario','Si está mal, la notificación es nula.']],
+    tips:['Revisá el sistema todos los días: las notificaciones electrónicas corren aunque no las abras.','Si el demandado no vive en el domicilio, pedí informes al RENAPER o a la Cámara Electoral.'], norma:'CPCCN arts. 133 a 149; Acordadas CSJN 31/2011 y 38/2013.', link:'https://www.pjn.gov.ar'},
+  {id:'oficio22172', cat:'Proceso judicial', org:'pjn', t:'Oficio a otra jurisdicción (Ley 22.172)', quien:'Abogados que necesitan que un juzgado o registro de otra provincia cumpla una medida: notificar, inscribir un embargo, pedir informes.',
+    que:'Es la comunicación directa entre tribunales de distintas jurisdicciones del país, sin exhorto. El abogado de la parte puede diligenciarlo.',
+    cuando:'Cuando la medida tiene que cumplirse fuera de la jurisdicción del juzgado.',
+    lleva:'El abogado autorizado en el oficio. En la jurisdicción de destino puede intervenir un abogado matriculado allí.',
+    como:['Redactá el oficio con la resolución, la medida pedida y los autorizados.','Hacelo firmar por el juzgado.','Presentalo en el juzgado o registro de destino y pagá las tasas locales.','Devolvé el oficio diligenciado al expediente.'],
+    docs:[['Oficio firmado por el juez o secretario','Es el instrumento de la comunicación.'],['Copias de la resolución','El destinatario necesita saber qué cumplir.']],
+    costo:'Tasas del lugar de destino.', tips:['Autorizá a un colega del lugar si no podés viajar.'], norma:'Ley 22.172.', link:''},
+  {id:'ejecutivo', cat:'Proceso judicial', org:'pjn', t:'Cobrar un pagaré, un cheque o expensas: juicio ejecutivo', quien:'Quien tiene un título ejecutivo impago: pagaré, cheque o echeq rechazado, certificado de deuda de expensas, factura de crédito electrónica, entre otros.',
+    que:'Es un juicio rápido en el que no se discute la causa de la deuda: el demandado solo puede oponer excepciones limitadas (pago, prescripción, falsedad del título, entre otras).',
+    cuando:'Cuando el título venció y no se pagó. La mediación es optativa para el reclamante.',
+    lleva:'Un abogado matriculado.',
+    como:['Verificá que el título esté completo y no prescripto.','Presentá la demanda ejecutiva con el título original, que queda guardado en secretaría.','El juzgado intima de pago y cita a oponer excepciones; se puede trabar embargo.','Si no hay excepciones o se rechazan, se dicta sentencia de trance y remate.','Se ejecuta: subasta de bienes embargados o cobro de lo retenido.'],
+    docs:[['Título original (pagaré, cheque, certificado de expensas)','Es la base del juicio.'],['Constancia de rechazo del cheque, o certificado para acciones civiles en el echeq','Acredita la falta de pago.'],['Datos de bienes o cuentas del deudor','Para pedir embargo.']],
+    costo:'Tasa de justicia y bono; las costas suelen quedar a cargo del deudor.', tiempo:'Meses, más el tiempo de cobro.',
+    tips:['El pagaré prescribe a los 3 años de su vencimiento; el cheque, al año de vencido el plazo de presentación.','Pedí el embargo de entrada: es lo que hace efectivo el cobro.'], norma:'CPCCN arts. 520 y siguientes; Decreto-ley 5965/63 (pagaré); Ley 24.452 (cheque); CCyC art. 2048 (expensas).', link:'https://www.pjn.gov.ar'},
+  {id:'desalojo', cat:'Proceso judicial', org:'pjn', t:'Desalojo de un inmueble', quien:'Propietario o locador que necesita recuperar un inmueble: por falta de pago, vencimiento del contrato u ocupación sin derecho.',
+    que:'Es el juicio para recuperar la tenencia del inmueble. Tramita por proceso sumarísimo y permite pedir la desocupación anticipada.',
+    cuando:'Si es por falta de pago de una vivienda, antes hay que intimar al pago con un plazo no menor a 10 días corridos (CCyC art. 1222). En la Justicia Nacional hay que mediar antes de demandar.',
+    lleva:'Un abogado matriculado.',
+    como:['Intimá el pago o la restitución por carta documento.','Iniciá la mediación.','Presentá la demanda de desalojo con el contrato y la intimación.','Pedí la desocupación inmediata si corresponde (art. 680 bis CPCCN), ofreciendo caución.','Con sentencia, se libra el mandamiento de lanzamiento.'],
+    docs:[['Contrato de locación','Prueba el vínculo y las condiciones.'],['Carta documento de intimación','Requisito para la falta de pago en vivienda.'],['Título de propiedad o derecho a reclamar','Legitima al actor.'],['Acta de mediación','Requisito de admisión.']],
+    tips:['Podés reclamar por separado los alquileres adeudados por vía ejecutiva.','Si hay ocupantes desconocidos, pedí que el oficial de justicia los identifique.'], norma:'CCyC arts. 1217 a 1222; CPCCN arts. 679 a 688.', link:'https://www.pjn.gov.ar'},
+  {id:'cautelar', cat:'Proceso judicial', org:'pjn', t:'Pedir una medida cautelar (embargo, inhibición, anotación de litis)', quien:'Quien inicia o va a iniciar un juicio y teme que el deudor se desprenda de sus bienes o que la situación cambie.',
+    que:'Es una medida urgente para asegurar el resultado del juicio: embargar bienes o cuentas, inhibir al deudor para que no venda, anotar el juicio en un registro, prohibir innovar.',
+    cuando:'Antes o junto con la demanda, o durante el juicio. Si se pide antes, la demanda debe iniciarse dentro de los 10 días de trabada la medida si la obligación es exigible.',
+    lleva:'Un abogado matriculado.',
+    como:['Explicá por qué el derecho es verosímil y por qué hay peligro en la demora.','Ofrecé contracautela (caución juratoria, personal o real).','Con la orden, librá oficios a los registros (RPI, DNRPA) o a los bancos.','Controlá que la medida quede inscripta o trabada.'],
+    docs:[['Prueba que hace verosímil el crédito (contrato, factura, título)','Es el primer requisito.'],['Datos de los bienes o cuentas del deudor','Para que la medida tenga efecto.']],
+    tips:['No requiere mediación previa.','Si no iniciás la demanda en plazo, la medida caduca y respondés por los daños.'], norma:'CPCCN arts. 195 a 233.', link:'https://www.pjn.gov.ar'},
+  {id:'verifcredito', cat:'Proceso judicial', org:'pjn', t:'Verificar un crédito en un concurso o una quiebra', quien:'Acreedores de una persona o empresa que se presentó en concurso preventivo o fue declarada en quiebra.',
+    que:'Es pedirle al síndico que incluya tu crédito en el pasivo, para cobrar en el acuerdo o en la distribución de la quiebra.',
+    cuando:'Hasta la fecha que fija el edicto publicado en el Boletín Oficial. Después solo queda la verificación tardía, más lenta y costosa.',
+    lleva:'El acreedor o su abogado.',
+    como:['Buscá el edicto: dice el juzgado, el síndico, su domicilio y la fecha límite.','Prepará el pedido con monto, causa y privilegio.','Presentalo ante el síndico con los títulos originales y pagá el arancel.','Seguí el informe individual del síndico y la resolución del juez.'],
+    docs:[['Títulos que justifican el crédito (facturas, contratos, remitos, cheques)','Prueban la causa de la deuda.'],['Poder, si presenta un apoderado','Acredita la representación.']],
+    costo:'Arancel equivalente al 10% del Salario Mínimo, Vital y Móvil. Están exentos los créditos laborales y los menores a tres salarios mínimos.',
+    tips:['Ojo con la fecha límite: verificar tarde es más caro y lento.','Los créditos laborales tienen pronto pago.'], norma:'Ley 24.522, arts. 32 a 37, 56 y 200.', link:''},
+  {id:'amparogral', cat:'Proceso judicial', org:'pjn', t:'Amparo', quien:'Quien sufre un acto u omisión de una autoridad o de un particular que lesiona en forma manifiesta un derecho constitucional, cuando no hay otra vía más idónea.',
+    que:'Es una acción rápida para frenar o revertir esa lesión. Muy usada en salud, por ejemplo para exigir una cobertura a una obra social o prepaga.',
+    cuando:'En general, dentro de los 15 días hábiles desde que se conoció el acto (Ley 16.986), aunque la jurisprudencia flexibiliza el plazo cuando la lesión es continua.',
+    lleva:'Un abogado matriculado.',
+    como:['Reuní la prueba de la lesión y del reclamo previo, si lo hubo.','Presentá la demanda; podés pedir una medida cautelar.','El juez pide el informe del art. 8 a la demandada.','Se produce la prueba, si hace falta, y se dicta sentencia.'],
+    docs:[['Prueba de la lesión (rechazo, intimación, falta de respuesta)','Muestra el acto u omisión.'],['En salud: indicación médica, historia clínica y reclamo a la entidad','Acreditan la necesidad y la negativa.']],
+    tips:['En Fojas, el módulo Amparos sigue cada expediente con sus plazos.','No hace falta mediación previa.'], norma:'CN art. 43; Ley 16.986.', link:''},
+  {id:'beneficio', cat:'Proceso judicial', org:'pjn', t:'Beneficio de litigar sin gastos', quien:'Quien no tiene recursos para pagar la tasa de justicia y los gastos del juicio.',
+    que:'Es un trámite paralelo al juicio en el que se pide quedar eximido de pagar gastos y tasas mientras dure la situación.',
+    cuando:'Antes o junto con la demanda.',
+    lleva:'Un abogado matriculado; también lo pueden patrocinar defensorías o consultorios jurídicos gratuitos.',
+    como:['Presentá el pedido explicando la situación económica.','Ofrecé testigos y documentación que la acrediten.','El juez resuelve después de escuchar a la otra parte y al fisco.'],
+    docs:[['Recibos de sueldo, constancias de ingresos o de desempleo','Prueban la situación económica.'],['Datos de testigos','Suelen pedirse para acreditar la carencia.']],
+    tips:['Mientras se tramita, no se paga la tasa de justicia.'], norma:'CPCCN arts. 78 a 86.', link:''},
+
+  // ----- Sucesiones -----
+  {id:'sucesion', cat:'Sucesiones', org:'pjn', t:'Iniciar una sucesión', quien:'Herederos de una persona que falleció: hijos, cónyuge, padres, o quienes figuren en un testamento.',
+    que:'Es el juicio para determinar quiénes son los herederos y transmitirles los bienes. Sin sucesión no se puede vender o inscribir a nombre de los herederos un inmueble, un auto o los fondos de una cuenta.',
+    cuando:'En cualquier momento después del fallecimiento. Conviene no demorarlo para evitar multas o impuestos y conflictos.',
+    lleva:'Un abogado matriculado, contratado por uno o varios herederos.',
+    como:['Iniciá la sucesión en el juzgado del último domicilio del causante.','El juzgado ordena publicar un edicto por un día en el Boletín Oficial, llamando a herederos y acreedores a presentarse dentro de los 30 días.','Se inscribe el inicio en el Registro de Juicios Universales.','Acreditado el vínculo, el juez dicta la declaratoria de herederos (o aprueba el testamento).','Se denuncian los bienes, se paga la tasa de justicia y se inscribe la declaratoria en cada registro.'],
+    docs:[['Partida de defunción','Acredita el fallecimiento y la fecha.'],['Partidas de nacimiento de los hijos y de matrimonio del cónyuge','Prueban el vínculo con el causante.'],['DNI del causante y constancia del último domicilio','Definen el juzgado competente.'],['Testamento, si existe','Puede cambiar quiénes heredan.'],['Títulos de propiedad, informes de dominio, datos de cuentas','Identifican los bienes a transmitir.']],
+    costo:'Tasa de justicia sobre el valor de los bienes (3% en la Justicia Nacional), edicto, registros y honorarios. La Provincia de Buenos Aires cobra además el impuesto a la transmisión gratuita de bienes.', tiempo:'De seis meses a un año si no hay conflictos.',
+    tips:['No requiere mediación.','Si los herederos están de acuerdo, pueden actuar con un mismo abogado y ahorrar costos.','La porción legítima protege a hijos, padres y cónyuge aunque haya testamento.'], norma:'CCyC arts. 2277 y siguientes, 2335 a 2340, 2424 y siguientes; CPCCN arts. 689 a 735.', link:''},
+  {id:'declaratoria', cat:'Sucesiones', org:'rpi', t:'Inscribir la declaratoria y vender bienes heredados', quien:'Herederos con declaratoria de herederos o testamento aprobado.',
+    que:'La declaratoria se inscribe en cada registro (inmuebles, autos) para que los bienes queden a nombre de los herederos. Si quieren vender, el escribano puede hacerlo por tracto abreviado, sin inscribir antes a nombre de los herederos.',
+    cuando:'Después de la declaratoria y del pago de la tasa de justicia.',
+    lleva:'El abogado de la sucesión, junto con un escribano si hay venta.',
+    como:['Pedí al juzgado el testimonio u oficio de inscripción.','Inscribilo en el Registro de la Propiedad, la DNRPA u oficiá al banco, según el bien.','Para vender: el escribano pide autorización en el expediente y otorga la escritura por tracto abreviado.'],
+    docs:[['Testimonio de la declaratoria y de la orden de inscripción','Es el título de los herederos.'],['Certificados de dominio e inhibición','El registro y el escribano los exigen.']],
+    tips:['Desde 2025 no hace falta el COTI para vender un inmueble heredado.','La partición puede hacerse en el expediente o por escritura si todos están de acuerdo.'], norma:'Ley 17.801, art. 16; CCyC arts. 2363 y siguientes (partición).', link:''},
+  {id:'testamento', cat:'Sucesiones', org:'escribania', t:'Hacer un testamento', quien:'Cualquier persona mayor de 18 años que quiera decidir sobre su porción disponible o dejar indicaciones.',
+    que:'Puede ser ológrafo (escrito, fechado y firmado íntegramente a mano por el testador) o por acto público (escritura ante escribano y dos testigos).',
+    cuando:'En cualquier momento; se puede cambiar o revocar.',
+    lleva:'El propio testador; para el acto público, un escribano. Conviene asesoramiento de un abogado o escribano.',
+    como:['Definí qué querés dejar y a quién, respetando la legítima.','Ológrafo: escribilo todo a mano, con fecha y firma, y guardalo en un lugar seguro.','Por acto público: el escribano redacta la escritura y la firman el testador y dos testigos.','Inscribilo en el Registro de Actos de Última Voluntad del Colegio de Escribanos.'],
+    docs:[['DNI del testador','Lo identifica.'],['Datos de los beneficiarios y de los bienes','Para que la disposición sea clara.']],
+    tips:['La legítima es de 2/3 para los descendientes, 1/2 para los ascendientes y 1/2 para el cónyuge: solo se dispone libremente del resto.','Un testamento ológrafo con una sola palabra a máquina puede ser nulo.'], norma:'CCyC arts. 2444 a 2448 (legítima) y 2462 a 2480 (formas).', link:'https://www.colegio-escribanos.org.ar'},
+  {id:'cesionher', cat:'Sucesiones', org:'escribania', t:'Cesión de derechos hereditarios', quien:'Un heredero que quiere vender o regalar su parte de la herencia, a otro heredero o a un tercero.',
+    que:'Es la transmisión de la parte indivisa de la herencia, antes de la partición. Se hace por escritura pública.',
+    cuando:'Después del fallecimiento y antes de la partición.',
+    lleva:'Un escribano, con asesoramiento del abogado de la sucesión.',
+    como:['Acordá el precio o la gratuidad y el alcance de la cesión.','Firmá la escritura ante escribano.','Agregá la escritura al expediente sucesorio: desde ahí tiene efectos frente a terceros.'],
+    docs:[['Datos del expediente sucesorio','Identifican la herencia.'],['DNI de las partes y, si corresponde, asentimiento del cónyuge','Requisitos de la escritura.']],
+    tips:['El cesionario no adquiere bienes concretos sino una parte de la herencia.'], norma:'CCyC arts. 1618 y 2302 a 2309.', link:''},
+
+  // ----- Inmuebles -----
+  {id:'compraventa', cat:'Inmuebles', org:'escribania', t:'Comprar o vender un inmueble', quien:'Compradores y vendedores de casas, departamentos, locales, terrenos o cocheras.',
+    que:'La compraventa de inmuebles requiere escritura pública. La propiedad pasa al comprador con la escritura y la entrega de la posesión, y es oponible a terceros con la inscripción en el Registro de la Propiedad.',
+    cuando:'Después de acordar precio y condiciones; suele haber antes una reserva y un boleto.',
+    lleva:'Un escribano, elegido en general por el comprador. Las partes pueden tener sus abogados, y suele intervenir una inmobiliaria.',
+    como:['Reserva o seña y, opcionalmente, boleto de compraventa.','El escribano pide los certificados: dominio e inhibición, catastro y deudas.','Se verifica la deuda de impuestos, servicios y expensas.','Se firma la escritura, se paga el saldo y se entrega la posesión.','El escribano inscribe la escritura en el Registro de la Propiedad.'],
+    docs:[['Título de propiedad del vendedor','Prueba que es el dueño.'],['DNI y estado civil de las partes; asentimiento del cónyuge si el bien es ganancial o es la vivienda familiar','El acto puede ser anulable sin el asentimiento.'],['Certificados de dominio e inhibición','Prueban que no hay embargos, hipotecas ni inhibiciones, y reservan la prioridad.'],['Libre deuda de ABL, servicios y expensas','El comprador puede heredar deudas del inmueble.'],['Planos y documentación catastral cuando corresponde','Acreditan que lo construido coincide con lo registrado.']],
+    costo:'Honorarios del escribano, impuesto de sellos (con exención para vivienda única hasta un tope en varias jurisdicciones), certificados e inscripción. Desde julio de 2024 no existe el ITI; si el vendedor compró desde 2018, puede corresponder Ganancias cedular: que lo vea su contador.', tiempo:'Entre dos y cuatro semanas desde que se piden los certificados.',
+    tips:['No pagues más que una seña antes de tener el certificado de dominio.','Desde 2025 no hace falta el COTI.','Revisá el reglamento de copropiedad si es un departamento.'], norma:'CCyC arts. 1017, 1123 y siguientes, 456 y 470; Ley 17.801.', link:'https://www.colegio-escribanos.org.ar'},
+  {id:'boleto', cat:'Inmuebles', org:'escribania', t:'Reserva, seña y boleto de compraventa', quien:'Partes que acordaron una compraventa y todavía no escrituran.',
+    que:'La reserva bloquea la operación por unos días. La seña confirma el negocio. El boleto es el contrato que obliga a escriturar y fija precio, plazos y penalidades.',
+    cuando:'Entre el acuerdo y la escritura.',
+    lleva:'La inmobiliaria, un abogado o un escribano. Conviene que lo revise un profesional.',
+    como:['Firmá la reserva con plazo y condiciones de devolución.','Redactá el boleto: partes, inmueble, precio, forma de pago, fecha de escritura, posesión y penalidades.','Hacé certificar las firmas si querés más seguridad.'],
+    docs:[['Título e informe de dominio','Para verificar quién vende y si hay gravámenes.'],['DNI de las partes','Identificación.']],
+    tips:['La seña puede ser confirmatoria o penitencial: aclaralo en el contrato (CCyC art. 1059).','El boleto con fecha cierta y posesión protege al comprador frente a terceros (CCyC art. 1170).'], norma:'CCyC arts. 1059, 1170 y 1171.', link:''},
+  {id:'alquiler', cat:'Inmuebles', org:'escribania', t:'Contrato de alquiler (locación)', quien:'Propietarios e inquilinos de viviendas, locales u oficinas.',
+    que:'Desde el DNU 70/2023 se derogó la Ley de Alquileres: hay amplia libertad para pactar plazo, moneda, ajustes y garantías dentro del Código Civil y Comercial.',
+    cuando:'Antes de entregar el inmueble.',
+    lleva:'Las partes, con inmobiliaria o abogado.',
+    como:['Acordá plazo, precio, ajuste, moneda, depósito y garantía.','Redactá el contrato e incluí un inventario del estado del inmueble.','Firmalo y, si querés fecha cierta, certificá las firmas.','Registrarlo en ARCA (RELI) ya no es obligatorio: solo hace falta para algunos beneficios fiscales.'],
+    docs:[['Título o autorización del locador','Prueba que puede alquilar.'],['DNI y datos de las partes','Identificación.'],['Garantía (propietaria, seguro de caución, recibos de sueldo)','Respalda el pago.']],
+    costo:'Puede corresponder impuesto de sellos según la jurisdicción.',
+    tips:['Si no se pacta plazo, es de 2 años para vivienda y de 3 para otros destinos (CCyC art. 1198, según el DNU 70/2023).','Pactá cómo se notifica la rescisión anticipada.'], norma:'CCyC arts. 1187 y siguientes; DNU 70/2023; RG ARCA 5545/2024.', link:''},
+  {id:'informesrpi', cat:'Inmuebles', org:'rpi', t:'Informes de dominio e inhibición', quien:'Abogados, escribanos y particulares que necesitan saber quién es el dueño de un inmueble o si una persona está inhibida.',
+    que:'El informe de dominio muestra titular, hipotecas y embargos de un inmueble. El de anotaciones personales muestra si una persona está inhibida para disponer de sus bienes.',
+    cuando:'Antes de comprar, de iniciar un juicio, de pedir un embargo o de aceptar una garantía.',
+    lleva:'Cualquier interesado; para los certificados con reserva de prioridad, un escribano.',
+    como:['Ingresá al sistema del Registro correspondiente (Ciudad o provincia).','Pedí el informe con la matrícula del inmueble o los datos de la persona.','Pagá la tasa y descargá el resultado.'],
+    docs:[['Matrícula o datos catastrales del inmueble','Lo identifican.'],['Nombre y CUIT o DNI de la persona','Para las anotaciones personales.']],
+    costo:'Tasa del registro según urgencia.', tips:['El informe solo informa; el certificado (para escribanos) además reserva la prioridad.'], norma:'Ley 17.801.', link:'https://www.argentina.gob.ar/justicia/registro-propiedad-inmueble'},
+  {id:'donacion', cat:'Inmuebles', org:'escribania', t:'Donar un inmueble', quien:'Quien quiere transferir gratuitamente un inmueble, por ejemplo de padres a hijos.',
+    que:'La donación de inmuebles requiere escritura pública. Si es a un heredero forzoso, se considera un adelanto de herencia.',
+    cuando:'En vida del donante.',
+    lleva:'Un escribano.',
+    como:['Consultá con el escribano los efectos sobre la herencia.','Se piden los mismos certificados que en una compraventa.','Se firma la escritura con la aceptación del donatario y se inscribe.'],
+    docs:[['Título de propiedad','Prueba la titularidad.'],['DNI, estado civil y asentimiento conyugal','Requisitos del acto.']],
+    costo:'Honorarios del escribano, certificados y, en la Provincia de Buenos Aires, impuesto a la transmisión gratuita de bienes.', tips:['La reforma de la Ley 27.587 (2020) dio más seguridad a los títulos que vienen de donaciones a herederos: igual hacelo revisar por el escribano.'], norma:'CCyC arts. 1542 y siguientes, 2386 y 2457 a 2461.', link:''},
+  {id:'usucapion', cat:'Inmuebles', org:'pjn', t:'Usucapión (prescripción adquisitiva)', quien:'Quien poseyó un inmueble como dueño, en forma continua y pública, durante el plazo legal.',
+    que:'Es el juicio para que se declare que adquiriste el inmueble por la posesión. El plazo es de 20 años, o de 10 con justo título y buena fe.',
+    cuando:'Cumplido el plazo de posesión.',
+    lleva:'Un abogado matriculado, con un agrimensor para el plano.',
+    como:['Reuní la prueba de la posesión: impuestos pagados, mejoras, servicios, testigos.','Encargá el plano de mensura para usucapión.','Iniciá el juicio contra el titular registral y, si se desconoce, por edictos.','Con sentencia, se inscribe en el Registro.'],
+    docs:[['Plano de mensura aprobado','Lo exige la ley para identificar el inmueble.'],['Pagos de impuestos y servicios a lo largo de los años','Prueban la posesión como dueño.'],['Informe de dominio','Identifica al titular registral.']],
+    tips:['Los pagos de impuestos solos no alcanzan: se necesita una prueba combinada.'], norma:'CCyC arts. 1897 a 1905; Ley 14.159.', link:''},
+  {id:'expensas', cat:'Inmuebles', org:'pjn', t:'Expensas: cobrar o reclamar en un consorcio', quien:'Consorcios de propietarios, administradores y propietarios de unidades.',
+    que:'El certificado de deuda de expensas firmado por el administrador es título ejecutivo: permite cobrar por juicio ejecutivo. Además, el propietario que vende necesita el certificado de deuda para escriturar.',
+    cuando:'Ante deudas de expensas o al vender una unidad.',
+    lleva:'El administrador y el abogado del consorcio.',
+    como:['Intimá al propietario deudor.','Pedí al administrador el certificado de deuda con los requisitos del reglamento.','Iniciá el juicio ejecutivo con ese certificado.'],
+    docs:[['Certificado de deuda de expensas','Es el título ejecutivo.'],['Reglamento de propiedad horizontal y actas de asamblea','Acreditan las expensas y quién administra.']],
+    tips:['La deuda de expensas sigue a la unidad: el comprador puede terminar pagándola.'], norma:'CCyC arts. 2048 y 2067.', link:''},
+
+  // ----- Automotores -----
+  {id:'transfauto', cat:'Automotores', org:'dnrpa', t:'Transferir un auto o una moto', quien:'Compradores y vendedores de vehículos usados.',
+    que:'Es la inscripción del cambio de titular en el registro automotor. Hasta que se inscribe, el vendedor sigue siendo responsable frente a terceros.',
+    cuando:'Al vender. Conviene hacerla enseguida.',
+    lleva:'Las partes, o un mandatario o gestor matriculado.',
+    como:['Pedí un informe de dominio para ver titular, prendas y embargos.','Hacé la verificación policial en una planta habilitada, si corresponde según la antigüedad del vehículo: queda registrada como Formulario 12 digital.','Iniciá el Formulario 08 digital en la web de la DNRPA y certificá las firmas en el registro o ante escribano.','Pagá aranceles y sellos y presentá todo en el registro con turno.'],
+    docs:[['Título del automotor y cédula','Acreditan la titularidad.'],['Formulario 08 con firmas certificadas','Es el instrumento de la transferencia.'],['Verificación policial (Formulario 12)','Acredita que el vehículo coincide con lo registrado.'],['DNI de las partes y asentimiento del cónyuge si es ganancial','Requisitos de la transferencia.'],['Libre deuda de patentes e infracciones','Evita que el comprador herede deudas.']],
+    costo:'Arancel registral (porcentaje del valor), sellos según la provincia y certificaciones.', tiempo:'Pocos días con turno.',
+    tips:['Si el comprador no transfiere, el vendedor puede hacer la denuncia de venta.','El régimen se digitalizó mucho desde 2024: revisá los requisitos actuales en la web de la DNRPA.'], norma:'Decreto-ley 6582/58 y Digesto de Normas Técnico-Registrales de la DNRPA.', link:'https://www.dnrpa.gov.ar'},
+  {id:'denventa', cat:'Automotores', org:'dnrpa', t:'Denuncia de venta de un vehículo', quien:'Quien vendió un vehículo y el comprador no hizo la transferencia.',
+    que:'Es una comunicación al registro que deslinda la responsabilidad del vendedor por lo que pase con el vehículo después de la entrega.',
+    cuando:'Cuando el comprador no transfiere en un plazo razonable.',
+    lleva:'El titular registral o su mandatario.',
+    como:['Presentá la denuncia en el registro con los datos del comprador y la fecha de entrega.','Guardá la constancia.'],
+    docs:[['DNI del titular','Identificación.'],['Datos del comprador y prueba de la entrega','Para individualizar al responsable.']],
+    tips:['Sin denuncia de venta, al titular le pueden llegar multas y reclamos por accidentes.'], norma:'Decreto-ley 6582/58, art. 27.', link:'https://www.dnrpa.gov.ar'},
+
+  // ----- Familia -----
+  {id:'divorcio', cat:'Familia', org:'pjn', t:'Divorcio', quien:'Personas casadas que quieren divorciarse.',
+    que:'El divorcio se puede pedir por uno solo de los cónyuges o por los dos, sin expresar causa. Hay que presentar una propuesta sobre los efectos: vivienda, bienes, alimentos, hijos.',
+    cuando:'En cualquier momento.',
+    lleva:'Un abogado por cada cónyuge, o uno para ambos si es conjunto.',
+    como:['Presentá la petición con la propuesta reguladora.','El juez da traslado al otro cónyuge para que esté de acuerdo o haga su propia propuesta.','El juez dicta la sentencia de divorcio; lo que no se acuerde se discute por separado.','Se inscribe la sentencia en el Registro Civil.'],
+    docs:[['Partida de matrimonio','Acredita el vínculo.'],['Partidas de nacimiento de los hijos','Para las cuestiones de responsabilidad parental.'],['Propuesta reguladora','Es requisito de admisión.']],
+    tips:['El desacuerdo sobre la propuesta no impide que se dicte el divorcio.','No requiere mediación, salvo los aspectos patrimoniales que el juez derive.'], norma:'CCyC arts. 435 a 445 y 717.', link:''},
+  {id:'alimentos', cat:'Familia', org:'mediacion', t:'Cuota alimentaria', quien:'Hijos menores de edad (y hasta los 21 años, o 25 si estudian), representados por el progenitor conviviente.',
+    que:'Es la contribución económica para los gastos del hijo: comida, vivienda, salud, educación, recreación.',
+    cuando:'Cuando no hay acuerdo sobre cuánto aporta cada progenitor.',
+    lleva:'Un abogado, o las defensorías y servicios jurídicos gratuitos.',
+    como:['Intentá un acuerdo; en la Justicia Nacional hay mediación previa.','Si no hay acuerdo, iniciá el juicio y pedí alimentos provisorios.','Con sentencia o acuerdo homologado, la cuota se puede retener del sueldo.'],
+    docs:[['Partidas de nacimiento','Acreditan el vínculo.'],['Gastos del hijo (colegio, salud, vivienda)','Fundan el monto.'],['Datos laborales o económicos del obligado','Para fijar la cuota y la retención.']],
+    tips:['Pedí los alimentos provisorios desde el inicio.'], norma:'CCyC arts. 658 a 670.', link:''},
+  {id:'viajemenor', cat:'Familia', org:'escribania', t:'Autorización de viaje para menores', quien:'Menores de 18 años que viajan al exterior sin alguno de sus progenitores.',
+    que:'Es el permiso de quien no viaja (o de ambos) para que el menor salga del país.',
+    cuando:'Antes del viaje.',
+    lleva:'Un escribano, el Registro Civil o el trámite digital de Migraciones donde esté disponible.',
+    como:['Definí si es para un viaje puntual o un permiso amplio.','Firmala ante escribano o en el organismo habilitado.','Llevá la autorización (y su legalización, si corresponde) al viaje.'],
+    docs:[['DNI o pasaporte del menor y de los progenitores','Identificación.'],['Partida de nacimiento','Acredita el vínculo.']],
+    tips:['Si un progenitor se niega, se pide la autorización al juez.'], norma:'CCyC art. 645; normativa de la Dirección Nacional de Migraciones.', link:''},
+
+  // ----- Escribanía y documentos -----
+  {id:'poder', cat:'Escribanía y documentos', org:'escribania', t:'Otorgar un poder', quien:'Personas o empresas que necesitan que otro actúe en su nombre: juicios, ventas, trámites, bancos.',
+    que:'Es el documento que otorga representación. Puede ser general judicial (para juicios), general amplio de administración y disposición, o especial para un acto.',
+    cuando:'Antes del acto en que va a actuar el apoderado.',
+    lleva:'Un escribano. Para juicios, también puede otorgarse un acta poder ante el juzgado en algunos casos.',
+    como:['Definí qué tipo de poder necesitás y para qué actos.','El escribano redacta la escritura y la firma el poderdante.','Entregá la copia al apoderado; si se usa en otra provincia o en el exterior, legalizala o apostillala.'],
+    docs:[['DNI del poderdante','Identificación.'],['Si es una empresa: estatuto, acta de designación de autoridades y, en su caso, acta que autoriza el poder','Prueban quién puede otorgarlo.'],['Datos del apoderado','Para individualizarlo.']],
+    costo:'Honorarios del escribano y legalizaciones.',
+    tips:['Para vender o donar inmuebles, el poder debe tener facultades expresas (CCyC art. 375).','Revocar el poder también se hace por escritura; avisá a los terceros.'], norma:'CCyC arts. 358 a 381.', link:'https://www.colegio-escribanos.org.ar'},
+  {id:'certfirma', cat:'Escribanía y documentos', org:'escribania', t:'Certificar una firma', quien:'Quien necesita que un documento privado tenga firma auténtica: contratos, autorizaciones, formularios.',
+    que:'El escribano certifica que la firma pertenece a quien firma delante de él. No certifica el contenido.',
+    cuando:'Cuando un organismo lo exige o querés dar más seguridad a un contrato.',
+    lleva:'Un escribano. Algunos registros y bancos también certifican firmas para sus trámites.',
+    como:['Llevá el documento sin firmar.','Firmá delante del escribano con tu DNI.','El escribano agrega la certificación.'],
+    docs:[['DNI del firmante','Identificación.'],['Documento que justifica la representación, si firmás por otro','Para que el escribano lo consigne.']],
+    costo:'Honorario por cada firma certificada.', tips:['La certificación da fecha cierta al documento.'], norma:'CCyC arts. 314 y 317.', link:''},
+  {id:'apostilla', cat:'Escribanía y documentos', org:'cancilleria', t:'Apostillar o legalizar un documento para el exterior', quien:'Quien necesita presentar un documento argentino (partida, título, poder, sentencia) en otro país.',
+    que:'La apostilla certifica la autenticidad de la firma del funcionario o escribano, para países del Convenio de La Haya. Para los demás países se usa la legalización consular.',
+    cuando:'Antes de presentar el documento en el exterior.',
+    lleva:'El interesado. Los documentos notariales se apostillan en el Colegio de Escribanos; los públicos, en Cancillería (también por TAD).',
+    como:['Verificá si el país de destino es parte del Convenio de La Haya.','Si el documento está en castellano y lo piden en otro idioma, encargá una traducción pública y legalizala en el Colegio de Traductores.','Pedí la apostilla en el organismo que corresponde.'],
+    docs:[['Documento original o copia certificada','Es lo que se apostilla.'],['Traducción pública, si corresponde','El país de destino puede exigirla.']],
+    tips:['Algunos documentos necesitan una legalización previa (por ejemplo, títulos universitarios).'], norma:'Convención de La Haya de 1961 (Ley 23.458).', link:'https://www.cancilleria.gob.ar'},
+
+  // ----- Personas y registros -----
+  {id:'partidas', cat:'Personas y registros', org:'rcivil', t:'Pedir partidas (nacimiento, matrimonio, defunción)', quien:'Titulares, familiares y abogados que necesitan acreditar un hecho o un vínculo.',
+    que:'Son las copias oficiales de las actas del Registro Civil. Se piden para sucesiones, divorcios, trámites previsionales y migratorios.',
+    cuando:'Cuando un trámite lo requiere. Muchos organismos piden partidas recientes.',
+    lleva:'El interesado o su abogado.',
+    como:['Identificá la jurisdicción donde se inscribió el hecho.','Pedila online (la Ciudad y varias provincias emiten partidas digitales con firma) o en una sede con turno.','Descargala o retirala.'],
+    docs:[['DNI del solicitante','Identificación.'],['Datos del acta: nombre, fecha y lugar del hecho','Para encontrarla.']],
+    costo:'Tasa según la jurisdicción.', tips:['Para usarla en el exterior, apostillala.'], norma:'Ley 26.413.', link:'https://buenosaires.gob.ar/registrocivil'},
+  {id:'antecedentes', cat:'Personas y registros', org:'reincidencia', t:'Certificado de antecedentes penales', quien:'Personas que lo necesitan para un empleo, una licitación, un trámite migratorio o una habilitación.',
+    que:'Informa si la persona tiene condenas o procesos registrados.',
+    cuando:'Cuando lo pide un empleador u organismo.',
+    lleva:'El interesado.',
+    como:['Pedilo online con validación de identidad o en un centro habilitado.','Pagá la tasa según la urgencia.','Descargalo cuando esté listo.'],
+    docs:[['DNI','Identificación.']],
+    tips:['Para usarlo afuera, se apostilla.'], norma:'Ley 22.117.', link:'https://www.argentina.gob.ar/justicia/reincidencia'},
+  {id:'deudores', cat:'Personas y registros', org:'bcra', t:'Consultar la Central de Deudores y cheques rechazados', quien:'Cualquiera que quiera ver la situación crediticia de una persona o empresa antes de contratar o demandar.',
+    que:'Muestra cómo califican los bancos a una persona o empresa (situación 1 a 5) y sus cheques rechazados.',
+    cuando:'Antes de dar crédito, aceptar un cheque, firmar un contrato importante o iniciar un juicio.',
+    lleva:'Cualquier persona, en forma gratuita.',
+    como:['Entrá a la web del BCRA, sección de situación crediticia.','Ingresá el CUIT o CUIL y consultá.'],
+    docs:[['CUIT o CUIL de la persona o empresa','Es el dato de búsqueda.']],
+    costo:'Gratuito.', tips:['Combinalo con los informes de inhibición para evaluar la solvencia.'], norma:'Normativa del BCRA.', link:'https://www.bcra.gob.ar'},
+
+  // ----- Societario -----
+  {id:'sas', cat:'Societario', org:'igj', t:'Constituir una SAS', quien:'Emprendedores y empresas que buscan una sociedad simple, con uno o más socios.',
+    que:'La Sociedad por Acciones Simplificada permite constituir una sociedad con un socio, un estatuto modelo y trámites digitales.',
+    cuando:'Antes de empezar a operar como sociedad.',
+    lleva:'Los socios, con un abogado, contador, escribano o gestor.',
+    como:['Elegí y reservá el nombre.','Redactá el instrumento constitutivo (o usá el modelo).','Firmalo con firma digital o con firmas certificadas.','Presentalo ante el registro (IGJ en la Ciudad) con el capital integrado.','Pedí la CUIT y habilitá los libros digitales.'],
+    docs:[['DNI y datos de los socios y administradores','Identificación.'],['Instrumento constitutivo','Es el contrato social.'],['Constancia de integración del capital','Requisito de inscripción.']],
+    costo:'Tasas del registro, certificaciones y honorarios. El capital mínimo es de dos Salarios Mínimos, Vitales y Móviles.',
+    tips:['Las reglas de la IGJ cambiaron varias veces: revisá la resolución vigente.'], norma:'Ley 27.349, arts. 33 a 62.', link:'https://www.argentina.gob.ar/justicia/igj'},
+  {id:'srlsa', cat:'Societario', org:'igj', t:'Constituir una SRL o una SA', quien:'Quienes inician un negocio con socios y quieren limitar su responsabilidad.',
+    que:'Son los tipos societarios tradicionales: la SRL para emprendimientos más chicos (cuotas) y la SA para empresas con acciones y directorio.',
+    cuando:'Antes de operar como sociedad.',
+    lleva:'Un abogado, escribano o contador; en la SA, el estatuto va por escritura pública.',
+    como:['Reservá el nombre.','Redactá el estatuto: objeto, capital, administración, cierre de ejercicio.','Firmalo (escritura en la SA; instrumento con firmas certificadas o escritura en la SRL).','Publicá el edicto en el Boletín Oficial.','Depositá el capital e inscribí en el registro.'],
+    docs:[['Estatuto','Es el contrato social.'],['DNI y datos de socios y administradores','Identificación.'],['Constancia de depósito del capital','Acredita la integración.']],
+    costo:'Escribanía, edicto, tasas del registro y honorarios.', tiempo:'Semanas a meses según el registro.',
+    tips:['Los administradores deben constituir domicilio y aceptar el cargo.'], norma:'Ley 19.550.', link:'https://www.argentina.gob.ar/justicia/igj'},
+  {id:'asambleas', cat:'Societario', org:'igj', t:'Asambleas, actas y libros sociales', quien:'Sociedades y asociaciones civiles.',
+    que:'Las decisiones importantes se toman en asamblea y se registran en libros rubricados o digitales: aprobación de balances, elección de autoridades, aumentos de capital.',
+    cuando:'Al menos una vez al año para aprobar los estados contables, y cada vez que haya decisiones relevantes.',
+    lleva:'El directorio o la gerencia, con Legales societario.',
+    como:['Convocá a la asamblea con la anticipación y publicidad que exige el estatuto.','Celebrala, verificá el quórum y las mayorías.','Labrá el acta y transcribila en el libro.','Inscribí lo que corresponda en la IGJ.'],
+    docs:[['Convocatoria y constancia de publicación','Prueban que se citó correctamente.'],['Registro de asistencia','Acredita el quórum.']],
+    tips:['Una asamblea mal convocada puede ser impugnada.'], norma:'Ley 19.550, arts. 233 a 254.', link:''},
+
+  // ----- Laboral -----
+  {id:'seclotram', cat:'Laboral', org:'seclo', t:'Conciliación laboral obligatoria (SECLO)', quien:'Trabajadores y empleadores con un reclamo laboral en la Ciudad de Buenos Aires.',
+    que:'Antes de un juicio laboral en la Justicia Nacional del Trabajo hay que pasar por el SECLO: un conciliador intenta un acuerdo que luego se homologa.',
+    cuando:'Antes de demandar. El empleador citado debe asistir a la audiencia.',
+    lleva:'Abogados de ambas partes: la asistencia letrada es obligatoria.',
+    como:['El trabajador inicia el reclamo y se sortea un conciliador.','El conciliador cita a las partes.','Si hay acuerdo, se eleva para su homologación y se paga en los plazos pactados.','Si no hay acuerdo, se emite el acta que habilita la demanda.'],
+    docs:[['Recibos de sueldo, telegramas y cartas documento','Muestran la relación y el reclamo.'],['Poder del representante de la empresa con facultades para conciliar','Para firmar un acuerdo.']],
+    tips:['Revisá cómo impacta la Ley 27.802 de Modernización Laboral en los montos y en el procedimiento.','Un acuerdo homologado tiene efecto de cosa juzgada.'], norma:'Ley 24.635; Ley 27.802.', link:'https://www.argentina.gob.ar/trabajo/seclo'},
+  {id:'despido', cat:'Laboral', org:'seclo', t:'Despido: comunicación y liquidación final', quien:'Empleadores que desvinculan a un trabajador y trabajadores despedidos.',
+    que:'El despido se comunica por escrito, indicando si es con o sin causa. Después hay que pagar la liquidación final y entregar los certificados.',
+    cuando:'Al decidir la desvinculación. Los pagos tienen plazos cortos desde la extinción.',
+    lleva:'Recursos Humanos con el abogado laboral de la empresa.',
+    como:['Comunicá el despido por carta documento, expresando la causa si la hay.','Calculá la liquidación final (indemnizaciones, preaviso, vacaciones y SAC proporcionales) según la normativa vigente.','Pagala en término y hacé la baja ante ARCA.','Entregá el certificado de trabajo y la certificación de servicios.'],
+    docs:[['Legajo del trabajador y recibos','Base del cálculo.'],['Carta documento de despido','Fija la fecha y la causa.']],
+    tips:['La Ley 27.802 (2026) cambió el cálculo de la indemnización del art. 245 LCT y otros puntos: recalculá con el texto vigente.','La causa invocada en la carta no se puede cambiar después en juicio.'], norma:'LCT arts. 231 a 255, con las reformas de la Ley 27.802.', link:''},
+  {id:'cert80', cat:'Laboral', org:'arca', t:'Certificado de trabajo (art. 80 LCT)', quien:'Empleadores, al terminar una relación laboral.',
+    que:'Es el certificado con los datos de la relación (tiempo, tareas, remuneraciones y aportes) que el trabajador necesita para jubilarse o para otro empleo. Se genera con el sistema de ARCA.',
+    cuando:'Al terminar la relación, dentro del plazo legal.',
+    lleva:'Recursos Humanos o el estudio contable.',
+    como:['Generá el certificado en el servicio de ARCA.','Firmalo y entregalo al trabajador dejando constancia.'],
+    docs:[['Datos de la relación laboral y aportes','Es el contenido del certificado.']],
+    tips:['Si el trabajador lo intima y no se entrega, puede haber sanciones: revisá el régimen vigente tras la Ley 27.802.'], norma:'LCT art. 80.', link:'https://www.arca.gob.ar'},
+
+  // ----- Impuestos -----
+  {id:'cuit', cat:'Impuestos', org:'arca', t:'Inscribirse en ARCA (monotributo o responsable inscripto)', quien:'Personas que empiezan a facturar y empresas nuevas.',
+    que:'Es el alta impositiva: CUIT, Clave Fiscal y adhesión al monotributo o inscripción en IVA y Ganancias.',
+    cuando:'Antes de empezar a facturar.',
+    lleva:'La persona, o un contador.',
+    como:['Obtené la Clave Fiscal con validación de identidad.','Elegí el régimen según tus ingresos y actividad.','Adherite o inscribite y habilitá la facturación electrónica.','Inscribite también en Ingresos Brutos.'],
+    docs:[['DNI','Identificación.'],['Domicilio y actividad','Definen el régimen y los impuestos.']],
+    tips:['Revisá las recategorizaciones del monotributo dos veces por año.'], norma:'Ley 24.977 (monotributo); Ley 11.683.', link:'https://www.arca.gob.ar'},
+  {id:'iibb', cat:'Impuestos', org:'rentas', t:'Ingresos Brutos (AGIP, ARBA y Convenio Multilateral)', quien:'Quienes realizan una actividad onerosa habitual.',
+    que:'Es el impuesto provincial sobre la facturación. Si se opera en varias jurisdicciones, se tributa por Convenio Multilateral.',
+    cuando:'Al empezar la actividad; luego mensualmente.',
+    lleva:'Un contador.',
+    como:['Inscribite en la rentas de tu jurisdicción o en Convenio Multilateral.','Presentá las declaraciones juradas y pagá.'],
+    docs:[['CUIT y Clave Fiscal','Para el alta.']],
+    tips:['Monotributistas: en varias jurisdicciones existe un régimen simplificado unificado.'], norma:'Códigos fiscales locales; Convenio Multilateral.', link:'https://www.agip.gob.ar'},
+  {id:'dfe', cat:'Impuestos', org:'arca', t:'Domicilio fiscal electrónico', quien:'Todos los contribuyentes.',
+    que:'Es la casilla donde ARCA notifica intimaciones, fiscalizaciones y resoluciones. Las notificaciones son válidas aunque no las leas.',
+    cuando:'Siempre; revisalo con frecuencia.',
+    lleva:'El contribuyente o su contador.',
+    como:['Ingresá con Clave Fiscal a «Domicilio Fiscal Electrónico».','Configurá un mail para recibir avisos.','Revisá las comunicaciones y cargá los plazos en Fojas.'],
+    docs:[['Clave Fiscal','Acceso al servicio.']],
+    tips:['Los plazos corren desde la notificación en la casilla.'], norma:'Ley 11.683, art. 3 bis.', link:'https://www.arca.gob.ar'},
+
+  // ----- Administración pública -----
+  {id:'recursoadm', cat:'Administración pública', org:'otro', t:'Recurrir un acto administrativo nacional', quien:'Personas y empresas afectadas por una decisión de un organismo nacional: una multa, un rechazo, una sanción.',
+    que:'Es pedir a la Administración que revise su decisión antes de ir a la Justicia. La Ley Bases (Ley 27.742) y el Decreto 695/2024 modificaron plazos y reglas.',
+    cuando:'Reconsideración: 10 días hábiles administrativos. Recurso jerárquico (el que agota la vía): al menos 30 días desde la notificación válida. Después hay 180 días hábiles judiciales para demandar.',
+    lleva:'El interesado o su abogado (recomendado).',
+    como:['Leé el acto: debe indicar qué recursos proceden y en qué plazos.','Pedí vista del expediente si necesitás conocerlo; suspende los plazos.','Presentá el recurso con fundamentos y prueba, por TAD o en mesa de entradas.','Si se rechaza o no hay respuesta, evaluá la vía judicial.'],
+    docs:[['Acto administrativo y su notificación','Definen qué se impugna y desde cuándo corre el plazo.'],['Prueba que respalda tu posición','Fundamenta el recurso.']],
+    tips:['Verificá los plazos del procedimiento especial si el organismo tiene uno propio.','Ya no se exige pagar la multa antes de recurrir judicialmente.'], norma:'Ley 19.549 (texto según Ley 27.742); Decreto 1759/72 (t.o. Decreto 695/2024).', link:'https://tramitesadistancia.gob.ar'},
+  {id:'accesoinfo', cat:'Administración pública', org:'aaip', t:'Pedido de acceso a la información pública', quien:'Cualquier persona, sin necesidad de explicar para qué.',
+    que:'Es el derecho a pedir información que tiene el Estado nacional: contratos, gastos, normas internas, estadísticas.',
+    cuando:'En cualquier momento. El organismo tiene 15 días hábiles para responder, prorrogables por otros 15.',
+    lleva:'El interesado.',
+    como:['Presentá el pedido por TAD o en el organismo.','Esperá la respuesta en el plazo legal.','Si no responden o la respuesta es insuficiente, reclamá ante la AAIP o iniciá acción judicial.'],
+    docs:[['Detalle concreto de lo que pedís','Facilita una respuesta completa.']],
+    costo:'Gratuito.', tips:['Sirve como prueba anticipada antes de un juicio contra el Estado.'], norma:'Ley 27.275.', link:'https://www.argentina.gob.ar/aaip'},
+  {id:'habeasdata', cat:'Administración pública', org:'aaip', t:'Pedir, corregir o suprimir datos personales', quien:'Cualquier persona sobre sus propios datos en manos de una empresa u organismo.',
+    que:'Es el derecho de acceso, rectificación y supresión de datos personales. Si no se responde, procede la acción de hábeas data.',
+    cuando:'En cualquier momento. El responsable tiene 10 días corridos para responder el acceso y 5 días hábiles para rectificar o suprimir.',
+    lleva:'El titular de los datos o su abogado.',
+    como:['Pedilo por un medio fehaciente al responsable de la base.','Si no responden en plazo, denunciá ante la AAIP o iniciá hábeas data.'],
+    docs:[['DNI del titular','Acredita que pide sus propios datos.']],
+    tips:['Del lado de la empresa: tené un circuito para responder estos pedidos en plazo.'], norma:'Ley 25.326, arts. 14 a 16 y 33 y siguientes.', link:'https://www.argentina.gob.ar/aaip'},
+  {id:'amparomora', cat:'Administración pública', org:'pjn', t:'Amparo por mora', quien:'Quien hizo un pedido a la Administración y no recibe respuesta en plazo.',
+    que:'Es una acción judicial para que el juez ordene a la Administración que se pronuncie. No resuelve el fondo: obliga a responder.',
+    cuando:'Cuando venció el plazo para resolver sin respuesta.',
+    lleva:'Un abogado matriculado.',
+    como:['Acreditá el pedido y el tiempo transcurrido.','Presentá el amparo por mora ante el juez competente.','El juez pide un informe y luego fija un plazo para que se responda.'],
+    docs:[['Constancia del pedido presentado','Prueba la fecha y el contenido.']],
+    tips:['La Ley 27.742 fortaleció esta vía.'], norma:'Ley 19.549, art. 28.', link:''},
+
+  // ----- Comercio y habilitaciones -----
+  {id:'habilitacion', cat:'Comercio y habilitaciones', org:'gcba', t:'Habilitar un local en la Ciudad de Buenos Aires', quien:'Quien va a abrir un comercio, oficina, consultorio o industria.',
+    que:'Es la autorización para usar el local para una actividad. Según el riesgo, se tramita como declaración jurada o con inspección previa.',
+    cuando:'Antes de abrir.',
+    lleva:'Un profesional matriculado (arquitecto, ingeniero o maestro mayor de obras) junto con el titular; también intervienen gestores.',
+    como:['Verificá que la actividad esté permitida en esa zona (Código Urbanístico).','Reuní planos, plan de evacuación y documentación del local.','Iniciá el trámite online con el profesional.','Pagá las tasas y esperá la aprobación o la inspección.'],
+    docs:[['Contrato de alquiler o título del local','Acredita el derecho a usarlo.'],['Planos y certificados técnicos','Prueban que el local es seguro y apto.'],['CUIT y datos del titular','Identificación.']],
+    tips:['Antes de alquilar, confirmá que la actividad se puede habilitar en ese local.'], norma:'Código Urbanístico y Código de Habilitaciones de la Ciudad.', link:'https://buenosaires.gob.ar/tramites'},
+
+  // ----- Consumo -----
+  {id:'reclconsumidor', cat:'Consumo', org:'ddc', t:'Reclamar como consumidor (para un cliente)', quien:'Consumidores y sus abogados ante un problema con un producto o servicio.',
+    que:'Hay tres vías: el reclamo administrativo (Ventanilla Federal Única u oficina local), la conciliación en el COPREC y el juicio, que en la Ciudad tramita ante el fuero de consumo.',
+    cuando:'Después de reclamar a la empresa sin solución.',
+    lleva:'El consumidor solo, o con abogado.',
+    como:['Reclamá primero a la empresa y guardá el número de reclamo.','Iniciá el reclamo en la Ventanilla Federal Única o en el COPREC.','Si no hay acuerdo, evaluá el juicio; tiene beneficio de gratuidad.'],
+    docs:[['Factura, contrato o comprobante','Prueban la relación de consumo.'],['Reclamos previos y respuestas','Muestran el incumplimiento.']],
+    costo:'Gratuito para el consumidor.', tips:['Se puede pedir daño punitivo cuando la conducta de la empresa fue grave.'], norma:'Ley 24.240; Ley 26.993.', link:'https://www.argentina.gob.ar/node/249673'},
+
+  // ----- Penal -----
+  {id:'denuncia', cat:'Penal', org:'mpf', t:'Hacer una denuncia penal', quien:'Víctimas o testigos de un delito, y empresas afectadas (fraudes, estafas, robos).',
+    que:'Es poner en conocimiento de la autoridad un hecho que puede ser delito para que se investigue.',
+    cuando:'Lo antes posible después del hecho.',
+    lleva:'Cualquier persona. Una empresa denuncia por su representante o apoderado; conviene ir con abogado, que además puede pedir ser querellante.',
+    como:['Reuní la prueba: documentos, capturas, datos de testigos.','Denunciá en una comisaría, en la fiscalía o, en la Ciudad, online para algunos delitos.','Guardá la constancia con el número de causa.','Evaluá constituirte como querellante para impulsar la investigación.'],
+    docs:[['DNI del denunciante','Identificación.'],['Prueba del hecho','Facilita la investigación.'],['Poder o estatuto si denuncia una empresa','Acredita la representación.']],
+    tips:['Una denuncia falsa es delito: contá solo lo que sabés.'], norma:'Código Procesal Penal aplicable según la jurisdicción.', link:'https://mpfciudad.gob.ar'}
+];
+
 // ---------- Módulo Administrativos: reclamos ante organismos, obligaciones de la empresa y guía ----------
 const ORGS = [
   {id:'sss', l:'Superintendencia de Servicios de Salud', c:'SSS', que:'Controla a obras sociales y prepagas: registros (RNEMP, RNAS, prestadores), reclamos y denuncias de afiliados, sumarios y sanciones.', link:'https://www.argentina.gob.ar/sssalud', plazo:{modo:'corridos', cant:5}, plazoDesc:'Responder el requerimiento de la SSS', plazoNota:'La Res. SSS 951/2025 fija un máximo de 5 días corridos para responder requerimientos formales. Verificá el plazo de la notificación.'},
@@ -4199,9 +4669,10 @@ const ORGS = [
   {id:'msal', l:'Ministerio de Salud', c:'Min. Salud', que:'Política sanitaria, PMO y normas de cobertura; autoridad de la que depende la SSS.', link:'https://www.argentina.gob.ar/salud', plazo:{modo:'habiles', cant:10}, plazoDesc:'Responder al Ministerio', plazoNota:''},
   {id:'otro', l:'Otro organismo', c:'Otro', que:'Organismos provinciales o municipales (Defensa del Consumidor local, habilitaciones, rentas) u otros.', link:'', plazo:{modo:'habiles', cant:10}, plazoDesc:'Responder / presentar', plazoNota:'Verificá el plazo que corresponda.'}
 ];
+ORGS.splice(ORGS.length-1, 0, ...ORGS_MAS);
 const orgById = id => ORGS.find(o=>o.id===id) || ORGS[ORGS.length-1];
 const TR_ETAPAS = {reclamo:['Ingreso','Descargo','Audiencia','Resolución','Recurso','Cerrado'], obligacion:['Pendiente','En preparación','Presentado','Cumplido']};
-const GUIA = [
+const GUIA_BASE = [
   {id:'rnemp', cat:'Salud', org:'sss', t:'Inscripción en el Registro Nacional de Entidades de Medicina Prepaga (RNEMP)', quien:'Empresas de medicina prepaga (art. 1 de la Ley 26.682).',
     que:'Es la inscripción obligatoria para obtener la autorización para funcionar como prepaga. Con los requisitos cumplidos, la SSS da el alta y otorga el certificado de inscripción.', cuando:'Antes de operar. Después, mantener actualizados los datos y la documentación del legajo.',
     como:['Ingresar a Trámites a Distancia (TAD) con Clave Fiscal nivel 3.','Buscar el trámite de inscripción en el RNEMP y cargar la documentación societaria, económica y prestacional que pide la SSS.','Seguir el expediente hasta el alta y guardar el certificado.'], norma:'Ley 26.682; Decreto 1993/2011; Decreto 171/2024; Res. SSS 55/2012 y modificatorias.', link:'https://www.argentina.gob.ar/servicio/solicitar-inscripcion-al-registro-nacional-de-entidades-de-medicina-prepaga'},
@@ -4266,6 +4737,8 @@ const GUIA = [
     que:'La Defensoría puede pedir informes sobre reclamos de usuarios y emitir recomendaciones. Conviene responder en término y con documentación.', cuando:'En el plazo que fije el pedido.',
     como:['Cargar el pedido en Fojas.','Responder con la posición de la empresa y la documentación.'], norma:'Ley 24.284.', link:'https://www.defensor.gov.ar'}
 ];
+const GUIA = [...GUIA_BASE.map(g=>({...g, ...(GUIA_MAS[g.id]||{})})), ...GUIA_NUEVA];
+const GUIA_CATS = ['Cartas y notificaciones','Proceso judicial','Sucesiones','Inmuebles','Automotores','Familia','Escribanía y documentos','Personas y registros','Societario','Laboral','Impuestos','Administración pública','Comercio y habilitaciones','Consumo','Salud','Datos personales','Propiedad intelectual','Integridad','Penal'];
 const guiaTodas = () => [...GUIA, ...((S.guiaPropia)||[]).map(g=>({...g, propia:true}))];
 function trs(){ return Array.isArray(S.tramites) ? S.tramites : (S.tramites = []); }
 const trById = id => trs().find(t=>t.id===id);
@@ -4292,26 +4765,30 @@ function vAdministrativos(){
   }
   if(tab==='guia'){
     const q = normTxt(ui.guiaQ||''), cat = ui.guiaCat||'Todas';
-    const cats = ['Todas', ...new Set(guiaTodas().map(g=>g.cat))];
-    const list = guiaTodas().filter(g=>(cat==='Todas'||g.cat===cat) && (!q || normTxt([g.t,g.quien,g.que,g.cuando,g.norma,orgById(g.org).l,orgById(g.org).c].join(' ')).includes(q)));
-    body = `<p class="small muted">Trámites y obligaciones que suele tener una empresa —en especial una prepaga— ante organismos públicos: qué son, a quién alcanzan, cuándo y cómo se hacen, y la norma. Información revisada en noviembre de 2026: confirmá siempre la versión vigente en el link oficial antes de actuar.</p>
-      <div class="row" style="gap:10px;flex-wrap:wrap"><input type="search" id="guiaQ" placeholder="Buscar: marca, No Llame, estados contables, COPREC…" value="${esc(ui.guiaQ||'')}" style="flex:1;min-width:240px"><button class="btn" data-act="guianueva">${ic('plus','sm')} Agregar a la guía</button></div>
+    const cats = ['Todas', ...[...new Set(guiaTodas().map(g=>g.cat))].sort((x,y)=>{ const i=GUIA_CATS.indexOf(x), j=GUIA_CATS.indexOf(y); return (i<0?99:i)-(j<0?99:j); })];
+    const list = guiaTodas().filter(g=>(cat==='Todas'||g.cat===cat) && (!q || normTxt([g.t,g.quien,g.que,g.cuando,g.norma,g.lleva,g.costo,g.tiempo,g.cat,(g.como||[]).join(' '),(g.docs||[]).flat().join(' '),(g.tips||[]).join(' '),orgById(g.org).l,orgById(g.org).c].join(' ')).includes(q)));
+    body = `<p class="small muted">Guía de consulta de trámites y operaciones jurídicas: cartas documento, juicios, sucesiones, compraventas, sociedades, trámites laborales, impositivos y ante organismos. Para cada uno: qué es, quién lo puede llevar, cómo se hace en la práctica, qué documentos se necesitan y por qué, costos, tiempos y errores comunes. Información revisada en noviembre de 2026: los aranceles y requisitos cambian, confirmá siempre en el sitio oficial antes de actuar.</p>
+      <div class="row" style="gap:10px;flex-wrap:wrap"><input type="search" id="guiaQ" placeholder="Buscar: carta documento, sucesión, compraventa, poder, despido, mediación…" value="${esc(ui.guiaQ||'')}" style="flex:1;min-width:240px"><button class="btn" data-act="guianueva">${ic('plus','sm')} Agregar a la guía</button></div>
       <div class="chips">${cats.map(c=>`<button class="chipbtn ${cat===c?'on':''}" data-guiacat="${esc(c)}">${esc(c)}</button>`).join('')}</div>
       <div class="list" id="guiaList">${list.map(g=>{ const o = orgById(g.org), ab = ui.guiaOpen===g.id; return `<div class="gcard ${ab?'open':''}">
         <button type="button" class="gcard-h" data-guiaopen="${g.id}"><span class="chev">${ic('next','sm')}</span><div style="flex:1;min-width:0"><b>${esc(g.t)}</b><div class="small muted">${esc(o.c)} · ${esc(g.cat)}${g.propia?' · agregada por el equipo':''}</div></div></button>
         ${ab?`<div class="gcard-b">
-          <div><span class="glbl">Qué es</span>${esc(g.que)}</div><div><span class="glbl">A quién alcanza</span>${esc(g.quien)}</div><div><span class="glbl">Cuándo</span>${esc(g.cuando)}</div>
-          ${(g.como||[]).length?`<div><span class="glbl">Cómo se hace</span><ol>${g.como.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>`:''}
+          <div><span class="glbl">Qué es</span>${esc(g.que)}</div><div><span class="glbl">Para quién</span>${esc(g.quien)}</div><div><span class="glbl">Cuándo</span>${esc(g.cuando)}</div>
+          ${g.lleva?`<div><span class="glbl">Quién lo puede llevar</span>${esc(g.lleva)}</div>`:''}
+          ${(g.como||[]).length?`<div><span class="glbl">Cómo se hace en la práctica</span><ol>${g.como.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>`:''}
+          ${(g.docs||[]).length?`<div><span class="glbl">Documentos que vas a necesitar</span><ul class="gdocs">${g.docs.map(([d,p])=>`<li><b>${esc(d)}</b>${p?`<span>${esc(p)}</span>`:''}</li>`).join('')}</ul></div>`:''}
+          ${g.costo||g.tiempo?`<div class="gmeta">${g.costo?`<div><span class="glbl">Costos</span>${esc(g.costo)}</div>`:''}${g.tiempo?`<div><span class="glbl">Tiempos</span>${esc(g.tiempo)}</div>`:''}</div>`:''}
+          ${(g.tips||[]).length?`<div class="gtips"><span class="glbl">Ojo con esto</span><ul>${g.tips.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
           <div><span class="glbl">Norma</span>${esc(g.norma||'—')}</div>
           <div class="row" style="gap:8px;flex-wrap:wrap">${g.link?`<a class="btn sm" href="${esc(g.link)}" target="_blank" rel="noopener">${ic('next','sm')} Ver en el sitio oficial</a>`:''}<button class="btn sm pri" data-act="trnuevo" data-clase="obligacion" data-guia="${g.id}">${ic('cal','sm')} Agendar en Fojas</button>${g.propia?`<button class="btn sm ghost danger" data-act="guiadel" data-g="${g.id}">${ic('trash','sm')} Quitar</button>`:''}<button class="btn sm ghost" data-agq="${esc('Explicame: '+g.t)}" data-ag-open="1">${ic('bot','sm')} Preguntarle al asistente</button></div>
         </div>`:''}</div>`; }).join('') || '<div class="empty small">No encontramos trámites con esa búsqueda. Podés agregarlo a la guía.</div>'}</div>`;
   }
-  if(tab==='orgs') body = `<p class="small muted">Organismos con los que suele tratar una empresa de salud. Tocá uno para ver sus trámites de la guía y los reclamos cargados.</p>
+  if(tab==='orgs') body = `<p class="small muted">Organismos, registros y oficinas con los que trata un abogado o una empresa. Tocá uno para ver sus trámites de la guía y los reclamos cargados.</p>
     <div class="grid g2">${ORGS.filter(o=>o.id!=='otro').map(o=>{ const n = trs().filter(t=>t.org===o.id && !/Cerrado|Cumplido/.test(t.estado)).length, g = guiaTodas().filter(x=>x.org===o.id); return `<section class="card" style="gap:8px">
       <div class="row" style="justify-content:space-between;gap:8px"><h3>${esc(o.l)}</h3>${n?`<span class="badge">${n} en curso</span>`:''}</div><p class="small">${esc(o.que)}</p>
       ${g.length?`<div class="small"><b>En la guía:</b> ${g.map(x=>`<a href="#administrativos" data-guiair="${x.id}">${esc(x.t)}</a>`).join(' · ')}</div>`:''}
       <div class="row" style="gap:8px">${o.link?`<a class="btn sm" href="${esc(o.link)}" target="_blank" rel="noopener">Sitio oficial</a>`:''}<button class="btn sm ghost" data-act="trnuevo" data-clase="reclamo" data-org="${o.id}">${ic('plus','sm')} Cargar reclamo</button></div></section>`; }).join('')}</div>`;
-  return `<div><h1>Administrativos</h1><p class="sub">Reclamos ante organismos (SSS, Defensa del Consumidor, COPREC, AAIP…), obligaciones de la empresa y una guía de trámites.</p></div>
+  return `<div><h1>Administrativos</h1><p class="sub">Reclamos ante organismos, obligaciones de la empresa y una guía de consulta con más de 70 trámites y operaciones jurídicas.</p></div>
     <div class="tabs">${tabs.map(([k,i,l])=>`<button class="tab ${tab===k?'on':''}" data-admtab="${k}">${ic(i,'sm')} ${l}</button>`).join('')}</div>
     <section class="card">${body}</section>`;
 }
