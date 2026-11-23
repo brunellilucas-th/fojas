@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.26">
+<meta name="fojas-version" content="2026-11-22.27">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -1878,7 +1878,7 @@ function vInicio(){
         : `<div class="empty"><div class="ico g">${ic('check','lg')}</div><b>No hay nada urgente</b><span>Nada vence en los próximos 3 días.</span></div>`}
     </section>
     <section class="card"><div class="head"><h2>Últimos movimientos del equipo</h2><a href="#historial" class="small">Ver historial</a></div>
-      <div class="list">${S.audit.slice(-5).reverse().map(a=>`
+      <div class="list">${auditVisible().slice(-5).reverse().map(a=>`
         <div class="li"><div style="display:flex;gap:10px"><div class="avatar" style="width:32px;height:32px;font-size:13px">${initials(userName(a.user))}</div><div><b>${esc(userName(a.user))}</b> <span class="muted">${esc(a.accion.toLowerCase())}</span><div class="small muted">${esc(a.objeto)}</div></div></div><div class="small muted" style="white-space:nowrap">${fmtTs(a.ts)}</div></div>`).join('')}
       </div></section>
   </div>
@@ -2198,7 +2198,8 @@ function vHistorial(){
     <button class="btn pri" data-act="verify">Comprobar ahora</button>
     <button class="btn ghost danger small" data-act="tamper" title="Solo para la demostración">Probar: simular una alteración</button>
   </section>
-  <section class="card"><div class="list">${S.audit.slice().reverse().map(a=>`
+  ${isAdmin()?'':'<div class="notice small" style="display:block">Ves los movimientos de tu equipo.</div>'}
+  <section class="card"><div class="list">${auditVisible().slice().reverse().map(a=>`
     <div class="li"><div style="display:flex;gap:12px"><div class="avatar" style="width:34px;height:34px;font-size:13px;flex:none">${initials(userName(a.user))}</div>
       <div><b>${esc(userName(a.user))}</b> · ${esc(a.accion)}<div class="small muted">${esc(a.objeto)} — ${esc(a.detalle)}</div><div class="hash">Registro N° ${a.n} · huella ${a.hash.slice(0,16)}…</div></div></div>
       <div class="small muted" style="white-space:nowrap">${fmtTs(a.ts)}</div></div>`).join('')}</div></section>`;
@@ -2319,9 +2320,9 @@ function orgGeneral(){
   const persona = uid => { const u = S.users.find(x=>x.id===uid); if(!u) return `<div class="onode vacio">Sin asignar</div>`; return `<div class="onode ${cls(u)}"><span class="avatar" style="width:32px;height:32px;font-size:12px;flex:none">${initials(u.nombre)}</span><span><b>${esc(u.nombre)}</b><span class="small muted">${esc(u.rol)}${u.area?' · '+esc(u.area):''}</span></span></div>`; };
   const nodo = (uid, camino) => { if(camino.has(uid)) return ''; const c = new Set(camino); c.add(uid); const hs = hijos(uid); const eqs = (S.teams||[]).filter(t=>t.jefe===uid);
     return `<li>${eqs.length?`<div class="oteam">${eqs.map(t=>`<div class="oteam-n">${ic('users','sm')} ${esc(t.nombre)}</div>`).join('')}${persona(uid)}</div>`:persona(uid)}${hs.length?`<ul>${hs.map(h=>nodo(h, c)).join('')}</ul>`:''}</li>`; };
-  const raices = users.filter(u=>{ const s = superiorDe(u.id); return !s || !users.some(x=>x.id===s); }).map(u=>u.id).sort(porRango);
+  const raices = isAdmin() ? users.filter(u=>{ const s = superiorDe(u.id); return !s || !users.some(x=>x.id===s); }).map(u=>u.id).sort(porRango) : [S.user];
   const arboles = raices.filter(r=>hijos(r).length || esGerente(S.users.find(x=>x.id===r)));
-  const sueltos = raices.filter(r=>!arboles.includes(r));
+  const sueltos = isAdmin() ? raices.filter(r=>!arboles.includes(r)) : [];
   return `<section class="card"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px"><h2>Organigrama</h2><span class="small muted">Gerente/a → Jefe/a → Coordinador/a → Analista</span></div>
     <div class="otrees">${arboles.map(r=>`<div class="otree"><ul>${nodo(r, new Set())}</ul></div>`).join('') || '<div class="empty small">Todavía no hay equipos ni áreas armados.</div>'}</div>
     <div class="row" style="gap:14px;flex-wrap:wrap"><span class="small"><span class="leg lg-g"></span> Gerente/a</span><span class="small"><span class="leg lg-j"></span> Jefe/a</span><span class="small"><span class="leg lg-c"></span> Coordinador/a</span><span class="small"><span class="leg"></span> Analista</span></div>
@@ -2329,7 +2330,7 @@ function orgGeneral(){
     <p class="small muted">Quien no está en un equipo queda debajo de quien está en el nivel de arriba en su misma <b>área</b> (por ejemplo, un analista de Compras debajo del gerente de Compras). El área de cada persona se carga en Usuarios.</p></section>`;
 }
 function vEquipo(){
-  if(isAdmin() || esGerente(me())) return `<div><h1>Equipo</h1><p class="sub">Así está armada la organización: cada gerente queda arriba solo de los equipos de su área; debajo, la jefa/e de cada equipo, coordinadores y analistas.${isAdmin()?' Más abajo creás equipos y distribuís a las personas.':''}</p></div>${orgGeneral()}${isAdmin()?teamEditor():''}`;
+  if(isAdmin() || esGerente(me())) return `<div><h1>Equipo</h1><p class="sub">${isAdmin()?'Así está armada la organización: cada gerente queda arriba solo de los equipos de su área; debajo, la jefa/e de cada equipo, coordinadores y analistas. Más abajo creás equipos y distribuís a las personas.':'Así está armada tu área: vos, tus jefas y jefes, coordinadores y analistas.'}</p></div>${orgGeneral()}${isAdmin()?teamEditor():''}`;
   const visible = isAdmin() ? S.teams : S.teams.filter(t=>t.jefe===S.user || t.miembros.includes(S.user));
   if(!visible.length && !isAdmin()) return `<div class="card empty"><div class="ico a">${ic('users','lg')}</div><b>Todavía no formás parte de un equipo</b><span>Pedile al administrador que te sume a uno.</span></div>`;
   return `
@@ -2389,11 +2390,7 @@ function eqUserModal(teamId){ ui.eqCt = ui.eqCt || 'solicitante';
     </div>
     <div class="fld">Módulos que puede usar${modChecks('eqMod', null, false)}</div>
     <div id="eqCtWrap">${ctPerfilBloque('eq', ui.eqCt)}</div>
-    <div class="form">
-      <label>Sumar al equipo<select id="eqTeam"><option value="">Sin equipo por ahora</option>${S.teams.map(t=>`<option value="${t.id}" ${t.id===teamId?'selected':''}>${esc(t.nombre)}</option>`).join('')}</select></label>
-      <label>Como<select id="eqComo"><option value="miembro">Analista del equipo</option><option value="jefe">Jefa/e del equipo</option></select></label>
-    </div>
-    <p class="small muted">La primera vez entra con su usuario como contraseña y Fojas le pide cambiarla.</p>
+    <p class="small muted">La primera vez entra con su usuario como contraseña y Fojas le pide cambiarla. Para sumarla a un equipo, andá a <a href="#equipo">Equipo</a>.</p>
     <div class="row"><button class="btn pri big" data-act="eqcrear">${ic('check')} Crear usuario</button></div>`); }
 async function eqCrear(){
   const err = t => { $('#eqErr').innerHTML = `<div class="notice bad">${esc(t)}</div>`; };
@@ -2405,7 +2402,7 @@ async function eqCrear(){
   if(ctp==='solicitante' && !area) return err('Para un solicitante de Contratos, completá su área (Compras, Marketing…).');
   const nu = await makeUser({id:uid, nombre, rol:$('#eqRol').value}, uid, true); nu.modulos = modulos; if(area) nu.area = area; if(ctp) nu.ctPerfil = ctp;
   S.users.push(nu); S.usersBorrados = (S.usersBorrados||[]).filter(x=>x!==uid);
-  const tm = S.teams.find(t=>t.id===$('#eqTeam').value), como = $('#eqComo').value; let txtEq = '';
+  const tm = null, como = ''; let txtEq = '';
   if(tm){ if(como==='jefe'){ const ant = tm.jefe; tm.jefe = uid; tm.miembros = tm.miembros.filter(m=>m!==uid); txtEq = ` · jefa/e de ${tm.nombre}${ant&&ant!==uid?` (antes: ${userName(ant)})`:''}`; } else { tm.miembros.push(uid); txtEq = ` · analista de ${tm.nombre}`; } }
   save(); audit('Agregó un usuario','Usuarios', `${uid} (${nu.rol}) · módulos: ${modulos.join(', ')||'ninguno'}${txtEq}`);
   ui.eqCt = null; if(route().name==='usuarios') ui.uSel = uid; closeModal(); render(); toast(`${nombre.split(' ')[0]} ya puede entrar con usuario y contraseña "${uid}"${tm?`. Quedó en ${tm.nombre}.`:''}`);
@@ -4509,10 +4506,10 @@ function gerenteDeArea(area){ if(!area) return null; const g = S.users.filter(x=
 function gerenteDe(t){ if(!t) return null; if(activoId(t.gerente) && esGerente(S.users.find(x=>x.id===t.gerente))) return t.gerente; const j = S.users.find(x=>x.id===t.jefe); return gerenteDeArea(t.area || (j&&j.area)); }
 // sin equipo: el superior es quien está en el nivel inmediato de arriba en su misma área (si hay uno solo en ese nivel)
 function superiorPorArea(u){ if(!u || !u.area) return null; const c = S.users.filter(x=>x.id!==u.id && x.activo!==false && x.rol!=='Administrador' && mismaArea(x.area, u.area) && rango(x)>rango(u)); if(!c.length) return null;
-  for(let r = rango(u)+1; r<=4; r++){ const n = c.filter(x=>rango(x)===r); if(n.length===1) return n[0].id; if(n.length>1) return null; } return null; }
+  for(let r = rango(u)+1; r<=4; r++){ if(r===2) continue; const n = c.filter(x=>rango(x)===r); if(n.length===1) return n[0].id; if(n.length>1) return null; } return null; }
 function reportaA(t, uid){ const r = (t.reporta||{})[uid]; if(r && r!==uid && t.miembros.includes(r) && activoId(r) && esCoord(S.users.find(x=>x.id===r))) return r;
   const u = S.users.find(x=>x.id===uid); if(esCoord(u)) return t.jefe; if(r===t.jefe) return t.jefe;
-  const coords = t.miembros.filter(m=>m!==uid && activoId(m) && esCoord(S.users.find(x=>x.id===m))); return coords.length===1 && !(t.reporta&&t.reporta[uid]) ? coords[0] : t.jefe; }
+  return t.jefe; }
 function superiorDe(uid){
   const u = S.users.find(x=>x.id===uid); if(!u) return null;
   if(esGerente(u) || u.rol==='Administrador') return null;
@@ -5070,6 +5067,10 @@ function solicitudesEjemplo(){ const ts = n => { const x = new Date(); x.setDate
   ]; }
 
 // ---------- Análisis del equipo: gerentes y jefes analizan lo que hace su gente y sacan informes ----------
+function ambitoIds(){ const u = me(); if(!u) return new Set(); if(isAdmin()) return new Set(S.users.map(x=>x.id));
+  if(puedeAnalizar()) return new Set(alcanceDe().map(x=>x.id));
+  const ids = new Set([u.id]); (S.teams||[]).forEach(t=>{ if(t.jefe===u.id || t.miembros.includes(u.id)){ ids.add(t.jefe); t.miembros.forEach(m=>ids.add(m)); } }); ids.delete(''); return ids; }
+const auditVisible = () => { if(isAdmin()) return S.audit; const ids = ambitoIds(); return S.audit.filter(a=>ids.has(a.user)); };
 const puedeAnalizar = () => { const u = me(); return !!u && (isAdmin() || esGerente(u) || /^Jef[ae]\b/.test(u.rol||'') || (S.teams||[]).some(t=>t.jefe===u.id)); };
 function alcanceDe(uid=S.user){ const u = S.users.find(x=>x.id===uid); if(!u) return [];
   if(u.rol==='Administrador') return S.users.filter(x=>x.rol!=='Administrador');
