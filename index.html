@@ -6,7 +6,7 @@
 <title>Fojas</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2064%2064%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%233E8352%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231D4529%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2033%29%20scale%281.1%29%20translate%28-32%20-32%29%22%3E%3Crect%20x%3D%2215%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23C0915F%22%20transform%3D%22rotate%28-11%2029%2032%29%22/%3E%3Crect%20x%3D%2218%22%20y%3D%2213%22%20width%3D%2228%22%20height%3D%2238%22%20rx%3D%224%22%20fill%3D%22%23EADBC2%22%20transform%3D%22rotate%28-4%2032%2032%29%22/%3E%3Cpath%20d%3D%22M22%2013h18l9%209v27a3%203%200%200%201-3%203H22a3%203%200%200%201-3-3V16a3%203%200%200%201%203-3z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M40%2013v6.5a2.5%202.5%200%200%200%202.5%202.5H49z%22%20fill%3D%22%23CFE3CB%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%225.5%22%20height%3D%2225%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2220.5%22%20width%3D%2216%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Crect%20x%3D%2224%22%20y%3D%2230.5%22%20width%3D%2211%22%20height%3D%225.5%22%20rx%3D%222.75%22%20fill%3D%22%232F6B3F%22/%3E%3Ccircle%20cx%3D%2241.5%22%20cy%3D%2243.5%22%20r%3D%225.5%22%20fill%3D%22%23C9963F%22/%3E%3Cpath%20d%3D%22M38.9%2043.6l1.8%201.8%203.4-3.6%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/g%3E%3C/svg%3E">
 <meta name="theme-color" content="#2F6B3F">
-<meta name="fojas-version" content="2026-11-22.23">
+<meta name="fojas-version" content="2026-11-22.24">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -67,7 +67,7 @@ svg.i.lg{width:30px;height:30px}
 .uper{display:flex;gap:10px;align-items:center;min-width:0} .uper > span:last-child{display:flex;flex-direction:column;min-width:0}
 .umd.con .urow{grid-template-columns:minmax(0,2fr) minmax(0,1.2fr) auto} .umd.con .urow > span:nth-child(3){display:none}
 @media (max-width:900px){ .umd.con{grid-template-columns:1fr} .ufi{position:static} .urow{grid-template-columns:minmax(0,1fr) auto} .urow > span:nth-child(2), .urow > span:nth-child(3){display:none} }
-.otree{overflow-x:auto;padding:8px 0 4px}
+.otrees{display:flex;flex-wrap:wrap;gap:28px;justify-content:center;align-items:flex-start;overflow-x:auto} .otree{overflow-x:auto;padding:8px 0 4px}
 .otree ul{display:flex;justify-content:center;padding-top:22px;position:relative;margin:0;padding-left:0;list-style:none}
 .otree > ul{padding-top:0}
 .otree li{display:flex;flex-direction:column;align-items:center;position:relative;padding:22px 8px 0}
@@ -95,6 +95,17 @@ svg.i.lg{width:30px;height:30px}
 .firmas{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-top:6px}
 .firma{display:flex;gap:12px;align-items:center;border:1.5px dashed var(--line);border-radius:14px;padding:12px 14px;background:var(--surface)} .firma.ok{border-style:solid;border-color:var(--accent);background:var(--accent-soft)}
 .firma-i{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--sunken);flex:none} .firma.ok .firma-i{background:var(--accent);color:#fff}
+.ankpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.ankpi{display:flex;flex-direction:column;gap:2px;background:var(--sunken);border-radius:12px;padding:12px 14px} .ankpi span{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)} .ankpi b{font-size:22px} .ankpi small{color:var(--muted);font-size:12px} .ankpi.sm b{font-size:16px}
+.antabla{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:auto}
+.an-h,.an-r{display:grid;grid-template-columns:minmax(200px,2fr) repeat(9,minmax(70px,1fr));gap:8px;padding:10px 12px;align-items:center;font-size:14px;min-width:980px}
+.an-h2{grid-template-columns:minmax(200px,2fr) repeat(5,minmax(90px,1fr))!important;min-width:720px} .an-h3{grid-template-columns:minmax(200px,2fr) repeat(5,minmax(90px,1fr))!important;min-width:720px}
+.an-h{background:var(--sunken);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}
+.an-r{border:0;border-top:1px solid var(--line);background:var(--surface);font:inherit;color:var(--ink);text-align:left;cursor:pointer} button.an-r:hover{background:var(--sunken)} .an-r.on{background:var(--accent-soft);box-shadow:inset 4px 0 0 var(--accent)} div.an-r{cursor:default}
+.anbar{display:inline-block;width:60px;height:8px;border-radius:4px;background:var(--sunken);overflow:hidden;vertical-align:middle} .anbar i{display:block;height:100%;background:var(--accent)}
+.andet{border:1px solid var(--line);border-radius:12px;padding:6px 14px;margin-top:8px} .andet summary{display:flex;gap:10px;align-items:center;flex-wrap:wrap;cursor:pointer;padding:8px 0;list-style:none} .andet summary::-webkit-details-marker{display:none} .andet[open]{padding-bottom:14px} .andet[open] > *{margin-top:8px}
+.ankv{display:grid;grid-template-columns:140px 1fr;gap:6px 12px;font-size:14px} .ankv span{color:var(--muted)} .ankv b{font-weight:500}
+.anqa{display:grid;grid-template-columns:1fr 1fr;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px} @media (max-width:800px){ .anqa{grid-template-columns:1fr} }
 .umenu-wrap{position:relative}
 .cttipos{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
 .cttipo{display:flex;flex-direction:column;gap:4px;text-align:left;border:1.5px solid var(--line);border-radius:14px;padding:14px;background:var(--surface);cursor:pointer;font:inherit;color:var(--ink)}
@@ -541,7 +552,7 @@ const DEFAULT_USERS = [
   {id:'cortiz', nombre:'Camila Ortiz', rol:'Analista', area:'Legales', ctPerfil:'analista', modulos:['contratos']},
   {id:'mgimenez', nombre:'Marcos Giménez', rol:'Solicitante', area:'Compras', ctPerfil:'solicitante', modulos:['contratos']},
   {id:'sruiz', nombre:'Sofía Ruiz', rol:'Solicitante', area:'Marketing', ctPerfil:'solicitante', modulos:['contratos']},
-  {id:'mrivas', nombre:'Martín Rivas', rol:'Gerente', area:'Legales', ctPerfil:'jefe', modulos:['amparos','administrativos','contratos']},
+  {id:'mrivas', nombre:'Martín Rivas', rol:'Gerente', area:'Amparos', modulos:['amparos','administrativos']},
   {id:'admin', nombre:'Administración', rol:'Administrador'}
 ];
 const DEFAULT_TEAMS = [{id:'t1', nombre:'Amparos', jefe:'dfraerman', miembros:['lbrunelli','fzaurdo']}];
@@ -1608,6 +1619,7 @@ async function migrate(d){
   if(!d.ctFlujo2){ d.ctFlujo2 = true; (d.solicitudes||[]).forEach(s=>{ if(s.estado==='Enviada al solicitante' && (s.versiones||[]).some(v=>v.enviada)) s.estado = 'Revisión del proveedor'; if(s.estado==='Esperando información') s.estado = 'Enviada al solicitante'; if(s.estado==='En revisión') s.estado = 'En elaboración'; });
     if(Array.isArray(d.solicitudes) && !d.solicitudes.some(s=>s.id==='cej4')) try{ d.solicitudes.push(solicitudEjemploFirmas()); }catch(err){ console.warn(err); } }
   if(!d.rolesGen){ d.rolesGen = true; (d.users||[]).forEach(u=>{ if(/^Analista\b/.test(u.rol||'') && u.rol!=='Analista') u.rol = 'Analista'; if(/^Coordinador(a)?\b/.test(u.rol||'')) u.rol = /^Coordinadora/.test(u.rol) ? 'Coordinadora' : 'Coordinador'; }); }
+  if(!d.gerArea){ d.gerArea = true; const mr = (d.users||[]).find(u=>u.id==='mrivas'); if(mr && mr.rol==='Gerente' && mr.ctPerfil==='jefe'){ delete mr.ctPerfil; mr.modulos = ['amparos','administrativos']; mr.area = 'Amparos'; } (d.teams||[]).forEach(t=>{ if(t.gerente===undefined) t.gerente = (t.nombre==='Amparos' && (d.users||[]).some(u=>u.id==='mrivas')) ? 'mrivas' : ''; }); }
   if(!d.ejemploTareas){ d.ejemploTareas = true; try{ ejemplosTareas(d); }catch(err){ console.warn(err); } }
   if(!d.ejemploAdm){ d.ejemploAdm = true; try{ ejemplosAdm(d); }catch(err){ console.warn(err); } d.nextId = Math.max(d.nextId||1, ...d.exps.map(e=>+e.id||0)) + 1; }
   d.schema = SCHEMA; d.user = null;
@@ -1743,6 +1755,7 @@ function shell(content){
       <nav class="nav" aria-label="Principal">
         ${link('inicio','home','Inicio')}
         ${isAdmin()?link('usuarios','user','Usuarios'):''}
+        ${puedeAnalizar()?link('analisis','chart','Análisis del equipo'):''}
         ${link('tareas','check','Tareas diarias', (()=>{ const n = tPendHoy() + tParaValidar(); return n?`<span class="badge red">${n}</span>`:''; })())}
         ${amp?link('amparos','folder','Amparos', `<span class="badge">${active().length}</span>`):''}
         ${amp?link('escritos','pen','Escritos'):''}
@@ -2307,16 +2320,16 @@ function orgGeneral(){
     const hijos = [...coords.map(c=>{ const suyos = t.miembros.filter(m=>m!==c && !coords.includes(m) && reportaA(t, m)===c); return `<li>${persona(c,'coord')}${suyos.length?`<ul>${suyos.map(m=>hoja(m,t,subs,vistos)).join('')}</ul>`:''}</li>`; }), ...directos.map(m=>hoja(m,t,subs,vistos))];
     return `<li><div class="oteam"><div class="oteam-n">${ic('users','sm')} ${esc(t.nombre)}</div>${persona(t.jefe,'jefe')}</div>${hijos.length?`<ul>${hijos.join('')}</ul>`:''}</li>`; };
   const vistos = new Set(); const gerentes = S.users.filter(u=>esGerente(u) && u.activo!==false);
-  const porGerente = gerentes.length ? gerentes.map(g=>({g, ts:raiz.filter(t=>gerenteDe(t)===g.id)})) : [{g:null, ts:raiz}];
+  const porGerente = [...gerentes.map(g=>({g, ts:raiz.filter(t=>gerenteDe(t)===g.id)})), {g:null, ts:raiz.filter(t=>!gerenteDe(t))}].filter(x=>x.g || x.ts.length);
   const enOrg = new Set([...gerentes.map(g=>g.id), ...teams.flatMap(t=>[t.jefe,...t.miembros])]);
   const sueltos = S.users.filter(u=>u.rol!=='Administrador' && !enOrg.has(u.id));
   return `<section class="card"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px"><h2>Organigrama</h2><span class="small muted">Gerente → Jefa/e → Coordinador/a → Analista · ${teams.length} equipo${teams.length===1?'':'s'}</span></div>
-    <div class="otree"><ul>${porGerente.map(({g, ts})=>`<li>${g?persona(g.id,'top'):`<div class="onode top vacio" style="color:#fff">Gerencia sin asignar</div>`}${ts.length?`<ul>${ts.map(t=>rama(t, vistos)).join('')}</ul>`:''}</li>`).join('')}</ul></div>
+    <div class="otrees">${porGerente.flatMap(({g, ts})=> g ? [`<div class="otree"><ul><li>${persona(g.id,'top')}${ts.length?`<ul>${ts.map(t=>rama(t, vistos)).join('')}</ul>`:''}</li></ul></div>`] : ts.map(t=>`<div class="otree"><ul>${rama(t, vistos)}</ul></div>`)).join('')}</div>
     <div class="row" style="gap:14px;flex-wrap:wrap" class="small"><span class="small"><span class="leg lg-g"></span> Gerente</span><span class="small"><span class="leg lg-j"></span> Jefa/e</span><span class="small"><span class="leg lg-c"></span> Coordinador/a</span><span class="small"><span class="leg"></span> Analista</span></div>
     ${sueltos.length?`<div class="small"><b>Sin equipo:</b> ${sueltos.map(u=>esc(u.nombre)).join(', ')}</div>`:''}</section>`;
 }
 function vEquipo(){
-  if(isAdmin() || esGerente(me())) return `<div><h1>Equipo</h1><p class="sub">Así está armada la organización, de arriba hacia abajo: Gerente, Jefa/e de cada equipo, Coordinador/a y Analistas.${isAdmin()?' Más abajo creás equipos y distribuís a las personas.':''}</p></div>${orgGeneral()}${isAdmin()?teamEditor():''}`;
+  if(isAdmin() || esGerente(me())) return `<div><h1>Equipo</h1><p class="sub">Así está armada la organización: cada gerente queda arriba solo de los equipos de su área; debajo, la jefa/e de cada equipo, coordinadores y analistas.${isAdmin()?' Más abajo creás equipos y distribuís a las personas.':''}</p></div>${orgGeneral()}${isAdmin()?teamEditor():''}`;
   const visible = isAdmin() ? S.teams : S.teams.filter(t=>t.jefe===S.user || t.miembros.includes(S.user));
   if(!visible.length && !isAdmin()) return `<div class="card empty"><div class="ico a">${ic('users','lg')}</div><b>Todavía no formás parte de un equipo</b><span>Pedile al administrador que te sume a uno.</span></div>`;
   return `
@@ -2344,7 +2357,7 @@ function guardarEquipo(f, silencioso){
   const reporta = {}; f.querySelectorAll('select[name^="rep_"]').forEach(s=>{ const m = s.name.slice(4); if(miembros.includes(m)) reporta[m] = s.value; });
   const gerente = f.gerente ? f.gerente.value : (tm.gerente||'');
   if(nombre===tm.nombre && jefe===tm.jefe && JSON.stringify(miembros)===JSON.stringify(tm.miembros) && JSON.stringify(reporta)===JSON.stringify(tm.reporta||{}) && gerente===(tm.gerente||'')) return true;
-  tm.nombre = nombre; tm.jefe = jefe; tm.miembros = miembros; tm.reporta = reporta; if(gerente) tm.gerente = gerente; save();
+  tm.nombre = nombre; tm.jefe = jefe; tm.miembros = miembros; tm.reporta = reporta; tm.gerente = gerente; save();
   audit('Actualizó un equipo','Equipos',`${tm.nombre}: jefa/e ${jefe?userName(jefe):'sin asignar'}, ${miembros.length} analista(s)`);
   if(!silencioso){ render(); toast('Equipo guardado'); } return true;
 }
@@ -2354,7 +2367,7 @@ function teamEditor(){
     ${S.teams.map(t=>`<form class="form teamform" data-team="${t.id}" style="padding:16px;border:1px solid var(--line);border-radius:12px">
       <label>Nombre del equipo<input type="text" name="nombre" value="${esc(t.nombre)}" required></label>
       <label>Jefa/e<select name="jefe"><option value="" ${!t.jefe?'selected':''}>Elegí quién lo dirige</option>${people.filter(u=>!esGerente(u)).map(u=>`<option value="${u.id}" ${u.id===t.jefe?'selected':''}>${esc(u.nombre)}</option>`).join('')}</select></label>
-      ${S.users.filter(esGerente).length>1?`<label>Depende de la gerencia de<select name="gerente">${S.users.filter(esGerente).map(g=>`<option value="${g.id}" ${gerenteDe(t)===g.id?'selected':''}>${esc(g.nombre)}</option>`).join('')}</select></label>`:''}
+      <label>Gerente del área<select name="gerente"><option value="" ${!gerenteDe(t)?'selected':''}>Sin gerente</option>${S.users.filter(u=>esGerente(u) && u.activo!==false).map(g=>`<option value="${g.id}" ${gerenteDe(t)===g.id?'selected':''}>${esc(g.nombre)}${g.area?' · '+esc(g.area):''}</option>`).join('')}</select></label>
       <div class="fld full">Coordinadores y analistas<div class="chips">${people.filter(u=>!esGerente(u)).map(u=>{ const otro = !multiEquipo(u.id) && !t.miembros.includes(u.id) ? S.teams.find(o=>o.id!==t.id && o.miembros.includes(u.id)) : null; return `<label class="chipbtn" style="font-weight:600;${otro?'opacity:.55;cursor:not-allowed':''}" ${otro?`title="Ya es analista de ${esc(otro.nombre)}"`:''}><input type="checkbox" name="m" value="${u.id}" ${t.miembros.includes(u.id)?'checked':''} ${otro?'disabled':''} style="accent-color:var(--accent)"> ${esc(u.nombre)}${otro?` <span class="small muted">(en ${esc(otro.nombre)})</span>`:''}${multiEquipo(u.id)?' <span class="small muted">(puede estar en varios)</span>':''}</label>`; }).join('')}</div></div>
       ${(()=>{ const coords = t.miembros.filter(m=>esCoord(S.users.find(x=>x.id===m))); const anal = t.miembros.filter(m=>!coords.includes(m)); if(!coords.length || !anal.length) return ''; return `<div class="fld full">¿A quién reporta cada analista?<div class="list">${anal.map(m=>`<div class="li"><span>${esc(userName(m))}</span><select name="rep_${m}" style="max-width:260px"><option value="${esc(t.jefe||'')}" ${reportaA(t,m)===t.jefe?'selected':''}>Directo a la jefa/e${t.jefe?' ('+esc(userName(t.jefe).split(' ')[0])+')':''}</option>${coords.map(c=>`<option value="${c}" ${reportaA(t,m)===c?'selected':''}>${esc(userName(c))} (coordina)</option>`).join('')}</select></div>`).join('')}</div></div>`; })()}
       <div class="full row" style="flex-wrap:wrap"><span class="small muted">${ic('check','sm')} Los cambios se guardan solos</span><button class="btn ghost danger" type="button" data-act="delteam" data-team="${t.id}">Eliminar equipo</button></div>
@@ -3327,7 +3340,7 @@ function render(){
   let r = route();
   if(['historial','respaldo','modulos'].includes(r.name) && !puedeMas()){ history.replaceState(null,'','#inicio'); r = {name:'inicio'}; }
   if(RUTA_MOD[r.name] && !tieneMod(RUTA_MOD[r.name])){ const alt = modsDe(me())[0]; const destino = alt==='administrativos' ? 'administrativos' : 'inicio'; if(location.hash.slice(1)!==destino){ history.replaceState(null,'','#'+destino); } r = {name:destino}; }
-  const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, modelos:vModelos, informes:vInformes, historial:vHistorial, papelera:vPapelera, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios, asistente:vAsistente, administrativos:vAdministrativos, tareas:vTareas, contratos:vContratos};
+  const views = {equipo:vEquipo, inicio:vInicio, amparos:vAmparos, vencimientos:vVencimientos, escritos:vEscritos, modelos:vModelos, informes:vInformes, historial:vHistorial, papelera:vPapelera, modulos:vModulos, respaldo:vRespaldo, usuarios:vUsuarios, asistente:vAsistente, administrativos:vAdministrativos, tareas:vTareas, contratos:vContratos, analisis:vAnalisis};
   const html = r.name==='expediente' ? vExpediente(r.id) : r.name==='tramite' ? vTramite(r.id) : r.name==='contrato' ? (r.id==='nuevo' ? vContratoNuevo() : vContrato(r.id)) : (views[r.name]||vInicio)();
   const scroll = $('#view') ? $('#view').scrollTop : 0;
   $('#root').innerHTML = shell(html);
@@ -3667,6 +3680,7 @@ IC.send = '<path d="M4 12l16-8-6 16-2.5-6.5z" fill="none" stroke="currentColor" 
 IC.x = '<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>';
 IC.bot = '<rect x="4" y="7" width="16" height="12" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7V4M9 13h.01M15 13h.01" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M2 12v3M22 12v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
 const AYUDA = [
+  {t:'Análisis del equipo e informes', k:['analisis','analizar','informe','informes','tiempos','respuesta','metricas','indicadores','rendimiento','gerente','jefe','csv','excel'], r:'Gerentes, jefas y jefes tienen **Análisis del equipo** en el panel izquierdo: ven a toda la gente a su cargo (coordinadores, analistas y jefes) con los pedidos de Contratos, los **tiempos** por etapa (en Legales, esperando al solicitante, en el proveedor, en firmas), la **primera respuesta**, los **pedidos de información y lo que respondieron**, los **documentos** y mensajes, la información que dieron al pedir, las **tareas diarias** y la **carga de trabajo**. Filtrás por período y persona, tocás a alguien para ver el detalle y sacás un **informe** para imprimir o un **CSV** para Excel.', ir:'analisis'},
   {t:'Pedir un contrato a Legales', k:['contrato','contratos','solicitud','pedir','pedido','nda','confidencialidad','proveedor','compras','marketing','adjuntar','asignar','jefe','analista','version','borrador'], r:'En **Contratos** tocá **Nueva solicitud**: elegí qué necesitás (locación de servicios, convenio con prestador, NDA, software, alquiler, marketing, adenda…), completá la contraparte y el detalle, y adjuntá los archivos (cualquier formato; te mostramos qué documentación suele hacer falta). Al enviarla, la **jefatura de Contratos** recibe una notificación y la **asigna** a alguien del equipo. El circuito es: **En elaboración** (Legales) → **Enviada al solicitante** cuando falta información (se pide por mail y Fojas registra la fecha) → **Revisión del proveedor** cuando el documento está finalizado para Legales → **Firmas** (firma del proveedor y de la unidad) → **Cerrada**, que exige adjuntar el documento firmado por ambas partes. En **Trazabilidad** ves cada envío con su fecha, en qué sector está y cuántos días estuvo en cada etapa.', ir:'contratos'},
   {t:'Tareas diarias', k:['tarea','tareas','diaria','diarias','validar','superior','jefe','asignar','indicar','completa','rojo','notificacion','notificaciones','campana'], r:'En **Tareas diarias** (panel izquierdo) cada persona carga las tareas que hace todos los días y su **superior del organigrama** las valida. El superior también puede **indicar tareas** (para un día o diarias): a la persona le llega una **notificación** (la campana, arriba a la derecha). Cada tarea se responde con **Completa**, **No se puede realizar** (con el motivo) o **No se hizo**. Si no se responde en el día, queda **en rojo** sola y se le avisa al superior. Lo que **no se pudo hacer** o quedó **en rojo** pasa al **día hábil siguiente** con la marca "Pendiente desde…", hasta que se complete o el superior la dé por cerrada.', ir:'tareas'},
   {t:'Menú de tu usuario', k:['menu','iniciales','circulo','salir','cerrar sesion','contrasena','clave','papelera','ayuda','vencimientos','asistente'], r:'Tocá el **círculo con tus iniciales**, arriba a la derecha. Ahí están **Vencimientos** (tus próximos vencimientos), **Asistente IA**, **Papelera**, **Cambiar contraseña**, **Ayuda** y **Salir**.', ir:null},
@@ -4487,7 +4501,7 @@ function notifs(){ return Array.isArray(S.notifs) ? S.notifs : (S.notifs = []); 
 const esGerente = u => !!u && u.rol==='Gerente';
 const esCoord = u => !!u && /^Coordinador/.test(u.rol||'');
 const activoId = id => !!id && S.users.some(x=>x.id===id && x.activo!==false);
-function gerenteDe(t){ if(t && activoId(t.gerente)) return t.gerente; const g = S.users.find(x=>esGerente(x) && x.activo!==false); return g ? g.id : null; }
+function gerenteDe(t){ return t && activoId(t.gerente) && esGerente(S.users.find(x=>x.id===t.gerente)) ? t.gerente : null; }
 function reportaA(t, uid){ const r = (t.reporta||{})[uid]; if(r && r!==uid && t.miembros.includes(r) && activoId(r) && esCoord(S.users.find(x=>x.id===r))) return r;
   const u = S.users.find(x=>x.id===uid); if(esCoord(u)) return t.jefe; if(r===t.jefe) return t.jefe;
   const coords = t.miembros.filter(m=>m!==uid && activoId(m) && esCoord(S.users.find(x=>x.id===m))); return coords.length===1 && !(t.reporta&&t.reporta[uid]) ? coords[0] : t.jefe; }
@@ -5045,6 +5059,106 @@ function solicitudesEjemplo(){ const ts = n => { const x = new Date(); x.setDate
       checklist:ctTipo('nda').docs.map(doc=>({doc, estado:'si'})), adjuntos:[], versiones:[], estado:'En elaboración', asignadoA:'lbrunelli', asignadoPor:'jpaz', asignadoEn:ts(-1), fechaObjetivo:dPlus(3), creada:ts(-2),
       hilo:[{id:'h5', fecha:ts(-2), user:'mgimenez', tipo:'evento', texto:'Envió la solicitud.'},{id:'h6', fecha:ts(-1), user:'jpaz', tipo:'evento', texto:'le asignó el pedido a Lucas Emmanuel Brunelli.'},{id:'h7', fecha:ts(-1), user:'jpaz', tipo:'mensaje', interno:true, texto:'Usá nuestro modelo de NDA bilateral y agregá la cláusula de datos de salud.'}], visto:{}}
   ]; }
+
+// ---------- Análisis del equipo: gerentes y jefes analizan lo que hace su gente y sacan informes ----------
+const puedeAnalizar = () => { const u = me(); return !!u && (isAdmin() || esGerente(u) || /^Jef[ae]\b/.test(u.rol||'') || (S.teams||[]).some(t=>t.jefe===u.id)); };
+function alcanceDe(uid=S.user){ const u = S.users.find(x=>x.id===uid); if(!u) return [];
+  if(u.rol==='Administrador') return S.users.filter(x=>x.rol!=='Administrador');
+  const ids = new Set([uid]), cola = [uid];
+  while(cola.length){ const x = cola.shift(); const nuevos = [];
+    S.users.forEach(y=>{ if(superiorDe(y.id)===x) nuevos.push(y.id); });
+    (S.teams||[]).forEach(t=>{ if(t.jefe===x) nuevos.push(...t.miembros); if(t.gerente===x) nuevos.push(t.jefe, ...t.miembros); });
+    nuevos.filter(Boolean).forEach(n=>{ if(!ids.has(n) && S.users.some(z=>z.id===n)){ ids.add(n); cola.push(n); } }); }
+  return S.users.filter(x=>ids.has(x.id)); }
+const H = 3600000;
+const fmtDur = ms => { if(ms==null || isNaN(ms) || ms<=0) return '—'; const h = ms/H; if(h < 1) return `${Math.max(1,Math.round(ms/60000))} min`; if(h < 24) return `${h.toFixed(h<10?1:0).replace('.',',')} h`; const d = h/24; return `${d.toFixed(d<10?1:0).replace('.',',')} días`; };
+const prom = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : null;
+function ctTramos(s){ const tr = (s.traza||[]).slice().sort((a,b)=>a.fecha.localeCompare(b.fecha)); const fin = !ctAbierta(s) ? (s.cerrada || (tr.slice(-1)[0]||{}).fecha) : new Date().toISOString();
+  return tr.map((x,i)=>({estado:x.estado, desde:x.fecha, hasta:(tr[i+1]||{}).fecha || fin, ms:new Date((tr[i+1]||{}).fecha || fin) - new Date(x.fecha), x})); }
+function ctMetricas(s){ ctAsegurarTraza(s); const t = ctTramos(s); const suma = est => t.filter(x=>est.includes(x.estado)).reduce((a,x)=>a+x.ms,0);
+  const asig = t.find(x=>x.estado==='Asignada'), prim = t.find(x=>x.estado==='En elaboración');
+  const pedidos = t.filter(x=>x.estado==='Enviada al solicitante');
+  const rondasProv = t.filter((x,i)=>x.estado==='Revisión del proveedor' && t[i+1] && t[i+1].estado==='En elaboración').length;
+  const chk = s.checklist||[]; const chkOk = chk.filter(c=>['si','ok','na'].includes(c.estado)).length;
+  const campos = ['objeto','monto','pago','vigencia','inicio','necesitaPara'].filter(k=>s[k]).length + ['cuit','domicilio','contacto','email'].filter(k=>s.contraparte&&s.contraparte[k]).length;
+  return { total: new Date(ctAbierta(s)?Date.now():(s.cerrada||Date.now())) - new Date(s.creada), espera: suma(['Recibida']), legales: suma(['Asignada','En elaboración']), solicitante: suma(['Enviada al solicitante']), proveedor: suma(['Revisión del proveedor']), firmas: suma(['Firmas']),
+    primeraRespuesta: asig && prim ? new Date(prim.desde) - new Date(asig.desde) : null, pedidos: pedidos.length, respSolicitante: pedidos.filter(p=>p.hasta && t.some(z=>z.desde===p.hasta && z.estado!=='Enviada al solicitante')).map(p=>p.ms),
+    rondasProv, versiones:(s.versiones||[]).length, adjSolicitud:(s.adjuntos||[]).length, mensajes:(s.hilo||[]).filter(h=>h.tipo!=='evento'), completitud: Math.round(100*(chk.length ? (chkOk/chk.length*0.5 + campos/10*0.5) : campos/10)) }; }
+function anFiltro(){ const d = ui.anDesde || dPlus(-90), h = ui.anHasta || iso(today()); return {d, h, en: f => { const x = (f||'').slice(0,10); return x>=d && x<=h; }}; }
+function anDatos(){ const per = alcanceDe(); const ids = new Set(per.map(u=>u.id)); const F = anFiltro();
+  const filas = per.filter(u=>!ui.anPersona || u.id===ui.anPersona).map(u=>{
+    const resp = sols().filter(s=>s.asignadoA===u.id && F.en(s.creada)), solsU = sols().filter(s=>s.solicitante===u.id && F.en(s.creada));
+    const mR = resp.map(ctMetricas), mS = solsU.map(ctMetricas);
+    const tds = tDia().filter(r=>r.user===u.id && F.en(r.fecha)), c = k => tds.filter(r=>r.estado===k).length;
+    const exps = S.exps.filter(e=>e.abogado===u.id && e.estado!=='Archivado'), venc = exps.flatMap(e=>(e.plazos||[]).filter(p=>!p.hecho && daysTo(p.vence)<0)).length;
+    const trsU = trs().filter(t=>t.abogado===u.id && !/Cerrado|Cumplido/.test(t.estado));
+    const msgs = sols().flatMap(s=>(s.hilo||[]).filter(h=>h.user===u.id && h.tipo!=='evento' && F.en(h.fecha)));
+    const docs = sols().flatMap(s=>[...(s.adjuntos||[]), ...(s.versiones||[]), ...(s.hilo||[]).flatMap(h=>h.adjuntos||[])]).filter(a=>a.user===u.id && F.en(a.fecha));
+    return {u, resp, solsU, mR, mS, tds, c, exps, venc, trsU, msgs, docs}; });
+  return {per, filas, F}; }
+function vAnalisis(){
+  if(!puedeAnalizar()) return `<div class="card empty"><b>Esta sección es para gerentes, jefas y jefes.</b></div>`;
+  const {per, filas, F} = anDatos(); const tab = ui.anTab || 'contratos';
+  const kpi = (l, v, sub='') => `<div class="ankpi"><span>${l}</span><b>${v}</b>${sub?`<small>${sub}</small>`:''}</div>`;
+  const allR = filas.flatMap(f=>f.resp), mAll = allR.map(ctMetricas);
+  const cerr = allR.filter(s=>!ctAbierta(s)).length;
+  let body = '';
+  if(tab==='contratos'){
+    body = `<div class="ankpis">${kpi('Pedidos a cargo', allR.length, `${cerr} cerrados · ${allR.length-cerr} abiertos`)}${kpi('Tiempo total promedio', fmtDur(prom(mAll.map(m=>m.total))), 'desde que se pidió')}${kpi('Tiempo en Legales', fmtDur(prom(mAll.map(m=>m.legales))), 'promedio por pedido')}${kpi('Primera respuesta', fmtDur(prom(mAll.map(m=>m.primeraRespuesta).filter(x=>x!=null))), 'de asignado a empezar')}${kpi('Esperando al solicitante', fmtDur(prom(mAll.map(m=>m.solicitante))), `${mAll.reduce((a,m)=>a+m.pedidos,0)} pedidos de información`)}${kpi('En el proveedor', fmtDur(prom(mAll.map(m=>m.proveedor))), `${mAll.reduce((a,m)=>a+m.rondasProv,0)} rondas de cambios`)}</div>
+      <div class="antabla"><div class="an-h"><span>Persona</span><span>A cargo</span><span>Cerrados</span><span>Prom. total</span><span>Prom. en Legales</span><span>1ª respuesta</span><span>Pedidos de info</span><span>Versiones</span><span>Mensajes</span><span>Docs</span></div>
+      ${filas.map(f=>{ const m = f.mR; return `<button type="button" class="an-r ${ui.anPersona===f.u.id?'on':''}" data-act="anper" data-u="${f.u.id}"><span class="uper"><span class="avatar" style="width:30px;height:30px;font-size:11px;flex:none">${initials(f.u.nombre)}</span><span><b>${esc(f.u.nombre)}</b><span class="small muted">${esc(f.u.rol)}</span></span></span><span>${f.resp.length}</span><span>${f.resp.filter(s=>!ctAbierta(s)).length}</span><span>${fmtDur(prom(m.map(x=>x.total)))}</span><span>${fmtDur(prom(m.map(x=>x.legales)))}</span><span>${fmtDur(prom(m.map(x=>x.primeraRespuesta).filter(x=>x!=null)))}</span><span>${m.reduce((a,x)=>a+x.pedidos,0)}</span><span>${m.reduce((a,x)=>a+x.versiones,0)}</span><span>${f.msgs.length}</span><span>${f.docs.length}</span></button>`; }).join('')}</div>
+      ${filas.some(f=>f.solsU.length)?`<h3 style="margin-top:6px">Como solicitantes</h3><p class="small muted">La información que brindaron en sus pedidos y cuánto tardaron en responder lo que les preguntaron.</p>
+      <div class="antabla"><div class="an-h an-h2"><span>Persona</span><span>Pedidos hechos</span><span>Completitud del pedido</span><span>Archivos al pedir</span><span>Les pidieron info</span><span>Tardaron en responder</span></div>
+      ${filas.filter(f=>f.solsU.length).map(f=>`<button type="button" class="an-r an-h2 ${ui.anPersona===f.u.id?'on':''}" data-act="anper" data-u="${f.u.id}"><span class="uper"><span class="avatar" style="width:30px;height:30px;font-size:11px;flex:none">${initials(f.u.nombre)}</span><span><b>${esc(f.u.nombre)}</b><span class="small muted">${esc(f.u.area||f.u.rol)}</span></span></span><span>${f.solsU.length}</span><span>${Math.round(prom(f.mS.map(m=>m.completitud)))}%</span><span>${f.mS.reduce((a,m)=>a+m.adjSolicitud,0)}</span><span>${f.mS.reduce((a,m)=>a+m.pedidos,0)}</span><span>${fmtDur(prom(f.mS.flatMap(m=>m.respSolicitante)))}</span></button>`).join('')}</div>`:''}
+      ${ui.anPersona?anDetalle(filas.find(f=>f.u.id===ui.anPersona)):`<div class="small muted">Tocá una persona para ver el detalle de cada pedido: tiempos por etapa, lo que se preguntó y lo que respondieron, los documentos y los mensajes.</div>`}`;
+  }
+  if(tab==='tareas'){ const tot = filas.reduce((a,f)=>a+f.tds.length,0), ok = filas.reduce((a,f)=>a+f.c('hecha'),0);
+    body = `<div class="ankpis">${kpi('Tareas del período', tot)}${kpi('Completas', ok, tot?Math.round(ok/tot*100)+'%':'')}${kpi('No se pudieron', filas.reduce((a,f)=>a+f.c('nose'),0))}${kpi('No se hicieron', filas.reduce((a,f)=>a+f.c('nohecha'),0), 'incluye las que quedaron en rojo solas')}</div>
+      <div class="antabla"><div class="an-h an-h3"><span>Persona</span><span>Tareas</span><span>Completas</span><span>No se pueden</span><span>No se hicieron</span><span>Cumplimiento</span></div>
+      ${filas.map(f=>{ const n = f.tds.length; return `<div class="an-r an-h3"><span class="uper"><span class="avatar" style="width:30px;height:30px;font-size:11px;flex:none">${initials(f.u.nombre)}</span><span><b>${esc(f.u.nombre)}</b><span class="small muted">${esc(f.u.rol)}</span></span></span><span>${n}</span><span>${f.c('hecha')}</span><span>${f.c('nose')}</span><span>${f.c('nohecha')}</span><span>${n?`<span class="anbar"><i style="width:${Math.round(f.c('hecha')/n*100)}%"></i></span> ${Math.round(f.c('hecha')/n*100)}%`:'—'}</span></div>`; }).join('')}</div>
+      ${(()=>{ const motivos = filas.flatMap(f=>f.tds.filter(r=>r.estado==='nose' && r.motivo).map(r=>({f, r}))); return motivos.length?`<h3>Motivos de "no se puede"</h3><div class="list">${motivos.map(({f,r})=>`<div class="li"><span><b>${esc(f.u.nombre)}</b> · ${esc(r.titulo)} <span class="small muted">(${fmt(r.fecha)})</span><div class="small">${esc(r.motivo)}</div></span></div>`).join('')}</div>`:''; })()}`; }
+  if(tab==='cartera'){ body = `<div class="antabla"><div class="an-h an-h3"><span>Persona</span><span>Expedientes</span><span>Plazos vencidos</span><span>Trámites adm.</span><span>Pedidos de Contratos abiertos</span><span>Notificaciones sin leer</span></div>
+      ${filas.map(f=>`<div class="an-r an-h3"><span class="uper"><span class="avatar" style="width:30px;height:30px;font-size:11px;flex:none">${initials(f.u.nombre)}</span><span><b>${esc(f.u.nombre)}</b><span class="small muted">${esc(f.u.rol)}</span></span></span><span>${f.exps.length}</span><span>${f.venc?`<b style="color:var(--danger)">${f.venc}</b>`:'0'}</span><span>${f.trsU.length}</span><span>${sols().filter(s=>s.asignadoA===f.u.id && ctAbierta(s)).length}</span><span>${notifs().filter(n=>n.para===f.u.id && !n.leida).length}</span></div>`).join('')}</div>`; }
+  return `<div class="head"><div><h1>Análisis del equipo</h1><p class="sub">Todo lo que hace tu gente (${per.length} persona${per.length===1?'':'s'}${isAdmin()?' de toda la organización':' a tu cargo, incluyéndote'}): pedidos, tiempos de respuesta, lo que preguntaron y respondieron, los documentos y las tareas. Desde acá sacás informes.</p></div>
+      <div class="row" style="gap:8px"><button class="btn" data-act="ancsv">${ic('down','sm')} Descargar Excel (CSV)</button><button class="btn pri" data-act="aninforme">${ic('file','sm')} Generar informe</button></div></div>
+    <section class="card"><div class="row" style="gap:10px;flex-wrap:wrap;align-items:flex-end">
+      <label class="small" style="display:flex;flex-direction:column;gap:4px;font-weight:600">Desde<input type="date" id="anDesde" value="${F.d}"></label><label class="small" style="display:flex;flex-direction:column;gap:4px;font-weight:600">Hasta<input type="date" id="anHasta" value="${F.h}" max="${iso(today())}"></label>
+      <label class="small" style="display:flex;flex-direction:column;gap:4px;font-weight:600">Persona<select id="anPersona"><option value="">Todas (${per.length})</option>${per.map(u=>`<option value="${u.id}" ${ui.anPersona===u.id?'selected':''}>${esc(u.nombre)} · ${esc(u.rol)}</option>`).join('')}</select></label>
+      <div class="chips" style="margin-left:auto">${[['7','7 días'],['30','30 días'],['90','90 días'],['365','Un año']].map(([k,l])=>`<button class="chipbtn" data-act="anrango" data-v="${k}">${l}</button>`).join('')}</div></div></section>
+    <div class="tabs">${[['contratos','file','Contratos'],['tareas','check','Tareas diarias'],['cartera','folder','Carga de trabajo']].map(([k,i,l])=>`<button class="${tab===k?'on':''}" data-act="antab" data-v="${k}">${ic(i,'sm')} ${l}</button>`).join('')}</div>
+    <section class="card">${body}</section>`;
+}
+function anDetalle(f){ if(!f) return ''; const lista = [...f.resp, ...f.solsU.filter(s=>!f.resp.includes(s))];
+  if(!lista.length) return `<div class="empty small">${esc(f.u.nombre)} no tiene pedidos en el período.</div>`;
+  return `<h3 style="margin-top:8px">Detalle de ${esc(f.u.nombre)}</h3>${lista.map(s=>{ const m = ctMetricas(s), rol = s.asignadoA===f.u.id ? 'A cargo' : 'Lo pidió';
+    const pares = (s.hilo||[]).filter(h=>h.tipo==='pedido').map(p=>{ const r = (s.hilo||[]).find(h=>h.fecha>p.fecha && h.tipo!=='evento' && h.tipo!=='pedido' && (h.user===s.solicitante || /Respuesta del solicitante/.test(h.texto||''))); return {p, r}; });
+    return `<details class="andet"><summary><span class="mono small">${esc(s.numero)}</span><b>${esc(s.contraparte.nombre)}</b><span class="small muted">${esc(ctTipo(s.tipo).l)} · ${rol}</span>${ctPill(s.estado)}<span class="small">Total ${fmtDur(m.total)}</span></summary>
+      <div class="ankpis">${kpi2('En Legales', fmtDur(m.legales))}${kpi2('1ª respuesta', fmtDur(m.primeraRespuesta))}${kpi2('En el solicitante', fmtDur(m.solicitante))}${kpi2('En el proveedor', fmtDur(m.proveedor))}${kpi2('En firmas', fmtDur(m.firmas))}${kpi2('Completitud del pedido', m.completitud+'%')}</div>
+      <div class="ankv"><span>Lo que se pidió</span><b>${esc(s.objeto||'—')}${s.monto?' · '+esc(s.monto):''}${s.vigencia?' · '+esc(s.vigencia):''}</b>
+        <span>Documentación</span><b>${(s.checklist||[]).map(c=>`${esc(c.doc)}: ${({si:'adjuntado',luego:'lo manda después',na:'no aplica',ok:'revisado'})[c.estado]||'sin indicar'}`).join(' · ')||'—'}</b>
+        <span>Archivos</span><b>${[...(s.adjuntos||[]), ...(s.versiones||[]).map(v=>({...v, nombre:`v${v.n} ${v.nombre}`}))].map(a=>esc(a.nombre)).join(', ')||'—'}${s.firmado?` · firmado: ${esc(s.firmado.nombre)}`:''}</b></div>
+      ${pares.length?`<div class="glbl">Lo que se preguntó y lo que respondieron</div>${pares.map(({p,r})=>`<div class="anqa"><div><b>Pregunta</b> · ${esc(userName(p.user))} · ${fmtTs(p.fecha)}<div>${esc(p.texto)}</div></div><div class="${r?'':'muted'}"><b>Respuesta</b>${r?` · ${esc(userName(r.user))} · ${fmtTs(r.fecha)} · tardó ${fmtDur(new Date(r.fecha)-new Date(p.fecha))}<div>${esc(r.texto)}</div>`:' · todavía sin respuesta'}</div></div>`).join('')}`:''}
+      <div class="glbl">Recorrido</div><div class="small">${ctTramos(s).map(x=>`${esc(x.estado)} (${fmtDur(x.ms)})`).join(' → ')}</div>
+      <a class="btn sm" href="#contrato-${s.id}">Abrir el pedido</a></details>`; }).join('')}`; }
+const kpi2 = (l, v) => `<div class="ankpi sm"><span>${l}</span><b>${v}</b></div>`;
+function anInformeHtml(){ const {per, filas, F} = anDatos(); const allR = filas.flatMap(f=>f.resp), mAll = allR.map(ctMetricas);
+  const fila = f => { const m = f.mR, n = f.tds.length; return `<tr><td><b>${esc(f.u.nombre)}</b><br><small>${esc(f.u.rol)}${f.u.area?' · '+esc(f.u.area):''}</small></td><td>${f.resp.length}</td><td>${f.resp.filter(s=>!ctAbierta(s)).length}</td><td>${fmtDur(prom(m.map(x=>x.total)))}</td><td>${fmtDur(prom(m.map(x=>x.legales)))}</td><td>${fmtDur(prom(m.map(x=>x.primeraRespuesta).filter(x=>x!=null)))}</td><td>${m.reduce((a,x)=>a+x.pedidos,0)}</td><td>${n?Math.round(f.c('hecha')/n*100)+'%':'—'}</td><td>${f.c('nohecha')}</td></tr>`; };
+  return {titulo:`Informe del equipo · ${fmt(F.d)} al ${fmt(F.h)}`, html:`<div class="inf"><div class="inf-h"><div class="inf-logo">${fojasMark('infA')}</div><div><h1>Informe del equipo</h1><div class="inf-sub">${esc(userName(S.user))} · del ${fmt(F.d)} al ${fmt(F.h)} · ${per.length} personas · generado el ${fmtTs(new Date().toISOString())}</div></div></div>
+    <h2>Resumen de Contratos</h2><p>${allR.length} pedidos a cargo (${allR.filter(s=>!ctAbierta(s)).length} cerrados). Tiempo total promedio: <b>${fmtDur(prom(mAll.map(m=>m.total)))}</b>; en Legales: <b>${fmtDur(prom(mAll.map(m=>m.legales)))}</b>; esperando al solicitante: <b>${fmtDur(prom(mAll.map(m=>m.solicitante)))}</b>; en el proveedor: <b>${fmtDur(prom(mAll.map(m=>m.proveedor)))}</b>. Pedidos de información: ${mAll.reduce((a,m)=>a+m.pedidos,0)}; rondas de cambios del proveedor: ${mAll.reduce((a,m)=>a+m.rondasProv,0)}.</p>
+    <h2>Por persona</h2><table class="inf-t"><tr><th>Persona</th><th>Pedidos</th><th>Cerrados</th><th>Prom. total</th><th>En Legales</th><th>1ª resp.</th><th>Pedidos de info</th><th>Tareas cumplidas</th><th>Tareas no hechas</th></tr>${filas.map(fila).join('')}</table>
+    ${allR.length?`<h2>Pedidos</h2><table class="inf-t"><tr><th>N°</th><th>Contraparte</th><th>A cargo</th><th>Estado</th><th>Total</th><th>Legales</th><th>Solicitante</th><th>Proveedor</th><th>Firmas</th></tr>${allR.map(s=>{ const m = ctMetricas(s); return `<tr><td>${esc(s.numero)}</td><td>${esc(s.contraparte.nombre)}<br><small>${esc(ctTipo(s.tipo).l)}</small></td><td>${esc(userName(s.asignadoA))}</td><td>${esc(s.estado)}</td><td>${fmtDur(m.total)}</td><td>${fmtDur(m.legales)}</td><td>${fmtDur(m.solicitante)}</td><td>${fmtDur(m.proveedor)}</td><td>${fmtDur(m.firmas)}</td></tr>`; }).join('')}</table>`:''}</div>`}; }
+function anCSV(){ const {filas, F} = anDatos(); const q = v => `"${String(v==null?'':v).replace(/"/g,'""')}"`;
+  const filasCsv = [['Número','Contraparte','Tipo','Unidad','Solicitante','Área','A cargo','Estado','Pedido el','Cerrado el','Total (h)','Espera asignación (h)','En Legales (h)','Primera respuesta (h)','En el solicitante (h)','En el proveedor (h)','En firmas (h)','Pedidos de información','Rondas de cambios del proveedor','Versiones','Archivos del pedido','Completitud del pedido (%)']];
+  const vistas = new Set(); filas.forEach(f=>[...f.resp, ...f.solsU].forEach(s=>{ if(vistas.has(s.id)) return; vistas.add(s.id); const m = ctMetricas(s), hs = x => x==null ? '' : (x/H).toFixed(1).replace('.',',');
+    filasCsv.push([s.numero, s.contraparte.nombre, ctTipo(s.tipo).l, s.unidad, userName(s.solicitante), s.area, userName(s.asignadoA), s.estado, (s.creada||'').slice(0,10), ctAbierta(s)?'':(s.cerrada||'').slice(0,10), hs(m.total), hs(m.espera), hs(m.legales), hs(m.primeraRespuesta), hs(m.solicitante), hs(m.proveedor), hs(m.firmas), m.pedidos, m.rondasProv, m.versiones, m.adjSolicitud, m.completitud]); }));
+  const csv = '﻿' + filasCsv.map(r=>r.map(q).join(';')).join('\r\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'})); a.download = `analisis-contratos-${F.d}-a-${F.h}.csv`; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+document.addEventListener('click', ev => { if(!S || !S.user) return; const el = ev.target.closest('[data-act]'); if(!el) return; const a = el.dataset.act, d = el.dataset; if(!/^an/.test(a)) return;
+  if(a==='antab'){ ui.anTab = d.v; render(); return; }
+  if(a==='anper'){ ui.anPersona = ui.anPersona===d.u ? null : d.u; render(); return; }
+  if(a==='anrango'){ ui.anDesde = dPlus(-(+d.v)); ui.anHasta = iso(today()); render(); return; }
+  if(a==='aninforme'){ agImprimir(anInformeHtml()); audit('Generó un informe del equipo','Análisis', `${anFiltro().d} a ${anFiltro().h}`); return; }
+  if(a==='ancsv'){ anCSV(); audit('Descargó el análisis en CSV','Análisis', `${anFiltro().d} a ${anFiltro().h}`); return; } });
+document.addEventListener('change', ev => { const t = ev.target; if(t.id==='anDesde'){ ui.anDesde = t.value; render(); } if(t.id==='anHasta'){ ui.anHasta = t.value; render(); } if(t.id==='anPersona'){ ui.anPersona = t.value || null; render(); } });
 
 // ---------- actualización automática: si hay una versión nueva publicada, se carga sola ----------
 const APP_VERSION = (document.querySelector('meta[name=fojas-version]')||{}).content || '';
